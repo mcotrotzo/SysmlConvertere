@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.example</groupId>
+    <artifactId>SysmlTest</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <properties>
+        <maven.compiler.release>21</maven.compiler.release>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <sysml.artifact.version>0.55.0</sysml.artifact.version>
+        <sysml.release.url>https://github.com/Systems-Modeling/SysML-v2-Pilot-Implementation/releases/download/2025-12</sysml.release.url>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.omg.sysml</groupId>
+            <artifactId>jupyter-sysml-kernel</artifactId>
+            <version>${sysml.artifact.version}</version>
+        </dependency>
+    </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>25</source>
+                    <target>25</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>setup</id>
+            <build>
+                <plugins>
+                    <!-- JAR downloaden -->
+                    <plugin>
+                        <groupId>com.googlecode.maven-download-plugin</groupId>
+                        <artifactId>download-maven-plugin</artifactId>
+                        <version>1.7.1</version>
+                        <executions>
+                            <execution>
+                                <id>download-sysml-kernel</id>
+                                <phase>initialize</phase>
+                                <goals><goal>wget</goal></goals>
+                                <configuration>
+                                    <url>${sysml.release.url}/jupyter-sysml-kernel-${sysml.artifact.version}.zip</url>
+                                    <outputDirectory>${project.build.directory}/sysml-download</outputDirectory>
+                                    <unpack>true</unpack>
+                                </configuration>
+                            </execution>
+                            <!-- sysml.library aus demselben ZIP extrahieren -->
+                            <execution>
+                                <id>download-sysml-library</id>
+                                <phase>initialize</phase>
+                                <goals><goal>wget</goal></goals>
+                                <configuration>
+                                    <url>${sysml.release.url}/jupyter-sysml-kernel-${sysml.artifact.version}.zip</url>
+                                    <outputDirectory>${project.build.directory}/sysml-library</outputDirectory>
+                                    <unpack>true</unpack>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <!-- JAR ins lokale Maven Repo installieren -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-install-plugin</artifactId>
+                        <version>3.1.1</version>
+                        <executions>
+                            <execution>
+                                <id>install-sysml</id>
+                                <phase>initialize</phase>
+                                <goals><goal>install-file</goal></goals>
+                                <configuration>
+                                    <file>${project.build.directory}/sysml-download/sysml/jupyter-sysml-kernel-${sysml.artifact.version}-all.jar</file>
+                                    <pomFile>${project.basedir}/jupyter-sysml-kernel.pom</pomFile>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+</project>
