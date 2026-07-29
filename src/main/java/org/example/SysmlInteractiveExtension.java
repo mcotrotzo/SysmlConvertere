@@ -1,4 +1,4 @@
-package org.example;
+/*package org.example;
 
 import org.eclipse.xtext.validation.Issue;
 import org.omg.sysml.interactive.SysMLInteractiveResult;
@@ -95,4 +95,4 @@ public class SysmlInteractiveExtension extends SysMLInteractiveResult {
         }
     }
 }
-
+*/

@@ -1,3 +1,5 @@
+part tettttr;
+
 package Test{
 
     private import TwinLibrary::*;
@@ -11,14 +13,16 @@ package Test{
 
    part def Test:>Twin{
    }
+   attribute tzest:TwinInteger =1;
    part test3{
-    attribute tet;
+    attribute tet[3];
    }
 
    part def Test2:>Test,Twin{
-    part zz{
-    hallo:>>test3.tet;
-        hallo2d:>>test3.tet;
+    part{
+    hallo:>>test3.tet[1];
+    hallo2d:>>test3.tet[3];
+
 
     }
 
@@ -57,30 +61,30 @@ package Test{
             if p11.plug
             then charging;
 
-            
+
             transition
             first idle
             if NOT_bool(p11.plug)
             then idle;
 
-            
+
             transition
             first charging
             if NOT_bool(p11.plug)
             then idle;
 
-            
+
         }
 
 
         attribute soc : TwinReal :> derivedAttributes =
             MULT_real(DIV_real(p11.voltage, nominalVoltage), 100);
-        
+
         calc temp30  :>>query{
             in attribute :>>twinAttribute = p11.temp;
             in attribute :>>since = 30;
             in attribute :>>sinceUnit = TimeUnit::HOUR;
-            return attribute :>>result:TwinReal[30];
+            return attribute gg:>>result:TwinReal[30];
 
         }
 
@@ -91,7 +95,7 @@ package Test{
             attribute llmCurrent:>> outputs:TwinReal[1];
         }
         attribute avgTemp : TwinReal :> derivedAttributes = Avg(temp30.result);
-    
+
 
         part consForecast :> predictiveStrategies {
             in attribute :>> lambdaPath = "battery/consForecast";
@@ -101,17 +105,17 @@ package Test{
             attribute predicted : TwinReal :> outputs;
         }
 
-        
+
             part chargeStrategy :> prescriptiveStrategies {
                 in attribute :>> lambdaPath default "battery/chargeStrategy";
-            
+
                 attribute :>> condition_ default LT_real(consForecast.predicted, maxCharge);
                 attribute chargeCmd : TwinReal :> outputs = p12.charge;
             }
 
-        
 
-        
+
+
     }
 
 

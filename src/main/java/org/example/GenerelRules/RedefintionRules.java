@@ -1,57 +1,42 @@
 package org.example.GenerelRules;
 
-import org.omg.sysml.lang.sysml.Classifier;
+
+import org.example.UtilClasses.RedefinitionGraph;
+import org.example.UtilClasses.SubsettingGraph;
+import org.example.Utils;
 import org.omg.sysml.lang.sysml.Element;
 import org.omg.sysml.lang.sysml.Feature;
-import org.omg.sysml.lang.sysml.Redefinition;
 import org.omg.sysml.lang.sysml.Type;
-import org.omg.sysml.util.FeatureUtil;
 import org.omg.sysml.util.TypeUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.lang.annotation.Inherited;
 import java.util.*;
 
-public class RedefintionRules implements GenerelRules {
+public class RedefintionRules extends SpecialicingRules {
 
-    private final List<Feature> featuresList = new ArrayList<>();
+    private static final Logger log = LoggerFactory.getLogger(RedefintionRules.class);
 
     @Override
-    public boolean isValid(Element rootElement) {
-        flattenElements(rootElement);
-
+    public boolean isValid() {
+        Element rootElement = getUtils().getRootElement();
+        boolean inheritedValid = checkOnlyInheritedRedefinition(rootElement);
+        boolean onceValid = checkRedefinedOnce(rootElement);
+        return inheritedValid && onceValid;
+    }
+    public boolean checkOnlyInheritedRedefinition(Element rootElement) {
+        RedefinitionGraph subsettingGraph = getUtils().getSpecialicationGraph(RedefinitionGraph.class);
         boolean hasErrors = false;
 
-        for (Feature feature : featuresList) {
-            // Nur Features prüfen, die explizit ein ':>>' deklariert haben
-            List<Redefinition> ownedRedefinitions = feature.getOwnedRedefinition();
-            if (ownedRedefinitions.isEmpty()) {
-                continue;
-            }
+        for (Map.Entry<Feature, Set<Feature>> entry : subsettingGraph.getForward().entrySet()) {
+            Feature redefiningFeature = entry.getKey();
+            Set<Feature> redefinedFeatures = entry.getValue();
+            Set<Feature> inheritedFeatures = getUtils().getALlInheritedFeatures(redefiningFeature);
 
-            Type ownerType = feature.getOwningType();
-            if (ownerType == null) {
-                continue;
-            }
-
-            // Alle geerbten Features aus dem gesamten umschließenden Kontext einsammeln
-            Set<Feature> availableInheritedFeatures = getAllAvailableInheritedFeatures(ownerType);
-
-            for (Redefinition redef : ownedRedefinitions) {
-                Feature redefinedTarget = redef.getRedefinedFeature();
-                Feature basicTarget = FeatureUtil.getBasicFeatureOf(redefinedTarget);
-
-                if (basicTarget == null) continue;
-
-                // Prüfen, ob das Ziel-Feature in den geerbten Features enthalten ist
-                if (!availableInheritedFeatures.contains(basicTarget) && !availableInheritedFeatures.contains(redefinedTarget)) {
-
-                    String featureName = FeatureUtil.computeEffectiveName(feature);
-                    String targetName = FeatureUtil.computeEffectiveName(basicTarget);
-
-                    String className = ownerType.getName() != null ? ownerType.getName() : "<anonymous>";
-
-                    System.err.println("Error: Feature '" + featureName + "' in '" + className +
-                            "' redefines '" + targetName + "' via (:>>), but it is NOT inherited!");
-
+            for (Feature redefinedFeature : redefinedFeatures) {
+                if (!inheritedFeatures.contains(redefinedFeature)) {
+                    logSpecialicingBut(redefiningFeature, redefinedFeature, "redefines", "but it is not inherited from the parent type.");
                     hasErrors = true;
                 }
             }
@@ -60,29 +45,26 @@ public class RedefintionRules implements GenerelRules {
         return !hasErrors;
     }
 
-    /**
-     * Wandert den Erstellungskontext nach oben und sammelt alle geerbten Features
-     * aus dem aktuellen Typ sowie allen umschließenden äußeren Typen ein.
-     */
-    private Set<Feature> getAllAvailableInheritedFeatures(Type currentType) {
-        Set<Feature> inheritedFeatures = new HashSet<>();
-        Set<Feature> availableInheritedFeatures = new HashSet<>();
-        for (Type superType : currentType.allSupertypes()) {
-            inheritedFeatures.addAll(TypeUtil.getPublicFeaturesOf(superType));
-        }
-        availableInheritedFeatures.addAll(currentType.getInheritedFeature());
+    boolean checkRedefinedOnce(Element rootElement) {
+        var redefinitionGraph = getUtils().getSpecialicationGraph(RedefinitionGraph.class);
 
-        inheritedFeatures.forEach(x -> System.out.println(x.getName()));
-        availableInheritedFeatures.forEach(x -> System.out.println(x.getName()));
-        return inheritedFeatures;
-    }
+        boolean hasErrors = false;
 
-    private void flattenElements(Element element) {
-        if (element instanceof Feature feature) {
-            featuresList.add(feature);
+        Map<Feature, Set<Feature>> redefinedToRedefiningMap = redefinitionGraph.getBackward();
+        for (Map.Entry<Feature, Set<Feature>> entry : redefinedToRedefiningMap.entrySet()) {
+            Feature redefinedFeature = entry.getKey();
+            Set<Feature> redefiningFeatures = entry.getValue();
+            if (redefiningFeatures != null && redefiningFeatures.size() > 1) {
+                String parentOwner = (redefinedFeature.getOwningType() != null && redefinedFeature.getOwningType().getName() != null)
+                        ? redefinedFeature.getOwningType().getName() : "<anonymous>";
+
+                logSpecialicingBut(redefinedFeature,redefiningFeatures, "is redefined from ", "but we dont allow multiple redefinitons of the same feature.");
+
+                hasErrors = true;
+            }
         }
-        for (Element child : element.getOwnedElement()) {
-            flattenElements(child);
-        }
+        System.out.println(hasErrors);
+
+        return !hasErrors;
     }
 }
