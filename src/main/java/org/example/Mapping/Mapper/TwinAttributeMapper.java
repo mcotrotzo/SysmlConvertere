@@ -45,3 +45,38 @@ class TwinAttributeMapperCalcs extends ChildMapper<TwinAttributeRaw, CustomCalcu
         return TwinAttributeRaw.class;
     }
 }
+
+
+class TwinAttributeMapperTwin extends ChildMapper<TwinAttributeRaw, TwinRaw> {
+    @Override
+    protected void parse(TwinAttributeRaw raw) {
+        parent.getConstAttributes().add(raw);
+        raw.parseExpressions();
+    }
+    @Override
+    protected Set<? extends AbstractMapper<?>> getChildMappers() {
+        return Set.of(new TwinCustomAttributeMapper());
+    }
+
+    @Override
+    protected Class<TwinAttributeRaw> getRawClass() {
+        return TwinAttributeRaw.class;
+    }
+}
+
+class TwinAttributeMapperQuery extends ChildMapper<TwinAttributeRaw, QueryRaw> {
+    @Override
+    protected void parse(TwinAttributeRaw raw) {
+        parent.getQueryAttributes().add(raw);
+        raw.parseExpressions();
+    }
+    @Override
+    protected Set<? extends AbstractMapper<?>> getChildMappers() {
+        return Set.of(new TwinCustomAttributeMapper());
+    }
+
+    @Override
+    protected Class<TwinAttributeRaw> getRawClass() {
+        return TwinAttributeRaw.class;
+    }
+}

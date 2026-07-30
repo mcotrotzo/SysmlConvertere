@@ -24,6 +24,8 @@ public class TwinRaw extends Raw {
     private Set<SensorRaw> sensors = new HashSet<>();
     private Set<ControlUnitRaw> controlUnits = new HashSet<>();
     private Set<ActuatorRaw> actuators = new HashSet<>();
+    private Set<TwinAttributeRaw> constAttributes = new HashSet<>();
+    private Set<QueryRaw> queries = new HashSet<>();
 
 
 

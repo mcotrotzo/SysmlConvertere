@@ -16,7 +16,12 @@ public class TwinMapper extends RootMapper<TwinRaw> {
 
     @Override
     protected Set<AbstractMapper<?>> getChildMappers() {
-        return Set.of(new SensorPortMapper(),new ActuatorMapper());
+        return Set.of(new SensorPortMapper(),
+                      new ActuatorMapper(),
+                      new TwinAttributeMapperTwin(),
+                      new ControlUnitMappet(),
+                      new QueryMapper()
+                );
     }
 
     @Override
