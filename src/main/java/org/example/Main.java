@@ -1,34 +1,20 @@
 package org.example;
 
-import org.eclipse.emf.ecore.EObject;
-
-import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
 import org.example.GenerelRules.GenerelRules;
-import org.example.GenerelRules.LibraryElements;
 import org.example.GenerelRules.RedefintionAndSubsettingRules;
 import org.example.GenerelRules.RedefintionRules;
 import org.example.Mapping.RawRegistry;
-import org.example.Mapping.TwinMapper;
+import org.example.Mapping.MapperService;
 import org.omg.sysml.interactive.SysMLInteractive;
 import org.omg.sysml.interactive.SysMLInteractiveResult;
-import org.omg.sysml.lang.sysml.*;
-import org.omg.sysml.lang.sysml.Package;
-import org.omg.sysml.lang.sysml.util.SysMLLibraryUtil;
-import org.omg.sysml.util.*;
 import org.eclipse.xtext.diagnostics.Severity;
-import org.omg.sysml.xtext.validation.SysMLValidator;
-import org.eclipse.emf.common.util.URI;
-import org.omg.sysml.lang.sysml.Element;
+
 import java.io.File;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
-
-import static org.example.GenerelRules.LibraryElements.TWIN;
 
 public class Main {
 
@@ -80,6 +66,7 @@ public class Main {
         RawRegistry rawRegistry = RawRegistry.getInstance();
         Utils utils = Utils.getInstance();
         utils.setRootElement(result.getRootElement());
+        utils.setResourceSet(result.getRootElement().eResource().getResourceSet());
 
 
         boolean isValid = true;
@@ -91,7 +78,7 @@ public class Main {
             isValid = isValid && ruleValid;
         }
 
-        TwinMapper mapper = new TwinMapper();
+        MapperService mapper = new MapperService();
         mapper.map();
         System.out.println("Overall model validity: " + isValid);
 

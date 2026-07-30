@@ -1,20 +1,25 @@
 package org.example;
 
 import jakarta.inject.Singleton;
+import lombok.Getter;
+import lombok.Setter;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.example.Mapping.LibraryElement;
+import org.example.Mapping.Raw;
 import org.example.UtilClasses.SpecialicationGraph;
 import org.omg.sysml.lang.sysml.*;
 import org.omg.sysml.lang.sysml.impl.FeatureImpl;
+import org.omg.sysml.lang.sysml.util.SysMLLibraryUtil;
 import org.omg.sysml.util.FeatureUtil;
 import org.omg.sysml.util.TypeUtil;
 
 import java.lang.Class;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 
 public class Utils {
@@ -30,20 +35,23 @@ public class Utils {
         }
         return instance;
     }
+    @Setter
+    @Getter
+    private ResourceSet resourceSet;
+
+    @Getter
+    @Setter
     private Element rootElement;
 
-    public Element getRootElement() {
-        return rootElement;
-    }
-
-    public void setRootElement(Element rootElement) {
-        this.rootElement = rootElement;
-    }
-
     public void walk(Consumer<Element> visitor) {
-        walkInternal(this.rootElement, visitor);
+        for (Resource resource : resourceSet.getResources()) {
+            for (EObject content : resource.getContents()) {
+                if (content instanceof Element element) {
+                    walkInternal(element, visitor);
+                }
+            }
+        }
     }
-
     private void walkInternal(Element current, Consumer<Element> visitor) {
         if (current == null) {
             return;
@@ -59,6 +67,7 @@ public class Utils {
         }
     }
 
+
     public <T extends Element> Set<T> collect(Class<T> type) {
         Set<T> result = new HashSet<>();
         walk(e -> {
@@ -66,18 +75,20 @@ public class Utils {
                 result.add(type.cast(e));
             }
         });
-        return result;
+        return result.stream().filter(x -> !isFromLibrary(x)).collect(Collectors.toSet());
     }
 
-    public <T extends Element> Set<T> collect(Class<T> type, Function<Element, Boolean> filter) {
-        Set<T> result = new HashSet<>();
-        walk(e -> {
-            if (type.isInstance(e) && filter.apply(e)) {
-                result.add(type.cast(e));
+    public boolean isFromLibrary(Element element) {
+        Element current = element;
+        while (current != null) {
+            if (current.getOwningNamespace() instanceof LibraryPackage) {
+                return true;
             }
-        });
-        return result;
+            current = current.getOwningNamespace();
+        }
+        return false;
     }
+
 
     public Type convertBasicFeatureToType(Type feature) {
         if (feature instanceof Feature featureType) {
@@ -108,7 +119,7 @@ public class Utils {
 
     public <U extends Type, C extends Type, S extends Specialization, T extends SpecialicationGraph<U, C, S>> T getSpecialicationGraph(Class<T> graphClass) {
         try {
-            return graphClass.getConstructor(Element.class).newInstance(this.rootElement);
+            return graphClass.getConstructor().newInstance();
         } catch (Exception e) {
             throw new RuntimeException("Failed to create specialization graph", e);
         }
@@ -126,6 +137,9 @@ public class Utils {
 
                 result.put(t, (new ElemWithMult(lower, upper)));
             }
+            else{
+                result.put(t, (new ElemWithMult(1, 1)));
+            }
         }
         return result;
     }
@@ -141,4 +155,19 @@ public class Utils {
         return TypeUtil.specializes(type, isowningType);
     }
 
+    private Map<String,Type> librarTypes = new HashMap<>();
+
+    public <T extends Raw> Type getLibrarTypes(Class<T> rawClass) {
+        String librarType = getLibrarTypeName(rawClass);
+        if (librarTypes.containsKey(librarType)) {
+            return librarTypes.get(librarType);
+        }
+        Type lib = SysMLLibraryUtil.getLibraryType(rootElement,librarType);
+        librarTypes.put(librarType,lib);
+        return lib;
+    }
+
+    public <T extends Raw> String getLibrarTypeName(Class<T> rawClass) {
+        return rawClass.getAnnotation(LibraryElement.class).value();
+    }
 }

@@ -25,6 +25,7 @@ public class RedefintionRules extends SpecialicingRules {
         boolean onceValid = checkRedefinedOnce(rootElement);
         return inheritedValid && onceValid;
     }
+
     public boolean checkOnlyInheritedRedefinition(Element rootElement) {
         RedefinitionGraph subsettingGraph = getUtils().getSpecialicationGraph(RedefinitionGraph.class);
         boolean hasErrors = false;
@@ -32,8 +33,12 @@ public class RedefintionRules extends SpecialicingRules {
         for (Map.Entry<Feature, Set<Feature>> entry : subsettingGraph.getForward().entrySet()) {
             Feature redefiningFeature = entry.getKey();
             Set<Feature> redefinedFeatures = entry.getValue();
-            Set<Feature> inheritedFeatures = getUtils().getALlInheritedFeatures(redefiningFeature);
 
+            if (Utils.getInstance().isFromLibrary(redefiningFeature)) {
+                continue;
+            }
+
+            Set<Feature> inheritedFeatures = getUtils().getALlInheritedFeatures(redefiningFeature);
             for (Feature redefinedFeature : redefinedFeatures) {
                 if (!inheritedFeatures.contains(redefinedFeature)) {
                     logSpecialicingBut(redefiningFeature, redefinedFeature, "redefines", "but it is not inherited from the parent type.");
@@ -47,23 +52,27 @@ public class RedefintionRules extends SpecialicingRules {
 
     boolean checkRedefinedOnce(Element rootElement) {
         var redefinitionGraph = getUtils().getSpecialicationGraph(RedefinitionGraph.class);
-
         boolean hasErrors = false;
 
         Map<Feature, Set<Feature>> redefinedToRedefiningMap = redefinitionGraph.getBackward();
         for (Map.Entry<Feature, Set<Feature>> entry : redefinedToRedefiningMap.entrySet()) {
             Feature redefinedFeature = entry.getKey();
             Set<Feature> redefiningFeatures = entry.getValue();
-            if (redefiningFeatures != null && redefiningFeatures.size() > 1) {
-                String parentOwner = (redefinedFeature.getOwningType() != null && redefinedFeature.getOwningType().getName() != null)
-                        ? redefinedFeature.getOwningType().getName() : "<anonymous>";
+            if (redefiningFeatures == null) continue;
 
-                logSpecialicingBut(redefinedFeature,redefiningFeatures, "is redefined from ", "but we dont allow multiple redefinitons of the same feature.");
+            Map<Type, Set<Feature>> groupedByContext = new HashMap<>();
+            for (Feature f : redefiningFeatures) {
+                Type context = getUtils().getOwingType(f).orElse(null);
+                groupedByContext.computeIfAbsent(context, k -> new HashSet<>()).add(f);
+            }
 
-                hasErrors = true;
+            for (Set<Feature> contextGroup : groupedByContext.values()) {
+                if (contextGroup.size() > 1) {
+                    logSpecialicingBut(redefinedFeature, contextGroup, "is redefined from ", "but we dont allow multiple redefinitons of the same feature.");
+                    hasErrors = true;
+                }
             }
         }
-        System.out.println(hasErrors);
 
         return !hasErrors;
     }

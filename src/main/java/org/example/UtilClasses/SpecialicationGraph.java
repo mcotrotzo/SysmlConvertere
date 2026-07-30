@@ -1,6 +1,7 @@
 package org.example.UtilClasses;
 
 import jakarta.inject.Inject;
+import lombok.Getter;
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
 import org.example.Utils;
 import org.omg.sysml.lang.sysml.*;
@@ -18,17 +19,10 @@ public abstract class SpecialicationGraph<T extends Type, C extends Type, S exte
     private Map<C, Set<T>> backward = new HashMap<>();
 
 
+    @Getter
     private final Utils utils = Utils.getInstance();
 
-    public Element getRootElement() {
-        return utils.getRootElement();
-    }
-
-    public Utils getUtils() {
-        return utils;
-    }
-
-    public SpecialicationGraph(Class<T> specificClass, Class<C> generalClass, Class<S> specializationClass, Element rootElement) {
+    public SpecialicationGraph(Class<T> specificClass, Class<C> generalClass, Class<S> specializationClass) {
         this.specificClass = specificClass;
         this.generalClass = generalClass;
         this.specializationClass = specializationClass;
@@ -58,11 +52,17 @@ public abstract class SpecialicationGraph<T extends Type, C extends Type, S exte
             Type general = utils.convertBasicFeatureToType(spec.getGeneral());
             Type specific = utils.convertBasicFeatureToType(spec.getSpecific());
 
+
+
             if (general.equals(specific)) {
                 continue;
             }
 
             if (!specificClass.isInstance(specific) || !generalClass.isInstance(general)) {
+                continue;
+            }
+
+            if (getUtils().isFromLibrary(specific) && getUtils().isFromLibrary(general)) {
                 continue;
             }
 

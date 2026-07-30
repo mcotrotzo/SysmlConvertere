@@ -10,10 +10,7 @@ import org.omg.sysml.lang.sysml.Type;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 public class RedefintionAndSubsettingRules extends SpecialicingRules {
 
@@ -44,24 +41,32 @@ public class RedefintionAndSubsettingRules extends SpecialicingRules {
 
         for (Feature specializedFeature : parentMap.keySet()) {
             ElemWithMult specializedMult = allMultiplicities.get(specializedFeature);
-
             if (specializedMult == null) {
                 continue;
             }
 
             Set<Feature> specializingFeatures = parentMap.get(specializedFeature);
-            HashMap<Feature, ElemWithMult> specializingFeaturesWithMult = new HashMap<>();
+            if (specializingFeatures == null) {
+                continue;
+            }
 
-            if (specializingFeatures != null) {
-                for (Feature child : specializingFeatures) {
+            // Gruppieren nach Owning-Context, statt global zusammenzuwerfen
+            Map<Type, Set<Feature>> groupedByContext = new HashMap<>();
+            for (Feature f : specializingFeatures) {
+                Type context = getUtils().getOwingType(f).orElse(null);
+                groupedByContext.computeIfAbsent(context, k -> new HashSet<>()).add(f);
+            }
+
+            for (Set<Feature> contextGroup : groupedByContext.values()) {
+                HashMap<Feature, ElemWithMult> specializingFeaturesWithMult = new HashMap<>();
+                for (Feature child : contextGroup) {
                     ElemWithMult childMult = allMultiplicities.get(child);
                     if (childMult != null) {
                         specializingFeaturesWithMult.put(child, childMult);
                     }
                 }
+                valid &= checkMulti(specializedFeature, specializedMult, specializingFeaturesWithMult, specializeSymbol);
             }
-
-            valid &= checkMulti(specializedFeature, specializedMult, specializingFeaturesWithMult, specializeSymbol);
         }
 
         return valid;

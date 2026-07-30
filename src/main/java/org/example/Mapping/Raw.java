@@ -14,9 +14,9 @@ import java.util.Set;
 @ToString(
         includeFieldNames = true,
         of = {"sysmlElementName"})
-public abstract class Raw<T extends Type> {
+public abstract class Raw {
     @Getter
-    private final T sysmlElement;
+    private final Type sysmlElement;
 
     @Getter
     private final String sysmlElementName;
@@ -25,7 +25,7 @@ public abstract class Raw<T extends Type> {
     @Getter
     private Utils utils = Utils.getInstance();
 
-    public Raw(T sysmlElement) {
+    public Raw(Type sysmlElement) {
         this.sysmlElement = sysmlElement;
         this.sysmlElementName = sysmlElement.getName();
     }

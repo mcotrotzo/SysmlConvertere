@@ -33,16 +33,27 @@ package Test{
     part def Battery :> Twin {
 
         port p11 :> sensors {
-            attribute temp    : TwinReal    :> measurements;
-            attribute voltage : TwinReal    :> measurements;
-            attribute current : TwinReal    :> measurements;
-            attribute plug    : TwinBoolean :> measurements;
-            attribute pos     : Position    :> measurements;
+            attribute temp    : TwinReal    :> measurements = (2, 3, 4);
+            attribute voltage : TwinReal    :> measurements =DIV_real(y=2, x=10);
+            attribute current : TwinReal    :> measurements = new TwinReal(0);
+            attribute plug    : TwinBoolean :> measurements = new TwinBoolean(false);
+            attribute pos     : Position    :> measurements = AddPosition(pos_a=new Position(x=10, y=20, z=30), pos_b=new Position(x=0, y=0, z=0));
+            attribute pos2     : Position    :> measurements{
+                                        Hallo:>>x[1] = 10;
+                                        :>>y = 20;
+                                        :>>z = 30;
+                                    }
+            attribute pos3     : Position    :> measurements{
+                                                    Hallo:>>x[1] = 10;
+                                                    :>>y = 20;
+                                                    :>>z = 30;
+                                                }
         }
 
         port p12 :> actuators {
-            attribute charge : TwinReal :> commands;
+            attribute charge : TwinReal :> commands = p11.temp;
         }
+
 
         attribute maxCharge        : TwinReal :> constAttributes = 100;
         attribute nominalVoltage   : TwinReal :> constAttributes = 48;

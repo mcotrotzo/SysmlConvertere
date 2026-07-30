@@ -5,7 +5,7 @@ import org.omg.sysml.lang.sysml.Type;
 @LibraryElement("ScalarValues::Real")
 @ToString(
         callSuper = true)
-public class TwinRealRaw extends TwinAttributeRaw<Double> {
+public class TwinRealRaw extends TwinAttributeRaw {
     public TwinRealRaw(Type sysmlElement) {
         super(sysmlElement);
     }

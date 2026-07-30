@@ -1,5 +1,6 @@
 package org.example.Mapping;
 
+import lombok.Getter;
 import org.example.GenerelRules.LibraryElements;
 import org.omg.sysml.lang.sysml.Type;
 import org.omg.sysml.util.TypeUtil;
@@ -13,7 +14,8 @@ import lombok.ToString;
 @LibraryElement("TwinDefLibrary::Twin")
 @ToString(
         callSuper = true)
-public class TwinRaw extends Raw<Type> {
+@Getter
+public class TwinRaw extends Raw {
 
     public TwinRaw(Type sysmlElement) {
         super(sysmlElement);
@@ -24,10 +26,6 @@ public class TwinRaw extends Raw<Type> {
     private Set<ActuatorRaw> actuators = new HashSet<>();
 
 
-    public void parse(Set<SensorRaw> sensorRaws, Set<ActuatorRaw> actuatorRaws, Set<ControlUnitRaw> controlUnitRaws){
-        sensors = sensorRaws;
-        actuators = actuatorRaws;
-        controlUnits = controlUnitRaws;
-    }
+
 
 }

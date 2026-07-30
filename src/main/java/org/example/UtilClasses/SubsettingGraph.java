@@ -11,7 +11,7 @@ import java.util.*;
 
 public class SubsettingGraph extends SpecialicationGraph<Feature,Feature,Subsetting> {
 
-    public SubsettingGraph(Element rootElement) {
-        super(Feature.class, Feature.class, Subsetting.class, rootElement);
+    public SubsettingGraph() {
+        super(Feature.class, Feature.class, Subsetting.class);
     }
 }

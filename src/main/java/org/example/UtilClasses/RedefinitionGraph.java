@@ -12,8 +12,8 @@ import java.util.*;
 public class RedefinitionGraph extends SpecialicationGraph<Feature,Feature,Redefinition> {
 
 
-    public RedefinitionGraph( Element rootElement) {
-        super(Feature.class, Feature.class, Redefinition.class, rootElement);
+    public RedefinitionGraph() {
+        super(Feature.class, Feature.class, Redefinition.class);
     }
 
 
