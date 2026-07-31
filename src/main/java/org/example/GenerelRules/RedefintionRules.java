@@ -2,16 +2,13 @@ package org.example.GenerelRules;
 
 
 import org.example.UtilClasses.RedefinitionGraph;
-import org.example.UtilClasses.SubsettingGraph;
-import org.example.Utils;
+import org.example.Util.Utils;
 import org.omg.sysml.lang.sysml.Element;
 import org.omg.sysml.lang.sysml.Feature;
 import org.omg.sysml.lang.sysml.Type;
-import org.omg.sysml.util.TypeUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.annotation.Inherited;
 import java.util.*;
 
 public class RedefintionRules extends SpecialicingRules {

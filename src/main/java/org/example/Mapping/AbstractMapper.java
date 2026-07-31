@@ -1,6 +1,6 @@
 package org.example.Mapping;
 
-import org.example.Utils;
+import org.example.Util.Utils;
 import org.omg.sysml.lang.sysml.Element;
 import org.omg.sysml.lang.sysml.LibraryPackage;
 

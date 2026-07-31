@@ -1,11 +1,9 @@
 package org.example.Mapping;
 
 
-import org.example.Utils;
-import org.omg.sysml.lang.sysml.Element;
+import org.example.Util.Utils;
 import org.omg.sysml.lang.sysml.Type;
 import org.omg.sysml.lang.sysml.util.SysMLLibraryUtil;
-import org.omg.sysml.util.ElementUtil;
 import org.omg.sysml.util.TypeUtil;
 
 import java.lang.reflect.Constructor;

@@ -1,9 +1,7 @@
 package org.example.UtilClasses;
 
-import jakarta.inject.Inject;
 import lombok.Getter;
-import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
-import org.example.Utils;
+import org.example.Util.Utils;
 import org.omg.sysml.lang.sysml.*;
 
 import java.lang.Class;

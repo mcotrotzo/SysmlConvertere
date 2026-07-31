@@ -5,6 +5,7 @@ import org.example.GenerelRules.RedefintionAndSubsettingRules;
 import org.example.GenerelRules.RedefintionRules;
 import org.example.Mapping.RawRegistry;
 import org.example.Mapping.MapperService;
+import org.example.Util.Utils;
 import org.omg.sysml.interactive.SysMLInteractive;
 import org.omg.sysml.interactive.SysMLInteractiveResult;
 import org.eclipse.xtext.diagnostics.Severity;

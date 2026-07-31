@@ -7,7 +7,7 @@ import org.example.Mapping.LibraryElement;
 import org.example.Mapping.Mapper.TwinExpression.TwinExpression;
 import org.example.Mapping.Mapper.TwinExpression.TwinExpressionAnnotation;
 import org.example.Mapping.Raw;
-import org.example.Utils;
+import org.example.Util.Utils;
 import org.omg.sysml.lang.sysml.Type;
 import org.omg.sysml.lang.sysml.util.SysMLLibraryUtil;
 import org.omg.sysml.util.TypeUtil;

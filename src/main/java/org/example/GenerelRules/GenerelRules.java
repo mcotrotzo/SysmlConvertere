@@ -1,8 +1,6 @@
 package org.example.GenerelRules;
 
-import jakarta.inject.Inject;
-import org.example.Utils;
-import org.omg.sysml.lang.sysml.Element;
+import org.example.Util.Utils;
 
 public abstract class GenerelRules {
 

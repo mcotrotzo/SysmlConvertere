@@ -3,7 +3,6 @@ package org.example.GenerelRules;
 import org.example.ElemWithMult;
 import org.example.UtilClasses.RedefinitionGraph;
 import org.example.UtilClasses.SubsettingGraph;
-import org.example.Utils;
 import org.omg.sysml.lang.sysml.Element;
 import org.omg.sysml.lang.sysml.Feature;
 import org.omg.sysml.lang.sysml.Type;
