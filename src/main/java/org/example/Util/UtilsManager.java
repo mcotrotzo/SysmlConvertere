@@ -5,19 +5,16 @@ import lombok.NoArgsConstructor;
 import org.omg.sysml.lang.sysml.Element;
 
 @Getter
-@NoArgsConstructor(access = lombok.AccessLevel.PRIVATE)
 public class UtilsManager {
 
     @Getter
     private final static UtilsManager instance = new UtilsManager();
+    private Utils utils;
 
-    private RessourceSetUtils ressourceSetUtils;
+    private UtilsManager(){}
 
-    private LibraryUtils libraryUtils;
-
-    public void init(Element rootElement) {
-        ressourceSetUtils = new RessourceSetUtils(rootElement);
-        libraryUtils = new LibraryUtils();
+    public void init(Utils utils) {
+        this.utils = utils;
     }
 
 
