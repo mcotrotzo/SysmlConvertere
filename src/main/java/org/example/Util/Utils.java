@@ -123,8 +123,6 @@ public class Utils {
         elementsCache.put(clazz.getName() + ":noLib", noLib);
     }
 
-
-
     public Type convertBasicFeatureToType(Type feature) {
         if (feature instanceof Feature featureType) {
             return (Type) FeatureUtil.getBasicFeatureOf(featureType);
@@ -179,30 +177,4 @@ public class Utils {
         return result;
     }
 
-    public boolean isDefinitionOrUsage(Element type) {
-        return type instanceof Definition || type instanceof Usage;
-    }
-
-    public boolean isOwningType(Type type,Type isowningType) {
-        if (type instanceof Feature) {
-            return isowningType.equals(getOwingType((Feature) type).orElse(null));
-        }
-        return TypeUtil.specializes(type, isowningType);
-    }
-
-    private Map<String,Type> librarTypes = new HashMap<>();
-
-    public <T extends Raw> Type getLibrarTypes(Class<T> rawClass) {
-        String librarType = getLibrarTypeName(rawClass);
-        if (librarTypes.containsKey(librarType)) {
-            return librarTypes.get(librarType);
-        }
-        Type lib = SysMLLibraryUtil.getLibraryType(rootElement,librarType);
-        librarTypes.put(librarType,lib);
-        return lib;
-    }
-
-    public <T extends Raw> String getLibrarTypeName(Class<T> rawClass) {
-        return rawClass.getAnnotation(LibraryElement.class).value();
-    }
 }
