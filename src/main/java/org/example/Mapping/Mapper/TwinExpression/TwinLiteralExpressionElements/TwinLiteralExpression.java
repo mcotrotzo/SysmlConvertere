@@ -1,18 +1,27 @@
 package org.example.Mapping.Mapper.TwinExpression.TwinLiteralExpressionElements;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.Setter;
+import lombok.ToString;
+import org.example.Mapping.Interfaces.Literal;
 import org.example.Mapping.Mapper.TwinExpression.TwinExpression;
-import org.example.Mapping.Mapper.TwinExpression.TwinExpressionAnnotation;
-import org.omg.sysml.lang.sysml.*;
+import org.example.Mapping.TwinAction.MappedMetaclass;
+import org.omg.sysml.lang.sysml.LiteralExpression;
 
-@EqualsAndHashCode(callSuper = true)
-@Data
-@TwinExpressionAnnotation(LiteralExpression.class)
-public abstract class TwinLiteralExpression<T,G extends LiteralExpression> extends TwinExpression<G> {
 
-    private T value;
-    @Override
-    public abstract void parse(G expression);
+@MappedMetaclass
+@ToString(callSuper = true)
+public abstract class TwinLiteralExpression<T, G extends LiteralExpression> extends TwinExpression<G> implements Literal<T> {
+
+	@Setter
+	private T value;
+
+	public TwinLiteralExpression(G sysmlElement) {
+		super(sysmlElement);
+	}
+
+	@Override
+	public T getLiteralValue() {
+		return value;
+	}
 }
 

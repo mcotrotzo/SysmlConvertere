@@ -1,20 +1,22 @@
 package org.example.Mapping.Mapper.TwinExpression.TwinLiteralExpressionElements;
 
-import lombok.Data;
 import lombok.ToString;
-import org.example.Mapping.Mapper.TwinExpression.TwinExpressionAnnotation;
+import org.example.Mapping.NewVersion.MappingContext;
+import org.example.Mapping.NewVersion.MappingException;
+import org.example.Mapping.TwinAction.MappedMetaclass;
 import org.omg.sysml.lang.sysml.LiteralBoolean;
 
-@TwinExpressionAnnotation(LiteralBoolean.class)
-@Data
+@MappedMetaclass
 @ToString(callSuper = true)
 public class TwinLiteralBooleanExpression extends TwinLiteralExpression<Boolean, LiteralBoolean> {
 
-    public TwinLiteralBooleanExpression() {
-    }
 
-    @Override
-    public void parse(LiteralBoolean expression) {
-        this.setValue(expression.isValue());
-    }
+	public TwinLiteralBooleanExpression(LiteralBoolean sysmlElement) {
+		super(sysmlElement);
+	}
+
+	@Override
+	public void parse(MappingContext context) throws MappingException {
+		this.setValue(this.getSysmlElement().isValue());
+	}
 }

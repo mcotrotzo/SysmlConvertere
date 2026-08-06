@@ -22,7 +22,7 @@ library package PhysicalTwinLibrary {
 
 
     abstract port def TwinPort:>TwinLibraryElementPortDef{
-        abstract attribute communicationProtocol : CommunicationProtocol;
+        abstract attribute communicationProtocol[0..1] : CommunicationProtocol;
     }
 
     port def Sensor :> TwinPort {

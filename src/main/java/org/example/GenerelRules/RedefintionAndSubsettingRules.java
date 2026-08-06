@@ -1,6 +1,7 @@
 package org.example.GenerelRules;
 
 import org.example.ElemWithMult;
+import org.example.Util.Utils;
 import org.example.UtilClasses.RedefinitionGraph;
 import org.example.UtilClasses.SubsettingGraph;
 import org.omg.sysml.lang.sysml.Element;
@@ -13,104 +14,97 @@ import java.util.*;
 
 public class RedefintionAndSubsettingRules extends SpecialicingRules {
 
-    private static final Logger log = LoggerFactory.getLogger(RedefintionAndSubsettingRules.class);
+	private static final Logger log = LoggerFactory.getLogger(RedefintionAndSubsettingRules.class);
 
-    @Override
-    public boolean isValid() {
+	public RedefintionAndSubsettingRules(Utils utils) {
+		super(utils);
+	}
 
-        return checkMultplicitySpecialictions(this.getUtils().getRootElement());
-    }
+	@Override
+	public boolean isValid() {
 
-    private boolean checkMultplicitySpecialictions(Element rootElement) {
-        boolean valid = true;
-        Map<Type, ElemWithMult> allMultiplicities = getUtils().getAllMultplicities();
+		return checkMultplicitySpecialictions(utilsManager.getRootElement());
+	}
 
-        Map<Feature, Set<Feature>> redefinitionsOfParent = getUtils().getSpecialicationGraph(RedefinitionGraph.class).getBackward();
-        Map<Feature, Set<Feature>> subsetsOfParent = getUtils().getSpecialicationGraph(SubsettingGraph.class).getBackward();
+	private boolean checkMultplicitySpecialictions(Element rootElement) {
+		boolean valid = true;
+		Map<Type, ElemWithMult> allMultiplicities = utilsManager.getAllMultplicities();
 
-        valid &= processSpecializationMap(redefinitionsOfParent, allMultiplicities, "redefines");
+		Map<Feature, Set<Feature>> redefinitionsOfParent = utilsManager.getSpecialicationGraph(RedefinitionGraph.class).getBackward();
+		Map<Feature, Set<Feature>> subsetsOfParent = utilsManager.getSpecialicationGraph(SubsettingGraph.class).getBackward();
 
-        valid &= processSpecializationMap(subsetsOfParent, allMultiplicities, "subsets");
+		valid &= processSpecializationMap(redefinitionsOfParent, allMultiplicities, "redefines");
 
-        return valid;
-    }
+		valid &= processSpecializationMap(subsetsOfParent, allMultiplicities, "subsets");
 
-    private boolean processSpecializationMap(Map<Feature, Set<Feature>> parentMap, Map<Type, ElemWithMult> allMultiplicities, String specializeSymbol) {
-        boolean valid = true;
+		return valid;
+	}
 
-        for (Feature specializedFeature : parentMap.keySet()) {
-            ElemWithMult specializedMult = allMultiplicities.get(specializedFeature);
-            if (specializedMult == null) {
-                continue;
-            }
+	private boolean processSpecializationMap(Map<Feature, Set<Feature>> parentMap, Map<Type, ElemWithMult> allMultiplicities, String specializeSymbol) {
+		boolean valid = true;
 
-            Set<Feature> specializingFeatures = parentMap.get(specializedFeature);
-            if (specializingFeatures == null) {
-                continue;
-            }
+		for (Feature specializedFeature : parentMap.keySet()) {
+			ElemWithMult specializedMult = allMultiplicities.get(specializedFeature);
+			if (specializedMult == null) {
+				continue;
+			}
 
-            // Gruppieren nach Owning-Context, statt global zusammenzuwerfen
-            Map<Type, Set<Feature>> groupedByContext = new HashMap<>();
-            for (Feature f : specializingFeatures) {
-                Type context = getUtils().getOwingType(f).orElse(null);
-                groupedByContext.computeIfAbsent(context, k -> new HashSet<>()).add(f);
-            }
+			Set<Feature> specializingFeatures = parentMap.get(specializedFeature);
+			if (specializingFeatures == null) {
+				continue;
+			}
 
-            for (Set<Feature> contextGroup : groupedByContext.values()) {
-                HashMap<Feature, ElemWithMult> specializingFeaturesWithMult = new HashMap<>();
-                for (Feature child : contextGroup) {
-                    ElemWithMult childMult = allMultiplicities.get(child);
-                    if (childMult != null) {
-                        specializingFeaturesWithMult.put(child, childMult);
-                    }
-                }
-                valid &= checkMulti(specializedFeature, specializedMult, specializingFeaturesWithMult, specializeSymbol);
-            }
-        }
+			Map<Type, Set<Feature>> groupedByContext = new HashMap<>();
+			for (Feature f : specializingFeatures) {
+				Type context = utilsManager.getOwingType(f).orElse(null);
+				groupedByContext.computeIfAbsent(context, k -> new HashSet<>()).add(f);
+			}
 
-        return valid;
-    }
+			for (Set<Feature> contextGroup : groupedByContext.values()) {
+				HashMap<Feature, ElemWithMult> specializingFeaturesWithMult = new HashMap<>();
+				for (Feature child : contextGroup) {
+					ElemWithMult childMult = allMultiplicities.get(child);
+					if (childMult != null) {
+						specializingFeaturesWithMult.put(child, childMult);
+					}
+				}
+				valid &= checkMulti(specializedFeature, specializedMult, specializingFeaturesWithMult, specializeSymbol);
+			}
+		}
 
-    private boolean checkMulti(Feature specializedFeature, ElemWithMult specializedMult, HashMap<Feature, ElemWithMult> specializingFeaturesWithMult, String specializeSymbol) {
+		return valid;
+	}
 
-        int specializedLowerBound = specializedMult.getLowerBound();
-        int specializedUpperBound = specializedMult.getUpperBound();
+	private boolean checkMulti(Feature specializedFeature, ElemWithMult specializedMult, HashMap<Feature, ElemWithMult> specializingFeaturesWithMult, String specializeSymbol) {
 
-        int sumOfSpecializingLowerBounds = specializingFeaturesWithMult.values().stream()
-                .filter(Objects::nonNull)
-                .mapToInt(ElemWithMult::getLowerBound)
-                .sum();
+		int specializedLowerBound = specializedMult.getLowerBound();
+		int specializedUpperBound = specializedMult.getUpperBound();
 
-        if (specializedLowerBound > sumOfSpecializingLowerBounds) {
-            String message = String.format("but the sum of lower bounds (%d) of the specializing features is less than the required lower bound (%d).",
-                    sumOfSpecializingLowerBounds, specializedLowerBound);
+		int sumOfSpecializingLowerBounds = specializingFeaturesWithMult.values().stream().filter(Objects::nonNull).mapToInt(ElemWithMult::getLowerBound).sum();
 
-            logSpecialicingBut(specializingFeaturesWithMult.keySet(), specializedFeature, specializeSymbol, message);
-            return false;
-        }
+		if (specializedLowerBound > sumOfSpecializingLowerBounds) {
+			String message = String.format("but the sum of lower bounds (%d) of the specializing features is less than the required lower bound (%d).", sumOfSpecializingLowerBounds, specializedLowerBound);
 
-        if (specializedUpperBound == -1) {
-            return true;
-        }
+			logSpecialicingBut(specializingFeaturesWithMult.keySet(), specializedFeature, specializeSymbol, message);
+			return false;
+		}
 
-        boolean hasUnboundedChild = specializingFeaturesWithMult.values().stream()
-                .filter(Objects::nonNull)
-                .anyMatch(m -> m.getUpperBound() == -1);
+		if (specializedUpperBound == -1) {
+			return true;
+		}
 
-        int sumOfSpecializingUpperBounds = specializingFeaturesWithMult.values().stream()
-                .filter(Objects::nonNull)
-                .mapToInt(ElemWithMult::getUpperBound)
-                .sum();
+		boolean hasUnboundedChild = specializingFeaturesWithMult.values().stream().filter(Objects::nonNull).anyMatch(m -> m.getUpperBound() == -1);
 
-        if (hasUnboundedChild || sumOfSpecializingUpperBounds > specializedUpperBound) {
-            String boundStr = hasUnboundedChild ? "unbounded (*)" : String.valueOf(sumOfSpecializingUpperBounds);
-            String message = String.format("but the sum of upper bounds (%s) exceeds the allowed upper bound (%d).",
-                    boundStr, specializedUpperBound);
+		int sumOfSpecializingUpperBounds = specializingFeaturesWithMult.values().stream().filter(Objects::nonNull).mapToInt(ElemWithMult::getUpperBound).sum();
 
-            logSpecialicingBut(specializingFeaturesWithMult.keySet(), specializedFeature, specializeSymbol, message);
-            return false;
-        }
+		if (hasUnboundedChild || sumOfSpecializingUpperBounds > specializedUpperBound) {
+			String boundStr = hasUnboundedChild ? "unbounded (*)" : String.valueOf(sumOfSpecializingUpperBounds);
+			String message = String.format("but the sum of upper bounds (%s) exceeds the allowed upper bound (%d).", boundStr, specializedUpperBound);
 
-        return true;
-    }
+			logSpecialicingBut(specializingFeaturesWithMult.keySet(), specializedFeature, specializeSymbol, message);
+			return false;
+		}
+
+		return true;
+	}
 }

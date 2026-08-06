@@ -16,14 +16,58 @@ package PositionThings{
         
     }
 
-    calc def Avg:>CustomCalculationAction{
-        in attribute reals[0..*]:TwinReal:>>inputs;
-        return out attribute avg:TwinReal:>>outputs;
-        
+    calc def Avg2:>CustomCalculationAction{
+            in attribute reals[0..*]:TwinReal:>>inputs;
+            return out attribute avg:TwinReal:>>outputs;
 
-        for value:TwinReal in reals{
-            assign avg := PLUS_real(avg, value);
+            for value:TwinReal in reals{
+                attribute test :>local_Attributes:TwinBoolean;
+                if EQ_real(SIZE_seq(reals), 0){
+                    assign avg := 0;
+                }
+                else{
+                    while EQ_real(SIZE_seq(reals), 0){
+                        assign avg := 0;
+                    }
+                    assign avg := 0;
+                }
+                assign avg := PLUS_real(avg, value);
+            }
+            assign avg := 0;
+            assign avg := DIV_real(avg, SIZE_seq(reals));
         }
-        assign avg := DIV_real(avg, SIZE_seq(reals));
-    }
+
+        calc def Avg:>CustomCalculationAction{
+                in attribute reals[0..*]:TwinReal:>>inputs;
+                return out attribute avg:TwinReal:>>outputs;
+
+                attribute test23 :>>local_Attributes:Position = new Position(x=0, y=0, z=0);
+
+                action test{
+                    for value:TwinReal in reals{
+
+                    if EQ_real(SIZE_seq(reals), 0){
+                        assign avg := 0;
+                    }
+                    else{
+                        while EQ_real(SIZE_seq(reals), 0){
+                            action test5 {
+                                assign avg := 0;
+                            }
+                            action test6 {
+                                assign avg := 0;
+                            }
+                            first test5;
+                            then test6;
+                        }
+                        assign avg := 0;
+                    }
+                    assign avg := PLUS_real(avg, value);
+                }
+                }
+
+                assign avg := 0;
+
+                assign avg := DIV_real(avg, SIZE_seq(reals));
+            }
 }

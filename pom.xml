@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
@@ -12,10 +12,16 @@
         <maven.compiler.release>21</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <sysml.artifact.version>0.55.0</sysml.artifact.version>
-        <sysml.release.url>https://github.com/Systems-Modeling/SysML-v2-Pilot-Implementation/releases/download/2025-12</sysml.release.url>
+        <sysml.release.url>https://github.com/Systems-Modeling/SysML-v2-Pilot-Implementation/releases/download/2025-12
+        </sysml.release.url>
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.16.1</version>
+        </dependency>
         <dependency>
             <groupId>org.omg.sysml</groupId>
             <artifactId>jupyter-sysml-kernel</artifactId>
@@ -47,6 +53,12 @@
             <artifactId>log4j-slf4j2-impl</artifactId>
             <version>2.25.2</version>
         </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.13.2</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
@@ -56,6 +68,13 @@
                 <configuration>
                     <source>25</source>
                     <target>25</target>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>1.18.46</version>
+                        </path>
+                    </annotationProcessorPaths>
                 </configuration>
             </plugin>
         </plugins>
@@ -75,7 +94,9 @@
                             <execution>
                                 <id>download-sysml-kernel</id>
                                 <phase>initialize</phase>
-                                <goals><goal>wget</goal></goals>
+                                <goals>
+                                    <goal>wget</goal>
+                                </goals>
                                 <configuration>
                                     <url>${sysml.release.url}/jupyter-sysml-kernel-${sysml.artifact.version}.zip</url>
                                     <outputDirectory>${project.build.directory}/sysml-download</outputDirectory>
@@ -86,7 +107,9 @@
                             <execution>
                                 <id>download-sysml-library</id>
                                 <phase>initialize</phase>
-                                <goals><goal>wget</goal></goals>
+                                <goals>
+                                    <goal>wget</goal>
+                                </goals>
                                 <configuration>
                                     <url>${sysml.release.url}/jupyter-sysml-kernel-${sysml.artifact.version}.zip</url>
                                     <outputDirectory>${project.build.directory}/sysml-library</outputDirectory>
@@ -104,9 +127,13 @@
                             <execution>
                                 <id>install-sysml</id>
                                 <phase>initialize</phase>
-                                <goals><goal>install-file</goal></goals>
+                                <goals>
+                                    <goal>install-file</goal>
+                                </goals>
                                 <configuration>
-                                    <file>${project.build.directory}/sysml-download/sysml/jupyter-sysml-kernel-${sysml.artifact.version}-all.jar</file>
+                                    <file>
+                                        ${project.build.directory}/sysml-download/sysml/jupyter-sysml-kernel-${sysml.artifact.version}-all.jar
+                                    </file>
                                     <pomFile>${project.basedir}/jupyter-sysml-kernel.pom</pomFile>
                                 </configuration>
                             </execution>

@@ -1,19 +1,32 @@
 package org.example.Mapping.Mapper.TwinExpression;
 
-import lombok.Data;
+import lombok.ToString;
+import org.example.Mapping.Interfaces.FeatureReference;
+import org.example.Mapping.Interfaces.TwinAttribute;
+import org.example.Mapping.NewVersion.Abstract.MappedReference;
+import org.example.Mapping.NewVersion.MappingContext;
+import org.example.Mapping.NewVersion.MappingException;
+import org.example.Mapping.NewVersion.TwinAttributeMapped;
+import org.example.Mapping.TwinAction.MappedMetaclass;
 import org.omg.sysml.lang.sysml.FeatureReferenceExpression;
 
-@Data
-@TwinExpressionAnnotation(FeatureReferenceExpression.class)
-class TwinFeatureReferenceExpression extends TwinExpression<FeatureReferenceExpression> {
-    private String referencedFeatureName;
+@MappedMetaclass
+@ToString(callSuper = true, onlyExplicitlyIncluded = false)
+public class TwinFeatureReferenceExpression extends TwinExpression<FeatureReferenceExpression> implements FeatureReference {
+	private MappedReference<TwinAttributeMapped> target;
 
-    public TwinFeatureReferenceExpression() {
+	public TwinFeatureReferenceExpression(FeatureReferenceExpression sysmlElement) {
+		super(sysmlElement);
+	}
 
-    }
+	@Override
+	public MappedReference<? extends TwinAttribute> getTarget() {
+		return target;
+	}
 
-    @Override
-    public void parse(FeatureReferenceExpression expression) {
-        referencedFeatureName = expression.getReferent().getName();
-    }
+	@Override
+	public void parse(MappingContext context) throws MappingException {
+		target = context.mapReference(getSysmlElement().getReferent(), TwinAttributeMapped.class);
+		;
+	}
 }

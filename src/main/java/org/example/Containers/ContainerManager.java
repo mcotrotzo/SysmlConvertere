@@ -1,106 +1,283 @@
 package org.example.Containers;
 
 import io.github.classgraph.ClassGraph;
-import io.github.classgraph.ScanResult;
 import io.github.classgraph.ClassInfo;
-import org.example.Mapping.LibraryElement;
-import org.example.Mapping.Mapper.TwinExpression.TwinExpression;
-import org.example.Mapping.Mapper.TwinExpression.TwinExpressionAnnotation;
-import org.example.Mapping.Raw;
+import io.github.classgraph.ScanResult;
+import org.example.Mapping.NewVersion.Abstract.MappedElement;
+import org.example.Mapping.NewVersion.Abstract.MappedElementType;
+import org.example.Mapping.NewVersion.MappingException;
+import org.example.Mapping.NewVersion.NoMappedElementException;
+import org.example.Mapping.TwinAction.MappedMetaclass;
 import org.example.Util.Utils;
 import org.omg.sysml.lang.sysml.Type;
-import org.omg.sysml.lang.sysml.util.SysMLLibraryUtil;
 import org.omg.sysml.util.TypeUtil;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Modifier;
+import java.util.*;
 import java.util.stream.Collectors;
 
-public class ContainerManager {
+public final class ContainerManager {
 
-    private static ContainerManager instance;
+	private final Map<String, List<Class<?>>> containers = new HashMap<>();
+	private final Utils utils;
 
-    private final Map<String, List<Class<?>>> containers = new HashMap<>();
-    private final Utils utils = Utils.getInstance();
-    private ContainerManager() {
-        scan();
-    }
+	public ContainerManager(Utils utils) {
+		this.utils = utils;
+		scan();
+	}
 
-    public static ContainerManager getInstance() {
-        if (instance == null) {
-            instance = new ContainerManager();
-        }
-        return instance;
-    }
+	public List<Class<? extends MappedElement<?>>> getLibraryMappedClasses() {
+		return getMappedClasses(MappedElementType.class);
+	}
 
-    private void scan() {
-        try (ScanResult scanResult = new ClassGraph()
-                .acceptPackages("org.example")
-                .enableAllInfo()
-                .scan()) {
+	public List<Class<? extends MappedElement<?>>> getMetaclassMappedClasses() {
+		return getMappedClasses(MappedMetaclass.class);
+	}
+
+	private List<Class<? extends MappedElement<?>>> getMappedClasses(Class<? extends Annotation> annotation) {
+		return containers.getOrDefault(annotation.getName(), Collections.emptyList()).stream().filter(MappedElement.class::isAssignableFrom).filter(clazz -> !Modifier.isAbstract(clazz.getModifiers())).map(this::castMappedClass).collect(Collectors.toCollection(ArrayList::new));
+	}
 
 
-            for (var annotationInfo : scanResult.getAllAnnotations()) {
-                String annotationName = annotationInfo.getName();
+	private void scan() {
+		try (ScanResult scanResult = new ClassGraph().acceptPackages("org.example").enableAllInfo().scan()) {
 
-                for (ClassInfo classInfo : scanResult.getClassesWithAnnotation(annotationName)) {
-                    if (classInfo.isInterface()) {
-                        continue;
-                    }
-                    if(classInfo.isAbstract()){
-                        continue;
-                    }
-                    containers.computeIfAbsent(annotationName, k -> new ArrayList<>())
-                            .add(classInfo.loadClass());
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+			for (var annotationInfo : scanResult.getAllAnnotations()) {
+				String annotationName = annotationInfo.getName();
 
-    public List<Class<?>> getClassesWithAnnotation(Class<?> annotationClass) {
-        return containers.getOrDefault(annotationClass.getName(), new ArrayList<>());
-    }
+				for (ClassInfo classInfo : scanResult.getClassesWithAnnotation(annotationName)) {
 
-    public List<Class<Raw>> getRawClasses() {
-        List<Class<Raw>> list = containers.getOrDefault(LibraryElement.class.getName(), new ArrayList<>()).stream().map(x -> (Class<Raw>) x).collect(Collectors.toList());
-        sortRawByHierarchy(list);
-        return list;
-    }
+					if (classInfo.isInterface() || classInfo.isAbstract()) {
+						continue;
+					}
 
-    public List<Class<TwinExpression<?>>> getTwinExpressionClasses() {
-        List<Class<TwinExpression<?>>> list = containers.getOrDefault(TwinExpressionAnnotation.class.getName(), new ArrayList<>()).stream().map(x -> (Class<TwinExpression<?>>) x).collect(Collectors.toList());
-        sortByHierarchy(list);
-        return list;
-    }
-    public void sortByHierarchy(List<Class<TwinExpression<?>>> list) {
-        Map<Class<TwinExpression<?>>, Integer> specificity = new HashMap<>();
-        for (Class<TwinExpression<?>> c : list) {
-            Class<?> ct = c.getAnnotation(TwinExpressionAnnotation.class).value();
-            int score = 0;
-            for (Class<TwinExpression<?>> other : list) {
-                if (other == c) continue;
-                Class<?> ot = other.getAnnotation(TwinExpressionAnnotation.class).value();
-                if (ot.isAssignableFrom(ct) && !ot.equals(ct)) {
-                    score++;
-                }
-            }
-            specificity.put(c, score);
-        }
+					containers.computeIfAbsent(annotationName, ignored -> new ArrayList<>()).add(classInfo.loadClass());
+				}
+			}
+		}
+	}
 
-        list.sort((c1, c2) -> specificity.get(c2) - specificity.get(c1));
-    }
 
-    public void sortRawByHierarchy(List<Class<Raw>>  list) {
-        list.sort((c1, c2) -> {
-            Type t1 = SysMLLibraryUtil.getLibraryType(utils.getRootElement(), c1.getAnnotation(LibraryElement.class).value());
-            Type t2 = SysMLLibraryUtil.getLibraryType(utils.getRootElement(), c2.getAnnotation(LibraryElement.class).value());
-            if (TypeUtil.specializes(t2, t1)) return -1;
-            if (TypeUtil.specializes(t1, t2)) return 1;
-            return 0;
-        });
-    }
+	public List<Class<? extends MappedElement<?>>> getMappedElementClasses() {
+		List<Class<? extends MappedElement<?>>> result = containers.getOrDefault(MappedElementType.class.getName(), Collections.emptyList()).stream().filter(MappedElement.class::isAssignableFrom).filter(clazz -> !Modifier.isAbstract(clazz.getModifiers())).map(this::castMappedClass).collect(Collectors.toCollection(ArrayList::new));
+
+		sortBySysmlTypeSpecificity(result);
+
+		return result;
+	}
+
+	private boolean isLibraryTypeCompatible(Type sysmlElement, Class<? extends MappedElement<?>> mappedClass) {
+		Type mappedLibraryType = getMappedLibraryType(mappedClass);
+
+		return mappedLibraryType != null && TypeUtil.isCompatible(sysmlElement, mappedLibraryType);
+	}
+
+	private Constructor<?> findCompatibleConstructor(Class<? extends MappedElement<?>> mappedClass, Type sysmlElement) {
+		Constructor<?> bestConstructor = null;
+
+		for (Constructor<?> constructor : mappedClass.getDeclaredConstructors()) {
+
+			Class<?>[] parameterTypes = constructor.getParameterTypes();
+
+			if (parameterTypes.length != 1) {
+				continue;
+			}
+
+			Class<?> parameterType = parameterTypes[0];
+
+			if (!parameterType.isInstance(sysmlElement)) {
+				continue;
+			}
+
+			if (bestConstructor == null) {
+				bestConstructor = constructor;
+				continue;
+			}
+
+			Class<?> currentBestType = bestConstructor.getParameterTypes()[0];
+
+			if (currentBestType.isAssignableFrom(parameterType)) {
+				bestConstructor = constructor;
+			}
+		}
+
+		return bestConstructor;
+	}
+
+
+	public Constructor<? extends MappedElement<?>> getMappedConstructor(Type sysmlElement) throws MappingException {
+
+		Objects.requireNonNull(sysmlElement, "sysmlElement");
+
+
+		if (!(sysmlElement instanceof org.omg.sysml.lang.sysml.InvocationExpression)) {
+			Constructor<? extends MappedElement<?>> libraryConstructor = findLibraryConstructor(sysmlElement);
+			if (libraryConstructor != null) {
+				return libraryConstructor;
+			}
+		}
+
+		Constructor<? extends MappedElement<?>> metaclassConstructor = findMetaclassConstructor(sysmlElement);
+		if (metaclassConstructor != null) {
+			return metaclassConstructor;
+		}
+
+		if (sysmlElement instanceof org.omg.sysml.lang.sysml.InvocationExpression) {
+			Constructor<? extends MappedElement<?>> libraryConstructor = findLibraryConstructor(sysmlElement);
+			if (libraryConstructor != null) {
+				return libraryConstructor;
+			}
+		}
+
+
+		throw new NoMappedElementException("No mapped constructor found for '%s' (%s).".formatted(safeName(sysmlElement), sysmlElement.getClass().getSimpleName()));
+	}
+
+	private Constructor<? extends MappedElement<?>> findMetaclassConstructor(Type sysmlElement) {
+		Constructor<?> best = null;
+
+		for (Class<? extends MappedElement<?>> mappedClass : getMetaclassMappedClasses()) {
+
+			Constructor<?> constructor = findCompatibleConstructor(mappedClass, sysmlElement);
+
+			if (constructor == null) {
+				continue;
+			}
+
+			if (best == null) {
+				best = constructor;
+				continue;
+			}
+
+			Class<?> bestParameter = best.getParameterTypes()[0];
+			Class<?> candidateParameter = constructor.getParameterTypes()[0];
+
+			if (bestParameter.isAssignableFrom(candidateParameter)) {
+				best = constructor;
+			}
+		}
+
+		return castConstructor(best);
+	}
+
+	private Constructor<? extends MappedElement<?>> findLibraryConstructor(Type sysmlElement) {
+		List<Class<? extends MappedElement<?>>> classes = getLibraryMappedClasses();
+
+		sortBySysmlTypeSpecificity(classes);
+
+		for (Class<? extends MappedElement<?>> mappedClass : classes) {
+			if (!isLibraryTypeCompatible(sysmlElement, mappedClass)) {
+				continue;
+			}
+
+			Constructor<?> constructor = findCompatibleConstructor(mappedClass, sysmlElement);
+
+			if (constructor != null) {
+				return castConstructor(constructor);
+			}
+		}
+
+		return null;
+	}
+
+	@SuppressWarnings("unchecked")
+	private Constructor<? extends MappedElement<?>> castConstructor(Constructor<?> constructor) {
+		return constructor == null ? null : (Constructor<? extends MappedElement<?>>) constructor;
+	}
+
+
+	private void sortBySysmlTypeSpecificity(List<Class<? extends MappedElement<?>>> classes) {
+		Map<Class<? extends MappedElement<?>>, Type> libraryTypes = new HashMap<>();
+		for (var mappedClass : classes) {
+			libraryTypes.put(mappedClass, getMappedLibraryType(mappedClass));
+		}
+
+		Map<Class<? extends MappedElement<?>>, List<Class<? extends MappedElement<?>>>> edges = new HashMap<>();
+		Map<Class<? extends MappedElement<?>>, Integer> indegree = new HashMap<>();
+		for (var c : classes) {
+			indegree.put(c, 0);
+		}
+
+		for (var a : classes) {
+			Type typeA = libraryTypes.get(a);
+			if (typeA == null) {
+				continue;
+			}
+			for (var b : classes) {
+				if (a == b) {
+					continue;
+				}
+				Type typeB = libraryTypes.get(b);
+				if (typeB == null) {
+					continue;
+				}
+				if (TypeUtil.specializes(typeA, typeB)) {
+					edges.computeIfAbsent(a, k -> new ArrayList<>()).add(b);
+					indegree.merge(b, 1, Integer::sum);
+				}
+			}
+		}
+
+		for (var c : classes) {
+			if (libraryTypes.get(c) == null) {
+				for (var other : classes) {
+					if (other != c && libraryTypes.get(other) != null) {
+						edges.computeIfAbsent(other, k -> new ArrayList<>()).add(c);
+						indegree.merge(c, 1, Integer::sum);
+					}
+				}
+			}
+		}
+
+		TreeSet<Class<? extends MappedElement<?>>> ready = new TreeSet<>(Comparator.comparing(Class::getName));
+		for (var c : classes) {
+			if (indegree.get(c) == 0) {
+				ready.add(c);
+			}
+		}
+
+		List<Class<? extends MappedElement<?>>> result = new ArrayList<>();
+		while (!ready.isEmpty()) {
+			var next = ready.pollFirst();
+			result.add(next);
+			for (var neighbor : edges.getOrDefault(next, List.of())) {
+				int deg = indegree.merge(neighbor, -1, Integer::sum);
+				if (deg == 0) {
+					ready.add(neighbor);
+				}
+			}
+		}
+
+		if (result.size() != classes.size()) {
+			List<Class<? extends MappedElement<?>>> remaining = new ArrayList<>(classes);
+			remaining.removeAll(result);
+			remaining.sort(Comparator.comparing(Class::getName));
+			result.addAll(remaining);
+		}
+
+		classes.clear();
+		classes.addAll(result);
+	}
+
+	private Type getMappedLibraryType(Class<? extends MappedElement<?>> mappedClass) {
+		MappedElementType annotation = mappedClass.getAnnotation(MappedElementType.class);
+
+		if (annotation == null) {
+			return null;
+		}
+
+		return utils.getLibTypeFromAnnotation(annotation.value());
+	}
+
+
+	@SuppressWarnings("unchecked")
+	private Class<? extends MappedElement<?>> castMappedClass(Class<?> mappedClass) {
+		return (Class<? extends MappedElement<?>>) mappedClass;
+	}
+
+	private String safeName(Type element) {
+		return element.getName() == null ? "<unnamed>" : element.getName();
+	}
 }

@@ -1,16 +1,16 @@
 package org.example.GenerelRules;
 
+import org.example.Mapping.NewVersion.MappingException;
 import org.example.Util.Utils;
+
 
 public abstract class GenerelRules {
 
+	protected final Utils utilsManager;
 
-    private final Utils utils = Utils.getInstance();
+	public GenerelRules(Utils utils) {
+		this.utilsManager = utils;
+	}
 
-
-    public Utils getUtils() {
-        return utils;
-    }
-
-    public abstract boolean isValid();
+	public abstract boolean isValid() throws MappingException;
 }

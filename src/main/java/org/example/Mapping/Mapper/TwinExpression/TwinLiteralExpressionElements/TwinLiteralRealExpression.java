@@ -1,20 +1,21 @@
 package org.example.Mapping.Mapper.TwinExpression.TwinLiteralExpressionElements;
 
-import lombok.Data;
 import lombok.ToString;
-import org.example.Mapping.Mapper.TwinExpression.TwinExpressionAnnotation;
+import org.example.Mapping.NewVersion.MappingContext;
+import org.example.Mapping.NewVersion.MappingException;
+import org.example.Mapping.TwinAction.MappedMetaclass;
 import org.omg.sysml.lang.sysml.LiteralRational;
 
-@TwinExpressionAnnotation(LiteralRational.class)
-@Data
+@MappedMetaclass
 @ToString(callSuper = true)
 public class TwinLiteralRealExpression extends TwinLiteralExpression<Double, LiteralRational> {
 
-    public TwinLiteralRealExpression() {
-    }
+	public TwinLiteralRealExpression(LiteralRational sysmlElement) {
+		super(sysmlElement);
+	}
 
-    @Override
-    public void parse(LiteralRational expression) {
-        this.setValue(expression.getValue());
-    }
+	@Override
+	public void parse(MappingContext context) throws MappingException {
+		this.setValue(this.getSysmlElement().getValue());
+	}
 }

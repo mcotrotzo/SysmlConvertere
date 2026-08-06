@@ -5,6 +5,8 @@ library package TwinLibrary{
     public import PredictivePublicElements::*;
     public import ShadowPublicElements::*;
     public import PhysicalElementsLibrary::*;
+    public import TwinTriggerConfigurationLibrary::TimeBasedConfiguration;
+    public import TwinTriggerConfigurationLibrary::EventBasedConfiguration;
 
     public import TwinEnumLibrary::*;
     public import TwinTypeSystem::*;

@@ -13,6 +13,8 @@ package Test{
 
    part def Test:>Twin{
    }
+   part def Test1:>Twin{
+      }
    attribute tzest:TwinInteger =1;
    part test3{
     attribute tet[3];
@@ -32,17 +34,17 @@ package Test{
 
     part def Battery :> Twin {
 
-        port p11 :> sensors {
+        port p11[30] :> sensors {
+            c1:>>communicationProtocol:MQTT_Protocol {
+
+            }
+
             attribute temp    : TwinReal    :> measurements = (2, 3, 4);
             attribute voltage : TwinReal    :> measurements =DIV_real(y=2, x=10);
             attribute current : TwinReal    :> measurements = new TwinReal(0);
             attribute plug    : TwinBoolean :> measurements = new TwinBoolean(false);
             attribute pos     : Position    :> measurements = AddPosition(pos_a=new Position(x=10, y=20, z=30), pos_b=new Position(x=0, y=0, z=0));
-            attribute pos2     : Position    :> measurements{
-                                        Hallo:>>x[1] = 10;
-                                        :>>y = 20;
-                                        :>>z = 30;
-                                    }
+            attribute pos2     : Position    :> measurements = new Position(x=10, y=20, z=30);
             attribute pos3     : Position    :> measurements{
                                                     Hallo:>>x[1] = 10;
                                                     :>>y = 20;
@@ -54,18 +56,30 @@ package Test{
             attribute charge : TwinReal :> commands = p11.temp;
         }
 
-
+        port p13[1]:>p11;
         attribute maxCharge        : TwinReal :> constAttributes = 100;
         attribute nominalVoltage   : TwinReal :> constAttributes = 48;
         attribute defaultNetDemand : TwinReal :> constAttributes = 0;
 
+
+        :>>databases:RelationalDatabase{
+            :>>durationInDays default 30;
+        }
         state cm1 :> controlUnit {
             attribute maxCharge :> local_Attributes = maxCharge;
 
             state idle:>>states;
             state charging:>>states {
-                do assign p12.charge := 100;
-            }
+
+                            state test34:>states{
+                                entry assign p12.charge := 50;
+                                do assign p12.charge := 50;
+                                exit assign p12.charge := 100;
+                            }
+                            entry assign p12.charge := 50;
+                            do assign p12.charge := 50;
+                            exit assign p12.charge := 100;
+                        }
             entry; then idle;
             transition
             first idle
@@ -98,17 +112,24 @@ package Test{
             return attribute gg:>>result:TwinReal[30];
 
         }
-
+        state test12 :> descriptiveStateMachine_{
+                    state sa:>>states;
+                    state sd:>>states;
+                }
         part LLM_Request :> descriptiveStrategies {
             in attribute :>> lambdaPath = "battery/LLM_Request";
             in attribute avgTemperature :> inputs default avgTemp;
             in attribute current :> inputs default p11.current;
             attribute llmCurrent:>> outputs:TwinReal[1];
         }
-        attribute avgTemp : TwinReal :> derivedAttributes = Avg(temp30.result);
+        attribute avgTemp : TwinReal :> derivedAttributes = Avg(temp30());
 
 
         part consForecast :> predictiveStrategies {
+        :>>triggerConfiguration:TimeBasedConfiguration{
+                        :>>triggerInterval_ default 5;
+                        :>>triggerIntervalUnit_ default TimeUnit::MINUTE;
+                    }
             in attribute :>> lambdaPath = "battery/consForecast";
             in attribute avgTemperature :> inputs default avgTemp;
             in attribute current :> inputs default p11.current;
@@ -118,6 +139,9 @@ package Test{
 
 
             part chargeStrategy :> prescriptiveStrategies {
+            :>>triggerConfig_:EventBasedConfiguration{
+                                :>>onChange_ default true;
+                            }
                 in attribute :>> lambdaPath default "battery/chargeStrategy";
 
                 attribute :>> condition_ default LT_real(consForecast.predicted, maxCharge);

@@ -12,7 +12,7 @@ library package PredicitiveLibrary {
     }
     part def PredictiveModel {
         
-        calc strategies : PredictiveStrategy[0..*];
+        part strategies : PredictiveStrategy[0..*];
     }
 
 }

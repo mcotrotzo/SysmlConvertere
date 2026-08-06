@@ -2,82 +2,83 @@ package org.example.UtilClasses;
 
 import lombok.Getter;
 import org.example.Util.Utils;
-import org.omg.sysml.lang.sysml.*;
+import org.omg.sysml.lang.sysml.Specialization;
+import org.omg.sysml.lang.sysml.Type;
 
-import java.lang.Class;
 import java.util.*;
 
 public abstract class SpecialicationGraph<T extends Type, C extends Type, S extends Specialization> {
 
-    private final Class<T> specificClass;
-    private final Class<C> generalClass;
-    private final Class<S> specializationClass;
+	private final Class<T> specificClass;
+	private final Class<C> generalClass;
+	private final Class<S> specializationClass;
+	@Getter
+	private final Utils utils;
+	@Getter
+	private Map<T, Set<C>> forward = new HashMap<>();
+	@Getter
+	private Map<C, Set<T>> backward = new HashMap<>();
 
-    private Map<T, Set<C>> forward = new HashMap<>();
-    private Map<C, Set<T>> backward = new HashMap<>();
+	public SpecialicationGraph(Utils utils, Class<T> specificClass, Class<C> generalClass, Class<S> specializationClass) {
+		this.specificClass = specificClass;
+		this.generalClass = generalClass;
+		this.specializationClass = specializationClass;
+		this.utils = utils;
+		computeMaps();
+	}
 
+	public Set<C> getSpecializedBy(T redefining) {
+		return forward.getOrDefault(redefining, Collections.emptySet());
+	}
 
-    @Getter
-    private final Utils utils = Utils.getInstance();
+	public Set<T> getSpecificationsOf(C redefined) {
+		return backward.getOrDefault(redefined, Collections.emptySet());
+	}
 
-    public SpecialicationGraph(Class<T> specificClass, Class<C> generalClass, Class<S> specializationClass) {
-        this.specificClass = specificClass;
-        this.generalClass = generalClass;
-        this.specializationClass = specializationClass;
-        computeMaps();
-    }
+	public Set<T> getAllSpecialized() {
+		return Collections.unmodifiableSet(forward.keySet());
+	}
 
-    public Set<C> getSpecializedBy(T redefining) {
-        return forward.getOrDefault(redefining, Collections.emptySet());
-    }
+	public Set<C> getAllSpecifications() {
+		return Collections.unmodifiableSet(backward.keySet());
+	}
 
-    public Set<T> getSpecificationsOf(C redefined) {
-        return backward.getOrDefault(redefined, Collections.emptySet());
-    }
+	public void computeMaps() {
+		Set<S> allSpecializations = utils.collect(specializationClass);
 
-    public Set<T> getAllSpecialized() {
-        return Collections.unmodifiableSet(forward.keySet());
-    }
+		for (S specialization : allSpecializations) {
 
-    public Set<C> getAllSpecifications() {
-        return Collections.unmodifiableSet(backward.keySet());
-    }
+			Type general = utils.convertBasicFeatureToType(specialization.getGeneral());
 
-    public void computeMaps() {
-        Set<S> allSpecializations = utils.collect(specializationClass);
+			Type specific = utils.convertBasicFeatureToType(specialization.getSpecific());
 
-        for (Specialization spec : allSpecializations) {
-            Type general = utils.convertBasicFeatureToType(spec.getGeneral());
-            Type specific = utils.convertBasicFeatureToType(spec.getSpecific());
+			if (general == null || specific == null) {
+				continue;
+			}
 
+			if (general == specific) {
+				continue;
+			}
 
+			if (general.getName() == null || specific.getName() == null) {
+				continue;
+			}
 
-            if (general.equals(specific)) {
-                continue;
-            }
+			if (!specificClass.isInstance(specific) || !generalClass.isInstance(general)) {
+				continue;
+			}
 
-            if (!specificClass.isInstance(specific) || !generalClass.isInstance(general)) {
-                continue;
-            }
+			if (utils.isFromStandardLibrary(specific) || utils.isFromStandardLibrary(general)) {
+				continue;
+			}
 
-            if (getUtils().isFromLibrary(specific) && getUtils().isFromLibrary(general)) {
-                continue;
-            }
+			addSpecialization(specificClass.cast(specific), generalClass.cast(general));
+		}
+	}
 
-            addSpecialization(specificClass.cast(specific), generalClass.cast(general));
-        }
-    }
+	private void addSpecialization(T specialization, C general) {
+		forward.computeIfAbsent(specialization, k -> new HashSet<>()).add(general);
+		backward.computeIfAbsent(general, k -> new HashSet<>()).add(specialization);
+	}
 
-    private void addSpecialization(T specialization, C general) {
-        forward.computeIfAbsent(specialization, k -> new HashSet<>()).add(general);
-        backward.computeIfAbsent(general, k -> new HashSet<>()).add(specialization);
-    }
-
-    public Map<T, Set<C>> getForward() {
-        return forward;
-    }
-
-    public Map<C, Set<T>> getBackward() {
-        return backward;
-    }
 }
