@@ -5,13 +5,15 @@ import org.example.ElemWithMult;
 import org.example.Mapping.Interfaces.QueryResult;
 import org.example.Mapping.NewVersion.Abstract.MappedElementType;
 import org.example.Util.LibraryNameSpaces;
+import org.omg.sysml.lang.sysml.AttributeUsage;
 import org.omg.sysml.lang.sysml.Type;
+import org.omg.sysml.lang.sysml.Usage;
 
 @MappedElementType(LibraryNameSpaces.QUERY_RESULT)
 @ToString(callSuper = true)
 public class QueryResultMapped extends CustomTypeMapped implements QueryResult {
 
-	public QueryResultMapped(Type sysmlElement) {
+	public QueryResultMapped(Usage sysmlElement) {
 		super(sysmlElement);
 	}
 

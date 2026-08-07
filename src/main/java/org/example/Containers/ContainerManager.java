@@ -162,10 +162,13 @@ public final class ContainerManager {
 		return castConstructor(best);
 	}
 
-	private Constructor<? extends MappedElement<?>> findLibraryConstructor(Type sysmlElement) {
-		List<Class<? extends MappedElement<?>>> classes = getLibraryMappedClasses();
+	private Constructor<? extends MappedElement<?>> findLibraryConstructor(Type sysmlElement)
+			throws MappingException {
 
+		List<Class<? extends MappedElement<?>>> classes = getLibraryMappedClasses();
 		sortBySysmlTypeSpecificity(classes);
+
+		Map<Constructor<?>, Type> candidates = new LinkedHashMap<>();
 
 		for (Class<? extends MappedElement<?>> mappedClass : classes) {
 			if (!isLibraryTypeCompatible(sysmlElement, mappedClass)) {
@@ -175,11 +178,37 @@ public final class ContainerManager {
 			Constructor<?> constructor = findCompatibleConstructor(mappedClass, sysmlElement);
 
 			if (constructor != null) {
-				return castConstructor(constructor);
+				candidates.put(constructor, getMappedLibraryType(mappedClass));
 			}
 		}
 
-		return null;
+		candidates.entrySet().removeIf(candidate ->
+				candidates.entrySet().stream().anyMatch(other ->
+						other != candidate
+								&& TypeUtil.specializes(
+								other.getValue(),
+								candidate.getValue()
+						)
+				)
+		);
+
+		if (candidates.size() > 1) {
+			throw new MappingException(
+					"Multiple constructors found for '%s' (%s). Available types: %s"
+							.formatted(
+									safeName(sysmlElement),
+									sysmlElement.getClass().getSimpleName(),
+									candidates.values().stream()
+											.map(Type::getQualifiedName)
+											.collect(Collectors.joining(", "))
+							)
+			);
+		}
+
+		return candidates.keySet().stream()
+				.findFirst()
+				.map(this::castConstructor)
+				.orElse(null);
 	}
 
 	@SuppressWarnings("unchecked")

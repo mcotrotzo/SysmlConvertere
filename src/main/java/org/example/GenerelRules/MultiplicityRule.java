@@ -19,33 +19,53 @@ public class MultiplicityRule extends GenerelRules {
 	@Override
 	public boolean isValid() throws MappingException {
 		Set<Type> userTypes = utilsManager.collect(Type.class);
+
 		for (Type userType : userTypes) {
-			if (!(userType instanceof Usage)) {
+			if (!(userType instanceof Usage || userType instanceof Definition)) {
 				continue;
 			}
-			validateType(userType);
+			validateType(userType, new HashSet<>());
 		}
 		return true;
 	}
 
-	private void validateType(Type userType) throws MappingException {
-		if (utilsManager.isFromStandardLibrary(userType) || utilsManager.isFromDTLibrary(userType)) {
+	private void validateType(Type userType, Set<Type> visited)
+			throws MappingException {
+
+		if (!visited.add(userType)) {
 			return;
 		}
-		Set<Feature> effectiveFeatures = new HashSet<>(TypeUtil.getPublicFeaturesOf(userType));
 
-		effectiveFeatures.addAll(userType.getOwnedFeature());
-		for (Feature inheritedFeature : effectiveFeatures) {
-			System.out.println("Type '%s' inherits feature '%s'.".formatted(getTypeName(userType), getFeatureName(inheritedFeature)));
+		if (utilsManager.isFromStandardLibrary(userType)
+				|| utilsManager.isFromDTLibrary(userType)) {
+			return;
 		}
-		for (Feature inheritedFeature : effectiveFeatures) {
-			if (utilsManager.isTechnicalKindFeature(inheritedFeature)) {
+
+		Set<Feature> features =
+				new HashSet<>(TypeUtil.getPublicFeaturesOf(userType));
+
+		features.addAll(userType.getOwnedFeature());
+
+		for (Feature feature : features) {
+			if (utilsManager.isTechnicalKindFeature(feature)) {
 				continue;
 			}
-			if (utilsManager.isFromStandardLibrary(inheritedFeature)) {
+
+			if (utilsManager.isFromStandardLibrary(feature)) {
 				continue;
 			}
-			validateInheritedFeature(userType, inheritedFeature);
+
+			validateInheritedFeature(
+					userType,
+					feature
+			);
+
+			if (feature instanceof Usage usage) {
+				validateType(
+						usage,
+						visited
+				);
+			}
 		}
 	}
 

@@ -3,6 +3,7 @@ package org.example.Mapping.TwinAction;
 import lombok.ToString;
 import org.example.Mapping.Interfaces.Assignment;
 import org.example.Mapping.Interfaces.Expression;
+import org.example.Mapping.Interfaces.Reference;
 import org.example.Mapping.Interfaces.TwinAttribute;
 import org.example.Mapping.Mapper.TwinExpression.TwinExpression;
 import org.example.Mapping.NewVersion.Abstract.MappedReference;
@@ -21,7 +22,7 @@ public class TwinAssignmentActionMapped extends TwinActionBaseUsage<AssignmentAc
 		super(sysmlElement);
 	}
 
-	public MappedReference<? extends TwinAttribute> getTarget() {
+	public Reference<? extends TwinAttribute> getTarget() {
 		return referent;
 	}
 

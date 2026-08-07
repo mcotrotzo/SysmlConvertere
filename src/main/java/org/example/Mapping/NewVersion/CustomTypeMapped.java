@@ -2,10 +2,16 @@ package org.example.Mapping.NewVersion;
 
 import lombok.ToString;
 import org.example.Mapping.Interfaces.CustomType;
+import org.example.Mapping.Interfaces.CustomTypeDefinition;
+import org.example.Mapping.Interfaces.Reference;
 import org.example.Mapping.Interfaces.TwinAttribute;
 import org.example.Mapping.NewVersion.Abstract.MappedElementType;
+import org.example.Mapping.NewVersion.Abstract.MappedReference;
 import org.example.Util.LibraryNameSpaces;
-import org.omg.sysml.lang.sysml.Type;
+import org.omg.sysml.lang.sysml.AttributeUsage;
+import org.omg.sysml.lang.sysml.Definition;
+import org.omg.sysml.lang.sysml.Feature;
+import org.omg.sysml.lang.sysml.Usage;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -17,8 +23,9 @@ import java.util.Set;
 public class CustomTypeMapped extends TwinAttributeMapped implements CustomType {
 
 	protected Set<TwinAttributeMapped> fields = new HashSet<>();
+	private MappedReference<? extends CustomTypeMappedDefintion> definition;
 
-	public CustomTypeMapped(Type sysmlElement) {
+	public CustomTypeMapped(Usage sysmlElement) {
 		super(sysmlElement);
 	}
 
@@ -29,11 +36,34 @@ public class CustomTypeMapped extends TwinAttributeMapped implements CustomType 
 	}
 
 	@Override
+	public Reference<? extends CustomTypeDefinition> getDefinition() {
+		return definition;
+	}
+
+	@Override
 	public void parse(MappingContext context) throws MappingException {
-		if (getSysmlElement() instanceof org.omg.sysml.lang.sysml.Usage) {
-			super.parse(context);
+		fields = new HashSet<>(
+				context.mapSlot(this, "fields", TwinAttributeMapped.class)
+		);
+
+		if(getSysmlElement() instanceof Feature feature){
+			Definition customDefinition = feature.getType().stream()
+					.filter(Definition.class::isInstance)
+					.map(Definition.class::cast)
+					.filter(type -> !context.getUtils().isFromDTLibrary(type))
+					.findFirst()
+					.orElseThrow(() ->
+							new MappingException(
+									"No custom type definition found for '%s'."
+											.formatted(getName())
+							)
+					);
+
+			definition = context.mapReference(
+					customDefinition,
+					CustomTypeMappedDefintion.class
+			);
 		}
-		fields = new HashSet<>(context.mapSlot(this, "fields", TwinAttributeMapped.class));
 	}
 
 }

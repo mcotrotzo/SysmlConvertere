@@ -11,27 +11,6 @@ package Test{
     private import BatteryControlUnitLibrary::*;
     private import PositionThings::*;
 
-   part def Test:>Twin{
-   }
-   part def Test1:>Twin{
-      }
-   attribute tzest:TwinInteger =1;
-   part test3{
-    attribute tet[3];
-   }
-
-   part def Test2:>Test,Twin{
-    part{
-    hallo:>>test3.tet[1];
-    hallo2d:>>test3.tet[3];
-
-
-    }
-
-    }
-
-
-
     part def Battery :> Twin {
 
         port p11[30] :> sensors {
@@ -50,6 +29,7 @@ package Test{
         attribute constructorTest : TwinReal    :> constAttributes = new TwinReal(0);
         attribute constructorTestBoolean    : TwinBoolean :> constAttributes = new TwinBoolean(false);
         attribute customCalculationTest     : Position    :> constAttributes = AddPosition(pos_a=new Position(x=10, y=20, z=30), pos_b=new Position(x=0, y=0, z=0));
+        attribute geoPositionTest     : Position    :> constAttributes = new GeoPosition(2.3, 3.4, 4.5);
 
         port p12 :> actuators {
             attribute charge : TwinReal :> commands;
@@ -67,14 +47,14 @@ package Test{
         }
         state cm1 :> controlUnit {
 
-            attribute maxCharge :> local_Attributes = maxCharge;
+            attribute maxCharge:TwinReal :> local_Attributes = maxCharge;
 
             state idle:>>states;
             state charging:>>states {
 
                             state test34:>states{
-                                entry assign p12.charge := 50;
-                                do assign p12.charge := 50;
+                                entry assign p12.charge := p11.temp;
+                                do assign p11.temp := 50;
                                 exit assign p12.charge := 100;
                             }
                             entry assign p12.charge := 50;
@@ -132,9 +112,9 @@ package Test{
                                 :>>triggerIntervalUnit_ default TimeUnit::MINUTE;
                             }
             in attribute :>> lambdaPath = "battery/LLM_Request";
-            in attribute avgTemperature :> inputs default avgTemp;
-            in attribute current :> inputs default p11.current;
-            attribute llmCurrent:>> outputs:TwinReal[1];
+            in attribute avgTemperature :TwinReal:> inputs default avgTemp;
+            in attribute current:TwinReal :> inputs default p11.current;
+            attribute llmCurrent:TwinReal:>> outputs:TwinReal[1];
         }
         attribute avgTemp : TwinReal :> derivedAttributes = Avg(temp30.result);
 
@@ -145,9 +125,8 @@ package Test{
                         :>>triggerIntervalUnit_ default TimeUnit::MINUTE;
                     }
             in attribute :>> lambdaPath = "battery/consForecast";
-            in attribute avgTemperature :> inputs default avgTemp;
-            in attribute current :> inputs default p11.current;
-            in attribute TESTTEST;
+            in attribute avgTemperature:TwinReal :> inputs default avgTemp;
+            in attribute current:TwinReal :> inputs default p11.current;
             attribute predicted : TwinReal :> outputs;
         }
 

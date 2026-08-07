@@ -19,9 +19,7 @@ public class TestResultOfQueryResultHasWrongMultplicity extends AbstarctTest {
 				
 				
 				        port p11 :> sensors {
-				         c1:>>communicationProtocol:MQTT_Protocol {
-				
-				                                 }
+				       
 				            attribute pos : Position :> measurements;
 				        }
 				

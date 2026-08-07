@@ -6,6 +6,7 @@ library package PhysicalTwinLibrary {
 
 
     abstract attribute def CommunicationProtocol:>TwinLibraryElementAttributeDef {
+
         
     }
 

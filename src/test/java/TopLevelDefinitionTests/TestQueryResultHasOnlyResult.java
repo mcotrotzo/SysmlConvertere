@@ -20,12 +20,8 @@ public class TestQueryResultHasOnlyResult extends AbstarctTest {
 				    part def Battery :> Twin {
 				
 				        port p11 :> sensors {
-				         c1:>>communicationProtocol:MQTT_Protocol {
-				
-				                                 }
-				            attribute pos : Position :> measurements;
-				        }
-				
+				        attribute pos : Position :> measurements;
+				}
 				        part positionHistory :> groupedQueryHistory {
 				            :>> twinAttribute : Position default p11.pos;
 				            :>> groupBy default "x";
@@ -75,6 +71,6 @@ public class TestQueryResultHasOnlyResult extends AbstarctTest {
 
 	@Test
 	public void exactlyOneQueryResultIsMapped() {
-		assertAmount(QueryResult.class, 2);
+		assertAmount(QueryResult.class, 1);
 	}
 }

@@ -4,14 +4,17 @@ import org.example.MapperService;
 import org.example.Mapping.Interfaces.Model;
 import org.example.Mapping.NewVersion.MappingException;
 import org.example.TwinDataBase;
-import org.junit.Assert;
 import org.junit.Before;
+import org.junit.jupiter.api.Test;
+
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public abstract class AbstarctTest {
 
@@ -100,11 +103,11 @@ public abstract class AbstarctTest {
 
 		Model actualParent = child.getParent().orElseThrow(() -> new AssertionError(child.getName() + " has no parent"));
 
-		Assert.assertEquals(expectedParent.getId(), actualParent.getId());
+		assertEquals(expectedParent.getId(), actualParent.getId());
 	}
 
 	protected void assertAmount(Class<? extends Model> type, int expected) {
-		Assert.assertEquals(expected, result.get(type).size());
+		assertEquals(expected, result.get(type).size());
 	}
 
 	protected <T extends Model> T named(Class<T> type, String name) {

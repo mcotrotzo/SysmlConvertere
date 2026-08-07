@@ -1,8 +1,11 @@
 package org.example;
 
+import SemanticRules.SemanticException;
 import org.example.Containers.ContainerManager;
 import org.example.GenerelRules.GenerelRules;
+import org.example.GenerelRules.MultiType;
 import org.example.GenerelRules.MultiplicityRule;
+import org.example.GenerelRules.TwinAttributeHasToSpecialiced;
 import org.example.Mapping.NewVersion.MappingContext;
 import org.example.Mapping.NewVersion.MappingException;
 import org.example.Util.Utils;
@@ -27,25 +30,37 @@ public class MapperService {
 		try {
 			preRules();
 			var s = mappingContext.parseAll();
-			return new TwinDataBase(s);
-		} catch (MappingException e) {
-			System.err.println("MappingException: " + e.getMessage());
-			throw e;
-		} catch (Exception e) {
-			System.err.println("Unexpected exception: " + e.getMessage());
+			TwinDataBase db = new TwinDataBase(s);
+			postRules(db);
+			return db;
+
 		}
-		return null;
+		catch (SemanticException e) {
+			throw new MappingException("Semantic exception: " + e.getClass().getName() + ": " + e.getMessage());
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+
+			throw new MappingException("Unexpected exception: " + e.getClass().getName() + ": " + e.getMessage());
+		}
 	}
 
 	public void preRules() throws MappingException {
-		var genereRules = List.of(new MultiplicityRule(utilsManager));
+		var genereRules = List.of(new MultiType(utilsManager),new TwinAttributeHasToSpecialiced(utilsManager),new MultiplicityRule(utilsManager));
 		boolean isValid = true;
 		for (GenerelRules rule : genereRules) {
 			System.out.println("Checking rule: " + rule.getClass().getSimpleName());
 			boolean ruleValid = rule.isValid();
 			System.out.println("Is valid: " + ruleValid);
-
 			isValid = isValid && ruleValid;
+		}
+	}
+
+	public void postRules(TwinDataBase database) throws SemanticException {
+		var semanticRules = List.of(new SemanticRules.CheckAssignemntRules());
+		boolean isValid = true;
+		for (SemanticRules.SemanticRule rule : semanticRules) {
+			rule.isValid(database);
 		}
 	}
 

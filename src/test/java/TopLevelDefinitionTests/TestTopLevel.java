@@ -13,7 +13,7 @@ public class TestTopLevel extends AbstarctTest {
 	@Test
 	public void testBatteryTwinInterface() {
 
-		assertAmount(Twin.class, 4);
+		assertAmount(Twin.class, 1);
 		Twin battery = named(Twin.class, "Battery");
 
 		Assert.assertEquals("Battery", battery.getName());
@@ -23,7 +23,7 @@ public class TestTopLevel extends AbstarctTest {
 		Assert.assertEquals(2, battery.getSensors().size());
 		Assert.assertEquals(1, battery.getActuators().size());
 		Assert.assertEquals(1, battery.getControlUnits().size());
-		Assert.assertEquals(8, battery.getConstAttributes().size());
+		Assert.assertEquals(9, battery.getConstAttributes().size());
 		Assert.assertEquals(2, battery.getDerivedAttributes().size());
 		Assert.assertEquals(1, battery.getQueriesHistory().size());
 		Assert.assertEquals(1, battery.getGroupQueriesHistory().size());

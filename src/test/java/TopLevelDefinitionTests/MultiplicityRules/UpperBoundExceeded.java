@@ -1,13 +1,16 @@
-package TopLevelDefinitionTests;
+package TopLevelDefinitionTests.MultiplicityRules;
 
+import TopLevelDefinitionTests.AbstarctTest;
 import org.example.Mapping.NewVersion.MappingException;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.Optional;
 
-public class TestQueryResultWithWrongMultiplicity extends AbstarctTest {
+import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+public class UpperBoundExceeded  extends AbstarctTest {
 
 	@Override
 	public Optional<String> getTestModel() {
@@ -18,17 +21,17 @@ public class TestQueryResultWithWrongMultiplicity extends AbstarctTest {
 				
 				    part def Battery :> Twin {
 				
-				
 				        port p11 :> sensors {
-				         
-				            attribute pos : Position :> measurements;
+				       c1[1]:>communicationProtocol:MQTT_Protocol {
+							:>>broker[1];
+							:>>topic[1];
 				        }
-				
-				        part positionHistory :> groupedQueryHistory {
-				            :>> twinAttribute : Position default p11.pos;
-				            :>> groupBy default "x";
-				            :>> result : PositionQueryResult;
+				       c2[1]:>communicationProtocol:MQTT_Protocol {
+							:>>broker[1];
+							:>>topic[1];
 				        }
+				        }
+			
 				    }
 				}
 				""");
@@ -47,7 +50,7 @@ public class TestQueryResultWithWrongMultiplicity extends AbstarctTest {
 				    }
 				
 				    attribute def PositionQueryResult :> QueryResult {
-				        :>> result : Position[0..*];
+				        :>> result : TwinReal[0..*];
 				    }
 				}
 				""");
@@ -56,15 +59,14 @@ public class TestQueryResultWithWrongMultiplicity extends AbstarctTest {
 	@Override
 	public void testTopLevelDefinition() throws IOException, MappingException {
 
-		String testModelDirectory = createModelDirectoryOrGetPath(getTestModel());
-
-		String userLibraryDirectory = createUserLibraryDirectoryOrGetPath(getUserLibrary());
 	}
 
 	@Test
-	public void throwsException() {
-		MappingException exception = Assert.assertThrows(MappingException.class, () -> super.testTopLevelDefinition());
+	public void upperBoundShouldThrow() {
+		MappingException exception = assertThrows(MappingException.class, () -> super.testTopLevelDefinition());
+		System.out.println(exception.getMessage());
+		assertTrue(exception.getMessage().contains("2 > 1"));
 
-		Assert.assertTrue(exception.getMessage().contains("multiplicity [0..*]"));
 	}
+
 }

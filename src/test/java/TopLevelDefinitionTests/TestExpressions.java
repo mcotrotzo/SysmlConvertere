@@ -16,9 +16,7 @@ public class TestExpressions extends AbstarctTest {
 	public void testCollectionExpressionTest() {
 		TwinRealAttribute temp = named(TwinRealAttribute.class, "collectionTest");
 
-		Assert.assertEquals(1, temp.getTwinExpressions().size());
-
-		Expression root = temp.getTwinExpressions().iterator().next();
+		Expression root = temp.getTwinExpressions().get();
 
 		Assert.assertTrue(root instanceof TwinCalculationExpression);
 
@@ -58,9 +56,9 @@ public class TestExpressions extends AbstarctTest {
 	public void testBaseFunctionExpression() {
 		TwinRealAttribute voltage = named(TwinRealAttribute.class, "baseFunctionTest");
 
-		Assert.assertEquals(1, voltage.getTwinExpressions().size());
+		Assert.assertNotNull(voltage.getTwinExpressions().get());
 
-		Expression root = voltage.getTwinExpressions().iterator().next();
+		Expression root = voltage.getTwinExpressions().get();
 
 		Assert.assertTrue(root instanceof TwinCalculationExpression);
 
@@ -95,9 +93,9 @@ public class TestExpressions extends AbstarctTest {
 	public void testConstructorExpression() {
 		TwinRealAttribute current = named(TwinRealAttribute.class, "constructorTest");
 
-		Assert.assertEquals(1, current.getTwinExpressions().size());
+		Assert.assertNotNull(current.getTwinExpressions().get());
 
-		Expression root = current.getTwinExpressions().iterator().next();
+		Expression root = current.getTwinExpressions().get();
 
 		Assert.assertTrue(root instanceof TwinConstructorExpression);
 
@@ -119,9 +117,9 @@ public class TestExpressions extends AbstarctTest {
 	public void testConstructorBooleanExpression() {
 		TwinBooleanAttribute current = named(TwinBooleanAttribute.class, "constructorTestBoolean");
 
-		Assert.assertEquals(1, current.getTwinExpressions().size());
+		Assert.assertNotNull(current.getTwinExpressions().get());
 
-		Expression root = current.getTwinExpressions().iterator().next();
+		Expression root = current.getTwinExpressions().get();
 
 		Assert.assertTrue(root instanceof TwinConstructorExpression);
 

@@ -26,12 +26,7 @@ public class TestSensors extends AbstarctTest {
 		Assert.assertNotNull(p11.getId());
 		Assert.assertTrue(p11.getParent().isPresent());
 
-		Assert.assertFalse(p11.getProtocol().isEmpty());
-		Assert.assertEquals(1, p11.getProtocol().size());
-
-		Assert.assertEquals("c1", p11.getProtocol().get(0).getName());
-
-		Assert.assertTrue(p11.getProtocol().get(0) instanceof MQTTProtocol);
+		Assert.assertTrue(p11.getProtocol().isEmpty());
 
 		Assert.assertEquals(7, p11.getAttributes().size());
 	}

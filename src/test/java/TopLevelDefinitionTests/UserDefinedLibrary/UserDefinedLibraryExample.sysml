@@ -8,6 +8,10 @@ package PositionThings{
         attribute z[1]:TwinInteger:>fields;
     }
 
+    attribute def GeoPosition:>Position{
+
+    }
+
     calc def AddPosition:>CustomCalculationAction{
         in attribute pos_a[1]:>>inputs:Position;
         in attribute pos_b[1]:>>inputs:Position;

@@ -18,7 +18,7 @@ import java.util.*;
 @MappedElementType(LibraryNameSpaces.TWIN_ATTRIBUTE)
 @ToString(callSuper = true)
 public class TwinAttributeMapped extends MappedElement<Type> implements TwinAttribute {
-	private Set<TwinExpression<?>> twinExpressions = new HashSet<>();
+	private Set<TwinExpression<?>> twinExpressions;
 	private MappedReference<TwinAttributeMapped> typeReference;
 
 	public TwinAttributeMapped(Type sysmlElement) {
@@ -28,13 +28,13 @@ public class TwinAttributeMapped extends MappedElement<Type> implements TwinAttr
 	@Override
 	public void parse(MappingContext context) throws MappingException {
 		Class<TwinExpression<?>> rawClass = (Class<TwinExpression<?>>) (Class<?>) TwinExpression.class;
-		twinExpressions = new HashSet<>(context.mapOwned(this, Expression.class, rawClass));
+		twinExpressions =new HashSet<>(context.mapOwned(this, Expression.class, rawClass));
 		resolveTypeReference(context);
 	}
 
 	@Override
-	public List<org.example.Mapping.Interfaces.Expression> getTwinExpressions() {
-		return new ArrayList<>(twinExpressions);
+	public Optional<org.example.Mapping.Interfaces.Expression> getTwinExpressions() {
+		return Optional.of(twinExpressions.stream().findFirst().get());
 	}
 
 	@Override

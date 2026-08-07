@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface TwinAttribute extends Model {
-	List<Expression> getTwinExpressions();
+	Optional<Expression> getTwinExpressions();
 
 	Optional<Reference<? extends TwinAttribute>> getDefinitionReference();
 }
