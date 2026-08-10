@@ -8,6 +8,10 @@ package PositionThings{
         attribute z[1]:TwinInteger:>fields;
     }
 
+    attribute def GeoPosition:>Position{
+
+    }
+
     calc def AddPosition:>CustomCalculationAction{
         in attribute pos_a[1]:>>inputs:Position;
         in attribute pos_b[1]:>>inputs:Position;
@@ -15,6 +19,15 @@ package PositionThings{
         assign pos_c := new Position(x = PLUS_int(pos_a.x, pos_b.x), y = PLUS_int(pos_a.y, pos_b.y), z = PLUS_int(pos_a.z, pos_b.z));
         
     }
+    part def PositionHistory :> GroupedHistoryQuery {
+                :>>groupBy default "x";
+
+            }
+
+
+            attribute def PositionQueryResult:>QueryResult{
+                x:>result:Position[0..*];
+            }
 
     calc def Avg2:>CustomCalculationAction{
             in attribute reals[0..*]:TwinReal:>>inputs;
@@ -59,6 +72,8 @@ package PositionThings{
                             }
                             first test5;
                             then test6;
+
+
                         }
                         assign avg := 0;
                     }
