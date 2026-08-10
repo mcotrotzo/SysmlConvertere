@@ -4,4 +4,5 @@ import java.util.List;
 
 public interface ControlUnit extends StateMachine {
 	List<TriggerConfiguration> getTriggerConfiguration();
+
 }

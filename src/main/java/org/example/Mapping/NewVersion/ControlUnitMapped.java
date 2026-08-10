@@ -2,6 +2,7 @@ package org.example.Mapping.NewVersion;
 
 import lombok.ToString;
 import org.example.Mapping.Interfaces.ControlUnit;
+import org.example.Mapping.Interfaces.ReadWriteRoles;
 import org.example.Mapping.Interfaces.TriggerConfiguration;
 import org.example.Mapping.NewVersion.Abstract.MappedElementType;
 import org.example.Util.LibraryNameSpaces;
@@ -31,5 +32,28 @@ public class ControlUnitMapped extends StateMachineMapped implements ControlUnit
 	public void parse(MappingContext context) throws MappingException {
 		super.parse(context);
 		triggerConfiguration = new HashSet<>(context.mapSlot(this, "triggerConfiguration", TriggerConfigurationMapped.class));
+	}
+
+	@Override
+	public Set<ReadWriteRoles> getReadPermissions() {
+		return Set.of(
+				ReadWriteRoles.SENSOR,
+				ReadWriteRoles.CONST,
+				ReadWriteRoles.LOCAL,
+				ReadWriteRoles.ACTUATOR
+		);
+	}
+
+	@Override
+	public Set<ReadWriteRoles> getWritePermissions() {
+		return Set.of(ReadWriteRoles.ACTUATOR,
+				ReadWriteRoles.LOCAL
+
+
+
+
+
+
+		);
 	}
 }

@@ -50,9 +50,8 @@ public class TwinTransitionUsageMapped extends TwinActionBaseUsage<TransitionUsa
 
 	@Override
 	public void parse(MappingContext context) throws MappingException {
-		super.parse(context);
 		source = context.mapReference(getSysmlElement().getSource(), TwinActionBaseUsage.getRawClass());
-		target = context.mapReference(getSysmlElement().getSource(), TwinActionBaseUsage.getRawClass());
+		target = context.mapReference(getSysmlElement().getTarget(), TwinActionBaseUsage.getRawClass());
 		guard = this.getSysmlElement().getGuardExpression().stream().map(e -> {
 			try {
 				return context.map(e, this, TwinExpression.class);

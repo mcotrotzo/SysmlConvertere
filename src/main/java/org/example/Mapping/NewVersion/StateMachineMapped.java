@@ -7,6 +7,8 @@ import org.example.Mapping.Interfaces.Transition;
 import org.example.Mapping.Interfaces.TwinAttribute;
 import org.example.Mapping.NewVersion.Abstract.MappedElementType;
 import org.example.Mapping.TwinAction.TwinActionBaseUsage;
+import org.example.Mapping.TwinAction.TwinSuccessionAction;
+import org.example.Mapping.TwinAction.TwinTransitionUsageMapped;
 import org.example.Util.LibraryNameSpaces;
 import org.omg.sysml.lang.sysml.ActionUsage;
 import org.omg.sysml.lang.sysml.StateUsage;
@@ -19,15 +21,14 @@ import java.util.Set;
 @MappedElementType(LibraryNameSpaces.STATE)
 @ToString(callSuper = true)
 public class StateMachineMapped extends TwinActionBaseUsage<StateUsage> implements StateMachine {
-
-
 	private Set<TwinAttributeMapped> localAttributes = new HashSet<>();
 	private Set<StateMachineMapped> states = new HashSet<>();
-	private Set<TwinActionBaseUsage> actions = new HashSet<>();
 
 	private TwinActionBaseUsage<?> entryAction;
 	private TwinActionBaseUsage<?> exitAction;
 	private TwinActionBaseUsage<?> doAction;
+
+	private List<Transition> transitions = new ArrayList<>();
 
 	public StateMachineMapped(StateUsage sysmlElement) {
 		super(sysmlElement);
@@ -46,54 +47,95 @@ public class StateMachineMapped extends TwinActionBaseUsage<StateUsage> implemen
 	@Override
 	public void parse(MappingContext context) throws MappingException {
 		super.parse(context);
-		ActionUsage entry = this.getSysmlElement().getEntryAction();
-		ActionUsage exit = this.getSysmlElement().getExitAction();
-		ActionUsage doA = this.getSysmlElement().getDoAction();
+
+		ActionUsage entry = getSysmlElement().getEntryAction();
+		ActionUsage exit = getSysmlElement().getExitAction();
+		ActionUsage doActionUsage = getSysmlElement().getDoAction();
 
 		if (entry != null) {
-			entryAction = context.map(entry, this, TwinActionBaseUsage.class);
+			entryAction = context.map(
+					entry,
+					this,
+					TwinActionBaseUsage.getRawClass()
+			);
 		}
+
 		if (exit != null) {
-			exitAction = context.map(exit, this, TwinActionBaseUsage.class);
+			exitAction = context.map(
+					exit,
+					this,
+					TwinActionBaseUsage.getRawClass()
+			);
 		}
 
-		if (doA != null) {
-			doAction = context.map(doA, this, TwinActionBaseUsage.class);
+		if (doActionUsage != null) {
+			doAction = context.map(
+					doActionUsage,
+					this,
+					TwinActionBaseUsage.getRawClass()
+			);
 		}
 
+		List<TwinActionBaseUsage<?>> s = new ArrayList<>();
 
-		actions = this.getSysmlElement().getNestedAction().stream().filter(x -> !(x.equals(entry) || x.equals(exit) || x.equals(doA))).map(x -> {
-			try {
-				return context.map(x, this, TwinActionBaseUsage.class);
-			} catch (MappingException e) {
-				throw new RuntimeException(e);
+		for (ActionUsage action : getSysmlElement().getNestedAction()) {
+
+			if (action.equals(entry)
+					|| action.equals(exit)
+					|| action.equals(doActionUsage)) {
+				continue;
 			}
-		}).collect(java.util.stream.Collectors.toSet());
 
-		localAttributes = new HashSet<>(context.mapSlot(this, "local_Attributes", TwinAttributeMapped.class));
+			s.add(
+					context.map(
+							action,
+							this,
+							TwinActionBaseUsage.getRawClass()
+					)
+			);
+		}
 
-		states = new HashSet<>(context.mapSlot(this, "states", StateMachineMapped.class));
+		twinActionBaseUsages = s;
+		transitions = twinActionBaseUsages.stream()
+				.filter(Transition.class::isInstance)
+				.map(Transition.class::cast)
+				.toList();
 
+		localAttributes = new HashSet<>(
+				context.mapSlot(
+						this,
+						"local_Attributes",
+						TwinAttributeMapped.class
+				)
+		);
+
+		states = new HashSet<>(
+				context.mapSlot(
+						this,
+						"states",
+						StateMachineMapped.class
+				)
+		);
 	}
 
 	@Override
 	public List<Transition> getTransitions() {
-		return actions.stream().filter(Transition.class::isInstance).map(Transition.class::cast).toList();
+		return new ArrayList<>(transitions);
 	}
 
 	@Override
 	public Action getEntryAction() {
-		return (Action) entryAction;
+		return entryAction;
 	}
 
 	@Override
 	public Action getExitAction() {
-		return (Action) exitAction;
+		return exitAction;
 	}
 
 	@Override
 	public Action getDoAction() {
-		return (Action) doAction;
+		return doAction;
 	}
 }
 

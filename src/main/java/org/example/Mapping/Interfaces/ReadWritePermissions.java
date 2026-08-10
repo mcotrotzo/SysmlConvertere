@@ -1,6 +1,8 @@
 package org.example.Mapping.Interfaces;
 
-public interface ReadWritePermissions extends Model{
+import java.util.Set;
 
-	Se
+public interface ReadWritePermissions{
+	Set<ReadWriteRoles> getReadPermissions();
+	Set<ReadWriteRoles> getWritePermissions();
 }

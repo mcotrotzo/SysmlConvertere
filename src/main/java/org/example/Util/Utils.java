@@ -170,7 +170,7 @@ public class Utils {
 		return result;
 	}
 
-	public ElemWithMult getMultiplicityRange(Type type) {
+	public static ElemWithMult getMultiplicityRange(Type type) {
 		MultiplicityRange mult = FeatureUtil.getMultiplicityRangeOf(type.getMultiplicity());
 		if (mult != null) {
 			int lower = mult.valueOf(mult.getLowerBound());

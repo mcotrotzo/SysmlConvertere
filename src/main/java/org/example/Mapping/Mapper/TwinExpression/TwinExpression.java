@@ -16,5 +16,7 @@ public abstract class TwinExpression<T extends Expression> extends MappedElement
 		return (Class<TwinExpression<?>>) (Class<?>) TwinExpression.class;
 
 	}
+
+
 }
 

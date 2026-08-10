@@ -1,14 +1,14 @@
 package org.example.Mapping.NewVersion;
 
 import org.example.Containers.ContainerManager;
+import org.example.Mapping.Interfaces.FeatureReference;
+import org.example.Mapping.Interfaces.TwinEnum;
 import org.example.Mapping.NewVersion.Abstract.MappedElement;
 import org.example.Mapping.NewVersion.Abstract.MappedReference;
 import org.example.Util.Utils;
-import org.omg.sysml.lang.sysml.Definition;
-import org.omg.sysml.lang.sysml.Element;
-import org.omg.sysml.lang.sysml.Feature;
-import org.omg.sysml.lang.sysml.Type;
+import org.omg.sysml.lang.sysml.*;
 
+import java.lang.Class;
 import java.lang.reflect.Constructor;
 import java.util.*;
 
@@ -129,7 +129,42 @@ public final class MappingContext {
 
 		return result;
 	}
+	public TwinAttributeLoopVariableMapped mapLoopVariable(
+			Type element,
+			MappedElement<?> owner
+	) throws MappingException {
 
+		MappedElement<?> existing = mappedElements.get(element);
+
+		if (existing != null) {
+			if (!(existing instanceof TwinAttributeLoopVariableMapped loopVariable)) {
+				throw new MappingException(
+						"Loop variable '%s' was already mapped as '%s'."
+								.formatted(
+										element.getName(),
+										existing.getClass().getSimpleName()
+								)
+				);
+			}
+
+			assignOwner(loopVariable, owner);
+			return loopVariable;
+		}
+
+		TwinAttributeLoopVariableMapped created =
+				new TwinAttributeLoopVariableMapped(element);
+
+		created.setOwner(owner);
+		mappedElements.put(element, created);
+
+		try {
+			created.parse(this);
+			return created;
+		} catch (MappingException | RuntimeException e) {
+			mappedElements.remove(element);
+			throw e;
+		}
+	}
 
 	public <T extends MappedElement<?>> T map(Type element, MappedElement<?> owner, Class<T> expectedClass) throws MappingException {
 
@@ -142,7 +177,11 @@ public final class MappingContext {
 		return expectedClass.cast(mapped);
 	}
 
-	public <S extends Type, T> List<T> mapOwned(MappedElement<?> mappedOwner, Class<S> sysmlMetaclass, Class<T> expectedClass) throws MappingException {
+	public <S extends Type, T> List<T> mapOwned(
+			MappedElement<?> mappedOwner,
+			Class<S> sysmlMetaclass,
+			Class<T> expectedClass
+	) throws MappingException {
 
 		List<T> result = new ArrayList<>();
 
@@ -154,13 +193,11 @@ public final class MappingContext {
 
 			S typedMember = sysmlMetaclass.cast(member);
 
-			try {
-				MappedElement<?> mapped = map(typedMember, mappedOwner);
+			MappedElement<?> mapped =
+					map(typedMember, mappedOwner);
 
-				if (expectedClass.isInstance(mapped)) {
-					result.add(expectedClass.cast(mapped));
-				}
-			} catch (NoMappedElementException ignored) {
+			if (expectedClass.isInstance(mapped)) {
+				result.add(expectedClass.cast(mapped));
 			}
 		}
 
@@ -176,6 +213,41 @@ public final class MappingContext {
 		T mapped = map(referent, null, expectedClass);
 
 		return new MappedReference<>(mapped);
+	}
+
+	public <T extends Enum<T> & TwinEnum> T extractEnum(
+			TwinAttributeMapped attribute,
+			Class<T> enumClass
+	) throws MappingException {
+
+		var expression = attribute.getTwinExpressions()
+				.orElseThrow(() -> new MappingException(
+						"Attribute '%s' has no expression"
+								.formatted(attribute.getName())
+				));
+
+		if (!(expression instanceof FeatureReference featureReference)) {
+			throw new MappingException(
+					"Attribute '%s' does not contain an enum reference"
+							.formatted(attribute.getName())
+			);
+		}
+
+		String symbol = featureReference
+				.getTarget()
+				.getReferent()
+				.getName();
+
+		for (T value : enumClass.getEnumConstants()) {
+			if (value.getStringRepresentation().equals(symbol)) {
+				return value;
+			}
+		}
+
+		throw new MappingException(
+				"Unknown value '%s' for enum '%s'"
+						.formatted(symbol, enumClass.getSimpleName())
+		);
 	}
 
 	public Utils getUtils() {

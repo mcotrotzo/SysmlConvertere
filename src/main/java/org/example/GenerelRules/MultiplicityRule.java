@@ -72,7 +72,7 @@ public class MultiplicityRule extends GenerelRules {
 	private void validateInheritedFeature(Type userType, Feature inheritedFeature) throws MappingException {
 
 		Set<Feature> specializingFeatures = userType.getFeature().stream().filter(feature -> directlySpecializes(feature, inheritedFeature)).collect(Collectors.toSet());
-		ElemWithMult parentMultiplicity = utilsManager.getMultiplicityRange(inheritedFeature);
+		ElemWithMult parentMultiplicity = Utils.getMultiplicityRange(inheritedFeature);
 
 		if (utilsManager.isFromDTLibrary(inheritedFeature)) {
 			validateLowerBound(userType, inheritedFeature, parentMultiplicity, specializingFeatures);
@@ -87,7 +87,7 @@ public class MultiplicityRule extends GenerelRules {
 	}
 
 	private void validateLowerBound(Type context, Feature parent, ElemWithMult parentMultiplicity, Set<Feature> children) throws MappingException {
-		int lowerSum = children.stream().map(utilsManager::getMultiplicityRange).mapToInt(ElemWithMult::getLowerBound).sum();
+		int lowerSum = children.stream().map(Utils::getMultiplicityRange).mapToInt(ElemWithMult::getLowerBound).sum();
 		if (lowerSum < parentMultiplicity.getLowerBound()) {
 			throw new MappingException(("Type '%s' does not fully concretize required feature '%s': " + "combined lower multiplicity is %d, required is %d.").formatted(getTypeName(context), getFeatureName(parent), lowerSum, parentMultiplicity.getLowerBound()));
 		}
@@ -99,12 +99,12 @@ public class MultiplicityRule extends GenerelRules {
 			return;
 		}
 		for (Feature child : children) {
-			ElemWithMult childMultiplicity = utilsManager.getMultiplicityRange(child);
+			ElemWithMult childMultiplicity = Utils.getMultiplicityRange(child);
 			if (childMultiplicity.getUpperBound() == -1) {
 				throw new MappingException(("Feature '%s' in type '%s' has multiplicity %s, " + "but parent feature '%s' has bounded multiplicity %s.").formatted(getFeatureName(child), getTypeName(context), formatMultiplicity(childMultiplicity), getFeatureName(parent), formatMultiplicity(parentMultiplicity)));
 			}
 		}
-		int upperSum = children.stream().map(utilsManager::getMultiplicityRange).mapToInt(ElemWithMult::getUpperBound).sum();
+		int upperSum = children.stream().map(Utils::getMultiplicityRange).mapToInt(ElemWithMult::getUpperBound).sum();
 		if (upperSum > parentUpper) {
 			throw new MappingException(("Features [%s] in type '%s' exceed the upper multiplicity " + "of feature '%s': %d > %d.").formatted(formatFeatureNames(children), getTypeName(context), getFeatureName(parent), upperSum, parentUpper));
 		}

@@ -27,6 +27,17 @@ public class TwinFeatureReferenceExpression extends TwinExpression<FeatureRefere
 	@Override
 	public void parse(MappingContext context) throws MappingException {
 		target = context.mapReference(getSysmlElement().getReferent(), TwinAttributeMapped.class);
-		;
+		System.out.println("TARGET NAME: " + target.getReferent().getName());
+		System.out.println("TARGET CLASS: " + target.getClass().getName());
+		System.out.println("TARGET OWNER: " + target.getReferent().getOwner());
+		System.out.println(
+				"TARGET REFERENT CLASS: "
+						+ target.getReferent().getClass().getName()
+		);
+
+		System.out.println(
+				"TARGET REFERENT NAME: "
+						+ target.getReferent().getName()
+		);
 	}
 }

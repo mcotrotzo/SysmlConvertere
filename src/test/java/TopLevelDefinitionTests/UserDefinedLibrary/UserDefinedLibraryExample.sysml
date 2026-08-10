@@ -72,6 +72,8 @@ package PositionThings{
                             }
                             first test5;
                             then test6;
+
+
                         }
                         assign avg := 0;
                     }

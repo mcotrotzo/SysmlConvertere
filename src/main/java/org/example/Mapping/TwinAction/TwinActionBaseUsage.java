@@ -12,12 +12,13 @@ import org.omg.sysml.lang.sysml.SuccessionAsUsage;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @MappedMetaclass
 @ToString(callSuper = true)
 public class TwinActionBaseUsage<T extends ActionUsage> extends MappedElement<T> implements Block {
-	List<TwinActionBaseUsage<?>> twinActionBaseUsages = new ArrayList<>();
-	List<TwinSuccessionAction> twinSuccessionActions = new ArrayList<>();
+	protected List<TwinActionBaseUsage<?>> twinActionBaseUsages = new ArrayList<>();
+	protected List<TwinSuccessionAction> twinSuccessionActions = new ArrayList<>();
 
 	public TwinActionBaseUsage(T sysmlElement) {
 		super(sysmlElement);
@@ -38,13 +39,26 @@ public class TwinActionBaseUsage<T extends ActionUsage> extends MappedElement<T>
 		return new ArrayList<>(twinSuccessionActions);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public void parse(MappingContext context) throws MappingException {
-		twinActionBaseUsages = context.mapOwned(this, ActionUsage.class, getRawClass());
-		twinSuccessionActions = context.mapOwned(this, SuccessionAsUsage.class, TwinSuccessionAction.class
+		List<TwinActionBaseUsage<?>> allActions =
+				context.mapOwned(
+						this,
+						ActionUsage.class,
+						getRawClass()
+				);
 
-		);
+		twinSuccessionActions =
+				context.mapOwned(
+						this,
+						SuccessionAsUsage.class,
+						TwinSuccessionAction.class
+				);
 
+		twinActionBaseUsages = allActions.stream()
+				.filter(action ->
+						!(action.getSysmlElement() instanceof SuccessionAsUsage)
+				)
+				.toList();
 	}
 }

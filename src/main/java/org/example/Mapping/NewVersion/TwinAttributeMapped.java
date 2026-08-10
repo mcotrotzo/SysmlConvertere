@@ -1,6 +1,7 @@
 package org.example.Mapping.NewVersion;
 
 import lombok.ToString;
+import org.example.Mapping.Interfaces.ReadWriteRoles;
 import org.example.Mapping.Interfaces.Reference;
 import org.example.Mapping.Interfaces.TwinAttribute;
 import org.example.Mapping.Mapper.TwinExpression.TwinExpression;
@@ -19,7 +20,9 @@ import java.util.*;
 @ToString(callSuper = true)
 public class TwinAttributeMapped extends MappedElement<Type> implements TwinAttribute {
 	private Set<TwinExpression<?>> twinExpressions;
-	private MappedReference<TwinAttributeMapped> typeReference;
+	protected MappedReference<TwinAttributeMapped> typeReference;
+
+	private ReadWriteRoles readWriteRoles;
 
 	public TwinAttributeMapped(Type sysmlElement) {
 		super(sysmlElement);
@@ -34,7 +37,10 @@ public class TwinAttributeMapped extends MappedElement<Type> implements TwinAttr
 
 	@Override
 	public Optional<org.example.Mapping.Interfaces.Expression> getTwinExpressions() {
-		return Optional.of(twinExpressions.stream().findFirst().get());
+		if (twinExpressions == null || twinExpressions.isEmpty()) {
+			return Optional.empty();
+		}
+		return Optional.ofNullable(twinExpressions.iterator().next());
 	}
 
 	@Override
@@ -42,7 +48,17 @@ public class TwinAttributeMapped extends MappedElement<Type> implements TwinAttr
 		return Optional.ofNullable(typeReference);
 	}
 
-	private void resolveTypeReference(MappingContext context) throws MappingException {
+	@Override
+	public ReadWriteRoles getRole() {
+		return readWriteRoles;
+	}
+
+
+	public void setRole(ReadWriteRoles role) {
+		this.readWriteRoles = role;
+	}
+
+	protected void resolveTypeReference(MappingContext context) throws MappingException {
 		if (!(getSysmlElement() instanceof Usage)) {
 			return;
 		}

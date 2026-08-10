@@ -24,7 +24,6 @@ public class TwinWhileActionMapped extends TwinActionBaseUsage<WhileLoopActionUs
 
 	@Override
 	public void parse(MappingContext context) throws MappingException {
-		super.parse(context);
 		if (sysmlElement.getWhileArgument() != null) {
 			condition = context.map(this.getSysmlElement().getWhileArgument(), this, TwinExpression.class);
 		}

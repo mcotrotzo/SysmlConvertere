@@ -15,7 +15,7 @@ library package TwinTriggerConfigurationLibrary{
     }
 
     part def EventBasedConfiguration :> TriggerConfiguration {
-        attribute triggeringAtributes_ : TwinAttribute[0..*];
+        attribute triggeringAtributes_ : TwinAttribute[1..*];
         attribute onChange_ : TwinBoolean[1];
     }
 }

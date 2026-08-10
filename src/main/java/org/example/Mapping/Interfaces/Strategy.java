@@ -9,5 +9,5 @@ public interface Strategy extends Model {
 
 	List<TwinAttribute> getOutputs();
 
-	List<TwinStringMapped> getLambdaPath();
+	TwinStringAttribute getLambdaPath();
 }

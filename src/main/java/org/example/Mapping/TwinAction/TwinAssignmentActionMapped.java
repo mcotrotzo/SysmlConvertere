@@ -33,7 +33,6 @@ public class TwinAssignmentActionMapped extends TwinActionBaseUsage<AssignmentAc
 
 	@Override
 	public void parse(MappingContext context) throws MappingException {
-		super.parse(context);
 		referent = context.mapReference(getSysmlElement().getReferent(), TwinAttributeMapped.class);
 		value = context.map(this.sysmlElement.getValueExpression(), this, TwinExpression.class);
 	}

@@ -3,21 +3,28 @@ package org.example.Mapping.NewVersion.Abstract;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.example.ElemWithMult;
 import org.example.Mapping.Interfaces.KIND;
 import org.example.Mapping.Interfaces.Model;
+import org.example.Mapping.Interfaces.ReadWriteRoles;
 import org.example.Mapping.NewVersion.MappingContext;
 import org.example.Mapping.NewVersion.MappingException;
 import org.omg.sysml.lang.sysml.Definition;
+import org.omg.sysml.lang.sysml.Feature;
+import org.omg.sysml.lang.sysml.MultiplicityRange;
 import org.omg.sysml.lang.sysml.Type;
+import org.omg.sysml.util.FeatureUtil;
+import org.omg.sysml.util.TypeUtil;
 
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 @ToString(of = {"name", "id"})
 public abstract class MappedElement<T extends Type> implements Model {
 
 	@Getter
 	protected T sysmlElement;
+
+
 
 	@Getter
 	@Setter
@@ -67,6 +74,17 @@ public abstract class MappedElement<T extends Type> implements Model {
 	@Override
 	public KIND getKind() {
 		return sysmlElement instanceof Definition ? KIND.DEFINITION : KIND.USAGE;
+	}
+
+
+	@Override
+	public Set<ReadWriteRoles> getReadPermissions() {
+		return new HashSet<>();
+	}
+
+	@Override
+	public Set<ReadWriteRoles> getWritePermissions() {
+		return new HashSet<>();
 	}
 
 }

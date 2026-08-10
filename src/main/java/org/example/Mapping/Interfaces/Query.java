@@ -7,9 +7,9 @@ public interface Query extends Function {
 
 	List<TwinIntegerAttribute> getSince();
 
-	List<TwinAttribute> getSinceUnit();
+	EnumTimeUnit getSinceUnit();
 
-	List<TwinAttribute> getOrderBy();
+	EnumOrderBy getOrderBy();
 
 	List<TwinBooleanAttribute> getFilterExpression();
 

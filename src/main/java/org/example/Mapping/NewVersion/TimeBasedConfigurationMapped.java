@@ -1,9 +1,7 @@
 package org.example.Mapping.NewVersion;
 
 import lombok.ToString;
-import org.example.Mapping.Interfaces.TimeBasedConfiguration;
-import org.example.Mapping.Interfaces.TwinAttribute;
-import org.example.Mapping.Interfaces.TwinIntegerAttribute;
+import org.example.Mapping.Interfaces.*;
 import org.example.Mapping.NewVersion.Abstract.MappedElementType;
 import org.example.Util.LibraryNameSpaces;
 import org.omg.sysml.lang.sysml.Type;
@@ -17,7 +15,7 @@ import java.util.Set;
 @ToString(callSuper = true)
 public class TimeBasedConfigurationMapped extends TriggerConfigurationMapped implements TimeBasedConfiguration {
 	private Set<TwinIntegerMapped> triggerInterval = new HashSet<>();
-	private Set<TwinAttributeMapped> triggerIntervalUnit = new HashSet<>();
+	private EnumTimeUnit triggerIntervalUnit;
 
 	public TimeBasedConfigurationMapped(Type sysmlElement) {
 		super(sysmlElement);
@@ -29,8 +27,8 @@ public class TimeBasedConfigurationMapped extends TriggerConfigurationMapped imp
 	}
 
 	@Override
-	public List<TwinAttribute> getTriggerIntervalUnit() {
-		return new ArrayList<>(triggerIntervalUnit);
+	public EnumTimeUnit getTriggerIntervalUnit() {
+		return triggerIntervalUnit;
 	}
 
 
@@ -38,6 +36,10 @@ public class TimeBasedConfigurationMapped extends TriggerConfigurationMapped imp
 	public void parse(MappingContext context) throws MappingException {
 		super.parse(context);
 		triggerInterval = new HashSet<>(context.mapSlot(this, "triggerInterval_", TwinIntegerMapped.class));
-		triggerIntervalUnit = new HashSet<>(context.mapSlot(this, "triggerIntervalUnit_", TwinAttributeMapped.class));
+		Set<TwinAttributeMapped> triggerIntervalUnitSet = new HashSet<>(context.mapSlot(this, "triggerIntervalUnit_", TwinAttributeMapped.class));
+		if(!triggerIntervalUnitSet.isEmpty()){
+			triggerIntervalUnit = context.extractEnum(triggerIntervalUnitSet.iterator().next(), EnumTimeUnit.class);
+		}
+		System.out.println("triggerInterval: " + triggerIntervalUnit);
 	}
 }

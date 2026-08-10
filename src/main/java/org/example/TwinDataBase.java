@@ -1,21 +1,25 @@
 package org.example;
 
 
+import org.example.Mapping.Interfaces.KIND;
 import org.example.Mapping.Interfaces.Model;
+import org.example.Mapping.Interfaces.Reference;
 import org.example.Mapping.NewVersion.Abstract.MappedElement;
 import org.example.Mapping.NewVersion.Abstract.MappedReference;
+import org.example.Util.Utils;
+import org.omg.sysml.util.FeatureUtil;
+import org.omg.sysml.util.TypeUtil;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.lang.reflect.Type;
+import java.util.*;
 
 public class TwinDataBase {
 
-	Map<String, Model> mappedElements = new HashMap<>();
-
+	private Map<String, Model> mappedElements = new HashMap<>();
+	private List<MappedElement<?>> mappedRaWElementzs = new ArrayList<>();
 
 	public TwinDataBase(List<MappedElement<?>> m) {
+		this.mappedRaWElementzs =m;
 		register(m);
 	}
 
@@ -31,7 +35,7 @@ public class TwinDataBase {
 		return mappedElements.values().stream().filter(type::isInstance).map(type::cast).collect(java.util.stream.Collectors.toSet());
 	}
 
-	public <T extends Model> T getByReference(MappedReference<?> reference, Class<T> type) {
+	public <T extends Model> T getByReference(Reference<?> reference, Class<T> type) {
 		Model target = mappedElements.get(reference.getTargetId());
 
 		if (target == null) {
@@ -48,6 +52,49 @@ public class TwinDataBase {
 
 	public <T extends Model> Set<Class<T>> getAllTypes() {
 		return (Set<Class<T>>) mappedElements.values().stream().map(x -> (Class<T>) x.getClass()).collect(java.util.stream.Collectors.toSet());
+	}
+
+
+	public List<Model> getSpecializationChildren(Model target) {
+
+		if (!(target instanceof MappedElement<?> mappedTarget)) {
+			throw new IllegalArgumentException(
+					"Model element must be a mapped element"
+			);
+		}
+
+		if (target.getKind().equals(KIND.DEFINITION)) {
+			throw new IllegalArgumentException(
+					"Model element must be a usage"
+			);
+		}
+
+		return mappedRaWElementzs.stream()
+				.filter(mapped -> mapped != mappedTarget)
+				.filter(mapped ->
+						TypeUtil.getSupertypesOf(
+								mapped.getSysmlElement(),
+								true
+						).contains(mappedTarget.getSysmlElement())
+				)
+				.map(mapped -> (Model) mapped)
+				.toList();
+	}
+
+	public ElemWithMult getMultiplicity(Model target) {
+		if (!(target instanceof MappedElement<?> mappedTarget)) {
+			throw new IllegalArgumentException(
+					"Model element must be a mapped element"
+			);
+		}
+
+		if (target.getKind().equals(KIND.DEFINITION)) {
+			throw new IllegalArgumentException(
+					"Model element must be a usage"
+			);
+		}
+
+		return Utils.getMultiplicityRange(mappedTarget.getSysmlElement());
 	}
 
 }

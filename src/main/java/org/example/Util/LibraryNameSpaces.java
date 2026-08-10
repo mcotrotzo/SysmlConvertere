@@ -22,7 +22,11 @@ public enum LibraryNameSpaces {
 
 	TWIN_CUSTOM_TYPE("UserLibrary::TwinCustomType"),
 
+	ORDER_BY("TwinEnumLibrary::ORDER_BY"),
+	TIME_UNIT("TwinEnumLibrary::TimeUnit"),
+
 	TWIN_ATTRIBUTE("Base::DataValue"), TWIN_REAL("ScalarValues::Real"), TWIN_INTEGER("ScalarValues::Integer"), TWIN_BOOLEAN("ScalarValues::Boolean"), TWIN_STRING("ScalarValues::String");
+
 
 	private final String namespace;
 

@@ -8,13 +8,14 @@ import org.example.Mapping.Interfaces.Model;
 import org.example.Mapping.Mapper.TwinExpression.TwinExpression;
 import org.example.Mapping.NewVersion.MappingContext;
 import org.example.Mapping.NewVersion.MappingException;
+import org.example.Mapping.NewVersion.TwinAttributeLoopVariableMapped;
 import org.example.Mapping.NewVersion.TwinAttributeMapped;
 import org.omg.sysml.lang.sysml.ForLoopActionUsage;
 
 @MappedMetaclass
 @ToString(callSuper = true)
 public class TwinForLoopActionMapped extends TwinActionBaseUsage<ForLoopActionUsage> implements ForLoop {
-	private TwinAttributeMapped loopVariable;
+	private TwinAttributeLoopVariableMapped loopVariable;
 	private TwinExpression<?> expr;
 	private TwinActionBaseUsage<?> body;
 
@@ -40,9 +41,22 @@ public class TwinForLoopActionMapped extends TwinActionBaseUsage<ForLoopActionUs
 
 	@Override
 	public void parse(MappingContext context) throws MappingException {
-		super.parse(context);
-		loopVariable = context.map(this.getSysmlElement().getLoopVariable(), this, TwinAttributeMapped.class);
-		expr = context.map(this.getSysmlElement().getSeqArgument(), this, TwinExpression.class);
-		body = context.map(this.getSysmlElement().getBodyAction(), this, TwinActionBaseUsage.class);
+
+		loopVariable = context.mapLoopVariable(
+				getSysmlElement().getLoopVariable(),
+				this
+		);
+
+		expr = context.map(
+				getSysmlElement().getSeqArgument(),
+				this,
+				TwinExpression.class
+		);
+
+		body = context.map(
+				getSysmlElement().getBodyAction(),
+				this,
+				TwinActionBaseUsage.class
+		);
 	}
 }

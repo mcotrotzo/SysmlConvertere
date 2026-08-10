@@ -5,9 +5,9 @@ import org.example.Mapping.NewVersion.Abstract.MappedReference;
 import java.util.List;
 
 public interface Transition extends Action {
-	MappedReference<? extends Action> getSource();
+	Reference<? extends Action> getSource();
 
-	MappedReference<? extends Action> getTarget();
+	Reference<? extends Action> getTarget();
 
 	List<Expression> getGuard();
 

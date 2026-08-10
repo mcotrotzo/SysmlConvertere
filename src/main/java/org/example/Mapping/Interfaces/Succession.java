@@ -5,5 +5,5 @@ import org.example.Mapping.NewVersion.Abstract.MappedReference;
 import java.util.List;
 
 public interface Succession extends Model {
-	List<MappedReference<? extends Action>> getActionList();
+	List<Reference<? extends Action>> getActionList();
 }

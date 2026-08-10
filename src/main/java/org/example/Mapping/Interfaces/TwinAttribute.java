@@ -7,4 +7,6 @@ public interface TwinAttribute extends Model {
 	Optional<Expression> getTwinExpressions();
 
 	Optional<Reference<? extends TwinAttribute>> getDefinitionReference();
+
+	ReadWriteRoles getRole();
 }

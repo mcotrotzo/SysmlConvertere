@@ -2,12 +2,14 @@ package org.example.Mapping.TwinAction;
 
 import lombok.ToString;
 import org.example.Mapping.Interfaces.Action;
+import org.example.Mapping.Interfaces.Reference;
 import org.example.Mapping.Interfaces.Succession;
 import org.example.Mapping.NewVersion.Abstract.MappedElement;
 import org.example.Mapping.NewVersion.Abstract.MappedReference;
 import org.example.Mapping.NewVersion.MappingContext;
 import org.example.Mapping.NewVersion.MappingException;
 import org.omg.sysml.lang.sysml.ActionUsage;
+import org.omg.sysml.lang.sysml.Feature;
 import org.omg.sysml.lang.sysml.ReferenceUsage;
 import org.omg.sysml.lang.sysml.SuccessionAsUsage;
 
@@ -27,23 +29,54 @@ public class TwinSuccessionAction extends MappedElement<SuccessionAsUsage> imple
 	@Override
 	public void parse(MappingContext context) throws MappingException {
 
-		for (var member : getSysmlElement().getOwnedMember()) {
-			if (!(member instanceof ReferenceUsage referenceUsage)) {
-				continue;
+		var sourceFeature = getSysmlElement().getSourceFeature();
+		var targetFeature = getSysmlElement().getTargetFeature();
+
+		if (sourceFeature == null) {
+			throw new MappingException(
+					"Succession has no source feature"
+			);
+		}
+
+		if (targetFeature == null) {
+			throw new MappingException(
+					"Succession has no target feature"
+			);
+		}
+
+
+		if (!(sourceFeature instanceof ActionUsage sourceAction)) {
+			throw new MappingException(
+					"Succession source is not an ActionUsage"
+			);
+		}
+		System.out.println(sourceAction.getName()+"Class name" + sourceAction.getClass().getName());
+
+		targets.add(
+				context.mapReference(
+						sourceAction,
+						TwinActionBaseUsage.getRawClass()
+				)
+		);
+
+		for(Feature target:targetFeature){
+			if (!(target instanceof ActionUsage targetAction)) {
+				throw new MappingException(
+						"Succession target is not an ActionUsage"
+				);
 			}
-
-			var referent = referenceUsage.referencedFeatureTarget();
-
-			if (!(referent instanceof ActionUsage actionUsage)) {
-				continue;
-			}
-
-			targets.add(context.mapReference(actionUsage, TwinActionBaseUsage.getRawClass()));
+			System.out.println(target.getName()+"Class name" + target.getClass().getName());
+			targets.add(
+					context.mapReference(
+							targetAction,
+							TwinActionBaseUsage.getRawClass()
+					)
+			);
 		}
 	}
 
 	@Override
-	public List<MappedReference<? extends Action>> getActionList() {
+	public List<Reference<? extends Action>> getActionList() {
 		return new ArrayList<>(targets);
 	}
 }

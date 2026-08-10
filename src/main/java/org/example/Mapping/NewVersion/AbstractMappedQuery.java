@@ -1,10 +1,7 @@
 package org.example.Mapping.NewVersion;
 
 import org.example.ElemWithMult;
-import org.example.Mapping.Interfaces.Query;
-import org.example.Mapping.Interfaces.TwinAttribute;
-import org.example.Mapping.Interfaces.TwinBooleanAttribute;
-import org.example.Mapping.Interfaces.TwinIntegerAttribute;
+import org.example.Mapping.Interfaces.*;
 import org.example.Mapping.NewVersion.Abstract.MappedElement;
 import org.example.Mapping.TwinAction.MappedMetaclass;
 import org.omg.sysml.lang.sysml.PartUsage;
@@ -19,8 +16,8 @@ public abstract class AbstractMappedQuery extends MappedElement<PartUsage> imple
 
 	protected Set<TwinAttributeMapped> twinAttributes = new HashSet<>();
 	protected Set<TwinIntegerMapped> since = new HashSet<>();
-	protected Set<TwinAttributeMapped> sinceUnit = new HashSet<>();
-	protected Set<TwinAttributeMapped> orderBy = new HashSet<>();
+	protected EnumTimeUnit sinceUnit;
+	protected EnumOrderBy orderBy;
 	protected Set<TwinIntegerMapped> limit = new HashSet<>();
 	protected Set<TwinBooleanMapped> filterExpression = new HashSet<>();
 	protected Set<TwinAttributeMapped> result = new HashSet<>();
@@ -36,9 +33,19 @@ public abstract class AbstractMappedQuery extends MappedElement<PartUsage> imple
 
 		since = parseSlot(context, "since", TwinIntegerMapped.class);
 
-		sinceUnit = parseSlot(context, "sinceUnit", TwinAttributeMapped.class);
+		Set<TwinAttributeMapped> attr = parseSlot(context, "sinceUnit", TwinAttributeMapped.class);
+		if (!attr.isEmpty()) {
+			sinceUnit = context.extractEnum(
+					attr.iterator().next(),
+					EnumTimeUnit.class
+			);
+		}
+		Set<TwinAttributeMapped> orderByAttr = parseSlot(context, "orderBy", TwinAttributeMapped.class);
 
-		orderBy = parseSlot(context, "orderBy", TwinAttributeMapped.class);
+		if(!orderByAttr.isEmpty()){
+			orderBy = context.extractEnum(orderByAttr.iterator().next(), EnumOrderBy.class);
+		}
+
 
 		limit = parseSlot(context, "limit", TwinIntegerMapped.class);
 
@@ -78,13 +85,13 @@ public abstract class AbstractMappedQuery extends MappedElement<PartUsage> imple
 	}
 
 	@Override
-	public List<TwinAttribute> getSinceUnit() {
-		return new ArrayList<>(sinceUnit);
+	public EnumTimeUnit getSinceUnit() {
+		return sinceUnit;
 	}
 
 	@Override
-	public List<TwinAttribute> getOrderBy() {
-		return new ArrayList<>(orderBy);
+	public EnumOrderBy getOrderBy() {
+		return orderBy;
 	}
 
 	@Override
