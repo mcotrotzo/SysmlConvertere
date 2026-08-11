@@ -28,7 +28,6 @@ library package DescriptiveModelLibrary {
     abstract part def GroupedHistoryQuery{
 
         attribute twinAttribute[1] : TwinAttribute;
-        attribute groupBy[1] : TwinString;
         attribute since[0..1] : TwinInteger;
         attribute sinceUnit[0..1] : TimeUnit;
         attribute orderBy[0..1] : ORDER_BY;

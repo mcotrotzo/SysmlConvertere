@@ -20,7 +20,6 @@ package PositionThings{
         
     }
     part def PositionHistory :> GroupedHistoryQuery {
-                :>>groupBy default "x";
 
             }
 
