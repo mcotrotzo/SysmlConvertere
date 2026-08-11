@@ -16,9 +16,26 @@ import java.util.stream.Stream;
 
 public final class ReadManager {
 
-	private static final Path STANDARD_LIBRARY = Path.of("target", "sysml-library", "sysml", "sysml.library").toAbsolutePath().normalize();
+	private static final Path STANDARD_LIBRARY;
 
-	private static final Path DT_LIBRARY = Path.of("DTLibrary").toAbsolutePath().normalize();
+	static {
+		try {
+			STANDARD_LIBRARY = extractStandardLibrary("sysml_library");
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	private static final Path DT_LIBRARY;
+
+	static {
+		try {
+			DT_LIBRARY = extractStandardLibrary("DTLibrary");
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 
 	private final SysMLInteractive sysMLInteractive;
 
@@ -28,6 +45,56 @@ public final class ReadManager {
 
 	private final Element rootElement;
 	private final LoadedResources loadedResources;
+
+
+	private static Path extractStandardLibrary(String ressourceName) throws IOException {
+
+		Path tempDirectory = Files.createTempDirectory(ressourceName+"_temp");
+
+		try (var input = ReadManager.class
+				.getClassLoader()
+				.getResourceAsStream(ressourceName+".zip")) {
+
+			if (input == null) {
+				throw new IllegalStateException(
+						"Bundled SysML standard library not found."
+				);
+			}
+
+			try (var zip = new java.util.zip.ZipInputStream(input)) {
+
+				java.util.zip.ZipEntry entry;
+
+				while ((entry = zip.getNextEntry()) != null) {
+
+					Path destination = tempDirectory
+							.resolve(entry.getName())
+							.normalize();
+
+					if (!destination.startsWith(tempDirectory)) {
+						throw new IOException(
+								"Invalid ZIP entry: " + entry.getName()
+						);
+					}
+
+					if (entry.isDirectory()) {
+						Files.createDirectories(destination);
+					} else {
+						Files.createDirectories(destination.getParent());
+						Files.copy(
+								zip,
+								destination,
+								java.nio.file.StandardCopyOption.REPLACE_EXISTING
+						);
+					}
+
+					zip.closeEntry();
+				}
+			}
+		}
+
+		return tempDirectory;
+	}
 
 	public ReadManager(String userTwinModelPath, String userLibraryPath) {
 		try {
@@ -41,11 +108,7 @@ public final class ReadManager {
 
 			sysMLInteractive = SysMLInteractive.createInstance();
 
-			/*
-			 * Vor loadLibrary() sind normalerweise keine Resources
-			 * vorhanden. Der Snapshot macht die Ermittlung trotzdem
-			 * unabhängig vom konkreten Ausgangszustand.
-			 */
+
 			Set<Resource> resourcesBeforeStandardLibrary = snapshotResources();
 
 			sysMLInteractive.loadLibrary(standardLibrary.toString());
@@ -54,14 +117,6 @@ public final class ReadManager {
 
 			standardLibraryResources.removeAll(resourcesBeforeStandardLibrary);
 
-			/*
-			 * addResource = true ist entscheidend:
-			 *
-			 * - DTLibrary bleibt im gemeinsamen ResourceSet.
-			 * - UserLibrary kann DTLibrary-Typen auflösen.
-			 * - Twinmodelle können UserLibrary- und DTLibrary-Typen
-			 *   auflösen.
-			 */
 			dtLibraryResult = processDirectory(dtLibrary, "DT library");
 
 			Resource dtLibraryResource = requireResultResource(dtLibraryResult, "DT library");
