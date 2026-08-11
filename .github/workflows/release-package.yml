@@ -1,10 +1,18 @@
+name: Publish SysML Dependency
+
 on:
-  release:
-    types:
-      - "published"
+  push:
+    branches:
+      - "master"
+
 jobs:
   publish:
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+
     steps:
       - uses: actions/checkout@v4
 
@@ -13,13 +21,26 @@ jobs:
           distribution: temurin
           java-version: '21'
           server-id: github
-          settings-path: ${{ github.workspace }}
-      - name: Download and install SysML dependency
-        run: mvn -Psetup initialize
+
+      - name: Download SysML release
+        run: |
+          wget https://github.com/Systems-Modeling/SysML-v2-Pilot-Implementation/releases/download/2025-12/jupyter-sysml-kernel-0.55.0.zip
+          unzip jupyter-sysml-kernel-0.55.0.zip -d sysml
+
+      - name: Publish SysML Maven artifact
+        run: |
+          mvn deploy:deploy-file \
+            -Dfile=sysml/sysml/jupyter-sysml-kernel-0.55.0-all.jar \
+            -DgroupId=org.omg.sysml \
+            -DartifactId=jupyter-sysml-kernel \
+            -Dversion=0.55.0 \
+            -Dpackaging=jar \
+            -DrepositoryId=github \
+            -Durl=https://maven.pkg.github.com/mcotrotzo/SysmlConvertere
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Test
         run: mvn clean test
-      - name: Build
-        run: mvn clean package
       - name: Publish
         run: mvn deploy -DskipTests
         env:

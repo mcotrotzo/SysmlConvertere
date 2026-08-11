@@ -3,7 +3,8 @@ package TopLevelDefinitionTests;
 import org.example.Mapping.Interfaces.GroupedHistoryQuery;
 import org.example.Mapping.Interfaces.QueryHistory;
 import org.example.Mapping.Interfaces.QueryResult;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
 
 public class TestQuery extends AbstarctTest {
 

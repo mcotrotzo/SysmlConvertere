@@ -1,11 +1,13 @@
 package TopLevelDefinitionTests;
 
 import org.example.Mapping.NewVersion.MappingException;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TestQueryResultResultIsAgainSpecialiced extends AbstarctTest {
 
@@ -64,8 +66,8 @@ public class TestQueryResultResultIsAgainSpecialiced extends AbstarctTest {
 
 	@Test
 	public void throwsException() {
-		MappingException exception = Assert.assertThrows(MappingException.class, () -> super.testTopLevelDefinition());
+		MappingException exception = assertThrows(MappingException.class, () -> super.testTopLevelDefinition());
 
-		Assert.assertTrue(exception.getMessage().contains("QueryResultMapped must have exactly one field which redefines result, but found"));
+		assertTrue(exception.getMessage().contains("QueryResultMapped must have exactly one field which redefines result, but found"));
 	}
 }

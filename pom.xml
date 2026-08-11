@@ -25,6 +25,13 @@
         </repository>
     </distributionManagement>
 
+    <repositories>
+        <repository>
+            <id>github</id>
+            <url>https://maven.pkg.github.com/mcotrotzo/SysmlConvertere</url>
+        </repository>
+    </repositories>
+
     <dependencies>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
@@ -46,6 +53,11 @@
             <groupId>io.github.classgraph</groupId>
             <artifactId>classgraph</artifactId>
             <version>4.8.179</version>
+        </dependency>
+        <dependency>
+            <groupId>org.omg.sysml</groupId>
+            <artifactId>jupyter-sysml-kernel</artifactId>
+            <version>${sysml.artifact.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
@@ -86,66 +98,4 @@
             </plugin>
         </plugins>
     </build>
-
-    <profiles>
-        <profile>
-            <id>setup</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>com.googlecode.maven-download-plugin</groupId>
-                        <artifactId>download-maven-plugin</artifactId>
-                        <version>1.7.1</version>
-                        <executions>
-                            <execution>
-                                <id>download-sysml-kernel</id>
-                                <phase>initialize</phase>
-                                <goals>
-                                    <goal>wget</goal>
-                                </goals>
-                                <configuration>
-                                    <url>${sysml.release.url}/jupyter-sysml-kernel-${sysml.artifact.version}.zip</url>
-                                    <outputDirectory>${project.build.directory}/sysml-download</outputDirectory>
-                                    <unpack>true</unpack>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <id>download-sysml-library</id>
-                                <phase>initialize</phase>
-                                <goals>
-                                    <goal>wget</goal>
-                                </goals>
-                                <configuration>
-                                    <url>${sysml.release.url}/jupyter-sysml-kernel-${sysml.artifact.version}.zip</url>
-                                    <outputDirectory>${project.build.directory}/sysml-library</outputDirectory>
-                                    <unpack>true</unpack>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <!-- JAR ins lokale Maven Repo installieren -->
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-install-plugin</artifactId>
-                        <version>3.1.1</version>
-                        <executions>
-                            <execution>
-                                <id>install-sysml</id>
-                                <phase>initialize</phase>
-                                <goals>
-                                    <goal>install-file</goal>
-                                </goals>
-                                <configuration>
-                                    <file>
-                                        ${project.build.directory}/sysml-download/sysml/jupyter-sysml-kernel-${sysml.artifact.version}-all.jar
-                                    </file>
-                                    <pomFile>${project.basedir}/jupyter-sysml-kernel.pom</pomFile>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
 </project>

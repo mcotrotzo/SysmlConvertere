@@ -7,8 +7,10 @@ import org.example.Mapping.Mapper.TwinExpression.TwinLiteralExpressionElements.T
 import org.example.Mapping.Mapper.TwinExpression.TwinLiteralExpressionElements.TwinLiteralIntegerExpression;
 import org.example.Mapping.NewVersion.Abstract.MappedReference;
 import org.example.Mapping.NewVersion.BaseFunctionKind;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
+
 
 public class TestExpressions extends AbstarctTest {
 
@@ -18,7 +20,7 @@ public class TestExpressions extends AbstarctTest {
 
 		Expression root = temp.getTwinExpressions().get();
 
-		Assert.assertTrue(root instanceof TwinCalculationExpression);
+		assertTrue(root instanceof TwinCalculationExpression);
 
 		TwinCalculationExpression outer = (TwinCalculationExpression) root;
 
@@ -26,16 +28,16 @@ public class TestExpressions extends AbstarctTest {
 
 		var referentFunction = result.getByReference(ref, BaseFunction.class);
 
-		Assert.assertNotNull(referentFunction);
-		Assert.assertEquals(BaseFunctionKind.COLLECTION, referentFunction.getFunctionKind());
-		Assert.assertEquals(2, outer.getArguments().size());
+		assertNotNull(referentFunction);
+		assertEquals(BaseFunctionKind.COLLECTION, referentFunction.getFunctionKind());
+		assertEquals(2, outer.getArguments().size());
 
 		Expression first = outer.getArguments().get(0);
 		Expression second = outer.getArguments().get(1);
 
-		Assert.assertTrue("Expected first argument to be TwinLiteralIntegerExpression, but was " + first.getClass().getName(), first instanceof TwinLiteralIntegerExpression);
+		assertInstanceOf(TwinLiteralIntegerExpression.class, first);
 
-		Assert.assertTrue("Expected second argument to be TwinCalculationExpression, but was " + second.getClass().getName(), second instanceof TwinCalculationExpression);
+		assertInstanceOf(TwinCalculationExpression.class,second);
 
 		TwinCalculationExpression inner = (TwinCalculationExpression) second;
 
@@ -43,73 +45,73 @@ public class TestExpressions extends AbstarctTest {
 
 		var referentInnerFunction = result.getByReference(innerRed, BaseFunction.class);
 
-		Assert.assertNotNull(referentInnerFunction);
-		Assert.assertEquals(BaseFunctionKind.COLLECTION, referentInnerFunction.getFunctionKind());
-		Assert.assertEquals(2, inner.getArguments().size());
+		assertNotNull(referentInnerFunction);
+		assertEquals(BaseFunctionKind.COLLECTION, referentInnerFunction.getFunctionKind());
+		assertEquals(2, inner.getArguments().size());
 
-		Assert.assertTrue(inner.getArguments().get(0) instanceof TwinLiteralIntegerExpression);
+		assertTrue(inner.getArguments().get(0) instanceof TwinLiteralIntegerExpression);
 
-		Assert.assertTrue(inner.getArguments().get(1) instanceof TwinLiteralIntegerExpression);
+		assertTrue(inner.getArguments().get(1) instanceof TwinLiteralIntegerExpression);
 	}
 
 	@Test
 	public void testBaseFunctionExpression() {
 		TwinRealAttribute voltage = named(TwinRealAttribute.class, "baseFunctionTest");
 
-		Assert.assertNotNull(voltage.getTwinExpressions().get());
+		assertNotNull(voltage.getTwinExpressions().get());
 
 		Expression root = voltage.getTwinExpressions().get();
 
-		Assert.assertTrue(root instanceof TwinCalculationExpression);
+		assertTrue(root instanceof TwinCalculationExpression);
 
 		TwinCalculationExpression calculation = (TwinCalculationExpression) root;
 
 		BaseFunction function = result.getByReference(calculation.getCalledFunction(), BaseFunction.class);
 
-		Assert.assertNotNull(function);
-		Assert.assertEquals(BaseFunctionKind.DIVIDE, function.getFunctionKind());
+		assertNotNull(function);
+		assertEquals(BaseFunctionKind.DIVIDE, function.getFunctionKind());
 
-		Assert.assertEquals(2, calculation.getArguments().size());
+		assertEquals(2, calculation.getArguments().size());
 
 		Expression firstArgument = calculation.getArguments().get(0);
 
 		Expression secondArgument = calculation.getArguments().get(1);
 
 
-		Assert.assertTrue("Expected first argument to be TwinLiteralIntegerExpression, but was " + firstArgument.getClass().getName(), firstArgument instanceof TwinLiteralIntegerExpression);
+		assertInstanceOf(TwinLiteralIntegerExpression.class, firstArgument);
 
-		Assert.assertTrue("Expected second argument to be TwinLiteralIntegerExpression, but was " + secondArgument.getClass().getName(), secondArgument instanceof TwinLiteralIntegerExpression);
+		assertInstanceOf(TwinLiteralIntegerExpression.class, secondArgument);
 
 		TwinLiteralIntegerExpression firstLiteral = (TwinLiteralIntegerExpression) firstArgument;
 
 		TwinLiteralIntegerExpression secondLiteral = (TwinLiteralIntegerExpression) secondArgument;
 
-		Assert.assertEquals(Integer.valueOf(10), firstLiteral.getLiteralValue());
+		assertEquals(Integer.valueOf(10), firstLiteral.getLiteralValue());
 
-		Assert.assertEquals(Integer.valueOf(2), secondLiteral.getLiteralValue());
+		assertEquals(Integer.valueOf(2), secondLiteral.getLiteralValue());
 	}
 
 	@Test
 	public void testConstructorExpression() {
 		TwinRealAttribute current = named(TwinRealAttribute.class, "constructorTest");
 
-		Assert.assertNotNull(current.getTwinExpressions().get());
+		assertNotNull(current.getTwinExpressions().get());
 
 		Expression root = current.getTwinExpressions().get();
 
-		Assert.assertTrue(root instanceof TwinConstructorExpression);
+		assertInstanceOf(TwinConstructorExpression.class, root);
 
 		TwinConstructorExpression calculation = (TwinConstructorExpression) root;
 
 		TwinAttribute referentType = result.getByReference(calculation.getConstructedType(), TwinAttribute.class);
 
-		Assert.assertNotNull(referentType);
+		assertNotNull(referentType);
 
-		Assert.assertTrue(calculation.getArguments().size() == 1);
+		assertEquals(1, calculation.getArguments().size());
 		Expression firstArgument = calculation.getArguments().get(0);
 
-		Assert.assertTrue(firstArgument instanceof TwinLiteralIntegerExpression);
-		Assert.assertEquals(Integer.valueOf(0), ((TwinLiteralIntegerExpression) firstArgument).getLiteralValue());
+		assertInstanceOf(TwinLiteralIntegerExpression.class, firstArgument);
+		assertEquals(Integer.valueOf(0), ((TwinLiteralIntegerExpression) firstArgument).getLiteralValue());
 
 	}
 
@@ -117,23 +119,23 @@ public class TestExpressions extends AbstarctTest {
 	public void testConstructorBooleanExpression() {
 		TwinBooleanAttribute current = named(TwinBooleanAttribute.class, "constructorTestBoolean");
 
-		Assert.assertNotNull(current.getTwinExpressions().get());
+		assertNotNull(current.getTwinExpressions().get());
 
 		Expression root = current.getTwinExpressions().get();
 
-		Assert.assertTrue(root instanceof TwinConstructorExpression);
+		assertInstanceOf(TwinConstructorExpression.class, root);
 
 		TwinConstructorExpression calculation = (TwinConstructorExpression) root;
 
 		TwinAttribute referentType = result.getByReference(calculation.getConstructedType(), TwinAttribute.class);
 
-		Assert.assertNotNull(referentType);
+		assertNotNull(referentType);
 
-		Assert.assertTrue(calculation.getArguments().size() == 1);
+		assertEquals(1, calculation.getArguments().size());
 		Expression firstArgument = calculation.getArguments().get(0);
 
-		Assert.assertTrue(firstArgument instanceof TwinLiteralBooleanExpression);
-		Assert.assertEquals(Boolean.valueOf(false), ((TwinLiteralBooleanExpression) firstArgument).getLiteralValue());
+		assertInstanceOf(TwinLiteralBooleanExpression.class, firstArgument);
+		assertEquals(Boolean.valueOf(false), ((TwinLiteralBooleanExpression) firstArgument).getLiteralValue());
 
 	}
 

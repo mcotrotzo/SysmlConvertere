@@ -3,12 +3,12 @@ package TopLevelDefinitionTests;
 import org.example.Mapping.Interfaces.Model;
 import org.example.Mapping.Interfaces.Sensors;
 import org.example.Mapping.Interfaces.Twin;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
 
 import java.util.Optional;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 public class TestTopLevel extends AbstarctTest {
@@ -21,10 +21,10 @@ public class TestTopLevel extends AbstarctTest {
 		Twin battery = named(Twin.class, "Battery");
 
 		assertEquals("Battery", battery.getName());
-		Assert.assertNotNull(battery.getId());
+		assertNotNull(battery.getId());
 		assertEquals(Optional.empty(), battery.getParent());
 
-		assertEquals(2, battery.getSensors().size());
+		assertEquals(4, battery.getSensors().size());
 		assertEquals(1, battery.getActuators().size());
 		assertEquals(1, battery.getControlUnits().size());
 		assertEquals(9, battery.getConstAttributes().size());

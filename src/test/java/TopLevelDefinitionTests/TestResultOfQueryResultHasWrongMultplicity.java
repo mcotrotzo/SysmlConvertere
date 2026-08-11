@@ -1,11 +1,13 @@
 package TopLevelDefinitionTests;
 
 import org.example.Mapping.NewVersion.MappingException;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TestResultOfQueryResultHasWrongMultplicity extends AbstarctTest {
 	@Override
@@ -62,8 +64,8 @@ public class TestResultOfQueryResultHasWrongMultplicity extends AbstarctTest {
 
 	@Test
 	public void throwsException() {
-		MappingException exception = Assert.assertThrows(MappingException.class, () -> super.testTopLevelDefinition());
+		MappingException exception = assertThrows(MappingException.class, () -> super.testTopLevelDefinition());
 
-		Assert.assertTrue(exception.getMessage().contains("multiplicity [0..*]"));
+		assertTrue(exception.getMessage().contains("multiplicity [0..*]"));
 	}
 }

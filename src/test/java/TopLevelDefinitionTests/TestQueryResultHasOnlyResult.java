@@ -2,11 +2,12 @@ package TopLevelDefinitionTests;
 
 import org.example.Mapping.Interfaces.QueryResult;
 import org.example.Mapping.Interfaces.TwinAttribute;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TestQueryResultHasOnlyResult extends AbstarctTest {
 
@@ -57,7 +58,7 @@ public class TestQueryResultHasOnlyResult extends AbstarctTest {
 
 		List<TwinAttribute> fields = queryResult.getFields();
 
-		Assert.assertEquals("PositionQueryResult must contain exactly one field", 1, fields.size());
+		assertEquals( 1, fields.size());
 	}
 
 	@Test
@@ -66,7 +67,7 @@ public class TestQueryResultHasOnlyResult extends AbstarctTest {
 
 		TwinAttribute field = queryResult.getFields().get(0);
 
-		Assert.assertEquals("result", field.getName());
+		assertEquals("result", field.getName());
 	}
 
 	@Test

@@ -1,10 +1,11 @@
 package TopLevelDefinitionTests;
 
 import org.example.Mapping.Interfaces.*;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TestBehaviorMapping extends AbstarctTest {
 
@@ -14,8 +15,8 @@ public class TestBehaviorMapping extends AbstarctTest {
 		ControlUnit controlUnit =
 				named(ControlUnit.class, "cm1");
 
-		Assert.assertEquals("cm1", controlUnit.getName());
-		Assert.assertNotNull(controlUnit.getId());
+		assertEquals("cm1", controlUnit.getName());
+		assertNotNull(controlUnit.getId());
 
 		assertParent(
 				controlUnit,
@@ -23,19 +24,19 @@ public class TestBehaviorMapping extends AbstarctTest {
 				"Battery"
 		);
 
-		Assert.assertEquals(
+		assertEquals(
 				1,
 				controlUnit.getLocalAttributes().size()
 		);
 
-		Assert.assertTrue(
+		assertTrue(
 				controlUnit.getLocalAttributes()
 						.stream()
 						.anyMatch(x ->
 								"maxCharge".equals(x.getName()))
 		);
 
-		Assert.assertEquals(
+		assertEquals(
 				2,
 				controlUnit.getStates().size()
 		);
@@ -56,10 +57,10 @@ public class TestBehaviorMapping extends AbstarctTest {
 						.findFirst()
 						.orElseThrow();
 
-		Assert.assertNotNull(idle);
-		Assert.assertNotNull(charging);
+		assertNotNull(idle);
+		assertNotNull(charging);
 
-		Assert.assertEquals(
+		assertEquals(
 				1,
 				charging.getStates().size()
 		);
@@ -67,22 +68,22 @@ public class TestBehaviorMapping extends AbstarctTest {
 		StateMachine test34 =
 				charging.getStates().get(0);
 
-		Assert.assertEquals(
+		assertEquals(
 				"test34",
 				test34.getName()
 		);
 
-		Assert.assertTrue(
+		assertTrue(
 				charging.getEntryAction()
 						instanceof Assignment
 		);
 
-		Assert.assertTrue(
+		assertTrue(
 				charging.getDoAction()
 						instanceof Assignment
 		);
 
-		Assert.assertTrue(
+		assertTrue(
 				charging.getExitAction()
 						instanceof Assignment
 		);
@@ -102,17 +103,17 @@ public class TestBehaviorMapping extends AbstarctTest {
 				"charge"
 		);
 
-		Assert.assertTrue(
+		assertTrue(
 				test34.getEntryAction()
 						instanceof Assignment
 		);
 
-		Assert.assertTrue(
+		assertTrue(
 				test34.getDoAction()
 						instanceof Assignment
 		);
 
-		Assert.assertTrue(
+		assertTrue(
 				test34.getExitAction()
 						instanceof Assignment
 		);
@@ -120,14 +121,14 @@ public class TestBehaviorMapping extends AbstarctTest {
 		Assignment test34Entry =
 				(Assignment) test34.getEntryAction();
 
-		Assert.assertEquals(
+		assertEquals(
 				"charge",
 				test34Entry.getTarget()
 						.getReferent()
 						.getName()
 		);
 
-		Assert.assertTrue(
+		assertTrue(
 				test34Entry.getValue()
 						instanceof FeatureChain
 		);
@@ -135,14 +136,14 @@ public class TestBehaviorMapping extends AbstarctTest {
 		FeatureChain chain =
 				(FeatureChain) test34Entry.getValue();
 
-		Assert.assertEquals(
+		assertEquals(
 				"temp",
 				chain.getTarget()
 						.getReferent()
 						.getName()
 		);
 
-		Assert.assertEquals(
+		assertEquals(
 				3,
 				controlUnit.getTransitions().size()
 		);
@@ -150,15 +151,15 @@ public class TestBehaviorMapping extends AbstarctTest {
 		for (Transition transition :
 				controlUnit.getTransitions()) {
 
-			Assert.assertNotNull(
+			assertNotNull(
 					transition.getSource()
 			);
 
-			Assert.assertNotNull(
+			assertNotNull(
 					transition.getTarget()
 			);
 
-			Assert.assertFalse(
+			assertFalse(
 					transition.getGuard().isEmpty()
 			);
 		}
@@ -173,7 +174,7 @@ public class TestBehaviorMapping extends AbstarctTest {
 		List<Transition> transitions =
 				controlUnit.getTransitions();
 
-		Assert.assertEquals(
+		assertEquals(
 				3,
 				transitions.size()
 		);
@@ -192,8 +193,8 @@ public class TestBehaviorMapping extends AbstarctTest {
 					transition.getTarget()
 							.getReferent();
 
-			Assert.assertNotNull(source);
-			Assert.assertNotNull(target);
+			assertNotNull(source);
+			assertNotNull(target);
 
 			String sourceName =
 					source.getName();
@@ -206,7 +207,7 @@ public class TestBehaviorMapping extends AbstarctTest {
 
 				idleToCharging = true;
 
-				Assert.assertEquals(
+				assertEquals(
 						1,
 						transition.getGuard().size()
 				);
@@ -214,7 +215,7 @@ public class TestBehaviorMapping extends AbstarctTest {
 				Expression guard =
 						transition.getGuard().get(0);
 
-				Assert.assertTrue(
+				assertTrue(
 						guard instanceof FeatureChain
 								|| guard instanceof FeatureReference
 				);
@@ -241,9 +242,9 @@ public class TestBehaviorMapping extends AbstarctTest {
 			}
 		}
 
-		Assert.assertTrue(idleToCharging);
-		Assert.assertTrue(idleToIdle);
-		Assert.assertTrue(chargingToIdle);
+		assertTrue(idleToCharging);
+		assertTrue(idleToIdle);
+		assertTrue(chargingToIdle);
 	}
 
 	@Test
@@ -255,7 +256,7 @@ public class TestBehaviorMapping extends AbstarctTest {
 						"test12"
 				);
 
-		Assert.assertEquals(
+		assertEquals(
 				"test12",
 				machine.getName()
 		);
@@ -266,38 +267,38 @@ public class TestBehaviorMapping extends AbstarctTest {
 				"Battery"
 		);
 
-		Assert.assertEquals(
+		assertEquals(
 				2,
 				machine.getStates().size()
 		);
 
-		Assert.assertTrue(
+		assertTrue(
 				machine.getStates()
 						.stream()
 						.anyMatch(x ->
 								"sa".equals(x.getName()))
 		);
 
-		Assert.assertTrue(
+		assertTrue(
 				machine.getStates()
 						.stream()
 						.anyMatch(x ->
 								"sd".equals(x.getName()))
 		);
 
-		Assert.assertEquals(
+		assertEquals(
 				1,
 				machine.getTriggerConfiguration().size()
 		);
 
-		Assert.assertTrue(
+		assertTrue(
 				machine.getTriggerConfiguration()
 						.get(0)
 						instanceof TimeBasedConfiguration
 		);
 
 		TimeBasedConfiguration timeBasedConfiguration = (TimeBasedConfiguration) machine.getTriggerConfiguration().get(0);
-		Assert.assertEquals(EnumTimeUnit.MINUTE, timeBasedConfiguration.getTriggerIntervalUnit());
+		assertEquals(EnumTimeUnit.MINUTE, timeBasedConfiguration.getTriggerIntervalUnit());
 	}
 
 	@Test
@@ -315,43 +316,43 @@ public class TestBehaviorMapping extends AbstarctTest {
 				"Battery"
 		);
 
-		Assert.assertEquals(
+		assertEquals(
 				2,
 				strategy.getInputs().size()
 		);
 
-		Assert.assertTrue(
+		assertTrue(
 				strategy.getInputs()
 						.stream()
 						.anyMatch(x ->
 								"avgTemperature".equals(x.getName()))
 		);
 
-		Assert.assertTrue(
+		assertTrue(
 				strategy.getInputs()
 						.stream()
 						.anyMatch(x ->
 								"current".equals(x.getName()))
 		);
 
-		Assert.assertEquals(
+		assertEquals(
 				1,
 				strategy.getOutputs().size()
 		);
 
-		Assert.assertEquals(
+		assertEquals(
 				"predicted",
 				strategy.getOutputs()
 						.get(0)
 						.getName()
 		);
 
-		Assert.assertEquals(
+		assertEquals(
 				1,
 				strategy.getTriggerConfiguration().size()
 		);
 
-		Assert.assertTrue(
+		assertTrue(
 				strategy.getTriggerConfiguration()
 						.get(0)
 						instanceof TimeBasedConfiguration
@@ -373,7 +374,7 @@ public class TestBehaviorMapping extends AbstarctTest {
 				"Battery"
 		);
 
-		Assert.assertEquals(
+		assertEquals(
 				1,
 				strategy.getOutputs().size()
 		);
@@ -381,30 +382,30 @@ public class TestBehaviorMapping extends AbstarctTest {
 		TwinAttribute chargeCmd =
 				strategy.getOutputs().get(0);
 
-		Assert.assertEquals(
+		assertEquals(
 				"chargeCmd",
 				chargeCmd.getName()
 		);
 
-		Assert.assertTrue(
+		assertTrue(
 				chargeCmd.getTwinExpressions().isPresent()
 		);
 
 		Expression outputExpression =
 				chargeCmd.getTwinExpressions().get();
 
-		Assert.assertTrue(
+		assertTrue(
 				outputExpression instanceof FeatureChain
 						|| outputExpression
 						instanceof FeatureReference
 		);
 
-		Assert.assertEquals(
+		assertEquals(
 				1,
 				strategy.getTriggerConfiguration().size()
 		);
 
-		Assert.assertTrue(
+		assertTrue(
 				strategy.getTriggerConfiguration()
 						.get(0)
 						instanceof EventBasedConfiguration
@@ -421,24 +422,24 @@ public class TestBehaviorMapping extends AbstarctTest {
 						"Avg"
 				);
 
-		Assert.assertEquals(
+		assertEquals(
 				1,
 				avg.getInputs().size()
 		);
 
-		Assert.assertEquals(
+		assertEquals(
 				"reals",
 				avg.getInputs()
 						.get(0)
 						.getName()
 		);
 
-		Assert.assertEquals(
+		assertEquals(
 				1,
 				avg.getOutputs().size()
 		);
 
-		Assert.assertEquals(
+		assertEquals(
 				"avg",
 				avg.getOutputs()
 						.get(0)
@@ -453,7 +454,7 @@ public class TestBehaviorMapping extends AbstarctTest {
 						.findFirst()
 						.orElseThrow();
 
-		Assert.assertTrue(
+		assertTrue(
 				testAction instanceof Block
 		);
 
@@ -469,25 +470,25 @@ public class TestBehaviorMapping extends AbstarctTest {
 						.findFirst()
 						.orElseThrow();
 
-		Assert.assertNotNull(
+		assertNotNull(
 				forLoop.getLoopVariable()
 		);
 
-		Assert.assertEquals(
+		assertEquals(
 				"value",
 				forLoop.getLoopVariable()
 						.getName()
 		);
 
-		Assert.assertNotNull(
+		assertNotNull(
 				forLoop.getCollection()
 		);
 
-		Assert.assertNotNull(
+		assertNotNull(
 				forLoop.getBody()
 		);
 
-		Assert.assertTrue(
+		assertTrue(
 				forLoop.getBody()
 						instanceof Block
 		);
@@ -503,19 +504,19 @@ public class TestBehaviorMapping extends AbstarctTest {
 						.findFirst()
 						.orElseThrow();
 
-		Assert.assertNotNull(
+		assertNotNull(
 				ifElse.getCondition()
 		);
 
-		Assert.assertNotNull(
+		assertNotNull(
 				ifElse.getThenAction()
 		);
 
-		Assert.assertNotNull(
+		assertNotNull(
 				ifElse.getElseAction()
 		);
 
-		Assert.assertTrue(
+		assertTrue(
 				ifElse.getElseAction()
 						instanceof Block
 		);
@@ -531,15 +532,15 @@ public class TestBehaviorMapping extends AbstarctTest {
 						.findFirst()
 						.orElseThrow();
 
-		Assert.assertNotNull(
+		assertNotNull(
 				whileLoop.getCondition()
 		);
 
-		Assert.assertNotNull(
+		assertNotNull(
 				whileLoop.getBody()
 		);
 
-		Assert.assertTrue(
+		assertTrue(
 				whileLoop.getBody()
 						instanceof Block
 		);
@@ -547,21 +548,21 @@ public class TestBehaviorMapping extends AbstarctTest {
 		Block whileBody =
 				(Block) whileLoop.getBody();
 
-		Assert.assertTrue(
+		assertTrue(
 				whileBody.getActions()
 						.stream()
 						.anyMatch(x ->
 								"test5".equals(x.getName()))
 		);
 
-		Assert.assertTrue(
+		assertTrue(
 				whileBody.getActions()
 						.stream()
 						.anyMatch(x ->
 								"test6".equals(x.getName()))
 		);
 
-		Assert.assertEquals(
+		assertEquals(
 				1,
 				whileBody.getSuccessions().size()
 		);
@@ -569,7 +570,7 @@ public class TestBehaviorMapping extends AbstarctTest {
 		Succession succession =
 				whileBody.getSuccessions().get(0);
 
-		Assert.assertEquals(
+		assertEquals(
 				2,
 				succession.getActionList().size()
 		);
@@ -584,17 +585,17 @@ public class TestBehaviorMapping extends AbstarctTest {
 						.get(1)
 						.getReferent();
 
-		Assert.assertEquals(
+		assertEquals(
 				"test5",
 				first.getName()
 		);
 
-		Assert.assertEquals(
+		assertEquals(
 				"test6",
 				second.getName()
 		);
 
-		Assert.assertFalse(
+		assertFalse(
 				result.get(Assignment.class)
 						.isEmpty()
 		);
@@ -602,16 +603,16 @@ public class TestBehaviorMapping extends AbstarctTest {
 		for (Assignment assignment :
 				result.get(Assignment.class)) {
 
-			Assert.assertNotNull(
+			assertNotNull(
 					assignment.getTarget()
 			);
 
-			Assert.assertNotNull(
+			assertNotNull(
 					assignment.getTarget()
 							.getReferent()
 			);
 
-			Assert.assertNotNull(
+			assertNotNull(
 					assignment.getValue()
 			);
 		}
@@ -626,21 +627,21 @@ public class TestBehaviorMapping extends AbstarctTest {
 						"avgTemp"
 				);
 
-		Assert.assertTrue(
+		assertTrue(
 				avgTemp.getTwinExpressions().isPresent()
 		);
 
 		Expression expression =
 				avgTemp.getTwinExpressions().get();
 
-		Assert.assertTrue(
+		assertTrue(
 				expression instanceof Calculation
 		);
 
 		Calculation avgCall =
 				(Calculation) expression;
 
-		Assert.assertEquals(
+		assertEquals(
 				1,
 				avgCall.getArguments().size()
 		);
@@ -648,14 +649,14 @@ public class TestBehaviorMapping extends AbstarctTest {
 		Expression argument =
 				avgCall.getArguments().get(0);
 
-		Assert.assertTrue(
+		assertTrue(
 				argument instanceof FeatureChain
 		);
 
 		FeatureChain chain =
 				(FeatureChain) argument;
 
-		Assert.assertEquals(
+		assertEquals(
 				"result",
 				chain.getTarget()
 						.getReferent()
@@ -668,23 +669,23 @@ public class TestBehaviorMapping extends AbstarctTest {
 			String targetName
 	) {
 
-		Assert.assertNotNull(
+		assertNotNull(
 				assignment.getTarget()
 		);
 
-		Assert.assertNotNull(
+		assertNotNull(
 				assignment.getTarget()
 						.getReferent()
 		);
 
-		Assert.assertEquals(
+		assertEquals(
 				targetName,
 				assignment.getTarget()
 						.getReferent()
 						.getName()
 		);
 
-		Assert.assertNotNull(
+		assertNotNull(
 				assignment.getValue()
 		);
 	}
@@ -693,12 +694,12 @@ public class TestBehaviorMapping extends AbstarctTest {
 			List<Expression> guards
 	) {
 
-		Assert.assertEquals(
+		assertEquals(
 				1,
 				guards.size()
 		);
 
-		Assert.assertTrue(
+		assertTrue(
 				guards.get(0)
 						instanceof Calculation
 		);
@@ -706,7 +707,7 @@ public class TestBehaviorMapping extends AbstarctTest {
 		Calculation calculation =
 				(Calculation) guards.get(0);
 
-		Assert.assertFalse(
+		assertFalse(
 				calculation.getArguments().isEmpty()
 		);
 	}

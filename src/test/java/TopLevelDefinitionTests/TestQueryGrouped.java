@@ -1,11 +1,13 @@
 package TopLevelDefinitionTests;
 
 import org.example.Mapping.NewVersion.MappingException;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TestQueryGrouped extends AbstarctTest {
 
@@ -61,9 +63,9 @@ public class TestQueryGrouped extends AbstarctTest {
 
 	@Test
 	public void queryResultHasCorrectType() {
-		MappingException exception = Assert.assertThrows(MappingException.class, () -> super.testTopLevelDefinition());
+		MappingException exception = assertThrows(MappingException.class, () -> super.testTopLevelDefinition());
 
 
-		Assert.assertTrue(exception.getMessage().contains("does not match QueryResult field type 'TwinRealMapped'."));
+		assertTrue(exception.getMessage().contains("does not match QueryResult field type 'TwinRealMapped'."));
 	}
 }

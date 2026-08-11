@@ -4,7 +4,8 @@ import org.example.MapperService;
 import org.example.Mapping.Interfaces.Model;
 import org.example.Mapping.NewVersion.MappingException;
 import org.example.TwinDataBase;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 
@@ -25,7 +26,7 @@ public abstract class AbstarctTest {
 	protected TwinDataBase result;
 
 
-	@Before
+	@BeforeEach
 	public void testTopLevelDefinition() throws IOException, MappingException {
 		String testModelDirectory = createModelDirectoryOrGetPath(getTestModel());
 
