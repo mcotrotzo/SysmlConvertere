@@ -4,8 +4,36 @@ on:
       - "master"
 jobs:
 
-  test:
+  testLinux:
     runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          server-id: github
+          settings-path: ${{ github.workspace }}
+      - name: Test
+        run: mvn clean test
+
+  testWindows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          server-id: github
+          settings-path: ${{ github.workspace }}
+      - name: Test
+        run: mvn clean test
+
+  testMac:
+    runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
 

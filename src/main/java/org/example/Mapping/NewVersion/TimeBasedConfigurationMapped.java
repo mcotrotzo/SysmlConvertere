@@ -40,6 +40,5 @@ public class TimeBasedConfigurationMapped extends TriggerConfigurationMapped imp
 		if(!triggerIntervalUnitSet.isEmpty()){
 			triggerIntervalUnit = context.extractEnum(triggerIntervalUnitSet.iterator().next(), EnumTimeUnit.class);
 		}
-		System.out.println("triggerInterval: " + triggerIntervalUnit);
 	}
 }
