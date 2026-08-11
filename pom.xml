@@ -51,6 +51,13 @@
             <groupId>org.omg.sysml</groupId>
             <artifactId>jupyter-sysml-kernel</artifactId>
             <version>${sysml.artifact.version}</version>
+
+            <exclusions>
+                <exclusion>
+                    <groupId>org.omg.sysml</groupId>
+                    <artifactId>org.omg.sysml.interactive</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
@@ -105,7 +112,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>${maven.compiler.plugin.version}</version>
+
 
                 <configuration>
                     <release>${maven.compiler.release}</release>
