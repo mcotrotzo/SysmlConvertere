@@ -1,14 +1,22 @@
+name: Tests
+
 on:
   pull_request:
     branches:
-      - "master"
+      - master
   push:
     branches:
-      - "master"
+      - master
+
 jobs:
 
   testLinux:
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: read
+
     steps:
       - uses: actions/checkout@v4
 
@@ -17,12 +25,22 @@ jobs:
           distribution: temurin
           java-version: '21'
           server-id: github
-          settings-path: ${{ github.workspace }}
+          server-username: GITHUB_ACTOR
+          server-password: GITHUB_TOKEN
+
       - name: Test
         run: mvn clean test
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
 
   testWindows:
     runs-on: windows-latest
+
+    permissions:
+      contents: read
+      packages: read
+
     steps:
       - uses: actions/checkout@v4
 
@@ -31,12 +49,22 @@ jobs:
           distribution: temurin
           java-version: '21'
           server-id: github
-          settings-path: ${{ github.workspace }}
+          server-username: GITHUB_ACTOR
+          server-password: GITHUB_TOKEN
+
       - name: Test
         run: mvn clean test
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
 
   testMac:
     runs-on: macos-latest
+
+    permissions:
+      contents: read
+      packages: read
+
     steps:
       - uses: actions/checkout@v4
 
@@ -45,6 +73,10 @@ jobs:
           distribution: temurin
           java-version: '21'
           server-id: github
-          settings-path: ${{ github.workspace }}
+          server-username: GITHUB_ACTOR
+          server-password: GITHUB_TOKEN
+
       - name: Test
         run: mvn clean test
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
