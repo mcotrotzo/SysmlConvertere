@@ -50,8 +50,6 @@ public class TwinSuccessionAction extends MappedElement<SuccessionAsUsage> imple
 					"Succession source is not an ActionUsage"
 			);
 		}
-		System.out.println(sourceAction.getName()+"Class name" + sourceAction.getClass().getName());
-
 		targets.add(
 				context.mapReference(
 						sourceAction,
@@ -65,7 +63,6 @@ public class TwinSuccessionAction extends MappedElement<SuccessionAsUsage> imple
 						"Succession target is not an ActionUsage"
 				);
 			}
-			System.out.println(target.getName()+"Class name" + target.getClass().getName());
 			targets.add(
 					context.mapReference(
 							targetAction,

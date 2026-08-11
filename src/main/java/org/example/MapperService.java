@@ -45,7 +45,7 @@ public class MapperService {
 		}
 	}
 
-	public void preRules() throws MappingException {
+	private void preRules() throws MappingException {
 		var genereRules = List.of(new MultiType(utilsManager),new TwinAttributeHasToSpecialiced(utilsManager),new MultiplicityRule(utilsManager));
 		boolean isValid = true;
 		for (GenerelRules rule : genereRules) {
@@ -56,7 +56,7 @@ public class MapperService {
 		}
 	}
 
-	public void postRules(TwinDataBase database) throws SemanticException {
+	private void postRules(TwinDataBase database) throws SemanticException {
 		var semanticRules = List.of(new SemanticRules.CheckAssignemntRules());
 		boolean isValid = true;
 		for (SemanticRules.SemanticRule rule : semanticRules) {
