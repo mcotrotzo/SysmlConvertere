@@ -18,5 +18,7 @@ jobs:
           java-version: '21'
           server-id: github
           settings-path: ${{ github.workspace }}
+      - name: Download and install SysML dependency
+        run: mvn -Psetup initialize
       - name: Test
         run: mvn clean test
