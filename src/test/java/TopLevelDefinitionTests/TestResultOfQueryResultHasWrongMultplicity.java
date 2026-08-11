@@ -27,7 +27,7 @@ public class TestResultOfQueryResultHasWrongMultplicity extends AbstarctTest {
 				
 				        part positionHistory :> groupedQueryHistory {
 				            :>> twinAttribute : Position default p11.pos;
-				            :>> groupBy default "x";
+				        
 				            :>> result : PositionQueryResult[0..*];
 				        }
 				    }

@@ -98,7 +98,6 @@ part tettttr;
 
          part charge30:PositionHistory :>groupedQueryHistory{
               :>>twinAttribute:Position default p11.temp;
-              :>>groupBy[1] default "x";
               :>>since default 30;
               t:>result:PositionQueryResult[0..*];
           }

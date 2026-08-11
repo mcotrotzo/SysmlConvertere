@@ -47,18 +47,13 @@ public class MapperService {
 
 	private void preRules() throws MappingException {
 		var genereRules = List.of(new MultiType(utilsManager),new TwinAttributeHasToSpecialiced(utilsManager),new MultiplicityRule(utilsManager));
-		boolean isValid = true;
 		for (GenerelRules rule : genereRules) {
-			System.out.println("Checking rule: " + rule.getClass().getSimpleName());
-			boolean ruleValid = rule.isValid();
-			System.out.println("Is valid: " + ruleValid);
-			isValid = isValid && ruleValid;
+			rule.isValid();
 		}
 	}
 
 	private void postRules(TwinDataBase database) throws SemanticException {
 		var semanticRules = List.of(new SemanticRules.CheckAssignemntRules());
-		boolean isValid = true;
 		for (SemanticRules.SemanticRule rule : semanticRules) {
 			rule.isValid(database);
 		}
