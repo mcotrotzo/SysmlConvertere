@@ -5,8 +5,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.example</groupId>
-    <artifactId>SysmlTest</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <artifactId>sysml-twin-mapper</artifactId>
+    <version>1.0.0</version>
+    <packaging>jar</packaging>
 
     <properties>
         <maven.compiler.release>21</maven.compiler.release>
@@ -15,6 +16,14 @@
         <sysml.release.url>https://github.com/Systems-Modeling/SysML-v2-Pilot-Implementation/releases/download/2025-12
         </sysml.release.url>
     </properties>
+
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>GitHub Packages</name>
+            <url>https://maven.pkg.github.com/mcotrotzo/SysmlConvertere</url>
+        </repository>
+    </distributionManagement>
 
     <dependencies>
         <dependency>
@@ -54,12 +63,6 @@
             <version>2.25.2</version>
         </dependency>
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.13.2</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
             <version>RELEASE</version>
@@ -72,8 +75,6 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>25</source>
-                    <target>25</target>
                     <annotationProcessorPaths>
                         <path>
                             <groupId>org.projectlombok</groupId>
@@ -91,7 +92,6 @@
             <id>setup</id>
             <build>
                 <plugins>
-                    <!-- JAR downloaden -->
                     <plugin>
                         <groupId>com.googlecode.maven-download-plugin</groupId>
                         <artifactId>download-maven-plugin</artifactId>
@@ -109,7 +109,6 @@
                                     <unpack>true</unpack>
                                 </configuration>
                             </execution>
-                            <!-- sysml.library aus demselben ZIP extrahieren -->
                             <execution>
                                 <id>download-sysml-library</id>
                                 <phase>initialize</phase>
