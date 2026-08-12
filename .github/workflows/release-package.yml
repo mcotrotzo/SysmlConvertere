@@ -1,9 +1,8 @@
 name: Release Package
 
 on:
-  push:
-    branches:
-      - "master"
+  release:
+    types: [published]
 
 jobs:
   publish:
