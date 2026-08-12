@@ -79,7 +79,7 @@ Add the mapper:
 <dependency>
     <groupId>org.example</groupId>
     <artifactId>sysml-twin-mapper</artifactId>
-    <version>1.0.0</version>
+    <version>GITHUB-release version</version>
 </dependency>
 ```
 
