@@ -193,18 +193,6 @@ public class CheckAssignemntRules implements SemanticRule {
 				}
 			}
 
-			case FeatureChain chain -> {
-
-				TwinAttribute attribute =
-						chain.getTarget()
-								.getReferent();
-
-				checkReadableAttribute(
-						availableAttributes,
-						attribute
-				);
-			}
-
 			case FeatureReference reference -> {
 
 				TwinAttribute attribute =

@@ -130,11 +130,11 @@ public class TestBehaviorMapping extends AbstarctTest {
 
 		assertTrue(
 				test34Entry.getValue()
-						instanceof FeatureChain
+						instanceof FeatureReference
 		);
 
-		FeatureChain chain =
-				(FeatureChain) test34Entry.getValue();
+		FeatureReference chain =
+				(FeatureReference) test34Entry.getValue();
 
 		assertEquals(
 				"temp",
@@ -215,9 +215,7 @@ public class TestBehaviorMapping extends AbstarctTest {
 				Expression guard =
 						transition.getGuard().get(0);
 
-				assertTrue(
-						guard instanceof FeatureChain
-								|| guard instanceof FeatureReference
+				assertTrue(guard instanceof FeatureReference
 				);
 			}
 
@@ -395,7 +393,7 @@ public class TestBehaviorMapping extends AbstarctTest {
 				chargeCmd.getTwinExpressions().get();
 
 		assertTrue(
-				outputExpression instanceof FeatureChain
+				outputExpression instanceof FeatureReference
 						|| outputExpression
 						instanceof FeatureReference
 		);
@@ -650,11 +648,11 @@ public class TestBehaviorMapping extends AbstarctTest {
 				avgCall.getArguments().get(0);
 
 		assertTrue(
-				argument instanceof FeatureChain
+				argument instanceof FeatureReference
 		);
 
-		FeatureChain chain =
-				(FeatureChain) argument;
+		FeatureReference chain =
+				(FeatureReference) argument;
 
 		assertEquals(
 				"result",

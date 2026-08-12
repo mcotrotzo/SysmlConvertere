@@ -1,7 +1,9 @@
 package org.example.Mapping.Mapper.TwinExpression;
 
 import lombok.ToString;
-import org.example.Mapping.Interfaces.FeatureChain;
+
+import org.example.Mapping.Interfaces.FeatureReference;
+import org.example.Mapping.Interfaces.Query;
 import org.example.Mapping.Interfaces.TwinAttribute;
 import org.example.Mapping.NewVersion.Abstract.MappedReference;
 import org.example.Mapping.NewVersion.MappingContext;
@@ -12,7 +14,7 @@ import org.omg.sysml.lang.sysml.FeatureChainExpression;
 
 @MappedMetaclass
 @ToString(callSuper = true)
-public class TwinFeatureChainExpression extends TwinExpression<FeatureChainExpression> implements FeatureChain {
+public class TwinFeatureChainExpression extends TwinExpression<FeatureChainExpression> implements FeatureReference {
 
 	private MappedReference<TwinAttributeMapped> target;
 
@@ -28,5 +30,13 @@ public class TwinFeatureChainExpression extends TwinExpression<FeatureChainExpre
 	@Override
 	public MappedReference<? extends TwinAttribute> getTarget() {
 		return target;
+	}
+
+
+	@Override
+	public boolean isResultOfQuery() {
+		return target.getReferent().getParent()
+				.map(Query.class::isInstance)
+				.orElse(false);
 	}
 }
