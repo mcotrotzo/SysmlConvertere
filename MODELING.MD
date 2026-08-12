@@ -297,9 +297,7 @@ attribute result : TwinReal
     :> outputs;
 ```
 
-The output is not sent to an actuator.
-
-Instead, it is persisted in the same general manner as predictive outputs, with strategy-specific persistence.
+The output is not sent to an actuator only saved
 
 ---
 
