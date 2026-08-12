@@ -133,6 +133,8 @@ identifies the Twin attribute whose historical values are queried.
 
 The query does **not** read the live sensor directly and does not modify the sensor. It queries the corresponding persisted data from the shadow.
 
+Important you can only reference the result of a query in other calculations. Avg(temp30.result) is valid, but Avg(temp30.twinAttribute) is not.
+In a query you can only use redefinitions. You can redefine alle parameters only once.
 #### Derived Attributes
 
 | Element | Description | Binding and access rules |
