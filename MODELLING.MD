@@ -7,7 +7,6 @@ There are two user-facing zones. Which one a file belongs to is detected structu
 1. A Twin model has to import `TwinLibrary`.
 2. A Twin model can import UserLibraries.
 3. A model of a twin starts always by exactly one subclassifing  `Twin` (e.g. `part def Battery :> Twin { … }`)
-4. Except using of Calculations each element whas to type,subsett or redfifne a library feature within the twin. Free usages are not considered.
 5. We allow no defintions in the model file except the  entry point of point 3.
 
 ```sysml
