@@ -1,9 +1,10 @@
 package org.example.Mapping.Interfaces;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface PrescriptiveStrategy extends Strategy {
-	List<TwinBooleanAttribute> getCondition();
+	Optional<TwinBooleanAttribute> getCondition();
 
 	List<TriggerConfiguration> getTriggerConfiguration();
 

@@ -15,7 +15,7 @@ import java.util.Set;
 @MappedElementType(LibraryNameSpaces.DESCRIPTIVE_STATE_MACHINE)
 @ToString(callSuper = true)
 public class DescriptiveStateMachineMapped extends StateMachineMapped implements DescriptiveStateMachine {
-	private Set<TriggerConfigurationMapped> triggerConfiguration = new HashSet<>();
+	private List<TriggerConfigurationMapped> triggerConfiguration = new ArrayList<>();
 
 	public DescriptiveStateMachineMapped(StateUsage sysmlElement) {
 		super(sysmlElement);
@@ -29,6 +29,6 @@ public class DescriptiveStateMachineMapped extends StateMachineMapped implements
 	@Override
 	public void parse(MappingContext context) throws MappingException {
 		super.parse(context);
-		triggerConfiguration = new HashSet<>(context.mapSlot(this, "triggerConfiguration", TriggerConfigurationMapped.class));
+		triggerConfiguration = context.mapSlot(this, "triggerConfiguration", TriggerConfigurationMapped.class);
 	}
 }

@@ -18,7 +18,7 @@ import java.util.Set;
 @MappedElementType(LibraryNameSpaces.ACTUATOR)
 @ToString(callSuper = true)
 public class ActuatorMapped extends TwinPortMapped implements Actuators {
-	private Set<TwinAttributeMapped> attributes = new HashSet<>();
+	private List<TwinAttributeMapped> attributes = new ArrayList<>();
 
 	public ActuatorMapped(Type sysmlElement) {
 		super(sysmlElement);
@@ -32,6 +32,6 @@ public class ActuatorMapped extends TwinPortMapped implements Actuators {
 	@Override
 	public void parse(MappingContext context) throws MappingException {
 		super.parse(context);
-		attributes = new HashSet<>(context.mapSlot(this, "commands", TwinAttributeMapped.class));
+		attributes = context.mapSlot(this, "commands", TwinAttributeMapped.class);
 	}
 }

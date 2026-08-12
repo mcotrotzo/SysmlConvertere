@@ -1,6 +1,4 @@
-part tettttr;
-
- package Test{
+package Test{
 
      private import TwinLibrary::*;
 
@@ -99,7 +97,7 @@ part tettttr;
          part charge30:PositionHistory :>groupedQueryHistory{
               :>>twinAttribute:Position default p11.temp;
               :>>since default 30;
-              t:>result:PositionQueryResult[0..*];
+              t:>>result:PositionQueryResult[0..*];
           }
          state test12 :> descriptiveStateMachine_{
          :>>triggerConfiguration:TimeBasedConfiguration{

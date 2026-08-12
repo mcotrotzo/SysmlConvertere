@@ -53,4 +53,5 @@ public class GroupedHistoryQueryMapped extends AbstractMappedQuery implements Gr
 	}
 
 
+
 }

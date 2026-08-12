@@ -11,15 +11,12 @@ import org.example.Mapping.NewVersion.MappingException;
 import org.example.Util.LibraryNameSpaces;
 import org.omg.sysml.lang.sysml.Type;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @MappedElementType(LibraryNameSpaces.TWIN_PORT)
 @ToString(callSuper = true)
 public abstract class TwinPortMapped extends MappedElement<Type> implements TwinPort {
-	private Set<CommunicationProtocolMapped> protocols = new HashSet<>();
+	private List<CommunicationProtocolMapped> protocols = new ArrayList<>();
 
 	public TwinPortMapped(Type sysmlElement) {
 		super(sysmlElement);
@@ -27,12 +24,12 @@ public abstract class TwinPortMapped extends MappedElement<Type> implements Twin
 
 	@Override
 	public void parse(MappingContext context) throws MappingException {
-		protocols = new HashSet<>(context.mapSlot(this, "communicationProtocol", CommunicationProtocolMapped.class));
+		protocols = context.mapSlot(this, "communicationProtocol", CommunicationProtocolMapped.class);
 	}
 
 	@Override
-	public List<Protocol> getProtocol() {
-		return new ArrayList<>(protocols);
+	public Optional<Protocol> getProtocol() {
+		return Optional.ofNullable(protocols.stream().findFirst().orElse(null));
 	}
 
 }

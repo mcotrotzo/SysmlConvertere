@@ -100,7 +100,7 @@ part tettttr;
               :>>twinAttribute:Position default p11.temp;
               :>>groupBy[1] default "x";
               :>>since default 30;
-              t:>result:PositionQueryResult[0..*];
+              t:>>result:PositionQueryResult[0..*];
           }
          state test12 :> descriptiveStateMachine_{
          :>>triggerConfiguration:TimeBasedConfiguration{

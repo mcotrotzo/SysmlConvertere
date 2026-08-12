@@ -17,8 +17,8 @@ import java.util.Set;
 @ToString(callSuper = true)
 public class EventBasedConfigurationMapped extends TriggerConfigurationMapped implements EventBasedConfiguration {
 
-	private Set<TwinAttributeMapped> triggeringAttributes = new HashSet<>();
-	private Set<TwinBooleanMapped> onChange = new HashSet<>();
+	private List<TwinAttributeMapped> triggeringAttributes = new ArrayList<>();
+	private List<TwinBooleanMapped> onChange = new ArrayList<>();
 
 	public EventBasedConfigurationMapped(Type sysmlElement) {
 		super(sysmlElement);
@@ -30,14 +30,14 @@ public class EventBasedConfigurationMapped extends TriggerConfigurationMapped im
 	}
 
 	@Override
-	public List<TwinBooleanAttribute> getOnChange() {
-		return new ArrayList<>(onChange);
+	public TwinBooleanAttribute getOnChange() {
+		return onChange.getFirst();
 	}
 
 	@Override
 	public void parse(MappingContext context) throws MappingException {
 		super.parse(context);
-		triggeringAttributes = new HashSet<>(context.mapSlot(this, "triggeringAtributes_", TwinAttributeMapped.class));
-		onChange = new HashSet<>(context.mapSlot(this, "onChange_", TwinBooleanMapped.class));
+		triggeringAttributes = context.mapSlot(this, "triggeringAtributes_", TwinAttributeMapped.class);
+		onChange = context.mapSlot(this, "onChange_", TwinBooleanMapped.class);
 	}
 }

@@ -16,7 +16,7 @@ import java.util.Set;
 @MappedElementType(LibraryNameSpaces.CONTROL_UNIT)
 @ToString(callSuper = true)
 public class ControlUnitMapped extends StateMachineMapped implements ControlUnit {
-	private Set<TriggerConfigurationMapped> triggerConfiguration = new HashSet<>();
+	private List<TriggerConfigurationMapped> triggerConfiguration = new ArrayList<>();
 
 	public ControlUnitMapped(StateUsage sysmlElement) {
 		super(sysmlElement);
@@ -31,7 +31,7 @@ public class ControlUnitMapped extends StateMachineMapped implements ControlUnit
 	@Override
 	public void parse(MappingContext context) throws MappingException {
 		super.parse(context);
-		triggerConfiguration = new HashSet<>(context.mapSlot(this, "triggerConfiguration", TriggerConfigurationMapped.class));
+		triggerConfiguration = context.mapSlot(this, "triggerConfiguration", TriggerConfigurationMapped.class);
 	}
 
 	@Override

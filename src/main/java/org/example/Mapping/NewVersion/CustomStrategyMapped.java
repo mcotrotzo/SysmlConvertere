@@ -18,8 +18,8 @@ import java.util.Set;
 public abstract class CustomStrategyMapped extends MappedElement<Type> implements Strategy {
 
 	private TwinStringMapped lambdaPath;
-	private Set<TwinAttributeMapped> inputs = new HashSet<>();
-	private Set<TwinAttributeMapped> outputs = new HashSet<>();
+	private List<TwinAttributeMapped> inputs = new ArrayList<>();
+	private List<TwinAttributeMapped> outputs = new ArrayList<>();
 
 	public CustomStrategyMapped(Type sysmlElement) {
 		super(sysmlElement);
@@ -43,9 +43,9 @@ public abstract class CustomStrategyMapped extends MappedElement<Type> implement
 
 	@Override
 	public void parse(MappingContext context) throws MappingException {
-		Set<TwinStringMapped> lambdaPathSet = new HashSet<>(context.mapSlot(this, "lambdaPath", TwinStringMapped.class));
+		List<TwinStringMapped> lambdaPathSet = context.mapSlot(this, "lambdaPath", TwinStringMapped.class);
 		lambdaPath = lambdaPathSet.stream().findFirst().orElseThrow(() -> new MappingException("Lambda path is empty %s".formatted(getName())));
-		inputs = new HashSet<>(context.mapSlot(this, "inputs", TwinAttributeMapped.class));
-		outputs = new HashSet<>(context.mapSlot(this, "outputs", TwinAttributeMapped.class));
+		inputs = context.mapSlot(this, "inputs", TwinAttributeMapped.class);
+		outputs = context.mapSlot(this, "outputs", TwinAttributeMapped.class);
 	}
 }

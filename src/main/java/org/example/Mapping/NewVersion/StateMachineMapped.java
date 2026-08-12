@@ -18,8 +18,8 @@ import java.util.Set;
 @MappedElementType(LibraryNameSpaces.STATE)
 @ToString(callSuper = true)
 public class StateMachineMapped extends TwinActionBaseUsage<StateUsage> implements StateMachine {
-	private Set<TwinAttributeMapped> localAttributes = new HashSet<>();
-	private Set<StateMachineMapped> states = new HashSet<>();
+	private List<TwinAttributeMapped> localAttributes = new ArrayList<>();
+	private List<StateMachineMapped> states = new ArrayList<>();
 
 	private TwinActionBaseUsage<?> entryAction;
 	private TwinActionBaseUsage<?> exitAction;
@@ -98,20 +98,20 @@ public class StateMachineMapped extends TwinActionBaseUsage<StateUsage> implemen
 				.map(Transition.class::cast)
 				.toList();
 
-		localAttributes = new HashSet<>(
+		localAttributes =
 				context.mapSlot(
 						this,
 						"local_Attributes",
 						TwinAttributeMapped.class
-				)
+
 		);
 
-		states = new HashSet<>(
+		states =
 				context.mapSlot(
 						this,
 						"states",
 						StateMachineMapped.class
-				)
+
 		);
 	}
 

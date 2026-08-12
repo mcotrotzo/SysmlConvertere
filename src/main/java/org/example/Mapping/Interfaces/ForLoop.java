@@ -1,7 +1,7 @@
 package org.example.Mapping.Interfaces;
 
 public interface ForLoop extends Action {
-	Model getLoopVariable();
+	TwinAttribute getLoopVariable();
 
 	Expression getCollection();
 

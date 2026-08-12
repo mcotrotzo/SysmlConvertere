@@ -19,7 +19,7 @@ import java.util.*;
 @MappedElementType(LibraryNameSpaces.TWIN_ATTRIBUTE)
 @ToString(callSuper = true)
 public class TwinAttributeMapped extends MappedElement<Type> implements TwinAttribute {
-	private Set<TwinExpression<?>> twinExpressions;
+	private List<TwinExpression<?>> twinExpressions = new ArrayList<>();
 	protected MappedReference<TwinAttributeMapped> typeReference;
 
 	private ReadWriteRoles readWriteRoles;
@@ -31,7 +31,7 @@ public class TwinAttributeMapped extends MappedElement<Type> implements TwinAttr
 	@Override
 	public void parse(MappingContext context) throws MappingException {
 		Class<TwinExpression<?>> rawClass = (Class<TwinExpression<?>>) (Class<?>) TwinExpression.class;
-		twinExpressions =new HashSet<>(context.mapOwned(this, Expression.class, rawClass));
+		twinExpressions =context.mapOwned(this, Expression.class, rawClass);
 		resolveTypeReference(context);
 	}
 
@@ -41,11 +41,6 @@ public class TwinAttributeMapped extends MappedElement<Type> implements TwinAttr
 			return Optional.empty();
 		}
 		return Optional.ofNullable(twinExpressions.iterator().next());
-	}
-
-	@Override
-	public Optional<Reference<? extends TwinAttribute>> getDefinitionReference() {
-		return Optional.ofNullable(typeReference);
 	}
 
 	@Override

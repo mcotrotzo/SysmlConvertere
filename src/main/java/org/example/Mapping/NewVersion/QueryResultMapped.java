@@ -5,6 +5,7 @@ import org.example.ElemWithMult;
 import org.example.Mapping.Interfaces.QueryResult;
 import org.example.Mapping.NewVersion.Abstract.MappedElementType;
 import org.example.Util.LibraryNameSpaces;
+import org.example.Util.Utils;
 import org.omg.sysml.lang.sysml.AttributeUsage;
 import org.omg.sysml.lang.sysml.Type;
 import org.omg.sysml.lang.sysml.Usage;
@@ -22,7 +23,7 @@ public class QueryResultMapped extends CustomTypeMapped implements QueryResult {
 		super.parse(context);
 
 		if (getSysmlElement() instanceof org.omg.sysml.lang.sysml.Usage) {
-			ElemWithMult queryResultMultiplicity = context.getUtils().getMultiplicityRange(getSysmlElement());
+			ElemWithMult queryResultMultiplicity = Utils.getMultiplicityRange(getSysmlElement());
 
 			if (queryResultMultiplicity.getLowerBound() != 0 || queryResultMultiplicity.getUpperBound() != -1) {
 
@@ -34,12 +35,12 @@ public class QueryResultMapped extends CustomTypeMapped implements QueryResult {
 		if (this.getFields().size() != 1) {
 			throw new MappingException("QueryResultMapped must have exactly one field which redefines result, but found: " + this.getFields().size());
 		}
-		var field = getFields().get(0);
+		var field = getFields().getFirst();
 		if (!(field instanceof TwinAttributeMapped mappedField)) {
 			throw new MappingException("QueryResult field '%s' was mapped as '%s', expected TwinAttributeMapped.".formatted(field.getName(), field.getClass().getSimpleName()));
 		}
 
-		ElemWithMult multiplicity = context.getUtils().getMultiplicityRange(mappedField.getSysmlElement());
+		ElemWithMult multiplicity = Utils.getMultiplicityRange(mappedField.getSysmlElement());
 
 		if (multiplicity.getLowerBound() != 0 || multiplicity.getUpperBound() != -1) {
 

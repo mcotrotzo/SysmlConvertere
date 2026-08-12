@@ -1,10 +1,7 @@
 package org.example.Mapping.TwinAction;
 
 import lombok.ToString;
-import org.example.Mapping.Interfaces.Action;
-import org.example.Mapping.Interfaces.Expression;
-import org.example.Mapping.Interfaces.ForLoop;
-import org.example.Mapping.Interfaces.Model;
+import org.example.Mapping.Interfaces.*;
 import org.example.Mapping.Mapper.TwinExpression.TwinExpression;
 import org.example.Mapping.NewVersion.MappingContext;
 import org.example.Mapping.NewVersion.MappingException;
@@ -25,7 +22,7 @@ public class TwinForLoopActionMapped extends TwinActionBaseUsage<ForLoopActionUs
 
 
 	@Override
-	public Model getLoopVariable() {
+	public TwinAttribute getLoopVariable() {
 		return loopVariable;
 	}
 

@@ -20,7 +20,7 @@ import java.util.Set;
 @ToString(callSuper = true)
 public class SensorMapped extends TwinPortMapped implements Sensors {
 
-	private Set<TwinAttributeMapped> attributes = new HashSet<>();
+	private List<TwinAttributeMapped> attributes = new ArrayList<>();
 
 	public SensorMapped(Type sysmlElement) {
 		super(sysmlElement);
@@ -34,6 +34,6 @@ public class SensorMapped extends TwinPortMapped implements Sensors {
 	@Override
 	public void parse(MappingContext context) throws MappingException {
 		super.parse(context);
-		attributes = new HashSet<>(context.mapSlot(this, "measurements", TwinAttributeMapped.class));
+		attributes = context.mapSlot(this, "measurements", TwinAttributeMapped.class);
 	}
 }

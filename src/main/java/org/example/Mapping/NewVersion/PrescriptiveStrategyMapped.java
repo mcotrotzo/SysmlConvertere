@@ -8,16 +8,13 @@ import org.example.Mapping.NewVersion.Abstract.MappedElementType;
 import org.example.Util.LibraryNameSpaces;
 import org.omg.sysml.lang.sysml.Type;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @MappedElementType(LibraryNameSpaces.CUSTOM_PRESCRIPTIVE_STRATEGY)
 @ToString(callSuper = true)
 public class PrescriptiveStrategyMapped extends CustomStrategyMapped implements PrescriptiveStrategy {
-	private Set<TriggerConfigurationMapped> triggerConfiguration = new HashSet<>();
-	private Set<TwinBooleanMapped> condition = new HashSet<>();
+	private List<TriggerConfigurationMapped> triggerConfiguration = new ArrayList<>();
+	private List<TwinBooleanMapped> condition = new ArrayList<>();
 
 	public PrescriptiveStrategyMapped(Type sysmlElement) {
 		super(sysmlElement);
@@ -27,8 +24,8 @@ public class PrescriptiveStrategyMapped extends CustomStrategyMapped implements 
 	@Override
 	public void parse(MappingContext context) throws MappingException {
 		super.parse(context);
-		triggerConfiguration = new HashSet<>(context.mapSlot(this, "triggerConfig_", TriggerConfigurationMapped.class));
-		condition = new HashSet<>(context.mapSlot(this, "condition_", TwinBooleanMapped.class));
+		triggerConfiguration = context.mapSlot(this, "triggerConfig_", TriggerConfigurationMapped.class);
+		condition = context.mapSlot(this, "condition_", TwinBooleanMapped.class);
 	}
 
 	@Override
@@ -37,8 +34,8 @@ public class PrescriptiveStrategyMapped extends CustomStrategyMapped implements 
 	}
 
 	@Override
-	public List<TwinBooleanAttribute> getCondition() {
-		return new ArrayList<>(condition);
+	public Optional<TwinBooleanAttribute> getCondition() {
+		return Optional.ofNullable(condition.getFirst());
 	}
 
 

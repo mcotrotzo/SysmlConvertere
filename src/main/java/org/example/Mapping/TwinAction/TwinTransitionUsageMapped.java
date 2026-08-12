@@ -20,7 +20,7 @@ import java.util.Set;
 public class TwinTransitionUsageMapped extends TwinActionBaseUsage<TransitionUsage> implements Transition {
 	private MappedReference<TwinActionBaseUsage<?>> source;
 	private MappedReference<TwinActionBaseUsage<?>> target;
-	private Set<TwinExpression<?>> guard = new HashSet<>();
+	private List<TwinExpression<?>> guard = new ArrayList<>();
 	private TwinActionBaseUsage<?> effectAction;
 
 	public TwinTransitionUsageMapped(TransitionUsage sysmlElement) {
@@ -58,7 +58,7 @@ public class TwinTransitionUsageMapped extends TwinActionBaseUsage<TransitionUsa
 			} catch (MappingException ex) {
 				throw new RuntimeException(ex);
 			}
-		}).collect(HashSet::new, HashSet::add, HashSet::addAll);
+		}).collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
 
 		effectAction = this.getSysmlElement().getEffectAction().stream().map(x -> {
 			try {

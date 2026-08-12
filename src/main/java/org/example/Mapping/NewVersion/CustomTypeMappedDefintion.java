@@ -21,9 +21,9 @@ public class CustomTypeMappedDefintion
 		extends TwinAttributeMapped
 		implements CustomTypeDefinition {
 
-	protected Set<TwinAttributeMapped> fields = new HashSet<>();
-	private Set<MappedReference<? extends CustomTypeDefinition>> parents =
-			new HashSet<>();
+	protected List<TwinAttributeMapped> fields = new ArrayList<>();
+	private List<MappedReference<? extends CustomTypeDefinition>> parents =
+			new ArrayList<>();
 
 	public CustomTypeMappedDefintion(Definition sysmlElement) {
 		super(sysmlElement);
@@ -42,12 +42,10 @@ public class CustomTypeMappedDefintion
 	@Override
 	public void parse(MappingContext context) throws MappingException {
 
-		fields = new HashSet<>(
-				context.mapSlot(
+		fields = context.mapSlot(
 						this,
 						"fields",
 						TwinAttributeMapped.class
-				)
 		);
 
 		Classifier classifier =

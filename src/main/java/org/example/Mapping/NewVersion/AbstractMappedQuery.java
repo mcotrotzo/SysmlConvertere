@@ -5,11 +5,9 @@ import org.example.Mapping.Interfaces.*;
 import org.example.Mapping.NewVersion.Abstract.MappedElement;
 import org.example.Mapping.TwinAction.MappedMetaclass;
 import org.omg.sysml.lang.sysml.PartUsage;
+import org.omg.sysml.lang.sysml.Redefinition;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @MappedMetaclass
 public abstract class AbstractMappedQuery extends MappedElement<PartUsage> implements Query {
@@ -28,6 +26,8 @@ public abstract class AbstractMappedQuery extends MappedElement<PartUsage> imple
 
 	@Override
 	public void parse(MappingContext context) throws MappingException {
+
+		validateOnlyRedefinitions(context);
 
 		twinAttributes = parseSlot(context, "twinAttribute", TwinAttributeMapped.class);
 
@@ -56,6 +56,35 @@ public abstract class AbstractMappedQuery extends MappedElement<PartUsage> imple
 		validateZeroToMany(context, result, "result");
 	}
 
+	private void validateOnlyRedefinitions(
+			MappingContext context
+	) throws MappingException {
+
+		for (var feature : getSysmlElement().getFeature()) {
+
+			if (context.getUtils().isFromStandardOrDTLibrary(feature)) {
+				continue;
+			}
+
+			boolean hasPlainSubsetting =
+					feature.getOwnedSubsetting().stream()
+							.anyMatch(subsetting ->
+									!(subsetting instanceof Redefinition)
+							);
+
+			if (hasPlainSubsetting) {
+				throw new MappingException(
+						"%s '%s': feature '%s' must not subset a query slot."
+								.formatted(
+										getClass().getSimpleName(),
+										getName(),
+										feature.getName()
+								)
+				);
+			}
+		}
+	}
+
 	protected <T extends TwinAttributeMapped> Set<T> parseSlot(MappingContext context, String slotName, Class<T> clazz) throws MappingException {
 
 		return new HashSet<>(context.mapSlot(this, slotName, clazz));
@@ -75,33 +104,41 @@ public abstract class AbstractMappedQuery extends MappedElement<PartUsage> imple
 	}
 
 	@Override
-	public List<TwinAttribute> getTwinAttribute() {
-		return new ArrayList<>(twinAttributes);
+	public TwinAttribute getTwinAttribute() {
+		return twinAttributes.stream()
+				.findFirst()
+				.orElseThrow();
 	}
 
 	@Override
-	public List<TwinIntegerAttribute> getSince() {
-		return new ArrayList<>(since);
+	public Optional<TwinIntegerAttribute> getSince() {
+		return since.stream()
+				.map(x -> (TwinIntegerAttribute) x)
+				.findFirst();
 	}
 
 	@Override
-	public EnumTimeUnit getSinceUnit() {
-		return sinceUnit;
+	public Optional<EnumTimeUnit> getSinceUnit() {
+		return Optional.ofNullable(sinceUnit);
 	}
 
 	@Override
-	public EnumOrderBy getOrderBy() {
-		return orderBy;
+	public Optional<EnumOrderBy> getOrderBy() {
+		return Optional.ofNullable(orderBy);
 	}
 
 	@Override
-	public List<TwinIntegerAttribute> getLimit() {
-		return new ArrayList<>(limit);
+	public Optional<TwinIntegerAttribute> getLimit() {
+		return limit.stream()
+				.map(x -> (TwinIntegerAttribute) x)
+				.findFirst();
 	}
 
 	@Override
-	public List<TwinBooleanAttribute> getFilterExpression() {
-		return new ArrayList<>(filterExpression);
+	public Optional<TwinBooleanAttribute> getFilterExpression() {
+		return filterExpression.stream()
+				.map(x -> (TwinBooleanAttribute) x)
+				.findFirst();
 	}
 
 	@Override

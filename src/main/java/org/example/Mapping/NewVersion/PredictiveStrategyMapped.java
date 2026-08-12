@@ -16,7 +16,7 @@ import java.util.Set;
 @MappedElementType(LibraryNameSpaces.PREDICTIVE_STRATEGY)
 public class PredictiveStrategyMapped extends CustomStrategyMapped implements PredictiveStrategy {
 
-	private Set<TriggerConfigurationMapped> triggerConfiguration = new HashSet<>();
+	private List<TriggerConfigurationMapped> triggerConfiguration = new ArrayList<>();
 
 	public PredictiveStrategyMapped(Type sysmlElement) {
 		super(sysmlElement);
@@ -25,7 +25,7 @@ public class PredictiveStrategyMapped extends CustomStrategyMapped implements Pr
 	@Override
 	public void parse(MappingContext context) throws MappingException {
 		super.parse(context);
-		triggerConfiguration = new HashSet<>(context.mapSlot(this, "triggerConfiguration", TriggerConfigurationMapped.class));
+		triggerConfiguration = context.mapSlot(this, "triggerConfiguration", TriggerConfigurationMapped.class);
 	}
 
 	@Override

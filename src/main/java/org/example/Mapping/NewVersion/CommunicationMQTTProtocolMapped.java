@@ -16,8 +16,8 @@ import java.util.Set;
 @MappedElementType(LibraryNameSpaces.MQTT_PROTOCOL)
 @ToString(callSuper = true)
 public class CommunicationMQTTProtocolMapped extends CommunicationProtocolMapped implements MQTTProtocol {
-	private Set<TwinStringMapped> topic = new HashSet<>();
-	private Set<TwinStringMapped> broker = new HashSet<>();
+	private List<TwinStringMapped> topic = new ArrayList<>();
+	private List<TwinStringMapped> broker = new ArrayList<>();
 
 	public CommunicationMQTTProtocolMapped(Type sysmlElement) {
 		super(sysmlElement);
@@ -26,9 +26,9 @@ public class CommunicationMQTTProtocolMapped extends CommunicationProtocolMapped
 	@Override
 	public void parse(MappingContext context) throws MappingException {
 		super.parse(context);
-		topic = new HashSet<>(context.mapSlot(this, "topic", TwinStringMapped.class));
+		topic = context.mapSlot(this, "topic", TwinStringMapped.class);
 
-		broker = new HashSet<>(context.mapSlot(this, "broker", TwinStringMapped.class));
+		broker = context.mapSlot(this, "broker", TwinStringMapped.class);
 	}
 
 	@Override

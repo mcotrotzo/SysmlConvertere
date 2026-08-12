@@ -3,7 +3,17 @@ package org.example.Mapping.Interfaces;
 import java.util.List;
 
 public interface EventBasedConfiguration extends TriggerConfiguration {
+	/**
+	 * Returns a list of triggering attributes for the event-based configuration.
+	 *
+	 * @return a list of TwinAttribute objects that trigger the event-based configuration
+	 */
 	List<TwinAttribute> getTriggeringAttributes();
 
-	List<TwinBooleanAttribute> getOnChange();
+	/**
+	 * When true it only should be triggered when the value of triggering attribute changes
+	 *
+	 * @return a list of TwinBooleanAttribute
+	 */
+	TwinBooleanAttribute getOnChange();
 }

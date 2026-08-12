@@ -1,21 +1,22 @@
 package org.example.Mapping.Interfaces;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface Query extends Function {
-	List<TwinAttribute> getTwinAttribute();
+	TwinAttribute getTwinAttribute();
 
-	List<TwinIntegerAttribute> getSince();
+	Optional<TwinIntegerAttribute> getSince();
 
-	EnumTimeUnit getSinceUnit();
+	Optional<EnumTimeUnit> getSinceUnit();
 
-	EnumOrderBy getOrderBy();
+	Optional<EnumOrderBy> getOrderBy();
 
-	List<TwinBooleanAttribute> getFilterExpression();
+	Optional<TwinBooleanAttribute> getFilterExpression();
 
-	List<TwinAttribute> getResult();
+	List<? extends TwinAttribute> getResult();
 
-	List<TwinIntegerAttribute> getLimit();
+	Optional<TwinIntegerAttribute> getLimit();
 
 
 }

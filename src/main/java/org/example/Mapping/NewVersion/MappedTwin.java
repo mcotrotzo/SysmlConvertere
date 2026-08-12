@@ -18,18 +18,18 @@ import java.util.Set;
 @MappedElementType(value = LibraryNameSpaces.TWIN)
 @ToString(callSuper = true)
 public class MappedTwin extends MappedElement<Type> implements Twin {
-	Set<SensorMapped> sensors = new HashSet<>();
-	Set<ActuatorMapped> actuators = new HashSet<>();
-	Set<ControlUnitMapped> controlUnits = new HashSet<>();
-	Set<TwinAttributeMapped> constAttributes = new HashSet<>();
-	Set<TwinAttributeMapped> derivedAttributes = new HashSet<>();
-	Set<QueryHistoryMapped> flatQueries = new HashSet<>();
-	Set<GroupedHistoryQueryMapped> groupedQueries = new HashSet<>();
-	Set<DescriptiveStateMachineMapped> descriptiveStateMachines = new HashSet<>();
-	Set<DescriptiveStrategyMapped> descriptiveStrategies = new HashSet<>();
-	Set<PredictiveStrategyMapped> predictiveStrategies = new HashSet<>();
-	Set<PrescriptiveStrategyMapped> prescriptiveStrategies = new HashSet<>();
-	Set<DatabaseMapped> databases = new HashSet<>();
+	List<SensorMapped> sensors = new ArrayList<>();
+	List<ActuatorMapped> actuators = new ArrayList<>();
+	List<ControlUnitMapped> controlUnits = new ArrayList<>();
+	List<TwinAttributeMapped> constAttributes = new ArrayList<>();
+	List<TwinAttributeMapped> derivedAttributes = new ArrayList<>();
+	List<QueryHistoryMapped> flatQueries = new ArrayList<>();
+	List<GroupedHistoryQueryMapped> groupedQueries = new ArrayList<>();
+	List<DescriptiveStateMachineMapped> descriptiveStateMachines = new ArrayList<>();
+	List<DescriptiveStrategyMapped> descriptiveStrategies = new ArrayList<>();
+	List<PredictiveStrategyMapped> predictiveStrategies = new ArrayList<>();
+	List<PrescriptiveStrategyMapped> prescriptiveStrategies = new ArrayList<>();
+	List<DatabaseMapped> databases = new ArrayList<>();
 
 	public MappedTwin(Type sysmlElement) {
 		super(sysmlElement);
@@ -38,18 +38,18 @@ public class MappedTwin extends MappedElement<Type> implements Twin {
 
 	@Override
 	public void parse(MappingContext context) throws MappingException {
-		sensors = new HashSet<>(context.mapSlot(this, "sensors", SensorMapped.class));
-		actuators = new HashSet<>(context.mapSlot(this, "actuators", ActuatorMapped.class));
-		controlUnits = new HashSet<>(context.mapSlot(this, "controlUnit", ControlUnitMapped.class));
-		constAttributes = new HashSet<>(context.mapSlot(this, "constAttributes", TwinAttributeMapped.class));
-		derivedAttributes = new HashSet<>(context.mapSlot(this, "derivedAttributes", TwinAttributeMapped.class));
-		flatQueries = new HashSet<>(context.mapSlot(this, "queryHistory", QueryHistoryMapped.class));
-		groupedQueries = new HashSet<>(context.mapSlot(this, "groupedQueryHistory", GroupedHistoryQueryMapped.class));
-		descriptiveStateMachines = new HashSet<>(context.mapSlot(this, "descriptiveStateMachine_", DescriptiveStateMachineMapped.class));
-		descriptiveStrategies = new HashSet<>(context.mapSlot(this, "descriptiveStrategies", DescriptiveStrategyMapped.class));
-		predictiveStrategies = new HashSet<>(context.mapSlot(this, "predictiveStrategies", PredictiveStrategyMapped.class));
-		prescriptiveStrategies = new HashSet<>(context.mapSlot(this, "prescriptiveStrategies", PrescriptiveStrategyMapped.class));
-		databases = new HashSet<>(context.mapSlot(this, "databases", DatabaseMapped.class));
+		sensors = context.mapSlot(this, "sensors", SensorMapped.class);
+		actuators =context.mapSlot(this, "actuators", ActuatorMapped.class);
+		controlUnits = context.mapSlot(this, "controlUnit", ControlUnitMapped.class);
+		constAttributes = context.mapSlot(this, "constAttributes", TwinAttributeMapped.class);
+		derivedAttributes = context.mapSlot(this, "derivedAttributes", TwinAttributeMapped.class);
+		flatQueries = context.mapSlot(this, "queryHistory", QueryHistoryMapped.class);
+		groupedQueries = context.mapSlot(this, "groupedQueryHistory", GroupedHistoryQueryMapped.class);
+		descriptiveStateMachines = context.mapSlot(this, "descriptiveStateMachine_", DescriptiveStateMachineMapped.class);
+		descriptiveStrategies = context.mapSlot(this, "descriptiveStrategies", DescriptiveStrategyMapped.class);
+		predictiveStrategies = context.mapSlot(this, "predictiveStrategies", PredictiveStrategyMapped.class);
+		prescriptiveStrategies = context.mapSlot(this, "prescriptiveStrategies", PrescriptiveStrategyMapped.class);
+		databases = context.mapSlot(this, "databases", DatabaseMapped.class);
 	}
 
 	@Override

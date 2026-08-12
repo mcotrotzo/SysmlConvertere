@@ -15,7 +15,7 @@ import java.util.Set;
 @MappedElementType(LibraryNameSpaces.HTTP_PROTOCOL)
 @ToString(callSuper = true)
 public class CommunicationHTTPProtocolMapped extends CommunicationProtocolMapped implements HTTPProtocol {
-	private Set<TwinStringMapped> url = new HashSet<>();
+	private List<TwinStringMapped> url = new ArrayList<>();
 
 
 	public CommunicationHTTPProtocolMapped(Type sysmlElement) {
@@ -31,6 +31,6 @@ public class CommunicationHTTPProtocolMapped extends CommunicationProtocolMapped
 	public void parse(MappingContext context) throws MappingException {
 		super.parse(context);
 
-		url = new HashSet<>(context.mapSlot(this, "url", TwinStringMapped.class));
+		url = context.mapSlot(this, "url", TwinStringMapped.class);
 	}
 }

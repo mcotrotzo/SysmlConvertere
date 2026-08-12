@@ -1,9 +1,10 @@
 package org.example.Mapping.Interfaces;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface TwinPort extends Model {
-	List<Protocol> getProtocol();
+	Optional<Protocol> getProtocol();
 
 	List<TwinAttribute> getAttributes();
 }

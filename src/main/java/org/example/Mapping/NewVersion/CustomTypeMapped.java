@@ -22,7 +22,7 @@ import java.util.Set;
 @MappedElementType(LibraryNameSpaces.TWIN_CUSTOM_TYPE)
 public class CustomTypeMapped extends TwinAttributeMapped implements CustomType {
 
-	protected Set<TwinAttributeMapped> fields = new HashSet<>();
+	protected List<TwinAttributeMapped> fields = new ArrayList<>();
 	private MappedReference<? extends CustomTypeMappedDefintion> definition;
 
 	public CustomTypeMapped(Usage sysmlElement) {
@@ -42,9 +42,7 @@ public class CustomTypeMapped extends TwinAttributeMapped implements CustomType 
 
 	@Override
 	public void parse(MappingContext context) throws MappingException {
-		fields = new HashSet<>(
-				context.mapSlot(this, "fields", TwinAttributeMapped.class)
-		);
+		fields = context.mapSlot(this, "fields", TwinAttributeMapped.class);
 
 		if(getSysmlElement() instanceof Feature feature){
 			Definition customDefinition = feature.getType().stream()

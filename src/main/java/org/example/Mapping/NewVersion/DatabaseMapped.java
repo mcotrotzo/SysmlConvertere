@@ -18,19 +18,19 @@ import java.util.Set;
 public class DatabaseMapped extends MappedElement<Type> implements Database {
 
 
-	private Set<TwinIntegerMapped> durationInDays = new HashSet<>();
+	private List<TwinIntegerMapped> durationInDays = new ArrayList<>();
 
 	public DatabaseMapped(Type sysmlElement) {
 		super(sysmlElement);
 	}
 
 	@Override
-	public List<TwinIntegerAttribute> getDurationInDays() {
-		return new ArrayList<>(durationInDays);
+	public TwinIntegerAttribute getDurationInDays() {
+		return durationInDays.stream().findFirst().orElseThrow(() -> new RuntimeException("No durationInDays found"));
 	}
 
 	@Override
 	public void parse(MappingContext context) throws MappingException {
-		durationInDays = new HashSet<>(context.mapSlot(this, "durationInDays", TwinIntegerMapped.class));
+		durationInDays = context.mapSlot(this, "durationInDays", TwinIntegerMapped.class);
 	}
 }
