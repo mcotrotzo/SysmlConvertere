@@ -1,10 +1,7 @@
 package org.example.Mapping.NewVersion;
 
 import lombok.ToString;
-import org.example.Mapping.Interfaces.Action;
-import org.example.Mapping.Interfaces.StateMachine;
-import org.example.Mapping.Interfaces.Transition;
-import org.example.Mapping.Interfaces.TwinAttribute;
+import org.example.Mapping.Interfaces.*;
 import org.example.Mapping.NewVersion.Abstract.MappedElementType;
 import org.example.Mapping.TwinAction.TwinActionBaseUsage;
 import org.example.Mapping.TwinAction.TwinSuccessionAction;
@@ -136,6 +133,11 @@ public class StateMachineMapped extends TwinActionBaseUsage<StateUsage> implemen
 	@Override
 	public Action getDoAction() {
 		return doAction;
+	}
+
+	@Override
+	public List<Succession> getSuccession() {
+		return getSuccessions();
 	}
 }
 

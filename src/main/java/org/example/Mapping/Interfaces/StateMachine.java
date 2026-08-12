@@ -14,4 +14,6 @@ public interface StateMachine extends Model {
 	Action getExitAction();
 
 	Action getDoAction();
+
+	List<Succession> getSuccession();
 }
