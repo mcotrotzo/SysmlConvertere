@@ -1,4 +1,4 @@
-name: Build and Publish
+name: Release Package
 
 on:
   push:
@@ -10,13 +10,11 @@ jobs:
     runs-on: ubuntu-latest
 
     permissions:
-      contents: write
+      contents: read
       packages: write
 
     steps:
       - uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
 
       - uses: actions/setup-java@v4
         with:
@@ -26,77 +24,23 @@ jobs:
           server-username: GITHUB_ACTOR
           server-password: GITHUB_TOKEN
 
-      - name: Check SysML package version
-        id: sysml
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          if gh api \
-            "/users/${{ github.repository_owner }}/packages/maven/org.omg.sysml.jupyter-sysml-kernel/versions" \
-            --jq '.[].name' | grep -Fxq "0.55.0"; then
-
-            echo "exists=true" >> "$GITHUB_OUTPUT"
-            echo "SysML 0.55.0 already exists - skipping upload."
-          else
-            echo "exists=false" >> "$GITHUB_OUTPUT"
-            echo "SysML 0.55.0 not found - publishing it."
-          fi
-
-      - name: Download SysML release
-        if: steps.sysml.outputs.exists == 'false'
-        run: |
-          wget https://github.com/Systems-Modeling/SysML-v2-Pilot-Implementation/releases/download/2025-12/jupyter-sysml-kernel-0.55.0.zip
-          unzip jupyter-sysml-kernel-0.55.0.zip -d sysml
-
-      - name: Publish SysML Maven artifact
-        if: steps.sysml.outputs.exists == 'false'
-        run: |
-          mvn deploy:deploy-file \
-            -Dfile=sysml/sysml/jupyter-sysml-kernel-0.55.0-all.jar \
-            -DgroupId=org.omg.sysml \
-            -DartifactId=jupyter-sysml-kernel \
-            -Dversion=0.55.0 \
-            -Dpackaging=jar \
-            -DrepositoryId=github \
-            -Durl=https://maven.pkg.github.com/mcotrotzo/SysmlConvertere
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Test
         run: mvn clean test
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Set version from release tag
+        run: |
+          VERSION="${{ github.event.release.tag_name }}"
+          VERSION="${VERSION#v}"
+
+          echo "Publishing Maven version $VERSION"
+
+          mvn versions:set \
+            -DnewVersion="$VERSION" \
+            -DgenerateBackupPoms=false
+
       - name: Publish mapper
         run: mvn deploy -DskipTests
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Increment patch version
-        run: |
-          CURRENT_VERSION=$(mvn help:evaluate \
-            -Dexpression=project.version \
-            -q \
-            -DforceStdout)
-
-          echo "Current version: $CURRENT_VERSION"
-
-          IFS='.' read -r MAJOR MINOR PATCH <<< "$CURRENT_VERSION"
-
-          NEXT_PATCH=$((PATCH + 1))
-          NEXT_VERSION="$MAJOR.$MINOR.$NEXT_PATCH"
-
-          echo "Next version: $NEXT_VERSION"
-
-          mvn versions:set \
-            -DnewVersion="$NEXT_VERSION" \
-            -DgenerateBackupPoms=false
-
-      - name: Commit next version
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-
-          git add pom.xml
-          git commit -m "chore: bump version [skip ci]"
-          git push
