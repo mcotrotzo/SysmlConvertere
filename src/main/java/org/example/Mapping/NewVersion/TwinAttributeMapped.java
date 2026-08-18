@@ -12,6 +12,7 @@ import org.example.Util.LibraryNameSpaces;
 import org.omg.sysml.lang.sysml.Expression;
 import org.omg.sysml.lang.sysml.Type;
 import org.omg.sysml.lang.sysml.Usage;
+import org.omg.sysml.lang.sysml.util.SysMLSwitch;
 import org.omg.sysml.util.TypeUtil;
 
 import java.util.*;
@@ -23,7 +24,6 @@ public class TwinAttributeMapped extends MappedElement<Type> implements TwinAttr
 	protected MappedReference<TwinAttributeMapped> typeReference;
 
 	private ReadWriteRoles readWriteRoles;
-
 	public TwinAttributeMapped(Type sysmlElement) {
 		super(sysmlElement);
 	}

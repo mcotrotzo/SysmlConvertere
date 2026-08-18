@@ -1,7 +1,5 @@
 package org.example.Mapping.Interfaces;
 
-import org.example.ElemWithMult;
-
 import java.util.Optional;
 
 public interface Model extends ReadWritePermissions {
@@ -12,10 +10,24 @@ public interface Model extends ReadWritePermissions {
 	 */
 	Optional<Model> getParent();
 
+	/**
+	 * Returns the unique identifier of this model. The ID is used to distinguish this model from other models in the system.
+	 * It changes for different runs of the program, so it should not be used for persistent storage or communication between different instances of the program.
+	 * @return the unique identifier of this model
+	 */
 	String getId();
 
 	String getName();
 
 	KIND getKind();
+
+	/**
+	 * Returns a deterministic ID for this model. This ID is unique and consistent across different runs of the program.
+	 * It is generated from the sysml path
+	 * @return a deterministic ID for this model
+	 */
+	String getDeterministicId();
+
+
 
 }

@@ -13,7 +13,9 @@ package Test{
 
          port p11[30] :> sensors {
 
-              attribute temp    : TwinReal    :> measurements;
+              attribute temp[2]    : TwinReal    :> measurements;
+              attribute temp2[2] :>temp;
+
               attribute voltage : TwinReal    :> measurements;
               attribute current : TwinReal    :> measurements;
               attribute plug    : TwinBoolean :> measurements;

@@ -3,19 +3,18 @@ package org.example.Mapping.NewVersion.Abstract;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.example.ElemWithMult;
 import org.example.Mapping.Interfaces.KIND;
 import org.example.Mapping.Interfaces.Model;
 import org.example.Mapping.Interfaces.ReadWriteRoles;
 import org.example.Mapping.NewVersion.MappingContext;
 import org.example.Mapping.NewVersion.MappingException;
-import org.omg.sysml.lang.sysml.Definition;
-import org.omg.sysml.lang.sysml.Feature;
-import org.omg.sysml.lang.sysml.MultiplicityRange;
-import org.omg.sysml.lang.sysml.Type;
+import org.omg.sysml.lang.sysml.*;
 import org.omg.sysml.util.FeatureUtil;
 import org.omg.sysml.util.TypeUtil;
 
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 @ToString(of = {"name", "id"})
@@ -36,6 +35,10 @@ public abstract class MappedElement<T extends Type> implements Model {
 	@Getter
 	private String id;
 
+	@Getter
+	private String deterministicId;
+
+
 	public MappedElement(T sysmlElement) {
 		bindSysmlElement(sysmlElement);
 	}
@@ -44,6 +47,11 @@ public abstract class MappedElement<T extends Type> implements Model {
 		this.sysmlElement = Objects.requireNonNull(sysmlElement);
 		name = sysmlElement.getName();
 		id = sysmlElement.getElementId();
+		String path = sysmlElement.path();
+
+		deterministicId = UUID.nameUUIDFromBytes(
+				path.getBytes(StandardCharsets.UTF_8)
+		).toString();
 
 	}
 

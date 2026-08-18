@@ -12,6 +12,7 @@ import org.omg.sysml.util.TypeUtil;
 
 import java.lang.reflect.Type;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class TwinDataBase {
 
@@ -33,6 +34,10 @@ public class TwinDataBase {
 
 	public <T extends Model> Set<T> get(Class<T> type) {
 		return mappedElements.values().stream().filter(type::isInstance).map(type::cast).collect(java.util.stream.Collectors.toSet());
+	}
+
+	public  Set<Model> getAll() {
+		return new HashSet<>(mappedElements.values());
 	}
 
 	public <T extends Model> T getByReference(Reference<?> reference, Class<T> type) {
