@@ -29,7 +29,7 @@ public class TestSensors extends AbstarctTest {
 
 		assertTrue(p11.getProtocol().isEmpty());
 
-		assertEquals(7, p11.getAttributes().size());
+		assertEquals(8, p11.getAttributes().size());
 	}
 
 	@Test
