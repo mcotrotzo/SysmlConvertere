@@ -36,7 +36,7 @@ public class TimeBasedConfigurationMapped extends TriggerConfigurationMapped imp
 	public void parse(MappingContext context) throws MappingException {
 		super.parse(context);
 		triggerInterval = context.mapSlot(this, "triggerInterval_", TwinIntegerMapped.class);
-		EnumTimeUnitMapped triggerIntervalUnitSet = new HashSet<>(context.mapSlot(this, "triggerIntervalUnit_", EnumTimeUnitMapped.class)).stream().findFirst().orElseThrow(() -> new MappingException("No triggerIntervalUnit_ found for TimeBasedConfigurationMapped"));
+		triggerIntervalUnit = new HashSet<>(context.mapSlot(this, "triggerIntervalUnit_", EnumTimeUnitMapped.class)).stream().findFirst().orElseThrow(() -> new MappingException("No triggerIntervalUnit_ found for TimeBasedConfigurationMapped"));
 
 	}
 }

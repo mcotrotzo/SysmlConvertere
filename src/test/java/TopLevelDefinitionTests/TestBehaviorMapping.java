@@ -300,6 +300,35 @@ public class TestBehaviorMapping extends AbstarctTest {
 	}
 
 	@Test
+	public void testDescriptiveStrategyComplete() {
+
+		DescriptiveStrategy strategy =
+				named(
+						DescriptiveStrategy.class,
+						"LLM_Request"
+				);
+
+		assertEquals(
+				1,
+				strategy.getTriggerConfiguration().size()
+		);
+
+		assertTrue(
+				strategy.getTriggerConfiguration().getFirst()
+						instanceof TimeBasedConfiguration
+		);
+
+		TimeBasedConfiguration config =
+				(TimeBasedConfiguration)
+						strategy.getTriggerConfiguration().getFirst();
+
+		assertEquals(
+				EnumTimeUnit.MINUTE,
+				config.getTriggerIntervalUnit()
+		);
+	}
+
+	@Test
 	public void testPredictiveStrategyComplete() {
 
 		PredictiveStrategy strategy =

@@ -103,7 +103,7 @@ public class TestExpressions extends AbstarctTest {
 
 		TwinConstructorExpression calculation = (TwinConstructorExpression) root;
 
-		TwinAttribute referentType = result.getByReference(calculation.getConstructedType(), TwinAttribute.class);
+		BaseRealDefinition referentType = result.getByReference(calculation.getConstructedType(), BaseRealDefinition.class);
 
 		assertNotNull(referentType);
 
@@ -127,7 +127,7 @@ public class TestExpressions extends AbstarctTest {
 
 		TwinConstructorExpression calculation = (TwinConstructorExpression) root;
 
-		TwinAttribute referentType = result.getByReference(calculation.getConstructedType(), TwinAttribute.class);
+		BaseBooleanDefinition referentType = result.getByReference(calculation.getConstructedType(), BaseBooleanDefinition.class);
 
 		assertNotNull(referentType);
 

@@ -28,37 +28,9 @@ public class TwinFeatureChainExpression extends TwinExpression<FeatureChainExpre
 
 	@Override
 	public void parse(MappingContext context) throws MappingException {
-		System.out.println(
-				"FEATURE CHAIN EXPRESSION: "
-						+ getSysmlElement().getQualifiedName()
-						+ " / "
-						+ getSysmlElement().getClass().getSimpleName()
-				+ getSysmlElement().path()
-		);
-
 		var targetFeature = FeatureUtil.getBasicFeatureOf(
 				getSysmlElement().getTargetFeature()
 		);
-
-		System.out.println(
-				"TARGET CLASS = " + targetFeature.getClass().getName()
-		);
-
-		System.out.println(
-				"TARGET IS TYPE = " + (targetFeature instanceof Type)
-		);
-
-		System.out.println(
-				"TARGET SUPERTYPES = " + TypeUtil.getSupertypesOf(targetFeature)
-		);
-		System.out.println(
-				"TARGET: "
-						+ targetFeature.getQualifiedName()
-						+ " / "
-						+ targetFeature.getClass().getSimpleName()
-				+ targetFeature.path()
-		);
-
 
 		target = context.mapReference(
 				targetFeature,

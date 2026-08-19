@@ -1,5 +1,7 @@
 package org.example.Mapping.Interfaces;
 
-public interface DescriptiveStrategy extends Strategy {
+import java.util.List;
 
+public interface DescriptiveStrategy extends Strategy {
+	List<TriggerConfiguration> getTriggerConfiguration();
 }

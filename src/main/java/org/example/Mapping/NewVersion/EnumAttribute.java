@@ -19,7 +19,7 @@ import java.util.Optional;
 public abstract class EnumAttribute<E extends Enum<E> & TwinEnum>
 		extends MappedElement<Feature> {
 
-	private EnumDefinitionMapped enumDefinition;
+
 	@Getter
 	private E value;
 
@@ -56,8 +56,8 @@ public abstract class EnumAttribute<E extends Enum<E> & TwinEnum>
 							.formatted(getName())
 			);
 		}
-
 		value = Arrays.stream(getEnumClass().getEnumConstants())
+				.peek(x -> System.out.println("Checking enum constant: " + x.getStringRepresentation()))
 				.filter(e -> e.getStringRepresentation().equals(symbol))
 				.findFirst()
 				.orElseThrow(() ->
