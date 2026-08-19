@@ -14,8 +14,8 @@ public abstract class AbstractMappedQuery extends MappedElement<PartUsage> imple
 
 	protected Set<TwinAttributeMapped> twinAttributes = new HashSet<>();
 	protected Set<TwinIntegerMapped> since = new HashSet<>();
-	protected EnumTimeUnit sinceUnit;
-	protected EnumOrderBy orderBy;
+	protected Optional<EnumTimeUnitMapped> sinceUnit = Optional.empty();
+	protected Optional<EnumOrderByMapped> orderBy = Optional.empty();
 	protected Set<TwinIntegerMapped> limit = new HashSet<>();
 	protected Set<TwinBooleanMapped> filterExpression = new HashSet<>();
 	protected Set<TwinAttributeMapped> result = new HashSet<>();
@@ -33,18 +33,10 @@ public abstract class AbstractMappedQuery extends MappedElement<PartUsage> imple
 
 		since = parseSlot(context, "since", TwinIntegerMapped.class);
 
-		Set<TwinAttributeMapped> attr = parseSlot(context, "sinceUnit", TwinAttributeMapped.class);
-		if (!attr.isEmpty()) {
-			sinceUnit = context.extractEnum(
-					attr.iterator().next(),
-					EnumTimeUnit.class
-			);
-		}
-		Set<TwinAttributeMapped> orderByAttr = parseSlot(context, "orderBy", TwinAttributeMapped.class);
+		sinceUnit = new HashSet<>(context.mapSlot( this,"sinceUnit", EnumTimeUnitMapped.class)).stream().findFirst();
 
-		if(!orderByAttr.isEmpty()){
-			orderBy = context.extractEnum(orderByAttr.iterator().next(), EnumOrderBy.class);
-		}
+		orderBy = new HashSet<>(context.mapSlot( this,"orderBy", EnumOrderByMapped.class)).stream().findFirst();
+
 
 
 		limit = parseSlot(context, "limit", TwinIntegerMapped.class);
@@ -119,12 +111,11 @@ public abstract class AbstractMappedQuery extends MappedElement<PartUsage> imple
 
 	@Override
 	public Optional<EnumTimeUnit> getSinceUnit() {
-		return Optional.ofNullable(sinceUnit);
+		return sinceUnit.map(EnumTimeUnitMapped::getValue);
 	}
-
 	@Override
 	public Optional<EnumOrderBy> getOrderBy() {
-		return Optional.ofNullable(orderBy);
+		return orderBy.map(EnumOrderByMapped::getValue);
 	}
 
 	@Override

@@ -17,5 +17,5 @@ public interface ConstructorCall extends Expression {
 	 *
 	 * @return the constructed type of the constructor call
 	 */
-	Reference<? extends TwinAttribute> getConstructedType();
+	Reference<? extends TwinTypeDefinition> getConstructedType();
 }

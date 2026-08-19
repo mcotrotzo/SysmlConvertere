@@ -1,6 +1,7 @@
 package TopLevelDefinitionTests;
 
 import org.example.Mapping.Interfaces.MQTTProtocol;
+import org.example.Mapping.Interfaces.PhysicalTwin;
 import org.example.Mapping.Interfaces.Sensors;
 import org.example.Mapping.Interfaces.Twin;
 import org.junit.jupiter.api.Test;
@@ -15,7 +16,7 @@ public class TestSensors extends AbstarctTest {
 	public void TestGeneralSensor() {
 		assertAmount(Sensors.class, 4);
 		Set<Sensors> sensors = result.get(Sensors.class);
-		sensors.forEach(sensor -> this.assertParent(sensor, Twin.class, "Battery"));
+		sensors.forEach(sensor -> this.assertParent(sensor, PhysicalTwin.class, "physicalBattery"));
 
 	}
 

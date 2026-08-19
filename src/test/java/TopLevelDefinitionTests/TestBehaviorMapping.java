@@ -20,8 +20,8 @@ public class TestBehaviorMapping extends AbstarctTest {
 
 		assertParent(
 				controlUnit,
-				Twin.class,
-				"Battery"
+				PhysicalTwin.class,
+				"physicalBattery"
 		);
 
 		assertEquals(
@@ -261,8 +261,8 @@ public class TestBehaviorMapping extends AbstarctTest {
 
 		assertParent(
 				machine,
-				Twin.class,
-				"Battery"
+				DescriptiveModel.class,
+				"descriptiveBattery"
 		);
 
 		assertEquals(
@@ -310,8 +310,8 @@ public class TestBehaviorMapping extends AbstarctTest {
 
 		assertParent(
 				strategy,
-				Twin.class,
-				"Battery"
+				PredictiveModel.class,
+				"predictiveBattery"
 		);
 
 		assertEquals(
@@ -368,8 +368,8 @@ public class TestBehaviorMapping extends AbstarctTest {
 
 		assertParent(
 				strategy,
-				Twin.class,
-				"Battery"
+				PrescriptiveModel.class,
+				"prescriptiveBattery"
 		);
 
 		assertEquals(

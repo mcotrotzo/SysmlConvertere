@@ -2,10 +2,11 @@ package org.example.Mapping.NewVersion;
 
 import org.omg.sysml.lang.sysml.ReferenceUsage;
 import org.omg.sysml.lang.sysml.Type;
+import org.omg.sysml.lang.sysml.Usage;
 import org.omg.sysml.util.TypeUtil;
 
 public class TwinAttributeLoopVariableMapped extends TwinAttributeMapped{
-	public TwinAttributeLoopVariableMapped(Type sysmlElement) {
+	public TwinAttributeLoopVariableMapped(Usage sysmlElement) {
 		super(sysmlElement);
 	}
 
@@ -28,7 +29,7 @@ public class TwinAttributeLoopVariableMapped extends TwinAttributeMapped{
 
 		typeReference = context.mapReference(
 				target,
-				TwinAttributeMapped.class
+				BaseTypeDefinitionMapped.class
 		);
 	}
 }

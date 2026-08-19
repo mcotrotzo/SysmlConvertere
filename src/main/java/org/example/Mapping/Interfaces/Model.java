@@ -2,7 +2,7 @@ package org.example.Mapping.Interfaces;
 
 import java.util.Optional;
 
-public interface Model extends ReadWritePermissions {
+public interface Model {
 	/**
 	 * Returns the parent model of this model, if it exists. The parent contains this model as member
 	 *
@@ -28,6 +28,18 @@ public interface Model extends ReadWritePermissions {
 	 */
 	String getDeterministicId();
 
+	default boolean belongsTo(Class<? extends Model> type) {
+		Model current = this;
 
+		while (current != null) {
+			if (type.isInstance(current)) {
+				return true;
+			}
+
+			current = current.getParent().orElse(null);
+		}
+
+		return false;
+	}
 
 }

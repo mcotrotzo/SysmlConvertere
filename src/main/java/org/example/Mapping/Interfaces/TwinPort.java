@@ -7,4 +7,5 @@ public interface TwinPort extends Model {
 	Optional<Protocol> getProtocol();
 
 	List<TwinAttribute> getAttributes();
+
 }

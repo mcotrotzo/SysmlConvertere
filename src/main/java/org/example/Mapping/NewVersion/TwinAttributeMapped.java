@@ -1,7 +1,7 @@
 package org.example.Mapping.NewVersion;
 
 import lombok.ToString;
-import org.example.Mapping.Interfaces.ReadWriteRoles;
+import org.eclipse.uml2.uml.internal.impl.DataTypeImpl;
 import org.example.Mapping.Interfaces.Reference;
 import org.example.Mapping.Interfaces.TwinAttribute;
 import org.example.Mapping.Mapper.TwinExpression.TwinExpression;
@@ -9,22 +9,19 @@ import org.example.Mapping.NewVersion.Abstract.MappedElement;
 import org.example.Mapping.NewVersion.Abstract.MappedElementType;
 import org.example.Mapping.NewVersion.Abstract.MappedReference;
 import org.example.Util.LibraryNameSpaces;
-import org.omg.sysml.lang.sysml.Expression;
-import org.omg.sysml.lang.sysml.Type;
-import org.omg.sysml.lang.sysml.Usage;
+import org.omg.sysml.lang.sysml.*;
 import org.omg.sysml.lang.sysml.util.SysMLSwitch;
 import org.omg.sysml.util.TypeUtil;
 
+import java.lang.Class;
 import java.util.*;
 
 @MappedElementType(LibraryNameSpaces.TWIN_ATTRIBUTE)
 @ToString(callSuper = true)
-public class TwinAttributeMapped extends MappedElement<Type> implements TwinAttribute {
+public class TwinAttributeMapped extends MappedElement<Feature> implements TwinAttribute {
 	private List<TwinExpression<?>> twinExpressions = new ArrayList<>();
-	protected MappedReference<TwinAttributeMapped> typeReference;
-
-	private ReadWriteRoles readWriteRoles;
-	public TwinAttributeMapped(Type sysmlElement) {
+	protected MappedReference<BaseTypeDefinitionMapped> typeReference;
+	public TwinAttributeMapped(Feature sysmlElement) {
 		super(sysmlElement);
 	}
 
@@ -43,31 +40,60 @@ public class TwinAttributeMapped extends MappedElement<Type> implements TwinAttr
 		return Optional.ofNullable(twinExpressions.iterator().next());
 	}
 
-	@Override
-	public ReadWriteRoles getRole() {
-		return readWriteRoles;
+	protected void resolveTypeReference(MappingContext context)
+			throws MappingException {
+
+		Set<Classifier> candidates = new LinkedHashSet<>();
+
+		collectInheritedClassifiers(
+				getSysmlElement(),
+				new HashSet<>(),
+				candidates
+		);
+
+		Classifier target = candidates.stream()
+				.filter(candidate ->
+						candidates.stream().noneMatch(other ->
+								other != candidate
+										&& TypeUtil.specializes(other, candidate)
+						)
+				)
+				.findFirst()
+				.orElseThrow(() ->
+						new MappingException(
+								"%s has no type definition"
+										.formatted(getName())
+						)
+				);
+
+		typeReference = context.mapReference(
+				target,
+				BaseTypeDefinitionMapped.class
+		);
 	}
 
+	private void collectInheritedClassifiers(
+			Type type,
+			Set<Type> visited,
+			Set<Classifier> result
+	) {
 
-	public void setRole(ReadWriteRoles role) {
-		this.readWriteRoles = role;
-	}
-
-	protected void resolveTypeReference(MappingContext context) throws MappingException {
-		if (!(getSysmlElement() instanceof Usage)) {
+		if (!visited.add(type)) {
 			return;
 		}
 
-		var supertypes = TypeUtil.getSupertypesOf(getSysmlElement());
+		for (Type superType : TypeUtil.getSupertypesOf(type)) {
 
-		Type target = supertypes.stream().filter(type -> !context.getUtils().isFromStandardOrDTLibrary(type)).findFirst().or(() -> supertypes.stream().findFirst()).orElse(null);
+			if (superType instanceof Classifier classifier) {
+				result.add(classifier);
+			}
 
-		if (target == null) {
-			throw new MappingException("%s is not typed but a TwinAttribute has to be typed".formatted(getName()));
+			collectInheritedClassifiers(
+					superType,
+					visited,
+					result
+			);
 		}
-
-		typeReference = context.mapReference(target, TwinAttributeMapped.class);
 	}
-
 
 }

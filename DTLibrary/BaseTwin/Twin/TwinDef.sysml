@@ -6,31 +6,40 @@ library package TwinDefLibrary {
     private import ShadowPublicElements::*;
     private import PhysicalElementsLibrary::*;
     private import TwinTypeSystem::*;
-    
-    part def Twin:>CloudTwin{
-        //PhysicalTwin
+    private import TwinLibraryPackage::*;
+
+    part def PhysicalTwin{
         out port sensors [0..*] : Sensor;
         state controlUnit:ControlUnit[0..*];
         in port actuators [0..*] : Actuator;
-        attribute constAttributes [0..*]: TwinAttribute;    
+        attribute constAttributes [0..*]: TwinAttribute;
     }
 
-    part def CloudTwin{ 
-        //Shadow
-        part databases : Database[0..*];
-
-        //Descriptive
+    part def DescriptiveModel:>TwinLibraryElement{
         part queryHistory : QueryHistory[0..*];
         part groupedQueryHistory : GroupedHistoryQuery[0..*];
         attribute derivedAttributes[0..*] : TwinAttribute;
         state descriptiveStateMachine_ : DescriptiveStateMachine[0..*];
         part descriptiveStrategies[0..*] : DescriptiveStrategy;
+    }
 
-        //Prescriptive
+    part def Shadow{
+        part databases : Database[0..*];
+    }
+
+    part def PrescriptiveModel:>TwinLibraryElement{
         part prescriptiveStrategies : CustomPrescriptiveStrategy[0..*];
-
-        //Predictive
+    }
+    part def PredictiveModel:>TwinLibraryElement{
         part predictiveStrategies : PredictiveStrategy[0..*];
     }
-    
+
+
+    part def Twin{
+        part physicalTwin : PhysicalTwin[0..1];
+        part shadow : Shadow[0..1];
+        part descriptiveModel : DescriptiveModel[0..1];
+        part prescriptiveModel : PrescriptiveModel[0..1];
+        part predictiveModel : PredictiveModel[0..1];
+    }
 }

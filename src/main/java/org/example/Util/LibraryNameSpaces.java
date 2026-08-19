@@ -1,8 +1,8 @@
 package org.example.Util;
 
 public enum LibraryNameSpaces {
-
-	TWIN("TwinDefLibrary::Twin"), CLOUD_TWIN("TwinDefLibrary::CloudTwin"),
+	TWIN("TwinDefLibrary::Twin"),
+	PHYSICAL_TWIN("TwinDefLibrary::PhysicalTwin"),DESCRIPTIVE_MODEL("TwinDefLibrary::DescriptiveModel"), PREDICTIVE_MODEL("TwinDefLibrary::PredictiveModel"), PRESCRIPTIVE_MODEL("TwinDefLibrary::PrescriptiveModel"), SHADOW("TwinDefLibrary::Shadow"),
 
 	ACTUATOR("PhysicalTwinLibrary::Actuator"), SENSOR("PhysicalTwinLibrary::Sensor"), TWIN_PORT("PhysicalTwinLibrary::TwinPort"), CONTROL_UNIT("PhysicalTwinLibrary::ControlUnit"), CONTROL_UNIT_STATE("PhysicalTwinLibrary::ControlUnitState"), COMMUNICATION_PROTOCOL("PhysicalTwinLibrary::CommunicationProtocol"), HTTP_PROTOCOL("PhysicalTwinLibrary::HTTP_Protocol"), MQTT_PROTOCOL("PhysicalTwinLibrary::MQTT_Protocol"), TWIN_TYPE_SYSTEM("TwinTypeSystem"),
 
@@ -14,11 +14,11 @@ public enum LibraryNameSpaces {
 
 	QUERY_HISTORY("DescriptiveModelLibrary::QueryHistory"), GROUPED_HISTORY_QUERY("DescriptiveModelLibrary::GroupedHistoryQuery"), QUERY_RESULT("DescriptiveModelLibrary::QueryResult"), DESCRIPTIVE_STATE_MACHINE("DescriptiveModelLibrary::DescriptiveStateMachine"), DESCRIPTIVE_STATE("DescriptiveModelLibrary::DescriptiveState"), DESCRIPTIVE_STRATEGY("DescriptiveModelLibrary::DescriptiveStrategy"),
 
-	PREDICTIVE_STRATEGY("PredicitiveLibrary::PredictiveStrategy"), PREDICTIVE_MODEL("PredicitiveLibrary::PredictiveModel"),
+	PREDICTIVE_STRATEGY("PredicitiveLibrary::PredictiveStrategy"),
 
 	PRESCRIPTIVE_STRATEGY("PrescriptiveModelLibrary::PrescriptiveStrategy"), CUSTOM_PRESCRIPTIVE_STRATEGY("PrescriptiveModelLibrary::CustomPrescriptiveStrategy"),
 
-	DATABASE("ShadowLibrary::Database"), SHADOW("ShadowLibrary::Shadow"), RELATIONAL_DATABASE("ShadowLibrary::RelationalDatabase"), KEY_VALUE_DATABASE("ShadowLibrary::KeyValueDatabase"),
+	DATABASE("ShadowLibrary::Database"), RELATIONAL_DATABASE("ShadowLibrary::RelationalDatabase"), KEY_VALUE_DATABASE("ShadowLibrary::KeyValueDatabase"),
 
 	TWIN_CUSTOM_TYPE("UserLibrary::TwinCustomType"),
 

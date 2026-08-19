@@ -11,6 +11,10 @@ import org.example.Mapping.NewVersion.MappingException;
 import org.example.Mapping.NewVersion.TwinAttributeMapped;
 import org.example.Mapping.TwinAction.MappedMetaclass;
 import org.omg.sysml.lang.sysml.FeatureChainExpression;
+import org.omg.sysml.lang.sysml.Type;
+import org.omg.sysml.lang.sysml.impl.FeatureImpl;
+import org.omg.sysml.util.FeatureUtil;
+import org.omg.sysml.util.TypeUtil;
 
 @MappedMetaclass
 @ToString(callSuper = true)
@@ -24,7 +28,42 @@ public class TwinFeatureChainExpression extends TwinExpression<FeatureChainExpre
 
 	@Override
 	public void parse(MappingContext context) throws MappingException {
-		target = context.mapReference(getSysmlElement().getTargetFeature(), TwinAttributeMapped.class);
+		System.out.println(
+				"FEATURE CHAIN EXPRESSION: "
+						+ getSysmlElement().getQualifiedName()
+						+ " / "
+						+ getSysmlElement().getClass().getSimpleName()
+				+ getSysmlElement().path()
+		);
+
+		var targetFeature = FeatureUtil.getBasicFeatureOf(
+				getSysmlElement().getTargetFeature()
+		);
+
+		System.out.println(
+				"TARGET CLASS = " + targetFeature.getClass().getName()
+		);
+
+		System.out.println(
+				"TARGET IS TYPE = " + (targetFeature instanceof Type)
+		);
+
+		System.out.println(
+				"TARGET SUPERTYPES = " + TypeUtil.getSupertypesOf(targetFeature)
+		);
+		System.out.println(
+				"TARGET: "
+						+ targetFeature.getQualifiedName()
+						+ " / "
+						+ targetFeature.getClass().getSimpleName()
+				+ targetFeature.path()
+		);
+
+
+		target = context.mapReference(
+				targetFeature,
+				TwinAttributeMapped.class
+		);
 	}
 
 	@Override

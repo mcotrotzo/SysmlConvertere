@@ -5,14 +5,11 @@ import org.example.Mapping.Interfaces.Sensors;
 import org.example.Mapping.Interfaces.Twin;
 import org.junit.jupiter.api.Test;
 
-
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-
 public class TestTopLevel extends AbstarctTest {
-
 
 	@Test
 	public void testBatteryTwinInterface() {
@@ -24,18 +21,28 @@ public class TestTopLevel extends AbstarctTest {
 		assertNotNull(battery.getId());
 		assertEquals(Optional.empty(), battery.getParent());
 
-		assertEquals(4, battery.getSensors().size());
-		assertEquals(1, battery.getActuators().size());
-		assertEquals(1, battery.getControlUnits().size());
-		assertEquals(9, battery.getConstAttributes().size());
-		assertEquals(2, battery.getDerivedAttributes().size());
-		assertEquals(1, battery.getQueriesHistory().size());
-		assertEquals(1, battery.getGroupQueriesHistory().size());
-		assertEquals(1, battery.getDescriptiveStateMachines().size());
-		assertEquals(1, battery.getDescriptiveStrategies().size());
-		assertEquals(1, battery.getPredictiveStrategies().size());
-		assertEquals(1, battery.getPrescriptiveStrategies().size());
-		assertEquals(1, battery.getDatabases().size());
+		var physical = battery.getPhysicalTwin().orElseThrow();
+		var shadow = battery.getShadow().orElseThrow();
+		var descriptive = battery.getDescriptiveModel().orElseThrow();
+		var predictive = battery.getPredictiveModel().orElseThrow();
+		var prescriptive = battery.getPrescriptiveModel().orElseThrow();
+
+		assertEquals(4, physical.getSensors().size());
+		assertEquals(1, physical.getActuators().size());
+		assertEquals(1, physical.getControlUnits().size());
+		assertEquals(9, physical.getConstAttributes().size());
+
+		assertEquals(2, descriptive.getDerivedAttributes().size());
+		assertEquals(1, descriptive.getQueriesHistory().size());
+		assertEquals(1, descriptive.getGroupQueriesHistory().size());
+		assertEquals(1, descriptive.getDescriptiveStateMachines().size());
+		assertEquals(1, descriptive.getDescriptiveStrategies().size());
+
+		assertEquals(1, predictive.getPredictiveStrategies().size());
+
+		assertEquals(1, prescriptive.getPrescriptiveStrategies().size());
+
+		assertEquals(1, shadow.getDatabases().size());
 	}
 
 	@Test
@@ -79,8 +86,6 @@ public class TestTopLevel extends AbstarctTest {
 		assertEquals(1, p15Mult.getLowerBound());
 		assertEquals(1, p15Mult.getUpperBound());
 
-
-
 		var p11Children =
 				result.getSpecializationChildren(p11);
 
@@ -92,7 +97,6 @@ public class TestTopLevel extends AbstarctTest {
 
 		var p15Children =
 				result.getSpecializationChildren(p15);
-
 
 		System.out.println(
 				"p11 children: " +
@@ -114,6 +118,4 @@ public class TestTopLevel extends AbstarctTest {
 						p15Children.stream().map(Model::getName).toList()
 		);
 	}
-
-
 }

@@ -7,8 +7,14 @@ import org.example.Mapping.NewVersion.Abstract.MappedElement;
 import org.example.Mapping.NewVersion.Abstract.MappedElementType;
 import org.example.Mapping.NewVersion.MappingException;
 import org.example.Mapping.NewVersion.NoMappedElementException;
+import org.example.Mapping.NewVersion.Packages.MappedNamespaceElement;
+import org.example.Mapping.NewVersion.Packages.PackageElementType;
+import org.example.Mapping.NewVersion.Packages.PackageTypeMeta;
 import org.example.Mapping.TwinAction.MappedMetaclass;
+import org.example.Util.LibraryPackageNames;
 import org.example.Util.Utils;
+import org.omg.sysml.lang.sysml.Element;
+import org.omg.sysml.lang.sysml.InvocationExpression;
 import org.omg.sysml.lang.sysml.Type;
 import org.omg.sysml.util.TypeUtil;
 
@@ -28,56 +34,115 @@ public final class ContainerManager {
 		scan();
 	}
 
-	public List<Class<? extends MappedElement<?>>> getLibraryMappedClasses() {
-		return getMappedClasses(MappedElementType.class);
-	}
-
-	public List<Class<? extends MappedElement<?>>> getMetaclassMappedClasses() {
-		return getMappedClasses(MappedMetaclass.class);
-	}
-
-	private List<Class<? extends MappedElement<?>>> getMappedClasses(Class<? extends Annotation> annotation) {
-		return containers.getOrDefault(annotation.getName(), Collections.emptyList()).stream().filter(MappedElement.class::isAssignableFrom).filter(clazz -> !Modifier.isAbstract(clazz.getModifiers())).map(this::castMappedClass).collect(Collectors.toCollection(ArrayList::new));
-	}
-
-
 	private void scan() {
-		try (ScanResult scanResult = new ClassGraph().acceptPackages("org.example").enableAllInfo().scan()) {
+		try (ScanResult scanResult = new ClassGraph()
+				.acceptPackages("org.example")
+				.enableAllInfo()
+				.scan()) {
 
 			for (var annotationInfo : scanResult.getAllAnnotations()) {
+
 				String annotationName = annotationInfo.getName();
 
-				for (ClassInfo classInfo : scanResult.getClassesWithAnnotation(annotationName)) {
+				for (ClassInfo classInfo :
+						scanResult.getClassesWithAnnotation(annotationName)) {
 
 					if (classInfo.isInterface() || classInfo.isAbstract()) {
 						continue;
 					}
 
-					containers.computeIfAbsent(annotationName, ignored -> new ArrayList<>()).add(classInfo.loadClass());
+					containers
+							.computeIfAbsent(
+									annotationName,
+									ignored -> new ArrayList<>()
+							)
+							.add(classInfo.loadClass());
 				}
 			}
 		}
 	}
 
 
+	/*
+	 * ============================================================
+	 * MAPPED CLASS DISCOVERY
+	 * ============================================================
+	 */
+
+	public List<Class<? extends MappedElement<?>>> getLibraryMappedClasses() {
+		return getMappedElementClasses(MappedElementType.class);
+	}
+
+	public List<Class<? extends MappedElement<?>>> getTypeMetaclassMappedClasses() {
+		return getMappedElementClasses(MappedMetaclass.class);
+	}
+
+	public List<Class<? extends MappedNamespaceElement<?>>> getNamespaceMetaclassMappedClasses() {
+		return getMappedNamespaceClasses(MappedMetaclass.class);
+	}
+
+	public List<Class<? extends PackageElementType>> getPackageMappedClasses() {
+		return containers
+				.getOrDefault(
+						PackageTypeMeta.class.getName(),
+						Collections.emptyList()
+				)
+				.stream()
+				.filter(PackageElementType.class::isAssignableFrom)
+				.filter(clazz -> !Modifier.isAbstract(clazz.getModifiers()))
+				.map(this::castPackageClass)
+				.collect(Collectors.toCollection(ArrayList::new));
+	}
+
+	private List<Class<? extends MappedElement<?>>> getMappedElementClasses(
+			Class<? extends Annotation> annotation
+	) {
+		return containers
+				.getOrDefault(annotation.getName(), Collections.emptyList())
+				.stream()
+				.filter(MappedElement.class::isAssignableFrom)
+				.filter(clazz -> !Modifier.isAbstract(clazz.getModifiers()))
+				.map(this::castMappedElementClass)
+				.collect(Collectors.toCollection(ArrayList::new));
+	}
+
+	private List<Class<? extends MappedNamespaceElement<?>>> getMappedNamespaceClasses(
+			Class<? extends Annotation> annotation
+	) {
+		return containers
+				.getOrDefault(annotation.getName(), Collections.emptyList())
+				.stream()
+				.filter(MappedNamespaceElement.class::isAssignableFrom)
+				.filter(clazz -> !Modifier.isAbstract(clazz.getModifiers()))
+				.map(this::castMappedNamespaceClass)
+				.collect(Collectors.toCollection(ArrayList::new));
+	}
+
 	public List<Class<? extends MappedElement<?>>> getMappedElementClasses() {
-		List<Class<? extends MappedElement<?>>> result = containers.getOrDefault(MappedElementType.class.getName(), Collections.emptyList()).stream().filter(MappedElement.class::isAssignableFrom).filter(clazz -> !Modifier.isAbstract(clazz.getModifiers())).map(this::castMappedClass).collect(Collectors.toCollection(ArrayList::new));
+
+		List<Class<? extends MappedElement<?>>> result =
+				getLibraryMappedClasses();
 
 		sortBySysmlTypeSpecificity(result);
 
 		return result;
 	}
 
-	private boolean isLibraryTypeCompatible(Type sysmlElement, Class<? extends MappedElement<?>> mappedClass) {
-		Type mappedLibraryType = getMappedLibraryType(mappedClass);
 
-		return mappedLibraryType != null && TypeUtil.isCompatible(sysmlElement, mappedLibraryType);
-	}
+	/*
+	 * ============================================================
+	 * GENERIC CONSTRUCTOR MATCHING
+	 * ============================================================
+	 */
 
-	private Constructor<?> findCompatibleConstructor(Class<? extends MappedElement<?>> mappedClass, Type sysmlElement) {
+	private Constructor<?> findCompatibleConstructor(
+			Class<? extends MappedNamespaceElement<?>> mappedClass,
+			Element sysmlElement
+	) {
 		Constructor<?> bestConstructor = null;
 
-		for (Constructor<?> constructor : mappedClass.getDeclaredConstructors()) {
+		for (Constructor<?> constructor :
+				mappedClass.getDeclaredConstructors()) {
 
 			Class<?>[] parameterTypes = constructor.getParameterTypes();
 
@@ -87,6 +152,14 @@ public final class ContainerManager {
 
 			Class<?> parameterType = parameterTypes[0];
 
+			/*
+			 * THIS is the SysML metaclass compatibility check.
+			 *
+			 * PackageImpl -> Package constructor
+			 * ImportImpl  -> Import constructor
+			 * StateUsage  -> StateUsage constructor
+			 * ...
+			 */
 			if (!parameterType.isInstance(sysmlElement)) {
 				continue;
 			}
@@ -96,7 +169,8 @@ public final class ContainerManager {
 				continue;
 			}
 
-			Class<?> currentBestType = bestConstructor.getParameterTypes()[0];
+			Class<?> currentBestType =
+					bestConstructor.getParameterTypes()[0];
 
 			if (currentBestType.isAssignableFrom(parameterType)) {
 				bestConstructor = constructor;
@@ -107,40 +181,218 @@ public final class ContainerManager {
 	}
 
 
-	public Constructor<? extends MappedElement<?>> getMappedConstructor(Type sysmlElement) throws MappingException {
+	/*
+	 * ============================================================
+	 * GENERAL ELEMENT ENTRY POINT
+	 *
+	 * Package / Import / Type / ...
+	 * ============================================================
+	 */
+
+	public Constructor<? extends MappedNamespaceElement<?>> getMappedConstructor(
+			Element sysmlElement
+	) throws MappingException {
 
 		Objects.requireNonNull(sysmlElement, "sysmlElement");
 
+		/*
+		 * Types use the existing Type-specific mapping.
+		 */
+		if (sysmlElement instanceof Type type) {
+			return castNamespaceConstructor(
+					getMappedConstructor(type)
+			);
+		}
 
-		if (!(sysmlElement instanceof org.omg.sysml.lang.sysml.InvocationExpression)) {
-			Constructor<? extends MappedElement<?>> libraryConstructor = findLibraryConstructor(sysmlElement);
-			if (libraryConstructor != null) {
-				return libraryConstructor;
+		/*
+		 * Packages are selected through PackageTypeMeta.
+		 */
+		if (sysmlElement instanceof org.omg.sysml.lang.sysml.Package sysmlPackage) {
+
+			Constructor<? extends MappedNamespaceElement<?>> constructor =
+					findPackageConstructor(sysmlPackage);
+
+			if (constructor != null) {
+				return constructor;
 			}
 		}
 
-		Constructor<? extends MappedElement<?>> metaclassConstructor = findMetaclassConstructor(sysmlElement);
+		/*
+		 * Other Elements, e.g. ImportMapped via @MappedMetaclass.
+		 */
+		Constructor<? extends MappedNamespaceElement<?>> metaclassConstructor =
+				findNamespaceMetaclassConstructor(sysmlElement);
+
 		if (metaclassConstructor != null) {
 			return metaclassConstructor;
 		}
 
-		if (sysmlElement instanceof org.omg.sysml.lang.sysml.InvocationExpression) {
-			Constructor<? extends MappedElement<?>> libraryConstructor = findLibraryConstructor(sysmlElement);
+		throw new NoMappedElementException(
+				"No mapped constructor found for '%s' (%s)."
+						.formatted(
+								safeName(sysmlElement),
+								sysmlElement.getClass().getSimpleName()
+						)
+		);
+	}
+
+
+	/*
+	 * ============================================================
+	 * PACKAGE MAPPING
+	 * ============================================================
+	 */
+
+	private Constructor<? extends MappedNamespaceElement<?>> findPackageConstructor(
+			org.omg.sysml.lang.sysml.Package sysmlPackage
+	) throws MappingException {
+
+		/*
+		 * Determine which of OUR package categories
+		 * this concrete SysML package belongs to.
+		 */
+		LibraryPackageNames wantedPackageType;
+
+		if (utils.idFromUserLibrary(sysmlPackage)) {
+			wantedPackageType = LibraryPackageNames.USER_LIBRARY;
+		} else if (utils.isFromTwinLibrary(sysmlPackage)) {
+			wantedPackageType = LibraryPackageNames.TWIN_DEF_LIBRARY;
+		} else {
+			return null;
+		}
+
+		Constructor<?> found = null;
+
+		for (Class<? extends PackageElementType> mappedClass :
+				getPackageMappedClasses()) {
+
+			PackageTypeMeta meta =
+					mappedClass.getAnnotation(PackageTypeMeta.class);
+
+			if (meta == null) {
+				continue;
+			}
+
+			/*
+			 * PackageTypeMeta.value() decides WHICH package mapper
+			 * represents this package category.
+			 */
+			if (meta.value() != wantedPackageType) {
+				continue;
+			}
+
+			/*
+			 * Now check whether the Java constructor accepts
+			 * the actual SysML metaclass.
+			 */
+			Constructor<?> constructor =
+					findCompatibleConstructor(
+							castMappedNamespaceClass(mappedClass),
+							sysmlPackage
+					);
+
+			if (constructor == null) {
+				continue;
+			}
+
+			if (found != null) {
+				throw new MappingException(
+						"Multiple package mappers found for package '%s' and package type '%s'."
+								.formatted(
+										safeName(sysmlPackage),
+										wantedPackageType
+								)
+				);
+			}
+
+			found = constructor;
+		}
+
+		return castNamespaceConstructor(found);
+	}
+
+
+	/*
+	 * ============================================================
+	 * NORMAL TYPE ENTRY POINT
+	 *
+	 * Existing mapping logic.
+	 * ============================================================
+	 */
+
+	public Constructor<? extends MappedElement<?>> getMappedConstructor(
+			Type sysmlElement
+	) throws MappingException {
+
+		Objects.requireNonNull(sysmlElement, "sysmlElement");
+
+		/*
+		 * For normal elements:
+		 * Library typing has priority.
+		 */
+		if (!(sysmlElement instanceof InvocationExpression)) {
+
+			Constructor<? extends MappedElement<?>> libraryConstructor =
+					findLibraryConstructor(sysmlElement);
+
 			if (libraryConstructor != null) {
 				return libraryConstructor;
 			}
 		}
 
+		/*
+		 * Then SysML metaclass mapping.
+		 */
+		Constructor<? extends MappedElement<?>> metaclassConstructor =
+				findTypeMetaclassConstructor(sysmlElement);
 
-		throw new NoMappedElementException("No mapped constructor found for '%s' (%s).".formatted(safeName(sysmlElement), sysmlElement.getClass().getSimpleName()));
+		if (metaclassConstructor != null) {
+			return metaclassConstructor;
+		}
+
+		/*
+		 * InvocationExpression:
+		 * library typing comes after metaclass matching.
+		 */
+		if (sysmlElement instanceof InvocationExpression) {
+
+			Constructor<? extends MappedElement<?>> libraryConstructor =
+					findLibraryConstructor(sysmlElement);
+
+			if (libraryConstructor != null) {
+				return libraryConstructor;
+			}
+		}
+
+		throw new NoMappedElementException(
+				"No mapped constructor found for '%s' (%s)."
+						.formatted(
+								safeName(sysmlElement),
+								sysmlElement.getClass().getSimpleName()
+						)
+		);
 	}
 
-	private Constructor<? extends MappedElement<?>> findMetaclassConstructor(Type sysmlElement) {
+
+	/*
+	 * ============================================================
+	 * TYPE @MappedMetaclass
+	 * ============================================================
+	 */
+
+	private Constructor<? extends MappedElement<?>> findTypeMetaclassConstructor(
+			Type sysmlElement
+	) {
 		Constructor<?> best = null;
 
-		for (Class<? extends MappedElement<?>> mappedClass : getMetaclassMappedClasses()) {
+		for (Class<? extends MappedElement<?>> mappedClass :
+				getTypeMetaclassMappedClasses()) {
 
-			Constructor<?> constructor = findCompatibleConstructor(mappedClass, sysmlElement);
+			Constructor<?> constructor =
+					findCompatibleConstructor(
+							castMappedNamespaceClass(mappedClass),
+							sysmlElement
+					);
 
 			if (constructor == null) {
 				continue;
@@ -151,37 +403,125 @@ public final class ContainerManager {
 				continue;
 			}
 
-			Class<?> bestParameter = best.getParameterTypes()[0];
-			Class<?> candidateParameter = constructor.getParameterTypes()[0];
+			Class<?> bestParameter =
+					best.getParameterTypes()[0];
+
+			Class<?> candidateParameter =
+					constructor.getParameterTypes()[0];
 
 			if (bestParameter.isAssignableFrom(candidateParameter)) {
 				best = constructor;
 			}
 		}
 
-		return castConstructor(best);
+		return castMappedConstructor(best);
 	}
 
-	private Constructor<? extends MappedElement<?>> findLibraryConstructor(Type sysmlElement)
-			throws MappingException {
 
-		List<Class<? extends MappedElement<?>>> classes = getLibraryMappedClasses();
-		sortBySysmlTypeSpecificity(classes);
+	/*
+	 * ============================================================
+	 * NON-TYPE @MappedMetaclass
+	 *
+	 * e.g. ImportMapped
+	 * ============================================================
+	 */
 
-		Map<Constructor<?>, Type> candidates = new LinkedHashMap<>();
+	private Constructor<? extends MappedNamespaceElement<?>> findNamespaceMetaclassConstructor(
+			Element sysmlElement
+	) {
+		Constructor<?> best = null;
 
-		for (Class<? extends MappedElement<?>> mappedClass : classes) {
-			if (!isLibraryTypeCompatible(sysmlElement, mappedClass)) {
+		for (Class<? extends MappedNamespaceElement<?>> mappedClass :
+				getNamespaceMetaclassMappedClasses()) {
+
+			Constructor<?> constructor =
+					findCompatibleConstructor(
+							mappedClass,
+							sysmlElement
+					);
+
+			if (constructor == null) {
 				continue;
 			}
 
-			Constructor<?> constructor = findCompatibleConstructor(mappedClass, sysmlElement);
+			if (best == null) {
+				best = constructor;
+				continue;
+			}
 
-			if (constructor != null) {
-				candidates.put(constructor, getMappedLibraryType(mappedClass));
+			Class<?> bestParameter =
+					best.getParameterTypes()[0];
+
+			Class<?> candidateParameter =
+					constructor.getParameterTypes()[0];
+
+			if (bestParameter.isAssignableFrom(candidateParameter)) {
+				best = constructor;
 			}
 		}
 
+		return castNamespaceConstructor(best);
+	}
+
+
+	/*
+	 * ============================================================
+	 * LIBRARY TYPE MATCHING
+	 * ============================================================
+	 */
+
+	private boolean isLibraryTypeCompatible(
+			Type sysmlElement,
+			Class<? extends MappedElement<?>> mappedClass
+	) {
+		Type mappedLibraryType =
+				getMappedLibraryType(mappedClass);
+
+		return mappedLibraryType != null
+				&& TypeUtil.isCompatible(
+				sysmlElement,
+				mappedLibraryType
+		);
+	}
+
+	private Constructor<? extends MappedElement<?>> findLibraryConstructor(
+			Type sysmlElement
+	) throws MappingException {
+
+		List<Class<? extends MappedElement<?>>> classes =
+				getLibraryMappedClasses();
+
+		sortBySysmlTypeSpecificity(classes);
+
+		Map<Constructor<?>, Type> candidates =
+				new LinkedHashMap<>();
+
+		for (Class<? extends MappedElement<?>> mappedClass : classes) {
+
+			if (!isLibraryTypeCompatible(
+					sysmlElement,
+					mappedClass
+			)) {
+				continue;
+			}
+
+			Constructor<?> constructor =
+					findCompatibleConstructor(
+							castMappedNamespaceClass(mappedClass),
+							sysmlElement
+					);
+
+			if (constructor != null) {
+				candidates.put(
+						constructor,
+						getMappedLibraryType(mappedClass)
+				);
+			}
+		}
+
+		/*
+		 * Remove less-specific library types.
+		 */
 		candidates.entrySet().removeIf(candidate ->
 				candidates.entrySet().stream().anyMatch(other ->
 						other != candidate
@@ -198,91 +538,170 @@ public final class ContainerManager {
 							.formatted(
 									safeName(sysmlElement),
 									sysmlElement.getClass().getSimpleName(),
-									candidates.values().stream()
+									candidates.values()
+											.stream()
 											.map(Type::getQualifiedName)
 											.collect(Collectors.joining(", "))
 							)
 			);
 		}
 
-		return candidates.keySet().stream()
+		return candidates
+				.keySet()
+				.stream()
 				.findFirst()
-				.map(this::castConstructor)
+				.map(this::castMappedConstructor)
 				.orElse(null);
 	}
 
-	@SuppressWarnings("unchecked")
-	private Constructor<? extends MappedElement<?>> castConstructor(Constructor<?> constructor) {
-		return constructor == null ? null : (Constructor<? extends MappedElement<?>>) constructor;
-	}
 
+	/*
+	 * ============================================================
+	 * LIBRARY TYPE SPECIFICITY
+	 * ============================================================
+	 */
 
-	private void sortBySysmlTypeSpecificity(List<Class<? extends MappedElement<?>>> classes) {
-		Map<Class<? extends MappedElement<?>>, Type> libraryTypes = new HashMap<>();
+	private void sortBySysmlTypeSpecificity(
+			List<Class<? extends MappedElement<?>>> classes
+	) {
+		Map<Class<? extends MappedElement<?>>, Type> libraryTypes =
+				new HashMap<>();
+
 		for (var mappedClass : classes) {
-			libraryTypes.put(mappedClass, getMappedLibraryType(mappedClass));
+			libraryTypes.put(
+					mappedClass,
+					getMappedLibraryType(mappedClass)
+			);
 		}
 
-		Map<Class<? extends MappedElement<?>>, List<Class<? extends MappedElement<?>>>> edges = new HashMap<>();
-		Map<Class<? extends MappedElement<?>>, Integer> indegree = new HashMap<>();
+		Map<Class<? extends MappedElement<?>>,
+				List<Class<? extends MappedElement<?>>>> edges =
+				new HashMap<>();
+
+		Map<Class<? extends MappedElement<?>>, Integer> indegree =
+				new HashMap<>();
+
 		for (var c : classes) {
 			indegree.put(c, 0);
 		}
 
 		for (var a : classes) {
+
 			Type typeA = libraryTypes.get(a);
+
 			if (typeA == null) {
 				continue;
 			}
+
 			for (var b : classes) {
+
 				if (a == b) {
 					continue;
 				}
+
 				Type typeB = libraryTypes.get(b);
+
 				if (typeB == null) {
 					continue;
 				}
+
 				if (TypeUtil.specializes(typeA, typeB)) {
-					edges.computeIfAbsent(a, k -> new ArrayList<>()).add(b);
-					indegree.merge(b, 1, Integer::sum);
+
+					edges
+							.computeIfAbsent(
+									a,
+									k -> new ArrayList<>()
+							)
+							.add(b);
+
+					indegree.merge(
+							b,
+							1,
+							Integer::sum
+					);
 				}
 			}
 		}
 
 		for (var c : classes) {
-			if (libraryTypes.get(c) == null) {
-				for (var other : classes) {
-					if (other != c && libraryTypes.get(other) != null) {
-						edges.computeIfAbsent(other, k -> new ArrayList<>()).add(c);
-						indegree.merge(c, 1, Integer::sum);
-					}
+
+			if (libraryTypes.get(c) != null) {
+				continue;
+			}
+
+			for (var other : classes) {
+
+				if (other == c) {
+					continue;
 				}
+
+				if (libraryTypes.get(other) == null) {
+					continue;
+				}
+
+				edges
+						.computeIfAbsent(
+								other,
+								k -> new ArrayList<>()
+						)
+						.add(c);
+
+				indegree.merge(
+						c,
+						1,
+						Integer::sum
+				);
 			}
 		}
 
-		TreeSet<Class<? extends MappedElement<?>>> ready = new TreeSet<>(Comparator.comparing(Class::getName));
+		TreeSet<Class<? extends MappedElement<?>>> ready =
+				new TreeSet<>(
+						Comparator.comparing(Class::getName)
+				);
+
 		for (var c : classes) {
+
 			if (indegree.get(c) == 0) {
 				ready.add(c);
 			}
 		}
 
-		List<Class<? extends MappedElement<?>>> result = new ArrayList<>();
+		List<Class<? extends MappedElement<?>>> result =
+				new ArrayList<>();
+
 		while (!ready.isEmpty()) {
+
 			var next = ready.pollFirst();
+
 			result.add(next);
-			for (var neighbor : edges.getOrDefault(next, List.of())) {
-				int deg = indegree.merge(neighbor, -1, Integer::sum);
-				if (deg == 0) {
+
+			for (var neighbor :
+					edges.getOrDefault(next, List.of())) {
+
+				int degree =
+						indegree.merge(
+								neighbor,
+								-1,
+								Integer::sum
+						);
+
+				if (degree == 0) {
 					ready.add(neighbor);
 				}
 			}
 		}
 
 		if (result.size() != classes.size()) {
-			List<Class<? extends MappedElement<?>>> remaining = new ArrayList<>(classes);
+
+			List<Class<? extends MappedElement<?>>> remaining =
+					new ArrayList<>(classes);
+
 			remaining.removeAll(result);
-			remaining.sort(Comparator.comparing(Class::getName));
+
+			remaining.sort(
+					Comparator.comparing(Class::getName)
+			);
+
 			result.addAll(remaining);
 		}
 
@@ -290,23 +709,86 @@ public final class ContainerManager {
 		classes.addAll(result);
 	}
 
-	private Type getMappedLibraryType(Class<? extends MappedElement<?>> mappedClass) {
-		MappedElementType annotation = mappedClass.getAnnotation(MappedElementType.class);
+
+	/*
+	 * ============================================================
+	 * ANNOTATION -> SYSML LIBRARY TYPE
+	 * ============================================================
+	 */
+
+	private Type getMappedLibraryType(
+			Class<? extends MappedElement<?>> mappedClass
+	) {
+		MappedElementType annotation =
+				mappedClass.getAnnotation(
+						MappedElementType.class
+				);
 
 		if (annotation == null) {
 			return null;
 		}
 
-		return utils.getLibTypeFromAnnotation(annotation.value());
+		return utils.getLibTypeFromAnnotation(
+				annotation.value()
+		);
 	}
 
 
+	/*
+	 * ============================================================
+	 * CAST HELPERS
+	 * ============================================================
+	 */
+
 	@SuppressWarnings("unchecked")
-	private Class<? extends MappedElement<?>> castMappedClass(Class<?> mappedClass) {
+	private Class<? extends MappedElement<?>> castMappedElementClass(
+			Class<?> mappedClass
+	) {
 		return (Class<? extends MappedElement<?>>) mappedClass;
 	}
 
-	private String safeName(Type element) {
-		return element.getName() == null ? "<unnamed>" : element.getName();
+	@SuppressWarnings("unchecked")
+	private Class<? extends MappedNamespaceElement<?>> castMappedNamespaceClass(
+			Class<?> mappedClass
+	) {
+		return (Class<? extends MappedNamespaceElement<?>>) mappedClass;
+	}
+
+	@SuppressWarnings("unchecked")
+	private Class<? extends PackageElementType> castPackageClass(
+			Class<?> mappedClass
+	) {
+		return (Class<? extends PackageElementType>) mappedClass;
+	}
+
+	@SuppressWarnings("unchecked")
+	private Constructor<? extends MappedElement<?>> castMappedConstructor(
+			Constructor<?> constructor
+	) {
+		return constructor == null
+				? null
+				: (Constructor<? extends MappedElement<?>>) constructor;
+	}
+
+	@SuppressWarnings("unchecked")
+	private Constructor<? extends MappedNamespaceElement<?>> castNamespaceConstructor(
+			Constructor<?> constructor
+	) {
+		return constructor == null
+				? null
+				: (Constructor<? extends MappedNamespaceElement<?>>) constructor;
+	}
+
+
+	/*
+	 * ============================================================
+	 * NAME
+	 * ============================================================
+	 */
+
+	private String safeName(Element element) {
+		return element.getName() == null
+				? "<unnamed>"
+				: element.getName();
 	}
 }

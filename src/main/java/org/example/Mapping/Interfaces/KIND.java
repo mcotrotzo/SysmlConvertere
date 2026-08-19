@@ -1,5 +1,5 @@
 package org.example.Mapping.Interfaces;
 
 public enum KIND {
-	DEFINITION, USAGE;
+	DEFINITION, USAGE,PACKAGE,IMPORT;
 }

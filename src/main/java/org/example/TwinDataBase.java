@@ -6,29 +6,31 @@ import org.example.Mapping.Interfaces.Model;
 import org.example.Mapping.Interfaces.Reference;
 import org.example.Mapping.NewVersion.Abstract.MappedElement;
 import org.example.Mapping.NewVersion.Abstract.MappedReference;
+import org.example.Mapping.NewVersion.Packages.MappedNamespaceElement;
 import org.example.Util.Utils;
+import org.omg.sysml.lang.sysml.Type;
+import org.omg.sysml.lang.sysml.impl.FeatureImpl;
 import org.omg.sysml.util.FeatureUtil;
 import org.omg.sysml.util.TypeUtil;
 
-import java.lang.reflect.Type;
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class TwinDataBase {
 
 	private Map<String, Model> mappedElements = new HashMap<>();
-	private List<MappedElement<?>> mappedRaWElementzs = new ArrayList<>();
+	private List<MappedNamespaceElement<?>> mappedRaWElementzs = new ArrayList<>();
 
-	public TwinDataBase(List<MappedElement<?>> m) {
+	public TwinDataBase(List<MappedNamespaceElement<?>> m) {
 		this.mappedRaWElementzs =m;
 		register(m);
 	}
 
-	private void register(MappedElement<?> m) {
+	private void register(MappedNamespaceElement<?> m) {
 		mappedElements.put(m.getId(), m);
 	}
 
-	private void register(List<MappedElement<?>> m) {
+	private void register(List<MappedNamespaceElement<?>> m) {
 		m.forEach(this::register);
 	}
 
@@ -74,11 +76,11 @@ public class TwinDataBase {
 			);
 		}
 
+
 		return mappedRaWElementzs.stream()
 				.filter(mapped -> mapped != mappedTarget)
 				.filter(mapped ->
-						TypeUtil.getSupertypesOf(
-								mapped.getSysmlElement(),
+						TypeUtil.getSupertypesOf((Type) mapped.getSysmlElement(),
 								true
 						).contains(mappedTarget.getSysmlElement())
 				)

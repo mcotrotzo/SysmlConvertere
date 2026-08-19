@@ -5,5 +5,4 @@ import java.util.Optional;
 
 public interface TwinAttribute extends Model {
 	Optional<Expression> getTwinExpressions();
-	ReadWriteRoles getRole();
 }

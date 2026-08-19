@@ -25,7 +25,7 @@ public class CustomTypeMapped extends TwinAttributeMapped implements CustomType 
 	protected List<TwinAttributeMapped> fields = new ArrayList<>();
 	private MappedReference<? extends CustomTypeMappedDefintion> definition;
 
-	public CustomTypeMapped(Usage sysmlElement) {
+	public CustomTypeMapped(Feature sysmlElement) {
 		super(sysmlElement);
 	}
 

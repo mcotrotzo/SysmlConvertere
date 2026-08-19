@@ -4,7 +4,7 @@ import java.util.List;
 /**
  * Represents a custom type definition in the model.
  */
-public interface CustomTypeDefinition extends Model{
+public interface CustomTypeDefinition extends TwinTypeDefinition{
 
 	/**
 	 * Retrieves the list of fields associated with this custom type definition.

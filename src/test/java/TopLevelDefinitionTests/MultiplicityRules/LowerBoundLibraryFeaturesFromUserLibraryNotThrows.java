@@ -19,8 +19,9 @@ public class LowerBoundLibraryFeaturesFromUserLibraryNotThrows extends AbstarctT
 				    private import PositionThings::*;
 				
 				    part def Battery :> Twin {
-				
+				part physicalBattery :>> physicalTwin {
 				        port p11 :> sensors:P11;
+				    }
 				    }
 				}
 				""");

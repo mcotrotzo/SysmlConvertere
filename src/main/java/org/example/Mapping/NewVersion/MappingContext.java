@@ -5,8 +5,15 @@ import org.example.Mapping.Interfaces.FeatureReference;
 import org.example.Mapping.Interfaces.TwinEnum;
 import org.example.Mapping.NewVersion.Abstract.MappedElement;
 import org.example.Mapping.NewVersion.Abstract.MappedReference;
+import org.example.Mapping.NewVersion.Packages.ImportMapped;
+import org.example.Mapping.NewVersion.Packages.MappedNamespaceElement;
+import org.example.Mapping.NewVersion.Packages.PackageElementType;
 import org.example.Util.Utils;
 import org.omg.sysml.lang.sysml.*;
+import org.omg.sysml.lang.sysml.Package;
+import org.omg.sysml.lang.sysml.impl.FeatureImpl;
+import org.omg.sysml.util.ElementUtil;
+import org.omg.sysml.util.NamespaceUtil;
 
 import java.lang.Class;
 import java.lang.reflect.Constructor;
@@ -17,7 +24,7 @@ public final class MappingContext {
 	private final Utils utils;
 	private final ContainerManager containerManager;
 
-	private final Map<Type, MappedElement<?>> mappedElements = new IdentityHashMap<>();
+	private final Map<Element, MappedNamespaceElement<?>> mappedElements = new IdentityHashMap<>();
 
 	public MappingContext(Utils utils, ContainerManager containerManager) {
 		this.utils = utils;
@@ -26,41 +33,38 @@ public final class MappingContext {
 	}
 
 
-	public List<MappedElement<?>> parseAll() throws MappingException {
-		Collection<Type> elements = utils.collect(Type.class);
+	public List<MappedNamespaceElement<?>> parseAll() throws MappingException {
+		Collection<Package> elements = utils.collect(Package.class);
 
-		parseAllDefinitions(elements);
+		parseAllPackages(elements);
 
 		return new ArrayList<>(mappedElements.values());
 	}
 
-	public List<MappedElement<?>> parseAllDefinitions(Collection<? extends Type> elements) throws MappingException {
-		List<MappedElement<?>> roots = new ArrayList<>();
+	public List<MappedNamespaceElement<?>> parseAllPackages(Collection<Package> elements) throws MappingException {
+		List<MappedNamespaceElement<?>> roots = new ArrayList<>();
 
-		for (Type element : elements) {
-			if (!isDefiniton(element)) {
-				continue;
-			}
+		for (Package element : elements) {
 
-			roots.add(map(element, null));
+			MappedNamespaceElement<?> mapped = map(element, null);
 
+			roots.add(mapped);
 		}
-
 		return roots;
 	}
 
-	public MappedElement<?> map(Type element, MappedElement<?> owner) throws MappingException {
+	public MappedNamespaceElement<?> map(Element element, MappedNamespaceElement<?> owner) throws MappingException {
 
 		Objects.requireNonNull(element, "element");
 
-		MappedElement<?> existing = mappedElements.get(element);
+		MappedNamespaceElement<?> existing = mappedElements.get(element);
 
 		if (existing != null) {
 			assignOwner(existing, owner);
 			return existing;
 		}
 
-		MappedElement<?> created = create(element);
+		MappedNamespaceElement<?> created = create(element);
 		created.setOwner(owner);
 
 		mappedElements.put(element, created);
@@ -74,16 +78,8 @@ public final class MappingContext {
 		}
 	}
 
-	private boolean isDefiniton(Type element) {
-		if (!(element instanceof Definition)) {
-			return false;
-		}
-
-		return true;
-	}
-
-	private MappedElement<?> create(Type element) throws MappingException {
-		Constructor<? extends MappedElement<?>> constructor = containerManager.getMappedConstructor(element);
+	private MappedNamespaceElement<?> create(Element element) throws MappingException {
+		Constructor<? extends MappedNamespaceElement<?>> constructor = containerManager.getMappedConstructor(element);
 		constructor.setAccessible(true);
 
 		try {
@@ -94,7 +90,7 @@ public final class MappingContext {
 	}
 
 
-	private void assignOwner(MappedElement<?> mapped, MappedElement<?> owner) {
+	private void assignOwner(MappedNamespaceElement<?> mapped, MappedNamespaceElement<?> owner) {
 		if (owner == null) {
 			return;
 		}
@@ -118,7 +114,7 @@ public final class MappingContext {
 				continue;
 			}
 
-			MappedElement<?> mapped = map(feature, mappedParent);
+			MappedNamespaceElement<?> mapped = map(feature, mappedParent);
 
 			if (!expectedClass.isInstance(mapped)) {
 				throw new MappingException("Slot '%s': Element '%s' was mapped as '%s', expected '%s'.".formatted(slotName, feature.getName(), mapped.getClass().getSimpleName(), expectedClass.getSimpleName()));
@@ -127,32 +123,24 @@ public final class MappingContext {
 			result.add(expectedClass.cast(mapped));
 		}
 
+
 		return result;
 	}
-	public TwinAttributeLoopVariableMapped mapLoopVariable(
-			Type element,
-			MappedElement<?> owner
-	) throws MappingException {
 
-		MappedElement<?> existing = mappedElements.get(element);
+	public TwinAttributeLoopVariableMapped mapLoopVariable(Usage element, MappedNamespaceElement<?> owner) throws MappingException {
+
+		MappedNamespaceElement<?> existing = mappedElements.get(element);
 
 		if (existing != null) {
 			if (!(existing instanceof TwinAttributeLoopVariableMapped loopVariable)) {
-				throw new MappingException(
-						"Loop variable '%s' was already mapped as '%s'."
-								.formatted(
-										element.getName(),
-										existing.getClass().getSimpleName()
-								)
-				);
+				throw new MappingException("Loop variable '%s' was already mapped as '%s'.".formatted(element.getName(), existing.getClass().getSimpleName()));
 			}
 
 			assignOwner(loopVariable, owner);
 			return loopVariable;
 		}
 
-		TwinAttributeLoopVariableMapped created =
-				new TwinAttributeLoopVariableMapped(element);
+		TwinAttributeLoopVariableMapped created = new TwinAttributeLoopVariableMapped(element);
 
 		created.setOwner(owner);
 		mappedElements.put(element, created);
@@ -166,9 +154,9 @@ public final class MappingContext {
 		}
 	}
 
-	public <T extends MappedElement<?>> T map(Type element, MappedElement<?> owner, Class<T> expectedClass) throws MappingException {
+	public <T extends MappedNamespaceElement<?>> T map(Element element, MappedNamespaceElement<?> owner, Class<T> expectedClass) throws MappingException {
 
-		MappedElement<?> mapped = map(element, owner);
+		MappedNamespaceElement<?> mapped = map(element, owner);
 
 		if (!expectedClass.isInstance(mapped)) {
 			throw new MappingException("Element '%s' was mapped as '%s', but '%s' was expected.".formatted(element.getName(), mapped.getClass().getSimpleName(), expectedClass.getSimpleName()));
@@ -177,11 +165,7 @@ public final class MappingContext {
 		return expectedClass.cast(mapped);
 	}
 
-	public <S extends Type, T> List<T> mapOwned(
-			MappedElement<?> mappedOwner,
-			Class<S> sysmlMetaclass,
-			Class<T> expectedClass
-	) throws MappingException {
+	public <S extends Element, T> List<T> mapOwned(MappedElement<?> mappedOwner, Class<S> sysmlMetaclass, Class<T> expectedClass) throws MappingException {
 
 		List<T> result = new ArrayList<>();
 
@@ -191,10 +175,33 @@ public final class MappingContext {
 				continue;
 			}
 
+
 			S typedMember = sysmlMetaclass.cast(member);
 
-			MappedElement<?> mapped =
-					map(typedMember, mappedOwner);
+			MappedNamespaceElement<?> mapped = map(typedMember, mappedOwner);
+
+			if (expectedClass.isInstance(mapped)) {
+				result.add(expectedClass.cast(mapped));
+			}
+		}
+
+		return result;
+	}
+
+	public <S extends Element, T> List<T> mapOwnedNamespace(MappedNamespaceElement<?> mappedOwner, Class<S> sysmlMetaclass, Class<T> expectedClass) throws MappingException {
+
+		List<T> result = new ArrayList<>();
+
+		for (Element member : mappedOwner.getSysmlElement().getOwnedElement()) {
+
+			if (!sysmlMetaclass.isInstance(member)) {
+				continue;
+			}
+
+
+			S typedMember = sysmlMetaclass.cast(member);
+
+			MappedNamespaceElement<?> mapped = map(typedMember, mappedOwner);
 
 			if (expectedClass.isInstance(mapped)) {
 				result.add(expectedClass.cast(mapped));
@@ -205,7 +212,8 @@ public final class MappingContext {
 	}
 
 
-	public <T extends MappedElement<?>> MappedReference<T> mapReference(Type referent, Class<T> expectedClass) throws MappingException {
+
+	public <T extends MappedNamespaceElement<?>> MappedReference<T> mapReference(Element referent, Class<T> expectedClass) throws MappingException {
 
 		Objects.requireNonNull(referent, "referent");
 		Objects.requireNonNull(expectedClass, "expectedClass");
@@ -220,23 +228,22 @@ public final class MappingContext {
 			Class<T> enumClass
 	) throws MappingException {
 
-		var expression = attribute.getTwinExpressions()
-				.orElseThrow(() -> new MappingException(
-						"Attribute '%s' has no expression"
-								.formatted(attribute.getName())
-				));
+		var expression = attribute.getSysmlElement()
+				.getOwnedElement()
+				.stream()
+				.filter(FeatureReferenceExpression.class::isInstance)
+				.map(FeatureReferenceExpression.class::cast)
+				.findFirst()
+				.orElseThrow(() ->
+						new MappingException(
+								"Attribute '%s' has no enum reference"
+										.formatted(attribute.getName())
+						)
+				);
 
-		if (!(expression instanceof FeatureReference featureReference)) {
-			throw new MappingException(
-					"Attribute '%s' does not contain an enum reference"
-							.formatted(attribute.getName())
-			);
-		}
+		var referent = expression.getReferent();
 
-		String symbol = featureReference
-				.getTarget()
-				.getReferent()
-				.getName();
+		String symbol = referent.getName();
 
 		for (T value : enumClass.getEnumConstants()) {
 			if (value.getStringRepresentation().equals(symbol)) {
@@ -250,7 +257,9 @@ public final class MappingContext {
 		);
 	}
 
+
 	public Utils getUtils() {
 		return utils;
 	}
+
 }

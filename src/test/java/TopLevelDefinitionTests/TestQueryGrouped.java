@@ -19,16 +19,18 @@ public class TestQueryGrouped extends AbstarctTest {
 				    private import PositionThings::*;
 				
 				    part def Battery :> Twin {
-				
+				part physicalBattery :>> physicalTwin {
 				        port p11 :> sensors{
 				            attribute pos : Position :> measurements;
 				        }
-				
+				}
+				part descriptiveBattery :>> descriptiveModel {
 				        part positionHistory :> groupedQueryHistory {
-				            :>> twinAttribute : Position default p11.pos;
+				            :>> twinAttribute : Position default physicalBattery.p11.pos;
 				           
 				            :>> result : PositionQueryResult[0..*];
 				        }
+				    }
 				    }
 				}
 				""");

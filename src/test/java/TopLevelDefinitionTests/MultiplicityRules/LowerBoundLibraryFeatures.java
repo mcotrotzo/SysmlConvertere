@@ -20,14 +20,14 @@ public class LowerBoundLibraryFeatures extends AbstarctTest {
 				    private import PositionThings::*;
 				
 				    part def Battery :> Twin {
-				
+				part physicalBattery :>> physicalTwin{
 				        port p11 :> sensors {
 				        c1:>communicationProtocol:MQTT_Protocol {
 				            }
 				
 				        }
 				
-				      
+				      }
 				    }
 				}
 				""");

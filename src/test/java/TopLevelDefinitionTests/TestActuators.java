@@ -1,6 +1,7 @@
 package TopLevelDefinitionTests;
 
 import org.example.Mapping.Interfaces.Actuators;
+import org.example.Mapping.Interfaces.PhysicalTwin;
 import org.example.Mapping.Interfaces.Twin;
 import org.junit.jupiter.api.Test;
 
@@ -13,7 +14,7 @@ public class TestActuators extends AbstarctTest {
 	public void testGeneralActuator() {
 		assertAmount(Actuators.class, 1);
 
-		result.get(Actuators.class).forEach(actuator -> assertParent(actuator, Twin.class, "Battery"));
+		result.get(Actuators.class).forEach(actuator -> assertParent(actuator, PhysicalTwin.class, "physicalBattery"));
 	}
 
 	@Test

@@ -20,7 +20,7 @@ public class UpperBoundExceededOnNonelibrary extends AbstarctTest {
 				    private import PositionThings::*;
 				
 				    part def Battery :> Twin {
-				
+				part physicalBattery :>> physicalTwin {
 				        port p11 :> sensors {
 				        attribute pos[3] : Position :> measurements;
 				        t1[0..1] :> pos;
@@ -28,6 +28,7 @@ public class UpperBoundExceededOnNonelibrary extends AbstarctTest {
 				        t3[0..2] :> pos;
 				        }
 			
+				    }
 				    }
 				}
 				""");

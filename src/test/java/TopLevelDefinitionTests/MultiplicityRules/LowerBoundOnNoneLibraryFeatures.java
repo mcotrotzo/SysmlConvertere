@@ -20,11 +20,11 @@ public class LowerBoundOnNoneLibraryFeatures extends AbstarctTest {
 				    private import PositionThings::*;
 				
 				    part def Battery :> Twin {
-				
+				part physicalBattery :>> physicalTwin {
 				        port p11 :> sensors {
 				        attribute pos[3] : Position :> measurements;
 				        }
-			
+			}
 				    }
 				}
 				""");

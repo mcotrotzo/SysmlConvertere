@@ -14,11 +14,11 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class RedefintionRules extends SpecialicingRules {
+public class RedefinitionRules extends SpecialicingRules {
 
-	private static final Logger log = LoggerFactory.getLogger(RedefintionRules.class);
+	private static final Logger log = LoggerFactory.getLogger(RedefinitionRules.class);
 
-	public RedefintionRules(Utils utils) {
+	public RedefinitionRules(Utils utils) {
 		super(utils);
 	}
 

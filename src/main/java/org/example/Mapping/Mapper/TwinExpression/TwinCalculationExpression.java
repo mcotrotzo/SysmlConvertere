@@ -42,10 +42,15 @@ public class TwinCalculationExpression extends TwinExpression<InvocationExpressi
 
 	@Override
 	public void parse(MappingContext context) throws MappingException {
+
+
 		var function = getSysmlElement().getFunction();
 		calledFunction = context.mapReference(function, FunctionMapped.class);
 
+
+		System.out.println("Calling Function: " + function.getName() + " / " + function.getQualifiedName());
 		for (var arg : getSysmlElement().getArgument()) {
+			System.out.println("Argument: " + arg.getName() + " / " + arg.getQualifiedName() + "path" + arg.path());
 			arguments.add(context.map(arg, this, TwinExpression.class));
 		}
 	}

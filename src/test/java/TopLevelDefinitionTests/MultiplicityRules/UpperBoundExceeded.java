@@ -20,7 +20,7 @@ public class UpperBoundExceeded  extends AbstarctTest {
 				    private import PositionThings::*;
 				
 				    part def Battery :> Twin {
-				
+				part physicalBattery :>> physicalTwin {
 				        port p11 :> sensors {
 				       c1[1]:>communicationProtocol:MQTT_Protocol {
 							:>>broker[1];
@@ -32,6 +32,7 @@ public class UpperBoundExceeded  extends AbstarctTest {
 				        }
 				        }
 			
+				    }
 				    }
 				}
 				""");

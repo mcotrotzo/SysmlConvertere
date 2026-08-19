@@ -15,7 +15,7 @@ import java.util.Set;
 @ToString(callSuper = true)
 public class TimeBasedConfigurationMapped extends TriggerConfigurationMapped implements TimeBasedConfiguration {
 	private List<TwinIntegerMapped> triggerInterval = new ArrayList<>();
-	private EnumTimeUnit triggerIntervalUnit;
+	private EnumTimeUnitMapped triggerIntervalUnit;
 
 	public TimeBasedConfigurationMapped(Type sysmlElement) {
 		super(sysmlElement);
@@ -28,7 +28,7 @@ public class TimeBasedConfigurationMapped extends TriggerConfigurationMapped imp
 
 	@Override
 	public EnumTimeUnit getTriggerIntervalUnit() {
-		return triggerIntervalUnit;
+		return triggerIntervalUnit.getValue();
 	}
 
 
@@ -36,9 +36,7 @@ public class TimeBasedConfigurationMapped extends TriggerConfigurationMapped imp
 	public void parse(MappingContext context) throws MappingException {
 		super.parse(context);
 		triggerInterval = context.mapSlot(this, "triggerInterval_", TwinIntegerMapped.class);
-		Set<TwinAttributeMapped> triggerIntervalUnitSet = new HashSet<>(context.mapSlot(this, "triggerIntervalUnit_", TwinAttributeMapped.class));
-		if(!triggerIntervalUnitSet.isEmpty()){
-			triggerIntervalUnit = context.extractEnum(triggerIntervalUnitSet.iterator().next(), EnumTimeUnit.class);
-		}
+		EnumTimeUnitMapped triggerIntervalUnitSet = new HashSet<>(context.mapSlot(this, "triggerIntervalUnit_", EnumTimeUnitMapped.class)).stream().findFirst().orElseThrow(() -> new MappingException("No triggerIntervalUnit_ found for TimeBasedConfigurationMapped"));
+
 	}
 }

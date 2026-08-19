@@ -18,14 +18,14 @@ import java.util.Set;
 @ToString(callSuper = true)
 @MappedElementType(LibraryNameSpaces.TWIN_CUSTOM_TYPE)
 public class CustomTypeMappedDefintion
-		extends TwinAttributeMapped
+		extends TwinTypeDefinitionMapped
 		implements CustomTypeDefinition {
 
 	protected List<TwinAttributeMapped> fields = new ArrayList<>();
 	private List<MappedReference<? extends CustomTypeDefinition>> parents =
 			new ArrayList<>();
 
-	public CustomTypeMappedDefintion(Definition sysmlElement) {
+	public CustomTypeMappedDefintion(Classifier sysmlElement) {
 		super(sysmlElement);
 	}
 

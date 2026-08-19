@@ -10,7 +10,7 @@ public class TestDeterministicIsUnique extends AbstarctTest{
 
 	@Test
 	public void testDeterministicIsUnique() {
-		var allModels = result.get(Twin.class).stream().findFirst().get().getConstAttributes();
+		var allModels = result.get(Twin.class).stream().findFirst().get().getPhysicalTwin().get().getConstAttributes();
 
 
 		for(var model : allModels) {
