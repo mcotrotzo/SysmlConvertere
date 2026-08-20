@@ -9,9 +9,8 @@ import org.example.Mapping.NewVersion.Abstract.MappedElementType;
 import org.example.Mapping.TwinAction.TwinActionBaseUsage;
 import org.example.Mapping.TwinAction.TwinSuccessionAction;
 import org.example.Util.LibraryNameSpaces;
-import org.omg.sysml.lang.sysml.ActionUsage;
-import org.omg.sysml.lang.sysml.Function;
-import org.omg.sysml.lang.sysml.SuccessionAsUsage;
+import org.example.Util.Utils;
+import org.omg.sysml.lang.sysml.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +41,7 @@ public class CustomCalculationMapped extends FunctionMapped<Function> implements
 		);
 		localAttributes = context.mapSlot(this, "local_Attributes", TwinAttributeMapped.class);
 	}
+
 
 	@Override
 	public List<TwinAttribute> getInputs() {

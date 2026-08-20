@@ -152,14 +152,6 @@ public final class ContainerManager {
 
 			Class<?> parameterType = parameterTypes[0];
 
-			/*
-			 * THIS is the SysML metaclass compatibility check.
-			 *
-			 * PackageImpl -> Package constructor
-			 * ImportImpl  -> Import constructor
-			 * StateUsage  -> StateUsage constructor
-			 * ...
-			 */
 			if (!parameterType.isInstance(sysmlElement)) {
 				continue;
 			}
@@ -181,13 +173,6 @@ public final class ContainerManager {
 	}
 
 
-	/*
-	 * ============================================================
-	 * GENERAL ELEMENT ENTRY POINT
-	 *
-	 * Package / Import / Type / ...
-	 * ============================================================
-	 */
 
 	public Constructor<? extends MappedNamespaceElement<?>> getMappedConstructor(
 			Element sysmlElement
@@ -195,18 +180,12 @@ public final class ContainerManager {
 
 		Objects.requireNonNull(sysmlElement, "sysmlElement");
 
-		/*
-		 * Types use the existing Type-specific mapping.
-		 */
 		if (sysmlElement instanceof Type type) {
 			return castNamespaceConstructor(
 					getMappedConstructor(type)
 			);
 		}
 
-		/*
-		 * Packages are selected through PackageTypeMeta.
-		 */
 		if (sysmlElement instanceof org.omg.sysml.lang.sysml.Package sysmlPackage) {
 
 			Constructor<? extends MappedNamespaceElement<?>> constructor =
@@ -217,9 +196,6 @@ public final class ContainerManager {
 			}
 		}
 
-		/*
-		 * Other Elements, e.g. ImportMapped via @MappedMetaclass.
-		 */
 		Constructor<? extends MappedNamespaceElement<?>> metaclassConstructor =
 				findNamespaceMetaclassConstructor(sysmlElement);
 
@@ -237,20 +213,11 @@ public final class ContainerManager {
 	}
 
 
-	/*
-	 * ============================================================
-	 * PACKAGE MAPPING
-	 * ============================================================
-	 */
 
 	private Constructor<? extends MappedNamespaceElement<?>> findPackageConstructor(
 			org.omg.sysml.lang.sysml.Package sysmlPackage
 	) throws MappingException {
 
-		/*
-		 * Determine which of OUR package categories
-		 * this concrete SysML package belongs to.
-		 */
 		LibraryPackageNames wantedPackageType;
 
 		if (utils.idFromUserLibrary(sysmlPackage)) {
@@ -273,18 +240,10 @@ public final class ContainerManager {
 				continue;
 			}
 
-			/*
-			 * PackageTypeMeta.value() decides WHICH package mapper
-			 * represents this package category.
-			 */
 			if (meta.value() != wantedPackageType) {
 				continue;
 			}
 
-			/*
-			 * Now check whether the Java constructor accepts
-			 * the actual SysML metaclass.
-			 */
 			Constructor<?> constructor =
 					findCompatibleConstructor(
 							castMappedNamespaceClass(mappedClass),
@@ -312,13 +271,6 @@ public final class ContainerManager {
 	}
 
 
-	/*
-	 * ============================================================
-	 * NORMAL TYPE ENTRY POINT
-	 *
-	 * Existing mapping logic.
-	 * ============================================================
-	 */
 
 	public Constructor<? extends MappedElement<?>> getMappedConstructor(
 			Type sysmlElement
@@ -326,10 +278,6 @@ public final class ContainerManager {
 
 		Objects.requireNonNull(sysmlElement, "sysmlElement");
 
-		/*
-		 * For normal elements:
-		 * Library typing has priority.
-		 */
 		if (!(sysmlElement instanceof InvocationExpression)) {
 
 			Constructor<? extends MappedElement<?>> libraryConstructor =
@@ -519,9 +467,6 @@ public final class ContainerManager {
 			}
 		}
 
-		/*
-		 * Remove less-specific library types.
-		 */
 		candidates.entrySet().removeIf(candidate ->
 				candidates.entrySet().stream().anyMatch(other ->
 						other != candidate
@@ -553,13 +498,6 @@ public final class ContainerManager {
 				.map(this::castMappedConstructor)
 				.orElse(null);
 	}
-
-
-	/*
-	 * ============================================================
-	 * LIBRARY TYPE SPECIFICITY
-	 * ============================================================
-	 */
 
 	private void sortBySysmlTypeSpecificity(
 			List<Class<? extends MappedElement<?>>> classes
@@ -710,12 +648,6 @@ public final class ContainerManager {
 	}
 
 
-	/*
-	 * ============================================================
-	 * ANNOTATION -> SYSML LIBRARY TYPE
-	 * ============================================================
-	 */
-
 	private Type getMappedLibraryType(
 			Class<? extends MappedElement<?>> mappedClass
 	) {
@@ -732,13 +664,6 @@ public final class ContainerManager {
 				annotation.value()
 		);
 	}
-
-
-	/*
-	 * ============================================================
-	 * CAST HELPERS
-	 * ============================================================
-	 */
 
 	@SuppressWarnings("unchecked")
 	private Class<? extends MappedElement<?>> castMappedElementClass(
@@ -778,13 +703,6 @@ public final class ContainerManager {
 				? null
 				: (Constructor<? extends MappedNamespaceElement<?>>) constructor;
 	}
-
-
-	/*
-	 * ============================================================
-	 * NAME
-	 * ============================================================
-	 */
 
 	private String safeName(Element element) {
 		return element.getName() == null

@@ -1,13 +1,10 @@
 package org.example;
 
-import SemanticRules.OnlyQueryResultCanBeReferenced;
+
 import SemanticRules.SemanticException;
 import SemanticRules.SemanticRule;
 import org.example.Containers.ContainerManager;
-import org.example.GenerelRules.GenerelRules;
-import org.example.GenerelRules.MultiType;
-import org.example.GenerelRules.MultiplicityRule;
-import org.example.GenerelRules.TwinAttributeHasToSpecialiced;
+import org.example.GenerelRules.*;
 import org.example.Mapping.NewVersion.MappingContext;
 import org.example.Mapping.NewVersion.MappingException;
 import org.example.Util.Utils;
@@ -48,14 +45,14 @@ public class MapperService {
 	}
 
 	private void preRules() throws MappingException {
-		var genereRules = List.of(new MultiType(utilsManager),new TwinAttributeHasToSpecialiced(utilsManager),new MultiplicityRule(utilsManager));
+		var genereRules = List.of(new MultiType(utilsManager),new TwinAttributeHasToSpecialiced(utilsManager),new MultiplicityRule(utilsManager),new CalcInputOutputRules(utilsManager));
 		for (GenerelRules rule : genereRules) {
 			rule.isValid();
 		}
 	}
 
 	private void postRules(TwinDataBase database) throws SemanticException {
-		var semanticRules = List.of(new SemanticRules.CheckAssignemntRules(),new OnlyQueryResultCanBeReferenced());
+		var semanticRules = List.of(new SemanticRules.CheckAssignemntRules());
 		for (SemanticRules.SemanticRule rule : semanticRules) {
 			rule.isValid(database);
 		}

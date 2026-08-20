@@ -3,8 +3,10 @@ package org.example.Mapping.Mapper.TwinExpression;
 import lombok.ToString;
 import org.example.Mapping.Interfaces.Calculation;
 import org.example.Mapping.Interfaces.Expression;
+import org.example.Mapping.Interfaces.FeatureReference;
 import org.example.Mapping.Interfaces.Function;
 import org.example.Mapping.NewVersion.Abstract.MappedReference;
+import org.example.Mapping.NewVersion.AbstractMappedQuery;
 import org.example.Mapping.NewVersion.FunctionMapped;
 import org.example.Mapping.NewVersion.MappingContext;
 import org.example.Mapping.NewVersion.MappingException;
@@ -46,6 +48,26 @@ public class TwinCalculationExpression extends TwinExpression<InvocationExpressi
 		calledFunction = context.mapReference(function, FunctionMapped.class);
 		for (var arg : getSysmlElement().getArgument()) {
 			arguments.add(context.map(arg, this, TwinExpression.class));
+		}
+
+		if (calledFunction.getReferent() instanceof AbstractMappedQuery query) {
+			validateQueryExpressions(query);
+		}
+	}
+
+	private void validateQueryExpressions(AbstractMappedQuery query) throws MappingException {
+
+		if (arguments.isEmpty()) {
+			throw new MappingException("Query '%s' requires a twinAttribute argument.".formatted(query.getName()));
+		}
+		for (TwinExpression<?> argument : arguments) {
+			System.out.println(argument);
+		}
+
+		TwinExpression<?> twinAttributeArgument = arguments.getFirst();
+
+		if (!(twinAttributeArgument instanceof FeatureReference)) {
+			throw new MappingException("Query '%s': twinAttribute must be a FeatureReference.".formatted(query.getName()));
 		}
 	}
 }

@@ -11,8 +11,9 @@ public class TestQuery extends AbstarctTest {
 
 	@Test
 	public void testGeneralQuery() {
-		assertAmount(QueryHistory.class, 1);
+		assertAmount(QueryHistory.class, 2);
 		assertAmount(GroupedHistoryQuery.class, 1);
-		assertAmount(QueryResult.class, 1);
+		assertAmount(QueryResult.class, 2);
+
 	}
 }

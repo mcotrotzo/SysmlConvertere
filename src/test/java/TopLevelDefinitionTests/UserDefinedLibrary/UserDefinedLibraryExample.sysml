@@ -17,14 +17,33 @@ package PositionThings{
         in attribute pos_b[1]:>>inputs:Position;
         return pos_c[1]:>>outputs:Position;
         assign pos_c := new Position(x = PLUS_int(pos_a.x, pos_b.x), y = PLUS_int(pos_a.y, pos_b.y), z = PLUS_int(pos_a.z, pos_b.z));
-        
+
     }
-    part def PositionHistory :> GroupedHistoryQuery {
 
+    calc def Avg3:>CustomCalculationAction{
+           return out attribute avg:TwinReal:>>outputs;
 
+        }
+    calc def Temp30 :>QueryHistory{
+            in attribute :>>twinAttribute:TwinReal[1];
+            in attribute :>>since = 30;
+            in attribute :>>sinceUnit = TimeUnit::SECOND;
+            return attribute :>>result:TwinReal[0..*];
+
+        }
+        calc def PositionHistory :> GroupedHistoryQuery {
+            in attribute :>>twinAttribute:Position[1];
+            in attribute :>>since = 30;
+            in attribute sinceUnit:>>sinceUnit = TimeUnit::SECOND;
+            return attribute :>>result:PositionQueryResult[0..*];
+        }
+        calc def LastReal:>QueryHistory{
+                in :>>twinAttribute:TwinReal[1];
+                in :>>since;
+                in :>>sinceUnit = TimeUnit::SECOND;
+                in :>>orderBy = ORDER_BY::DESCENDING;
+                return :>>result:TwinReal[0..*];
             }
-
-
             attribute def PositionQueryResult:>QueryResult{
                 x:>result:Position[0..*];
             }

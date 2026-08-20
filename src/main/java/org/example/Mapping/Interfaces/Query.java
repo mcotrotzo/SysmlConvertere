@@ -14,8 +14,6 @@ public interface Query extends Function {
 
 	Optional<TwinBooleanAttribute> getFilterExpression();
 
-	List<? extends TwinAttribute> getResult();
-
 	Optional<TwinIntegerAttribute> getLimit();
 
 

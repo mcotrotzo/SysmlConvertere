@@ -32,9 +32,7 @@ public class TestTopLevel extends AbstarctTest {
 		assertEquals(1, physical.getControlUnits().size());
 		assertEquals(9, physical.getConstAttributes().size());
 
-		assertEquals(2, descriptive.getDerivedAttributes().size());
-		assertEquals(1, descriptive.getQueriesHistory().size());
-		assertEquals(1, descriptive.getGroupQueriesHistory().size());
+		assertEquals(4, descriptive.getDerivedAttributes().size());
 		assertEquals(1, descriptive.getDescriptiveStateMachines().size());
 		assertEquals(1, descriptive.getDescriptiveStrategies().size());
 

@@ -4,115 +4,194 @@ import org.example.ElemWithMult;
 import org.example.Mapping.Interfaces.*;
 import org.example.Mapping.NewVersion.Abstract.MappedElement;
 import org.example.Mapping.TwinAction.MappedMetaclass;
-import org.omg.sysml.lang.sysml.PartUsage;
-import org.omg.sysml.lang.sysml.Redefinition;
+import org.example.Util.Utils;
+import org.omg.sysml.lang.sysml.Element;
+import org.omg.sysml.lang.sysml.Feature;
+import org.omg.sysml.lang.sysml.Function;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @MappedMetaclass
-public abstract class AbstractMappedQuery extends MappedElement<PartUsage> implements Query {
+public abstract class AbstractMappedQuery
+		extends FunctionMapped<Function>
+		implements Query {
 
-	protected Set<TwinAttributeMapped> twinAttributes = new HashSet<>();
-	protected Set<TwinIntegerMapped> since = new HashSet<>();
+	protected TwinAttributeMapped twinAttribute;
+
+	protected Optional<TwinIntegerMapped> since = Optional.empty();
 	protected Optional<EnumTimeUnitMapped> sinceUnit = Optional.empty();
 	protected Optional<EnumOrderByMapped> orderBy = Optional.empty();
-	protected Set<TwinIntegerMapped> limit = new HashSet<>();
-	protected Set<TwinBooleanMapped> filterExpression = new HashSet<>();
-	protected Set<TwinAttributeMapped> result = new HashSet<>();
+	protected Optional<TwinIntegerMapped> limit = Optional.empty();
+	protected Optional<TwinBooleanMapped> filterExpression = Optional.empty();
 
-	public AbstractMappedQuery(PartUsage sysmlElement) {
+	protected TwinAttributeMapped result;
+
+	public AbstractMappedQuery(Function sysmlElement) {
 		super(sysmlElement);
 	}
 
 	@Override
 	public void parse(MappingContext context) throws MappingException {
 
-		validateOnlyRedefinitions(context);
+		twinAttribute = parseRequiredSlot(
+				context,
+				"twinAttribute",
+				TwinAttributeMapped.class
+		);
 
-		twinAttributes = parseSlot(context, "twinAttribute", TwinAttributeMapped.class);
+		since = parseOptionalSlot(
+				context,
+				"since",
+				TwinIntegerMapped.class
+		);
 
-		since = parseSlot(context, "since", TwinIntegerMapped.class);
+		sinceUnit = parseOptionalSlot(
+				context,
+				"sinceUnit",
+				EnumTimeUnitMapped.class
+		);
 
-		sinceUnit = new HashSet<>(context.mapSlot( this,"sinceUnit", EnumTimeUnitMapped.class)).stream().findFirst();
+		orderBy = parseOptionalSlot(
+				context,
+				"orderBy",
+				EnumOrderByMapped.class
+		);
 
-		orderBy = new HashSet<>(context.mapSlot( this,"orderBy", EnumOrderByMapped.class)).stream().findFirst();
+		limit = parseOptionalSlot(
+				context,
+				"limit",
+				TwinIntegerMapped.class
+		);
 
 
+		filterExpression = parseOptionalSlot(
+				context,
+				"filterExpression",
+				TwinBooleanMapped.class
+		);
 
-		limit = parseSlot(context, "limit", TwinIntegerMapped.class);
+		result = parseRequiredSlot(
+				context,
+				"result",
+				TwinAttributeMapped.class
+		);
 
-		filterExpression = parseSlot(context, "filterExpression", TwinBooleanMapped.class);
-
-		result = parseSlot(context, "result", TwinAttributeMapped.class);
-
-		validateZeroToMany(context, result, "result");
+		validateMulti(
+				twinAttribute,
+				"twinAttribute",1,1
+		);
+		validateMulti(
+				result,
+				"result",0,-1
+		);
 	}
 
-	private void validateOnlyRedefinitions(
-			MappingContext context
+
+	protected <T extends MappedElement<?>> T parseRequiredSlot(
+			MappingContext context,
+			String slotName,
+			Class<T> clazz
 	) throws MappingException {
 
-		for (var feature : getSysmlElement().getFeature()) {
-
-			if (context.getUtils().isFromStandardOrDTLibrary(feature)) {
-				continue;
-			}
-
-			boolean hasPlainSubsetting =
-					feature.getOwnedSubsetting().stream()
-							.anyMatch(subsetting ->
-									!(subsetting instanceof Redefinition)
-							);
-
-			if (hasPlainSubsetting) {
-				throw new MappingException(
-						"%s '%s': feature '%s' must not subset a query slot."
-								.formatted(
-										getClass().getSimpleName(),
-										getName(),
-										feature.getName()
-								)
+		List<T> values =
+				context.mapSlot(
+						this,
+						slotName,
+						clazz
 				);
-			}
+
+		if (values.size() != 1) {
+			throw new MappingException(
+					"%s '%s': slot '%s' must be specified exactly once, but found %d."
+							.formatted(
+									getClass().getSimpleName(),
+									getName(),
+									slotName,
+									values.size()
+							)
+			);
 		}
+
+		return values.getFirst();
 	}
 
-	protected <T extends TwinAttributeMapped> Set<T> parseSlot(MappingContext context, String slotName, Class<T> clazz) throws MappingException {
+	protected <T extends MappedElement<?>> Optional<T> parseOptionalSlot(
+			MappingContext context,
+			String slotName,
+			Class<T> clazz
+	) throws MappingException {
 
-		return new HashSet<>(context.mapSlot(this, slotName, clazz));
+		List<T> values =
+				context.mapSlot(
+						this,
+						slotName,
+						clazz
+				);
+
+		if (values.size() > 1) {
+			throw new MappingException(
+					"%s '%s': slot '%s' may be specified at most once, but found %d."
+							.formatted(
+									getClass().getSimpleName(),
+									getName(),
+									slotName,
+									values.size()
+							)
+			);
+		}
+
+		return values.stream().findFirst();
 	}
 
-	protected void validateZeroToMany(MappingContext context, Set<TwinAttributeMapped> attributes, String slotName) throws MappingException {
+	protected void validateMulti(
+			TwinAttributeMapped attribute,
+			String slotName,
+			int requiredLower,
+			int requiredUpper
+	) throws MappingException {
 
-		for (TwinAttributeMapped attribute : attributes) {
+		ElemWithMult multiplicity =
+				Utils.getMultiplicityRange(
+						attribute.getSysmlElement()
+				);
 
-			ElemWithMult multiplicity = context.getUtils().getMultiplicityRange(attribute.getSysmlElement());
+		if (multiplicity.getLowerBound() != requiredLower
+				|| multiplicity.getUpperBound() != requiredUpper) {
 
-			if (multiplicity.getLowerBound() != 0 || multiplicity.getUpperBound() != -1) {
-
-				throw new MappingException("%s '%s': slot '%s' must have multiplicity [0..*], but found [%d..%s].".formatted(getClass().getSimpleName(), getName(), slotName, multiplicity.getLowerBound(), multiplicity.getUpperBound() == -1 ? "*" : multiplicity.getUpperBound()));
-			}
+			throw new MappingException(
+					"%s '%s': slot '%s' must have multiplicity [%d..%s], but found [%d..%s]."
+							.formatted(
+									getClass().getSimpleName(),
+									getName(),
+									slotName,
+									requiredLower,
+									requiredUpper == -1 ? "*" : requiredUpper,
+									multiplicity.getLowerBound(),
+									multiplicity.getUpperBound() == -1
+											? "*"
+											: multiplicity.getUpperBound()
+							)
+			);
 		}
 	}
 
 	@Override
 	public TwinAttribute getTwinAttribute() {
-		return twinAttributes.stream()
-				.findFirst()
-				.orElseThrow();
+		return twinAttribute;
 	}
 
 	@Override
 	public Optional<TwinIntegerAttribute> getSince() {
-		return since.stream()
-				.map(x -> (TwinIntegerAttribute) x)
-				.findFirst();
+		return since.map(x -> x);
 	}
 
 	@Override
 	public Optional<EnumTimeUnit> getSinceUnit() {
 		return sinceUnit.map(EnumTimeUnitMapped::getValue);
 	}
+
 	@Override
 	public Optional<EnumOrderBy> getOrderBy() {
 		return orderBy.map(EnumOrderByMapped::getValue);
@@ -120,20 +199,11 @@ public abstract class AbstractMappedQuery extends MappedElement<PartUsage> imple
 
 	@Override
 	public Optional<TwinIntegerAttribute> getLimit() {
-		return limit.stream()
-				.map(x -> (TwinIntegerAttribute) x)
-				.findFirst();
+		return limit.map(x -> x);
 	}
 
 	@Override
 	public Optional<TwinBooleanAttribute> getFilterExpression() {
-		return filterExpression.stream()
-				.map(x -> (TwinBooleanAttribute) x)
-				.findFirst();
-	}
-
-	@Override
-	public List<TwinAttribute> getResult() {
-		return new ArrayList<>(result);
+		return filterExpression.map(x -> x);
 	}
 }

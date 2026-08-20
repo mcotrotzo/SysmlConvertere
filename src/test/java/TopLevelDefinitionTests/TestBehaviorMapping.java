@@ -3,6 +3,7 @@ package TopLevelDefinitionTests;
 import org.example.Mapping.Interfaces.*;
 import org.junit.jupiter.api.Test;
 
+import java.sql.Ref;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -495,26 +496,36 @@ public class TestBehaviorMapping extends AbstarctTest {
 		Expression outputExpression =
 				chargeCmd.getTwinExpressions().get();
 
-		assertTrue(
-				outputExpression instanceof FeatureReference
-						|| outputExpression
-						instanceof FeatureReference
+		assertInstanceOf(FeatureReference.class, outputExpression);
+
+
+		EventBasedConfiguration eventBasedConfiguration =
+				(EventBasedConfiguration)
+						strategy.getTriggerConfiguration().getFirst();
+
+		List<Reference<? extends TwinAttribute>> triggeringAttributes =
+				eventBasedConfiguration.getTriggeringAttributes();
+
+		assertEquals(
+				2,
+				triggeringAttributes.size()
+		);
+
+		TwinAttribute first =
+				triggeringAttributes.get(0).getReferent();
+
+		TwinAttribute second =
+				triggeringAttributes.get(1).getReferent();
+
+		assertEquals(
+				"predicted",
+				first.getName()
 		);
 
 		assertEquals(
-				1,
-				strategy.getTriggerConfiguration().size()
+				"maxCharge",
+				second.getName()
 		);
-
-		assertTrue(
-				strategy.getTriggerConfiguration()
-						.get(0)
-						instanceof EventBasedConfiguration
-		);
-		EventBasedConfiguration eventBasedConfiguration = (EventBasedConfiguration) strategy.getTriggerConfiguration().get(0);
-		assertTrue(eventBasedConfiguration.getTriggeringAttributes().size() == 1);
-
-
 	}
 
 	@Test
@@ -753,15 +764,13 @@ public class TestBehaviorMapping extends AbstarctTest {
 		Expression argument =
 				avgCall.getArguments().get(0);
 
-		assertTrue(
-				argument instanceof FeatureReference
-		);
+		assertInstanceOf(FeatureReference.class, argument);
 
 		FeatureReference chain =
 				(FeatureReference) argument;
 
 		assertEquals(
-				"result",
+				"temp30",
 				chain.getTarget()
 						.getReferent()
 						.getName()

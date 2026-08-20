@@ -8,7 +8,7 @@ public interface EventBasedConfiguration extends TriggerConfiguration {
 	 *
 	 * @return a list of TwinAttribute objects that trigger the event-based configuration
 	 */
-	List<TwinAttribute> getTriggeringAttributes();
+	List<Reference<? extends TwinAttribute>> getTriggeringAttributes();
 
 	/**
 	 * When true it only should be triggered when the value of triggering attribute changes

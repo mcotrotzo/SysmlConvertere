@@ -17,6 +17,7 @@ public class UserLibraryMapped extends PackageElementType implements UserLibrary
 	List<CustomCalculationMapped> customCalculationDefinitions = new ArrayList<>();
 	List<CustomTypeMappedDefintion> customTypeDefinitions = new ArrayList<>();
 	List<BaseTypeDefinitionMapped> baseTypedDefinitions = new ArrayList<>();
+	List<AbstractMappedQuery> queryDefinitions = new ArrayList<>();
 
 	public UserLibraryMapped(Package sysmlElement) {
 		super(sysmlElement);
@@ -29,6 +30,7 @@ public class UserLibraryMapped extends PackageElementType implements UserLibrary
 		baseTypedDefinitions = context.mapOwnedNamespace(this, Definition.class, BaseTypeDefinitionMapped.class);
 		customCalculationDefinitions = context.mapOwnedNamespace(this, Definition.class, CustomCalculationMapped.class);
 		customTypeDefinitions = context.mapOwnedNamespace(this, Definition.class, CustomTypeMappedDefintion.class);
+		queryDefinitions = context.mapOwnedNamespace(this, Definition.class, AbstractMappedQuery.class);
 	}
 
 	@Override
@@ -54,5 +56,10 @@ public class UserLibraryMapped extends PackageElementType implements UserLibrary
 	@Override
 	public List<? extends CustomTypeDefinition> getCustomTypeDefinitions() {
 		return customTypeDefinitions;
+	}
+
+	@Override
+	public List<? extends Query> getQueryDefinitions() {
+		return queryDefinitions;
 	}
 }

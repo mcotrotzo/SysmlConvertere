@@ -4,6 +4,7 @@ import lombok.ToString;
 import org.eclipse.uml2.uml.internal.impl.DataTypeImpl;
 import org.example.Mapping.Interfaces.Reference;
 import org.example.Mapping.Interfaces.TwinAttribute;
+import org.example.Mapping.Interfaces.TwinTypeDefinition;
 import org.example.Mapping.Mapper.TwinExpression.TwinExpression;
 import org.example.Mapping.NewVersion.Abstract.MappedElement;
 import org.example.Mapping.NewVersion.Abstract.MappedElementType;
@@ -28,6 +29,20 @@ public class TwinAttributeMapped extends MappedElement<Feature> implements TwinA
 	@Override
 	public void parse(MappingContext context) throws MappingException {
 		Class<TwinExpression<?>> rawClass = (Class<TwinExpression<?>>) (Class<?>) TwinExpression.class;
+		for (Expression expression :
+				getSysmlElement().getOwnedElement()
+						.stream()
+						.filter(Expression.class::isInstance)
+						.map(Expression.class::cast)
+						.toList()) {
+
+			System.out.println(
+					"ATTRIBUTE: " + getName()
+							+ " SYSML EXPRESSION: "
+							+ expression.getClass().getName()
+			);
+		}
+
 		twinExpressions =context.mapOwned(this, Expression.class, rawClass);
 		resolveTypeReference(context);
 	}
@@ -38,6 +53,11 @@ public class TwinAttributeMapped extends MappedElement<Feature> implements TwinA
 			return Optional.empty();
 		}
 		return Optional.ofNullable(twinExpressions.iterator().next());
+	}
+
+	@Override
+	public Reference<? extends TwinTypeDefinition> getDefinition() {
+		return typeReference;
 	}
 
 	protected void resolveTypeReference(MappingContext context)

@@ -187,7 +187,7 @@ public final class ReadManager {
 	}
 
 	private static void failOnErrors(SysMLInteractiveResult result, String description) {
-		boolean hasErrors = result.getIssues().stream().anyMatch(issue -> issue.getSeverity() == Severity.ERROR);
+		boolean hasErrors = !result.getIssues().isEmpty();
 
 		if (hasErrors) {
 			throw new IllegalStateException("SysML errors while processing " + description);

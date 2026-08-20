@@ -33,7 +33,7 @@ public class QueryResultMapped extends CustomTypeMapped implements QueryResult {
 
 
 		if (this.getFields().size() != 1) {
-			throw new MappingException("QueryResultMapped must have exactly one field which redefines result, but found: " + this.getFields().size());
+			throw new MappingException("QueryResultMapped must have exactly one field which redefines/subsets result, but found: " + this.getFields().size());
 		}
 		var field = getFields().getFirst();
 		if (!(field instanceof TwinAttributeMapped mappedField)) {

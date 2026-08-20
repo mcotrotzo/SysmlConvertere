@@ -89,19 +89,12 @@ package Test{
          part descriptiveBattery :>> descriptiveModel {
 
              attribute soc : TwinReal :> derivedAttributes =
-                 MULT_real(DIV_real(physicalBattery.p11.voltage, physicalBattery.nominalVoltage), 100);
+                              MULT_real(DIV_real(LastReal(physicalBattery.p11.voltage), LastReal(physicalBattery.nominalVoltage)), 100);
 
-             part temp30 :>queryHistory{
-                         :>>twinAttribute:TwinReal default physicalBattery.p11.temp;
-                         :>>since default 30;
-                         :>>result:TwinReal[0..*];
-                     }
+             attribute temp30:TwinReal[0..*] :>derivedAttributes = Temp30(twinAttribute=physicalBattery.p11.temp);
 
-             part charge30:PositionHistory :>groupedQueryHistory{
-                  :>>twinAttribute:Position default physicalBattery.p11.pos;
-                  :>>since default 30;
-                  t:>>result:PositionQueryResult[0..*];
-              }
+             attribute charge30:PositionQueryResult[0..*] :> derivedAttributes = PositionHistory(twinAttribute=physicalBattery.p11.pos);
+
 
              state test12 :> descriptiveStateMachine_{
              :>>triggerConfiguration:TimeBasedConfiguration{
@@ -123,7 +116,7 @@ package Test{
                  attribute llmCurrent:TwinReal:>> outputs:TwinReal[1];
              }
 
-             attribute avgTemp : TwinReal :> derivedAttributes = Avg(temp30.result);
+             attribute avgTemp : TwinReal :> derivedAttributes = Avg(temp30);
          }
 
          part predictiveBattery :>> predictiveModel {

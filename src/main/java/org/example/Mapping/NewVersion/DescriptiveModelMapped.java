@@ -28,8 +28,6 @@ public class DescriptiveModelMapped extends MappedElement<Type> implements Descr
 	@Override
 	public void parse(MappingContext context) throws MappingException {
 		derivedAttributes = context.mapSlot(this, "derivedAttributes", TwinAttributeMapped.class);
-		flatQueries = context.mapSlot(this, "queryHistory", QueryHistoryMapped.class);
-		groupedQueries = context.mapSlot(this, "groupedQueryHistory", GroupedHistoryQueryMapped.class);
 		descriptiveStateMachines = context.mapSlot(this, "descriptiveStateMachine_", DescriptiveStateMachineMapped.class);
 		descriptiveStrategies = context.mapSlot(this, "descriptiveStrategies", DescriptiveStrategyMapped.class);
 	}
@@ -37,16 +35,6 @@ public class DescriptiveModelMapped extends MappedElement<Type> implements Descr
 	@Override
 	public List<TwinAttribute> getDerivedAttributes() {
 		return new ArrayList<>(derivedAttributes);
-	}
-
-	@Override
-	public List<GroupedHistoryQuery> getGroupQueriesHistory() {
-		return new ArrayList<>(groupedQueries);
-	}
-
-	@Override
-	public List<QueryHistory> getQueriesHistory() {
-		return new ArrayList<>(flatQueries);
 	}
 
 	@Override

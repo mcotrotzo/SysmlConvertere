@@ -5,4 +5,6 @@ import java.util.Optional;
 
 public interface TwinAttribute extends Model {
 	Optional<Expression> getTwinExpressions();
+
+	Reference<? extends TwinTypeDefinition> getDefinition();
 }

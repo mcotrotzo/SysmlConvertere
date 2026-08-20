@@ -10,8 +10,8 @@ library package TwinEnumLibrary{
     }
 
     public enum def ORDER_BY {
-        enum ASCENDING;
-        enum DESCENDING;
+        ASCENDING;
+        DESCENDING;
     }
 
 }

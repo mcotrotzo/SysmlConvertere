@@ -4,6 +4,7 @@ import lombok.ToString;
 import org.example.Mapping.Interfaces.QueryHistory;
 import org.example.Mapping.NewVersion.Abstract.MappedElementType;
 import org.example.Util.LibraryNameSpaces;
+import org.omg.sysml.lang.sysml.Function;
 import org.omg.sysml.lang.sysml.PartUsage;
 
 
@@ -11,7 +12,7 @@ import org.omg.sysml.lang.sysml.PartUsage;
 @ToString(callSuper = true)
 public class QueryHistoryMapped extends AbstractMappedQuery implements QueryHistory {
 
-	public QueryHistoryMapped(PartUsage sysmlElement) {
+	public QueryHistoryMapped(Function sysmlElement) {
 		super(sysmlElement);
 	}
 
@@ -24,14 +25,21 @@ public class QueryHistoryMapped extends AbstractMappedQuery implements QueryHist
 
 	private void checkMatchingAttributeTypes() throws MappingException {
 
-		for (TwinAttributeMapped queriedAttribute : twinAttributes) {
-			for (TwinAttributeMapped resultAttribute : result) {
+		var twinAttributeType =
+				twinAttribute.getDefinition().getReferent();
 
-				if (queriedAttribute.getClass() != resultAttribute.getClass()) {
+		var resultType =
+				result.getDefinition().getReferent();
 
-					throw new MappingException("QueryHistory '%s': queried attribute type '%s' does not match result type '%s'.".formatted(getName(), queriedAttribute.getClass().getSimpleName(), resultAttribute.getClass().getSimpleName()));
-				}
-			}
+		if (twinAttributeType != resultType) {
+			throw new MappingException(
+					"QueryHistory '%s': twinAttribute type '%s' must match result type '%s'."
+							.formatted(
+									getName(),
+									twinAttributeType.getName(),
+									resultType.getName()
+							)
+			);
 		}
 	}
 }

@@ -10,31 +10,25 @@ library package DescriptiveModelLibrary {
     private import UserLibrary::*;
     private import PhysicalTwinLibrary::*;
 
-    abstract part def QueryHistory {
+    abstract calc def QueryHistory {
 
-        attribute twinAttribute[1] : TwinAttribute;
-        attribute since[0..1] : TwinInteger;
-        attribute sinceUnit[0..1] : TimeUnit;
-        attribute orderBy[0..1] : ORDER_BY;
-        attribute limit[0..1]:TwinInteger;
-        attribute filterExpression[0..1] : TwinBoolean;
-        attribute result[0..*]:TwinAttribute;
-    }
+            in attribute twinAttribute[1] : TwinAttribute;
+            in attribute since[0..1] : TwinInteger;
+            in attribute sinceUnit[0..1] : TimeUnit;
+            in attribute orderBy[0..1] : ORDER_BY;
+            in attribute limit[0..1]:TwinInteger;
+            in attribute filterExpression[0..1] : TwinBoolean;
+            return result[0..*]:TwinAttribute :>>result;
+        }
 
-    abstract attribute def QueryResult :>TwinCustomType {
-        attribute result[0..*]:>>fields:TwinAttribute;
-    }
+        abstract attribute def QueryResult :>TwinCustomType {
+            attribute result[0..*]:>>fields:TwinAttribute;
+        }
 
-    abstract part def GroupedHistoryQuery{
+        abstract calc def GroupedHistoryQuery:>QueryHistory{
+            return result[0..*]:QueryResult :>>result;
+        }
 
-        attribute twinAttribute[1] : TwinAttribute;
-        attribute since[0..1] : TwinInteger;
-        attribute sinceUnit[0..1] : TimeUnit;
-        attribute orderBy[0..1] : ORDER_BY;
-        attribute limit[0..1]:TwinInteger;
-        attribute filterExpression[0..1] : TwinBoolean;
-        attribute result[0..*]:QueryResult;
-    }
 
 
 

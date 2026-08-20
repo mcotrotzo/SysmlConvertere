@@ -16,8 +16,6 @@ library package TwinDefLibrary {
     }
 
     part def DescriptiveModel:>TwinLibraryElement{
-        part queryHistory : QueryHistory[0..*];
-        part groupedQueryHistory : GroupedHistoryQuery[0..*];
         attribute derivedAttributes[0..*] : TwinAttribute;
         state descriptiveStateMachine_ : DescriptiveStateMachine[0..*];
         part descriptiveStrategies[0..*] : DescriptiveStrategy;
