@@ -19,7 +19,7 @@ public class TestTopLevel extends AbstarctTest {
 
 		assertEquals("Battery", battery.getName());
 		assertNotNull(battery.getId());
-		assertEquals(Optional.empty(), battery.getParent());
+		assertTrue(battery.getParent().isPresent());
 
 		var physical = battery.getPhysicalTwin().orElseThrow();
 		var shadow = battery.getShadow().orElseThrow();

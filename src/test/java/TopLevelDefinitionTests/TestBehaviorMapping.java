@@ -308,6 +308,9 @@ public class TestBehaviorMapping extends AbstarctTest {
 						"LLM_Request"
 				);
 
+		List<TwinAttribute> inputs = strategy.getInputs();
+		List<TwinAttribute> outputs = strategy.getOutputs();
+
 		assertEquals(
 				1,
 				strategy.getTriggerConfiguration().size()
@@ -325,6 +328,77 @@ public class TestBehaviorMapping extends AbstarctTest {
 		assertEquals(
 				EnumTimeUnit.MINUTE,
 				config.getTriggerIntervalUnit()
+		);
+
+
+		assertEquals(2, inputs.size());
+
+		TwinAttribute avgTemperature =
+				inputs.stream()
+						.filter(x -> "avgTemperature".equals(x.getName()))
+						.findFirst()
+						.orElseThrow();
+
+		TwinAttribute current =
+				inputs.stream()
+						.filter(x -> "current".equals(x.getName()))
+						.findFirst()
+						.orElseThrow();
+
+
+		assertTrue(
+				avgTemperature.getTwinExpressions().isPresent()
+		);
+
+		Expression avgTemperatureExpression =
+				avgTemperature.getTwinExpressions().orElseThrow();
+
+		assertTrue(
+				avgTemperatureExpression instanceof FeatureReference
+		);
+
+		FeatureReference avgTemperatureReference =
+				(FeatureReference) avgTemperatureExpression;
+
+		assertEquals(
+				"avgTemp",
+				avgTemperatureReference
+						.getTarget()
+						.getReferent()
+						.getName()
+		);
+
+		assertTrue(
+				current.getTwinExpressions().isPresent()
+		);
+
+		Expression currentExpression =
+				current.getTwinExpressions().orElseThrow();
+
+		assertTrue(
+				currentExpression instanceof FeatureReference
+		);
+
+		FeatureReference currentReference =
+				(FeatureReference) currentExpression;
+
+		assertEquals(
+				"current",
+				currentReference
+						.getTarget()
+						.getReferent()
+						.getName()
+		);
+
+
+		assertEquals(1, outputs.size());
+
+		TwinAttribute llmCurrent =
+				outputs.getFirst();
+
+		assertEquals(
+				"llmCurrent",
+				llmCurrent.getName()
 		);
 	}
 
@@ -437,6 +511,9 @@ public class TestBehaviorMapping extends AbstarctTest {
 						.get(0)
 						instanceof EventBasedConfiguration
 		);
+		EventBasedConfiguration eventBasedConfiguration = (EventBasedConfiguration) strategy.getTriggerConfiguration().get(0);
+		assertTrue(eventBasedConfiguration.getTriggeringAttributes().size() == 1);
+
 
 	}
 

@@ -38,6 +38,7 @@ public class EventBasedConfigurationMapped extends TriggerConfigurationMapped im
 	public void parse(MappingContext context) throws MappingException {
 		super.parse(context);
 		triggeringAttributes = context.mapSlot(this, "triggeringAtributes_", TwinAttributeMapped.class);
+
 		onChange = context.mapSlot(this, "onChange_", TwinBooleanMapped.class);
 	}
 }
