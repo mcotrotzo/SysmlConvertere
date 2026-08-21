@@ -4,12 +4,12 @@ import lombok.ToString;
 import org.example.Mapping.Interfaces.Action;
 import org.example.Mapping.Interfaces.CustomCalculation;
 import org.example.Mapping.Interfaces.Succession;
-import org.example.Mapping.Interfaces.TwinAttribute;
+import org.example.Mapping.Interfaces.BaseTaxonomy.TwinAttribute.BaseTwinAttribute.Usage.TwinAttributeUsage;
 import org.example.Mapping.NewVersion.Abstract.MappedElementType;
+import org.example.Mapping.NewVersion.TwinAttribute.TwinAttributeUsageMapped;
 import org.example.Mapping.TwinAction.TwinActionBaseUsage;
 import org.example.Mapping.TwinAction.TwinSuccessionAction;
 import org.example.Util.LibraryNameSpaces;
-import org.example.Util.Utils;
 import org.omg.sysml.lang.sysml.*;
 
 import java.util.ArrayList;
@@ -18,13 +18,13 @@ import java.util.List;
 @MappedElementType(LibraryNameSpaces.CUSTOM_CALCULATION)
 @ToString(callSuper = true)
 public class CustomCalculationMapped extends FunctionMapped<Function> implements CustomCalculation {
-	private List<TwinAttributeMapped> inputs = new ArrayList<>();
-	private List<TwinAttributeMapped> outputs = new ArrayList<>();
+	private List<TwinAttributeUsageMapped> inputs = new ArrayList<>();
+	private List<TwinAttributeUsageMapped> outputs = new ArrayList<>();
 
 	private List<TwinSuccessionAction> successions = new ArrayList<>();
 
 	private List<TwinActionBaseUsage<?>> actions = new ArrayList<>();
-	private List<TwinAttributeMapped> localAttributes = new ArrayList<>();
+	private List<TwinAttributeUsageMapped> localAttributes = new ArrayList<>();
 
 
 	public CustomCalculationMapped(Function sysmlElement) {
@@ -33,23 +33,23 @@ public class CustomCalculationMapped extends FunctionMapped<Function> implements
 
 	@Override
 	public void parse(MappingContext context) throws MappingException {
-		inputs = context.mapSlot(this, "inputs", TwinAttributeMapped.class);
-		outputs = context.mapSlot(this, "outputs", TwinAttributeMapped.class);
+		inputs = context.mapSlot(this, "inputs", TwinAttributeUsageMapped.class);
+		outputs = context.mapSlot(this, "outputs", TwinAttributeUsageMapped.class);
 		actions = context.mapOwned(this, ActionUsage.class, TwinActionBaseUsage.getRawClass());
 		successions = context.mapOwned(this, SuccessionAsUsage.class, TwinSuccessionAction.class
 
 		);
-		localAttributes = context.mapSlot(this, "local_Attributes", TwinAttributeMapped.class);
+		localAttributes = context.mapSlot(this, "local_Attributes", TwinAttributeUsageMapped.class);
 	}
 
 
 	@Override
-	public List<TwinAttribute> getInputs() {
+	public List<TwinAttributeUsage> getInputs() {
 		return new ArrayList<>(inputs);
 	}
 
 	@Override
-	public List<TwinAttribute> getOutputs() {
+	public List<TwinAttributeUsage> getOutputs() {
 		return new ArrayList<>(outputs);
 	}
 

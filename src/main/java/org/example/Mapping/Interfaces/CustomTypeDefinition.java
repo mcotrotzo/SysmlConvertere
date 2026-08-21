@@ -1,5 +1,7 @@
 package org.example.Mapping.Interfaces;
 
+import org.example.Mapping.Interfaces.BaseTaxonomy.TwinAttribute.BaseTwinAttribute.Usage.TwinAttributeUsage;
+
 import java.util.List;
 /**
  * Represents a custom type definition in the model.
@@ -11,7 +13,7 @@ public interface CustomTypeDefinition extends TwinTypeDefinition{
 	 *
 	 * @return a list of TwinAttribute objects representing the fields
 	 */
-	List<TwinAttribute> getFields();
+	List<TwinAttributeUsage> getFields();
 	/**
 	 * When this definition is a child of another definition, this method returns the list of parent definitions.
 	 *

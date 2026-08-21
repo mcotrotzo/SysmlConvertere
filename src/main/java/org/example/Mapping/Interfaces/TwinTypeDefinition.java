@@ -1,4 +1,6 @@
 package org.example.Mapping.Interfaces;
 
-public interface TwinTypeDefinition extends Model{
+import org.example.Mapping.Interfaces.Base.Model;
+
+public interface TwinTypeDefinition extends Model {
 }

@@ -2,19 +2,15 @@ package org.example;
 
 
 import org.example.Mapping.Interfaces.KIND;
-import org.example.Mapping.Interfaces.Model;
+import org.example.Mapping.Interfaces.Base.Model;
 import org.example.Mapping.Interfaces.Reference;
 import org.example.Mapping.NewVersion.Abstract.MappedElement;
-import org.example.Mapping.NewVersion.Abstract.MappedReference;
-import org.example.Mapping.NewVersion.Packages.MappedNamespaceElement;
+import org.example.Mapping.NewVersion.NameSpace.NameSpacePackage.MappedNamespaceElement;
 import org.example.Util.Utils;
 import org.omg.sysml.lang.sysml.Type;
-import org.omg.sysml.lang.sysml.impl.FeatureImpl;
-import org.omg.sysml.util.FeatureUtil;
 import org.omg.sysml.util.TypeUtil;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class TwinDataBase {
 

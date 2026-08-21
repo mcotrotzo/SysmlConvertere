@@ -1,9 +1,9 @@
 package org.example.Mapping.Mapper.TwinExpression;
 
 import lombok.ToString;
-import org.example.Mapping.Interfaces.Calculation;
+import org.example.Mapping.Interfaces.BaseTaxonomy.TwinExpression.Calculation;
 import org.example.Mapping.Interfaces.Expression;
-import org.example.Mapping.Interfaces.FeatureReference;
+import org.example.Mapping.Interfaces.BaseTaxonomy.TwinExpression.FeatureReference;
 import org.example.Mapping.Interfaces.Function;
 import org.example.Mapping.NewVersion.Abstract.MappedReference;
 import org.example.Mapping.NewVersion.AbstractMappedQuery;

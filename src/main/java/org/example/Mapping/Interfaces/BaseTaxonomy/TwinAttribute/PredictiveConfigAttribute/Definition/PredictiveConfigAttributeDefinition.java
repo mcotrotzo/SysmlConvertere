@@ -1,0 +1,7 @@
+package org.example.Mapping.Interfaces.BaseTaxonomy.TwinAttribute.PredictiveConfigAttribute.Definition;
+
+import org.example.Mapping.Interfaces.BaseTaxonomy.TwinAttribute.PredictiveConfigAttribute.PredictiveConfigAttribute;
+import org.example.Mapping.Interfaces.BaseTaxonomy.TwinAttribute.BaseTwinAttribute.Definition.TwinAttributeDefinition;
+
+public interface PredictiveConfigAttributeDefinition extends PredictiveConfigAttribute, TwinAttributeDefinition {
+}

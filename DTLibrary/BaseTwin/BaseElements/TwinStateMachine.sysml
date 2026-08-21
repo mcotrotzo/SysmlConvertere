@@ -1,10 +1,9 @@
 library package TwinStateMachineLibrary {
     private import TwinTypeSystem::*;
     private import TwinLibraryPackage::*;
-    
-    state def State:>TwinLibraryElementStateDef {
-        attribute local_Attributes :TwinAttribute[0..*];
-        state states:State[0..*];
+    private import TwinActionLibrary::*;
+    state def State:> TwinAction{
+        state states:State[0..*]:>>execution;
     }
 
 }

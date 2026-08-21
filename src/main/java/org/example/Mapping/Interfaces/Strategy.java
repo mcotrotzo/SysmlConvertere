@@ -1,13 +1,14 @@
 package org.example.Mapping.Interfaces;
 
-import org.example.Mapping.NewVersion.TwinStringMapped;
+import org.example.Mapping.Interfaces.Base.Model;
+import org.example.Mapping.Interfaces.BaseTaxonomy.TwinAttribute.BaseTwinAttribute.Usage.TwinAttributeUsage;
 
 import java.util.List;
 
 public interface Strategy extends Model {
-	List<TwinAttribute> getInputs();
+	List<TwinAttributeUsage> getInputs();
 
-	List<TwinAttribute> getOutputs();
+	List<TwinAttributeUsage> getOutputs();
 
-	TwinStringAttribute getLambdaPath();
+	TwinStringAttributeUsage getLambdaPath();
 }

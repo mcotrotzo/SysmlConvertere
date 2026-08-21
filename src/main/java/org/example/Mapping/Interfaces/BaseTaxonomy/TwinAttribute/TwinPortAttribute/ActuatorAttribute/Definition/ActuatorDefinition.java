@@ -1,0 +1,7 @@
+package org.example.Mapping.Interfaces.BaseTaxonomy.TwinAttribute.TwinPortAttribute.ActuatorAttribute.Definition;
+
+import org.example.Mapping.Interfaces.BaseTaxonomy.TwinAttribute.TwinPortAttribute.ActuatorAttribute.ActuatorAttribute;
+import org.example.Mapping.Interfaces.BaseTaxonomy.TwinAttribute.TwinPortAttribute.TwinPortAttributes.Definition.TwinPortDefinitionAttribute;
+
+public interface ActuatorDefinition extends ActuatorAttribute, TwinPortDefinitionAttribute {
+}

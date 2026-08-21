@@ -1,31 +1,168 @@
 package org.example.Util;
 
 public enum LibraryNameSpaces {
-	TWIN("TwinDefLibrary::Twin"),
-	PHYSICAL_TWIN("TwinDefLibrary::PhysicalTwin"),DESCRIPTIVE_MODEL("TwinDefLibrary::DescriptiveModel"), PREDICTIVE_MODEL("TwinDefLibrary::PredictiveModel"), PRESCRIPTIVE_MODEL("TwinDefLibrary::PrescriptiveModel"), SHADOW("TwinDefLibrary::Shadow"),
 
-	ACTUATOR("PhysicalTwinLibrary::Actuator"), SENSOR("PhysicalTwinLibrary::Sensor"), TWIN_PORT("PhysicalTwinLibrary::TwinPort"), CONTROL_UNIT("PhysicalTwinLibrary::ControlUnit"), CONTROL_UNIT_STATE("PhysicalTwinLibrary::ControlUnitState"), COMMUNICATION_PROTOCOL("PhysicalTwinLibrary::CommunicationProtocol"), HTTP_PROTOCOL("PhysicalTwinLibrary::HTTP_Protocol"), MQTT_PROTOCOL("PhysicalTwinLibrary::MQTT_Protocol"), TWIN_TYPE_SYSTEM("TwinTypeSystem"),
+	// ========================================================================
+	// Twin
+	// ========================================================================
+
+	TWIN("TwinDefLibrary::Twin"),
+
+	PHYSICAL_TWIN("TwinDefLibrary::PhysicalTwin"),
+	DESCRIPTIVE_MODEL("TwinDefLibrary::DescriptiveModel"),
+	PREDICTIVE_MODEL("TwinDefLibrary::PredictiveModel"),
+	PRESCRIPTIVE_MODEL("TwinDefLibrary::PrescriptiveModel"),
+	SHADOW("TwinDefLibrary::Shadow"),
+
+
+	// ========================================================================
+	// Taxonomy
+	// ========================================================================
+
+	TWIN_TAXONOMY("TwinTaxonomyLibrary::TwinTaxonomy"),
+	PHYSICAL_TAXONOMY("TwinTaxonomyLibrary::PhysicalTaxonomy"),
+	CLOUD_TWIN_TAXONOMY("TwinTaxonomyLibrary::CloudTwinTaxonomy"),
+
+	DESCRIPTIVE_TAXONOMY("TwinTaxonomyLibrary::DescriptiveTaxonomy"),
+	PREDICTIVE_TAXONOMY("TwinTaxonomyLibrary::PredictiveTaxonomy"),
+	PRESCRIPTIVE_TAXONOMY("TwinTaxonomyLibrary::PrescriptiveTaxonomy"),
+	SHADOW_TAXONOMY("TwinTaxonomyLibrary::ShadowTaxonomy"),
+
+
+	// ========================================================================
+	// Twin Actions
+	// ========================================================================
+
+	TWIN_ACTION("TwinActionLibrary::TwinAction"),
+
+	PHYSICAL_FLOW("TwinActionLibrary::PhysicalFlow"),
+	DESCRIPTIVE_FLOW("TwinActionLibrary::DescriptiveFlow"),
+	PREDICTIVE_FLOW("TwinActionLibrary::PredictiveFlow"),
+	PRESCRIPTIVE_FLOW("TwinActionLibrary::PrescriptiveFlow"),
+
+	QUERY_FLOW("TwinActionLibrary::QueryFlow"),
+
+	DESCRIPTIVE_TO_PREDICTIVE_FLOW(
+			"TwinActionLibrary::DescriptiveToPredictiveFlow"
+	),
+
+	DESCRIPTIVE_TO_PRESCRIPTIVE_FLOW(
+			"TwinActionLibrary::DescriptiveToPrescriptiveFlow"
+	),
+
+	PREDICTIVE_TO_PRESCRIPTIVE_FLOW(
+			"TwinActionLibrary::PredictiveToPrescriptiveFlow"
+	),
+
+	PRESCRIPTIVE_TO_PHYSICAL_FLOW(
+			"TwinActionLibrary::PrescriptiveToPhysicalFlow"
+	),
+
+
+	// ========================================================================
+	// Strategies
+	// ========================================================================
+
+	STRATEGY("TwinStrategyLibrary::Strategy"),
+	CUSTOM_STRATEGY("TwinStrategyLibrary::CustomStrategy"),
+	EXTERNAL_STRATEGY("TwinStrategyLibrary::ExternalStrategy"),
+
+
+	// ========================================================================
+	// State Machines
+	// ========================================================================
 
 	STATE("TwinStateMachineLibrary::State"),
 
-	TRIGGER_CONFIGURATION("TwinTriggerConfigurationLibrary::TriggerConfiguration"), TIME_BASED_CONFIGURATION("TwinTriggerConfigurationLibrary::TimeBasedConfiguration"), EVENT_BASED_CONFIGURATION("TwinTriggerConfigurationLibrary::EventBasedConfiguration"),
+	DESCRIPTIVE_STATE_MACHINE(
+			"DescriptiveModelLibrary::DescriptiveStateMachine"
+	),
 
-	CUSTOM_CALCULATION("TwinImp::CustomCalculationAction"),
+	DESCRIPTIVE_STATE(
+			"DescriptiveModelLibrary::DescriptiveState"
+	),
 
-	QUERY_HISTORY("DescriptiveModelLibrary::QueryHistory"), GROUPED_HISTORY_QUERY("DescriptiveModelLibrary::GroupedHistoryQuery"), QUERY_RESULT("DescriptiveModelLibrary::QueryResult"), DESCRIPTIVE_STATE_MACHINE("DescriptiveModelLibrary::DescriptiveStateMachine"), DESCRIPTIVE_STATE("DescriptiveModelLibrary::DescriptiveState"), DESCRIPTIVE_STRATEGY("DescriptiveModelLibrary::DescriptiveStrategy"),
 
-	PREDICTIVE_STRATEGY("PredicitiveLibrary::PredictiveStrategy"),
+	// ========================================================================
+	// Physical Twin
+	// ========================================================================
 
-	PRESCRIPTIVE_STRATEGY("PrescriptiveModelLibrary::PrescriptiveStrategy"), CUSTOM_PRESCRIPTIVE_STRATEGY("PrescriptiveModelLibrary::CustomPrescriptiveStrategy"),
+	ACTUATOR("PhysicalTwinLibrary::Actuator"),
+	SENSOR("PhysicalTwinLibrary::Sensor"),
+	TWIN_PORT("PhysicalTwinLibrary::TwinPort"),
 
-	DATABASE("ShadowLibrary::Database"), RELATIONAL_DATABASE("ShadowLibrary::RelationalDatabase"), KEY_VALUE_DATABASE("ShadowLibrary::KeyValueDatabase"),
+	CONTROL_UNIT("PhysicalTwinLibrary::ControlUnit"),
+	CONTROL_UNIT_STATE("PhysicalTwinLibrary::ControlUnitState"),
 
-	TWIN_CUSTOM_TYPE("UserLibrary::TwinCustomType"),
+	COMMUNICATION_PROTOCOL(
+			"PhysicalTwinLibrary::CommunicationProtocol"
+	),
+
+	HTTP_PROTOCOL(
+			"PhysicalTwinLibrary::HTTP_Protocol"
+	),
+
+	MQTT_PROTOCOL(
+			"PhysicalTwinLibrary::MQTT_Protocol"
+	),
+
+
+	// ========================================================================
+	// Shadow
+	// ========================================================================
+
+	DATABASE("ShadowLibrary::Database"),
+
+	RELATIONAL_DATABASE(
+			"ShadowLibrary::RelationalDatabase"
+	),
+
+	KEY_VALUE_DATABASE(
+			"ShadowLibrary::KeyValueDatabase"
+	),
+
+
+	// ========================================================================
+	// Calculations
+	// ========================================================================
+
+	CUSTOM_CALCULATION(
+			"TwinImp::CustomCalculationAction"
+	),
+
+
+	// ========================================================================
+	// User Types
+	// ========================================================================
+
+	TWIN_CUSTOM_TYPE(
+			"UserLibrary::TwinCustomType"
+	),
+
+
+	// ========================================================================
+	// Enums
+	// ========================================================================
 
 	ORDER_BY("TwinEnumLibrary::ORDER_BY"),
 	TIME_UNIT("TwinEnumLibrary::TimeUnit"),
+	CUSTOM_STRATEGY_TYPE(
+			"TwinEnumLibrary::CustomStrategyType"
+	),
 
-	TWIN_ATTRIBUTE("Base::DataValue"), TWIN_REAL("ScalarValues::Real"), TWIN_INTEGER("ScalarValues::Integer"), TWIN_BOOLEAN("ScalarValues::Boolean"), TWIN_STRING("ScalarValues::String");
+
+	// ========================================================================
+	// Twin Type System
+	// ========================================================================
+
+	TWIN_TYPE_SYSTEM("TwinTypeSystem"),
+
+	TWIN_ATTRIBUTE("Base::DataValue"),
+
+	TWIN_REAL("ScalarValues::Real"),
+	TWIN_INTEGER("ScalarValues::Integer"),
+	TWIN_BOOLEAN("ScalarValues::Boolean"),
+	TWIN_STRING("ScalarValues::String");
 
 
 	private final String namespace;

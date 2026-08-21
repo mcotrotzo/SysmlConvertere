@@ -1,19 +1,14 @@
 package org.example.Mapping.NewVersion;
 
 import org.example.Containers.ContainerManager;
-import org.example.Mapping.Interfaces.FeatureReference;
 import org.example.Mapping.Interfaces.TwinEnum;
 import org.example.Mapping.NewVersion.Abstract.MappedElement;
 import org.example.Mapping.NewVersion.Abstract.MappedReference;
-import org.example.Mapping.NewVersion.Packages.ImportMapped;
-import org.example.Mapping.NewVersion.Packages.MappedNamespaceElement;
-import org.example.Mapping.NewVersion.Packages.PackageElementType;
+import org.example.Mapping.NewVersion.NameSpace.NameSpacePackage.MappedNamespaceElement;
+import org.example.Mapping.NewVersion.TwinAttribute.TwinAttributeUsageMapped;
 import org.example.Util.Utils;
 import org.omg.sysml.lang.sysml.*;
 import org.omg.sysml.lang.sysml.Package;
-import org.omg.sysml.lang.sysml.impl.FeatureImpl;
-import org.omg.sysml.util.ElementUtil;
-import org.omg.sysml.util.NamespaceUtil;
 
 import java.lang.Class;
 import java.lang.reflect.Constructor;
@@ -127,12 +122,12 @@ public final class MappingContext {
 		return result;
 	}
 
-	public TwinAttributeLoopVariableMapped mapLoopVariable(Usage element, MappedNamespaceElement<?> owner) throws MappingException {
+	public TwinAttributeUsageLoopVariableMapped mapLoopVariable(Usage element, MappedNamespaceElement<?> owner) throws MappingException {
 
 		MappedNamespaceElement<?> existing = mappedElements.get(element);
 
 		if (existing != null) {
-			if (!(existing instanceof TwinAttributeLoopVariableMapped loopVariable)) {
+			if (!(existing instanceof TwinAttributeUsageLoopVariableMapped loopVariable)) {
 				throw new MappingException("Loop variable '%s' was already mapped as '%s'.".formatted(element.getName(), existing.getClass().getSimpleName()));
 			}
 
@@ -140,7 +135,7 @@ public final class MappingContext {
 			return loopVariable;
 		}
 
-		TwinAttributeLoopVariableMapped created = new TwinAttributeLoopVariableMapped(element);
+		TwinAttributeUsageLoopVariableMapped created = new TwinAttributeUsageLoopVariableMapped(element);
 
 		created.setOwner(owner);
 		mappedElements.put(element, created);
@@ -224,7 +219,7 @@ public final class MappingContext {
 	}
 
 	public <T extends Enum<T> & TwinEnum> T extractEnum(
-			TwinAttributeMapped attribute,
+			TwinAttributeUsageMapped attribute,
 			Class<T> enumClass
 	) throws MappingException {
 

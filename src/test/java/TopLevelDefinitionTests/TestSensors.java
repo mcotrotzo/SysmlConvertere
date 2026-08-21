@@ -1,9 +1,7 @@
 package TopLevelDefinitionTests;
 
-import org.example.Mapping.Interfaces.MQTTProtocol;
-import org.example.Mapping.Interfaces.PhysicalTwin;
-import org.example.Mapping.Interfaces.Sensors;
-import org.example.Mapping.Interfaces.Twin;
+import org.example.Mapping.Interfaces.BaseTaxonomy.PhysicalTwin;
+import org.example.Mapping.Interfaces.TwinPort.Sensors;
 import org.junit.jupiter.api.Test;
 
 import java.util.Set;

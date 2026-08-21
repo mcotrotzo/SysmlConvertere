@@ -1,8 +1,7 @@
 package TopLevelDefinitionTests;
 
-import org.example.Mapping.Interfaces.Actuators;
-import org.example.Mapping.Interfaces.PhysicalTwin;
-import org.example.Mapping.Interfaces.Twin;
+import org.example.Mapping.Interfaces.TwinPort.Actuators;
+import org.example.Mapping.Interfaces.BaseTaxonomy.PhysicalTwin;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

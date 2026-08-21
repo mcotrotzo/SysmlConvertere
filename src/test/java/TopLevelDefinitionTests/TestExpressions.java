@@ -16,7 +16,7 @@ public class TestExpressions extends AbstarctTest {
 
 	@Test
 	public void testCollectionExpressionTest() {
-		TwinRealAttribute temp = named(TwinRealAttribute.class, "collectionTest");
+		TwinRealAttributeUsage temp = named(TwinRealAttributeUsage.class, "collectionTest");
 
 		Expression root = temp.getTwinExpressions().get();
 
@@ -56,7 +56,7 @@ public class TestExpressions extends AbstarctTest {
 
 	@Test
 	public void testBaseFunctionExpression() {
-		TwinRealAttribute voltage = named(TwinRealAttribute.class, "baseFunctionTest");
+		TwinRealAttributeUsage voltage = named(TwinRealAttributeUsage.class, "baseFunctionTest");
 
 		assertNotNull(voltage.getTwinExpressions().get());
 
@@ -93,7 +93,7 @@ public class TestExpressions extends AbstarctTest {
 
 	@Test
 	public void testConstructorExpression() {
-		TwinRealAttribute current = named(TwinRealAttribute.class, "constructorTest");
+		TwinRealAttributeUsage current = named(TwinRealAttributeUsage.class, "constructorTest");
 
 		assertNotNull(current.getTwinExpressions().get());
 
@@ -117,7 +117,7 @@ public class TestExpressions extends AbstarctTest {
 
 	@Test
 	public void testConstructorBooleanExpression() {
-		TwinBooleanAttribute current = named(TwinBooleanAttribute.class, "constructorTestBoolean");
+		TwinBooleanAttributeUsage current = named(TwinBooleanAttributeUsage.class, "constructorTestBoolean");
 
 		assertNotNull(current.getTwinExpressions().get());
 

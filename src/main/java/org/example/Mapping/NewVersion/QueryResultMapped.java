@@ -4,10 +4,9 @@ import lombok.ToString;
 import org.example.ElemWithMult;
 import org.example.Mapping.Interfaces.QueryResult;
 import org.example.Mapping.NewVersion.Abstract.MappedElementType;
+import org.example.Mapping.NewVersion.TwinAttribute.TwinAttributeUsageMapped;
 import org.example.Util.LibraryNameSpaces;
 import org.example.Util.Utils;
-import org.omg.sysml.lang.sysml.AttributeUsage;
-import org.omg.sysml.lang.sysml.Type;
 import org.omg.sysml.lang.sysml.Usage;
 
 @MappedElementType(LibraryNameSpaces.QUERY_RESULT)
@@ -36,7 +35,7 @@ public class QueryResultMapped extends CustomTypeMapped implements QueryResult {
 			throw new MappingException("QueryResultMapped must have exactly one field which redefines/subsets result, but found: " + this.getFields().size());
 		}
 		var field = getFields().getFirst();
-		if (!(field instanceof TwinAttributeMapped mappedField)) {
+		if (!(field instanceof TwinAttributeUsageMapped mappedField)) {
 			throw new MappingException("QueryResult field '%s' was mapped as '%s', expected TwinAttributeMapped.".formatted(field.getName(), field.getClass().getSimpleName()));
 		}
 

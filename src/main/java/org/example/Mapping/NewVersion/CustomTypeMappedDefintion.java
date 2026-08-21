@@ -3,17 +3,16 @@ package org.example.Mapping.NewVersion;
 import lombok.ToString;
 import org.example.Mapping.Interfaces.CustomTypeDefinition;
 import org.example.Mapping.Interfaces.Reference;
-import org.example.Mapping.Interfaces.TwinAttribute;
+import org.example.Mapping.Interfaces.BaseTaxonomy.TwinAttribute.BaseTwinAttribute.Usage.TwinAttributeUsage;
 import org.example.Mapping.NewVersion.Abstract.MappedElementType;
 import org.example.Mapping.NewVersion.Abstract.MappedReference;
+import org.example.Mapping.NewVersion.TwinAttribute.TwinAttributeUsageMapped;
 import org.example.Util.LibraryNameSpaces;
 import org.omg.sysml.lang.sysml.Classifier;
 import org.omg.sysml.lang.sysml.Definition;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @ToString(callSuper = true)
 @MappedElementType(LibraryNameSpaces.TWIN_CUSTOM_TYPE)
@@ -21,7 +20,7 @@ public class CustomTypeMappedDefintion
 		extends TwinTypeDefinitionMapped
 		implements CustomTypeDefinition {
 
-	protected List<TwinAttributeMapped> fields = new ArrayList<>();
+	protected List<TwinAttributeUsageMapped> fields = new ArrayList<>();
 	private List<MappedReference<? extends CustomTypeDefinition>> parents =
 			new ArrayList<>();
 
@@ -35,7 +34,7 @@ public class CustomTypeMappedDefintion
 	}
 
 	@Override
-	public List<TwinAttribute> getFields() {
+	public List<TwinAttributeUsage> getFields() {
 		return new ArrayList<>(fields);
 	}
 
@@ -45,7 +44,7 @@ public class CustomTypeMappedDefintion
 		fields = context.mapSlot(
 						this,
 						"fields",
-						TwinAttributeMapped.class
+						TwinAttributeUsageMapped.class
 		);
 
 		Classifier classifier =

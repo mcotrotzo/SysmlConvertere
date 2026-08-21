@@ -1,6 +1,7 @@
 package org.example.Mapping.Interfaces;
 
-import org.example.Mapping.NewVersion.Abstract.MappedReference;
+import org.example.Mapping.Interfaces.BaseTaxonomy.TwinAttribute.BaseTwinAttribute.Usage.TwinAttributeUsage;
+
 /**
  * Represents an assignment action in the model.
  */
@@ -10,7 +11,7 @@ public interface Assignment extends Action {
 	 *
 	 * @return the target of the assignment
 	 */
-	Reference<? extends TwinAttribute> getTarget();
+	Reference<? extends TwinAttributeUsage> getTarget();
 	/**
 	 * Returns the value to be assigned to the target.
 	 *

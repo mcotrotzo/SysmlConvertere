@@ -1,0 +1,8 @@
+package org.example.Mapping.Interfaces.BaseTaxonomy.TwinAttribute.DescriptiveLocalAttribute.Usage;
+
+import org.example.Mapping.Interfaces.BaseTaxonomy.TwinAttribute.DescriptiveLocalAttribute.DescriptiveLocalAttribute;
+import org.example.Mapping.Interfaces.BaseTaxonomy.TwinAttribute.AttributeWithExpression.TwinAttributeWithExpression;
+import org.example.Mapping.Interfaces.BaseTaxonomy.TwinExpression.DescriptiveLocalExpression.DescriptiveLocalExpression;
+
+public interface DescriptiveLocalAttributeUsage extends DescriptiveLocalAttribute, TwinAttributeWithExpression<DescriptiveLocalExpression> {
+}

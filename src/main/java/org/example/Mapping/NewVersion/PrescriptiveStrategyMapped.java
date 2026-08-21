@@ -3,7 +3,7 @@ package org.example.Mapping.NewVersion;
 import lombok.ToString;
 import org.example.Mapping.Interfaces.PrescriptiveStrategy;
 import org.example.Mapping.Interfaces.TriggerConfiguration;
-import org.example.Mapping.Interfaces.TwinBooleanAttribute;
+import org.example.Mapping.Interfaces.TwinBooleanAttributeUsage;
 import org.example.Mapping.NewVersion.Abstract.MappedElementType;
 import org.example.Util.LibraryNameSpaces;
 import org.omg.sysml.lang.sysml.Type;
@@ -14,7 +14,7 @@ import java.util.*;
 @ToString(callSuper = true)
 public class PrescriptiveStrategyMapped extends CustomStrategyMapped implements PrescriptiveStrategy {
 	private List<TriggerConfigurationMapped> triggerConfiguration = new ArrayList<>();
-	private List<TwinBooleanMapped> condition = new ArrayList<>();
+	private List<TwinBooleanMappedUsage> condition = new ArrayList<>();
 
 	public PrescriptiveStrategyMapped(Type sysmlElement) {
 		super(sysmlElement);
@@ -25,7 +25,7 @@ public class PrescriptiveStrategyMapped extends CustomStrategyMapped implements 
 	public void parse(MappingContext context) throws MappingException {
 		super.parse(context);
 		triggerConfiguration = context.mapSlot(this, "triggerConfig_", TriggerConfigurationMapped.class);
-		condition = context.mapSlot(this, "condition_", TwinBooleanMapped.class);
+		condition = context.mapSlot(this, "condition_", TwinBooleanMappedUsage.class);
 	}
 
 	@Override
@@ -34,7 +34,7 @@ public class PrescriptiveStrategyMapped extends CustomStrategyMapped implements 
 	}
 
 	@Override
-	public Optional<TwinBooleanAttribute> getCondition() {
+	public Optional<TwinBooleanAttributeUsage> getCondition() {
 		return Optional.ofNullable(condition.getFirst());
 	}
 

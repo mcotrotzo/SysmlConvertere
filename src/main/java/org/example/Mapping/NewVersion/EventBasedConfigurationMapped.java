@@ -2,38 +2,36 @@ package org.example.Mapping.NewVersion;
 
 import lombok.ToString;
 import org.example.Mapping.Interfaces.*;
-import org.example.Mapping.Mapper.TwinExpression.TwinCalculationExpression;
-import org.example.Mapping.Mapper.TwinExpression.TwinExpression;
-import org.example.Mapping.Mapper.TwinExpression.TwinFeatureReferenceExpression;
+import org.example.Mapping.Interfaces.BaseTaxonomy.TwinAttribute.BaseTwinAttribute.Usage.TwinAttributeUsage;
+import org.example.Mapping.Interfaces.BaseTaxonomy.TwinExpression.Calculation;
+import org.example.Mapping.Interfaces.BaseTaxonomy.TwinExpression.FeatureReference;
 import org.example.Mapping.NewVersion.Abstract.MappedElementType;
-import org.example.Mapping.NewVersion.Abstract.MappedReference;
+import org.example.Mapping.NewVersion.TwinAttribute.TwinAttributeUsageMapped;
 import org.example.Util.LibraryNameSpaces;
 import org.omg.sysml.lang.sysml.Type;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @MappedElementType(LibraryNameSpaces.EVENT_BASED_CONFIGURATION)
 @ToString(callSuper = true)
 public class EventBasedConfigurationMapped extends TriggerConfigurationMapped implements EventBasedConfiguration {
 
-	private List<Reference<? extends TwinAttribute>> triggeringAttributes = new ArrayList<>();
+	private List<Reference<? extends TwinAttributeUsage>> triggeringAttributes = new ArrayList<>();
 
-	private List<TwinBooleanMapped> onChange = new ArrayList<>();
+	private List<TwinBooleanMappedUsage> onChange = new ArrayList<>();
 
 	public EventBasedConfigurationMapped(Type sysmlElement) {
 		super(sysmlElement);
 	}
 
 	@Override
-	public List<Reference<? extends TwinAttribute>> getTriggeringAttributes() {
+	public List<Reference<? extends TwinAttributeUsage>> getTriggeringAttributes() {
 		return new ArrayList<>(triggeringAttributes);
 	}
 
 	@Override
-	public TwinBooleanAttribute getOnChange() {
+	public TwinBooleanAttributeUsage getOnChange() {
 		return onChange.getFirst();
 	}
 
@@ -41,18 +39,18 @@ public class EventBasedConfigurationMapped extends TriggerConfigurationMapped im
 	public void parse(MappingContext context) throws MappingException {
 		super.parse(context);
 
-		List<TwinAttributeMapped> slots = context.mapSlot(this, "triggeringAtributes_", TwinAttributeMapped.class);
+		List<TwinAttributeUsageMapped> slots = context.mapSlot(this, "triggeringAtributes_", TwinAttributeUsageMapped.class);
 
 		List<Expression> expressions = slots.stream().flatMap(slot -> slot.getTwinExpressions().stream()).toList();
 
 		triggeringAttributes = resolveTriggeringAttributes(expressions);
 
-		onChange = context.mapSlot(this, "onChange_", TwinBooleanMapped.class);
+		onChange = context.mapSlot(this, "onChange_", TwinBooleanMappedUsage.class);
 	}
 
-	private List<Reference<? extends TwinAttribute>> resolveTriggeringAttributes(List<Expression> expressions) throws MappingException {
+	private List<Reference<? extends TwinAttributeUsage>> resolveTriggeringAttributes(List<Expression> expressions) throws MappingException {
 
-		List<Reference<? extends TwinAttribute>> result = new ArrayList<>();
+		List<Reference<? extends TwinAttributeUsage>> result = new ArrayList<>();
 
 		for (Expression expression : expressions) {
 

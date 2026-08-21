@@ -1,4 +1,6 @@
 library package TwinEnumLibrary{
+
+    
     public enum def TimeUnit{
         MICROSECOND;
         MILLISECOND;
@@ -10,8 +12,13 @@ library package TwinEnumLibrary{
     }
 
     public enum def ORDER_BY {
-        ASCENDING;
-        DESCENDING;
+        enum ASCENDING;
+        enum DESCENDING;
+    }
+
+    public enum def CustomStrategyType{
+        CONTAINER;
+        LAMBDA;
     }
 
 }

@@ -1,12 +1,10 @@
 package TopLevelDefinitionTests;
 
 import org.example.MapperService;
-import org.example.Mapping.Interfaces.Model;
+import org.example.Mapping.Interfaces.Base.Model;
 import org.example.Mapping.NewVersion.MappingException;
 import org.example.TwinDataBase;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 
 
 import java.io.IOException;

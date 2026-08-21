@@ -2,17 +2,17 @@ package org.example.Mapping.TwinAction;
 
 import lombok.ToString;
 import org.example.Mapping.Interfaces.*;
+import org.example.Mapping.Interfaces.BaseTaxonomy.TwinAttribute.BaseTwinAttribute.Usage.TwinAttributeUsage;
 import org.example.Mapping.Mapper.TwinExpression.TwinExpression;
 import org.example.Mapping.NewVersion.MappingContext;
 import org.example.Mapping.NewVersion.MappingException;
-import org.example.Mapping.NewVersion.TwinAttributeLoopVariableMapped;
-import org.example.Mapping.NewVersion.TwinAttributeMapped;
+import org.example.Mapping.NewVersion.TwinAttributeUsageLoopVariableMapped;
 import org.omg.sysml.lang.sysml.ForLoopActionUsage;
 
 @MappedMetaclass
 @ToString(callSuper = true)
 public class TwinForLoopActionMapped extends TwinActionBaseUsage<ForLoopActionUsage> implements ForLoop {
-	private TwinAttributeLoopVariableMapped loopVariable;
+	private TwinAttributeUsageLoopVariableMapped loopVariable;
 	private TwinExpression<?> expr;
 	private TwinActionBaseUsage<?> body;
 
@@ -22,7 +22,7 @@ public class TwinForLoopActionMapped extends TwinActionBaseUsage<ForLoopActionUs
 
 
 	@Override
-	public TwinAttribute getLoopVariable() {
+	public TwinAttributeUsage getLoopVariable() {
 		return loopVariable;
 	}
 

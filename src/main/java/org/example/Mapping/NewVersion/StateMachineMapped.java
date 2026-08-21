@@ -2,23 +2,21 @@ package org.example.Mapping.NewVersion;
 
 import lombok.ToString;
 import org.example.Mapping.Interfaces.*;
+import org.example.Mapping.Interfaces.BaseTaxonomy.TwinAttribute.BaseTwinAttribute.Usage.TwinAttributeUsage;
 import org.example.Mapping.NewVersion.Abstract.MappedElementType;
+import org.example.Mapping.NewVersion.TwinAttribute.TwinAttributeUsageMapped;
 import org.example.Mapping.TwinAction.TwinActionBaseUsage;
-import org.example.Mapping.TwinAction.TwinSuccessionAction;
-import org.example.Mapping.TwinAction.TwinTransitionUsageMapped;
 import org.example.Util.LibraryNameSpaces;
 import org.omg.sysml.lang.sysml.ActionUsage;
 import org.omg.sysml.lang.sysml.StateUsage;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @MappedElementType(LibraryNameSpaces.STATE)
 @ToString(callSuper = true)
 public class StateMachineMapped extends TwinActionBaseUsage<StateUsage> implements StateMachine {
-	private List<TwinAttributeMapped> localAttributes = new ArrayList<>();
+	private List<TwinAttributeUsageMapped> localAttributes = new ArrayList<>();
 	private List<StateMachineMapped> states = new ArrayList<>();
 
 	private TwinActionBaseUsage<?> entryAction;
@@ -32,7 +30,7 @@ public class StateMachineMapped extends TwinActionBaseUsage<StateUsage> implemen
 	}
 
 	@Override
-	public List<TwinAttribute> getLocalAttributes() {
+	public List<TwinAttributeUsage> getLocalAttributes() {
 		return new ArrayList<>(localAttributes);
 	}
 
@@ -102,7 +100,7 @@ public class StateMachineMapped extends TwinActionBaseUsage<StateUsage> implemen
 				context.mapSlot(
 						this,
 						"local_Attributes",
-						TwinAttributeMapped.class
+						TwinAttributeUsageMapped.class
 
 		);
 

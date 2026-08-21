@@ -1,0 +1,8 @@
+package org.example.Mapping.Interfaces.BaseTaxonomy.TwinAttribute.DescriptiveConfigAtttribute.Usage;
+
+import org.example.Mapping.Interfaces.BaseTaxonomy.TwinAttribute.DescriptiveConfigAtttribute.DescriptiveConfigAttribute;
+import org.example.Mapping.Interfaces.BaseTaxonomy.TwinAttribute.AttributeWithExpression.TwinAttributeWithExpression;
+import org.example.Mapping.Interfaces.BaseTaxonomy.TwinExpression.DescriptveConfigExpression.DescriptiveConfigExpression;
+
+public interface DescriptiveConfigAttributeUsage extends DescriptiveConfigAttribute, TwinAttributeWithExpression<DescriptiveConfigExpression> {
+}

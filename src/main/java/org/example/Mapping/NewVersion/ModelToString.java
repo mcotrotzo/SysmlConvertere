@@ -1,6 +1,6 @@
 package org.example.Mapping.NewVersion;
 
-import org.example.Mapping.Interfaces.Model;
+import org.example.Mapping.Interfaces.Base.Model;
 
 import java.lang.reflect.Method;
 import java.util.*;

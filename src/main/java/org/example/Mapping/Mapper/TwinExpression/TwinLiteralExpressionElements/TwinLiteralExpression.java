@@ -2,7 +2,7 @@ package org.example.Mapping.Mapper.TwinExpression.TwinLiteralExpressionElements;
 
 import lombok.Setter;
 import lombok.ToString;
-import org.example.Mapping.Interfaces.Literal;
+import org.example.Mapping.Interfaces.BaseTaxonomy.TwinExpression.Literal;
 import org.example.Mapping.Mapper.TwinExpression.TwinExpression;
 import org.example.Mapping.TwinAction.MappedMetaclass;
 import org.omg.sysml.lang.sysml.LiteralExpression;

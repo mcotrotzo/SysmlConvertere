@@ -1,0 +1,36 @@
+package org.example.Mapping.NewVersion;
+
+import org.example.Mapping.NewVersion.TwinAttribute.TwinAttributeUsageMapped;
+import org.omg.sysml.lang.sysml.ReferenceUsage;
+import org.omg.sysml.lang.sysml.Type;
+import org.omg.sysml.lang.sysml.Usage;
+import org.omg.sysml.util.TypeUtil;
+
+public class TwinAttributeUsageLoopVariableMapped extends TwinAttributeUsageMapped {
+	public TwinAttributeUsageLoopVariableMapped(Usage sysmlElement) {
+		super(sysmlElement);
+	}
+
+
+	@Override
+	protected void resolveTypeReference(MappingContext context) throws MappingException {
+
+		var supertypes = TypeUtil.getSupertypesOf(getSysmlElement());
+
+		Type target = supertypes.stream()
+				.filter(type -> !(type instanceof ReferenceUsage))
+				.findFirst()
+				.orElse(null);
+
+		if (target == null) {
+			throw new MappingException(
+					"%s is not typed".formatted(getName())
+			);
+		}
+
+		typeReference = context.mapReference(
+				target,
+				BaseTypeDefinitionMapped.class
+		);
+	}
+}

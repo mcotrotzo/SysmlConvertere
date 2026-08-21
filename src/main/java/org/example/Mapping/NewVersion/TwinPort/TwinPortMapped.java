@@ -2,7 +2,7 @@ package org.example.Mapping.NewVersion.TwinPort;
 
 import lombok.ToString;
 import org.example.Mapping.Interfaces.Protocol;
-import org.example.Mapping.Interfaces.TwinPort;
+import org.example.Mapping.Interfaces.TwinPort.TwinPort;
 import org.example.Mapping.NewVersion.Abstract.MappedElement;
 import org.example.Mapping.NewVersion.Abstract.MappedElementType;
 import org.example.Mapping.NewVersion.CommunicationProtocolMapped;
@@ -15,10 +15,10 @@ import java.util.*;
 
 @MappedElementType(LibraryNameSpaces.TWIN_PORT)
 @ToString(callSuper = true)
-public abstract class TwinPortMapped extends MappedElement<Type> implements TwinPort {
+public abstract class TwinPortMapped<T extends Type> extends MappedElement<T> implements TwinPort {
 	private List<CommunicationProtocolMapped> protocols = new ArrayList<>();
 
-	public TwinPortMapped(Type sysmlElement) {
+	public TwinPortMapped(T sysmlElement) {
 		super(sysmlElement);
 	}
 

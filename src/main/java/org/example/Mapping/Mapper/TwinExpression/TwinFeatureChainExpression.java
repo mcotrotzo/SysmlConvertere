@@ -2,25 +2,22 @@ package org.example.Mapping.Mapper.TwinExpression;
 
 import lombok.ToString;
 
-import org.example.Mapping.Interfaces.FeatureReference;
+import org.example.Mapping.Interfaces.BaseTaxonomy.TwinExpression.FeatureReference;
 import org.example.Mapping.Interfaces.Query;
-import org.example.Mapping.Interfaces.TwinAttribute;
+import org.example.Mapping.Interfaces.BaseTaxonomy.TwinAttribute.BaseTwinAttribute.Usage.TwinAttributeUsage;
 import org.example.Mapping.NewVersion.Abstract.MappedReference;
 import org.example.Mapping.NewVersion.MappingContext;
 import org.example.Mapping.NewVersion.MappingException;
-import org.example.Mapping.NewVersion.TwinAttributeMapped;
+import org.example.Mapping.NewVersion.TwinAttribute.TwinAttributeUsageMapped;
 import org.example.Mapping.TwinAction.MappedMetaclass;
 import org.omg.sysml.lang.sysml.FeatureChainExpression;
-import org.omg.sysml.lang.sysml.Type;
-import org.omg.sysml.lang.sysml.impl.FeatureImpl;
 import org.omg.sysml.util.FeatureUtil;
-import org.omg.sysml.util.TypeUtil;
 
 @MappedMetaclass
 @ToString(callSuper = true)
 public class TwinFeatureChainExpression extends TwinExpression<FeatureChainExpression> implements FeatureReference {
 
-	private MappedReference<TwinAttributeMapped> target;
+	private MappedReference<TwinAttributeUsageMapped> target;
 
 	public TwinFeatureChainExpression(FeatureChainExpression sysmlElement) {
 		super(sysmlElement);
@@ -34,12 +31,12 @@ public class TwinFeatureChainExpression extends TwinExpression<FeatureChainExpre
 
 		target = context.mapReference(
 				targetFeature,
-				TwinAttributeMapped.class
+				TwinAttributeUsageMapped.class
 		);
 	}
 
 	@Override
-	public MappedReference<? extends TwinAttribute> getTarget() {
+	public MappedReference<? extends TwinAttributeUsage> getTarget() {
 		return target;
 	}
 

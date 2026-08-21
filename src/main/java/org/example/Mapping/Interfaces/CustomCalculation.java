@@ -1,13 +1,15 @@
 package org.example.Mapping.Interfaces;
 
+import org.example.Mapping.Interfaces.BaseTaxonomy.TwinAttribute.BaseTwinAttribute.Usage.TwinAttributeUsage;
+
 import java.util.List;
 /**
  * Represents a custom calculation(Definition) in the model, which is a specialized function with defined inputs, outputs, actions, and successions.
  */
 public interface CustomCalculation extends Function {
-	List<TwinAttribute> getInputs();
+	List<TwinAttributeUsage> getInputs();
 
-	List<TwinAttribute> getOutputs();
+	List<TwinAttributeUsage> getOutputs();
 
 	/**
 	 * Returns a list of actions of the body of the custom calculation..

@@ -9,12 +9,11 @@ import org.omg.sysml.lang.sysml.Type;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @MappedElementType(LibraryNameSpaces.TIME_BASED_CONFIGURATION)
 @ToString(callSuper = true)
 public class TimeBasedConfigurationMapped extends TriggerConfigurationMapped implements TimeBasedConfiguration {
-	private List<TwinIntegerMapped> triggerInterval = new ArrayList<>();
+	private List<TwinIntegerMappedUsage> triggerInterval = new ArrayList<>();
 	private EnumTimeUnitMapped triggerIntervalUnit;
 
 	public TimeBasedConfigurationMapped(Type sysmlElement) {
@@ -22,7 +21,7 @@ public class TimeBasedConfigurationMapped extends TriggerConfigurationMapped imp
 	}
 
 	@Override
-	public List<TwinIntegerAttribute> getTriggerInterval() {
+	public List<TwinIntegerAttributeUsage> getTriggerInterval() {
 		return new ArrayList<>(triggerInterval);
 	}
 
@@ -35,7 +34,7 @@ public class TimeBasedConfigurationMapped extends TriggerConfigurationMapped imp
 	@Override
 	public void parse(MappingContext context) throws MappingException {
 		super.parse(context);
-		triggerInterval = context.mapSlot(this, "triggerInterval_", TwinIntegerMapped.class);
+		triggerInterval = context.mapSlot(this, "triggerInterval_", TwinIntegerMappedUsage.class);
 		triggerIntervalUnit = new HashSet<>(context.mapSlot(this, "triggerIntervalUnit_", EnumTimeUnitMapped.class)).stream().findFirst().orElseThrow(() -> new MappingException("No triggerIntervalUnit_ found for TimeBasedConfigurationMapped"));
 
 	}

@@ -7,9 +7,9 @@ import org.example.Mapping.NewVersion.Abstract.MappedElement;
 import org.example.Mapping.NewVersion.Abstract.MappedElementType;
 import org.example.Mapping.NewVersion.MappingException;
 import org.example.Mapping.NewVersion.NoMappedElementException;
-import org.example.Mapping.NewVersion.Packages.MappedNamespaceElement;
-import org.example.Mapping.NewVersion.Packages.PackageElementType;
-import org.example.Mapping.NewVersion.Packages.PackageTypeMeta;
+import org.example.Mapping.NewVersion.NameSpace.NameSpacePackage.MappedNamespaceElement;
+import org.example.Mapping.NewVersion.NameSpace.NameSpacePackage.PackageElementType;
+import org.example.Mapping.NewVersion.NameSpace.NameSpacePackage.PackageTypeMeta;
 import org.example.Mapping.TwinAction.MappedMetaclass;
 import org.example.Util.LibraryPackageNames;
 import org.example.Util.Utils;
@@ -44,22 +44,33 @@ public final class ContainerManager {
 
 				String annotationName = annotationInfo.getName();
 
-				for (ClassInfo classInfo :
+				for (ClassInfo annotatedClass :
 						scanResult.getClassesWithAnnotation(annotationName)) {
+					registerIfConcrete(annotationName, annotatedClass);
+					for (ClassInfo subclass :
+							annotatedClass.getSubclasses()) {
 
-					if (classInfo.isInterface() || classInfo.isAbstract()) {
-						continue;
+						registerIfConcrete(annotationName, subclass);
 					}
-
-					containers
-							.computeIfAbsent(
-									annotationName,
-									ignored -> new ArrayList<>()
-							)
-							.add(classInfo.loadClass());
 				}
 			}
 		}
+	}
+
+	private void registerIfConcrete(
+			String annotationName,
+			ClassInfo classInfo
+	) {
+		if (classInfo.isInterface() || classInfo.isAbstract()) {
+			return;
+		}
+
+		containers
+				.computeIfAbsent(
+						annotationName,
+						ignored -> new ArrayList<>()
+				)
+				.add(classInfo.loadClass());
 	}
 
 

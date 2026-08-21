@@ -1,9 +1,16 @@
 package TopLevelDefinitionTests;
 
 import org.example.Mapping.Interfaces.*;
+import org.example.Mapping.Interfaces.Base.Model;
+import org.example.Mapping.Interfaces.BaseTaxonomy.DescriptiveModel;
+import org.example.Mapping.Interfaces.BaseTaxonomy.PhysicalTwin;
+import org.example.Mapping.Interfaces.BaseTaxonomy.PredictiveModel;
+import org.example.Mapping.Interfaces.BaseTaxonomy.PrescriptiveModel;
+import org.example.Mapping.Interfaces.BaseTaxonomy.TwinAttribute.BaseTwinAttribute.Usage.TwinAttributeUsage;
+import org.example.Mapping.Interfaces.BaseTaxonomy.TwinExpression.Calculation;
+import org.example.Mapping.Interfaces.BaseTaxonomy.TwinExpression.FeatureReference;
 import org.junit.jupiter.api.Test;
 
-import java.sql.Ref;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -309,8 +316,8 @@ public class TestBehaviorMapping extends AbstarctTest {
 						"LLM_Request"
 				);
 
-		List<TwinAttribute> inputs = strategy.getInputs();
-		List<TwinAttribute> outputs = strategy.getOutputs();
+		List<TwinAttributeUsage> inputs = strategy.getInputs();
+		List<TwinAttributeUsage> outputs = strategy.getOutputs();
 
 		assertEquals(
 				1,
@@ -334,13 +341,13 @@ public class TestBehaviorMapping extends AbstarctTest {
 
 		assertEquals(2, inputs.size());
 
-		TwinAttribute avgTemperature =
+		TwinAttributeUsage avgTemperature =
 				inputs.stream()
 						.filter(x -> "avgTemperature".equals(x.getName()))
 						.findFirst()
 						.orElseThrow();
 
-		TwinAttribute current =
+		TwinAttributeUsage current =
 				inputs.stream()
 						.filter(x -> "current".equals(x.getName()))
 						.findFirst()
@@ -394,7 +401,7 @@ public class TestBehaviorMapping extends AbstarctTest {
 
 		assertEquals(1, outputs.size());
 
-		TwinAttribute llmCurrent =
+		TwinAttributeUsage llmCurrent =
 				outputs.getFirst();
 
 		assertEquals(
@@ -481,7 +488,7 @@ public class TestBehaviorMapping extends AbstarctTest {
 				strategy.getOutputs().size()
 		);
 
-		TwinAttribute chargeCmd =
+		TwinAttributeUsage chargeCmd =
 				strategy.getOutputs().get(0);
 
 		assertEquals(
@@ -503,7 +510,7 @@ public class TestBehaviorMapping extends AbstarctTest {
 				(EventBasedConfiguration)
 						strategy.getTriggerConfiguration().getFirst();
 
-		List<Reference<? extends TwinAttribute>> triggeringAttributes =
+		List<Reference<? extends TwinAttributeUsage>> triggeringAttributes =
 				eventBasedConfiguration.getTriggeringAttributes();
 
 		assertEquals(
@@ -511,10 +518,10 @@ public class TestBehaviorMapping extends AbstarctTest {
 				triggeringAttributes.size()
 		);
 
-		TwinAttribute first =
+		TwinAttributeUsage first =
 				triggeringAttributes.get(0).getReferent();
 
-		TwinAttribute second =
+		TwinAttributeUsage second =
 				triggeringAttributes.get(1).getReferent();
 
 		assertEquals(
@@ -736,9 +743,9 @@ public class TestBehaviorMapping extends AbstarctTest {
 	@Test
 	public void testAvgDerivedAttributeExpression() {
 
-		TwinAttribute avgTemp =
+		TwinAttributeUsage avgTemp =
 				named(
-						TwinAttribute.class,
+						TwinAttributeUsage.class,
 						"avgTemp"
 				);
 

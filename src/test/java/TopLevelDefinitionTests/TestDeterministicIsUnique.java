@@ -1,7 +1,7 @@
 package TopLevelDefinitionTests;
 
 
-import org.example.Mapping.Interfaces.Twin;
+import org.example.Mapping.Interfaces.FullTwin.Twin;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.fail;

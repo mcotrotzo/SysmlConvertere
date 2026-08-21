@@ -1,11 +1,9 @@
 package TopLevelDefinitionTests;
 
-import org.example.Mapping.Interfaces.Model;
-import org.example.Mapping.Interfaces.Sensors;
-import org.example.Mapping.Interfaces.Twin;
+import org.example.Mapping.Interfaces.Base.Model;
+import org.example.Mapping.Interfaces.TwinPort.Sensors;
+import org.example.Mapping.Interfaces.FullTwin.Twin;
 import org.junit.jupiter.api.Test;
-
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 

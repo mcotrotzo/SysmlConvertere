@@ -1,0 +1,7 @@
+package org.example.Mapping.Interfaces.BaseTaxonomy.TwinAttribute.DescriptiveConfigAtttribute.Definition;
+
+import org.example.Mapping.Interfaces.BaseTaxonomy.TwinAttribute.DescriptiveConfigAtttribute.DescriptiveConfigAttribute;
+import org.example.Mapping.Interfaces.BaseTaxonomy.TwinAttribute.BaseTwinAttribute.Definition.TwinAttributeDefinition;
+
+public interface DescriptiveConfigAttributeDefinition extends DescriptiveConfigAttribute, TwinAttributeDefinition {
+}

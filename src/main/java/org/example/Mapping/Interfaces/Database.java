@@ -1,7 +1,7 @@
 package org.example.Mapping.Interfaces;
 
-import java.util.List;
+import org.example.Mapping.Interfaces.Base.Model;
 
 public interface Database extends Model {
-	TwinIntegerAttribute getDurationInDays();
+	TwinIntegerAttributeUsage getDurationInDays();
 }

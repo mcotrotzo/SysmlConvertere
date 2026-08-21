@@ -1,0 +1,8 @@
+package org.example.Mapping.Interfaces.BaseTaxonomy.TwinAttribute.PredictiveLocalAttribute.Usage;
+
+import org.example.Mapping.Interfaces.BaseTaxonomy.TwinAttribute.PredictiveLocalAttribute.PredictiveLocalAttribute;
+import org.example.Mapping.Interfaces.BaseTaxonomy.TwinAttribute.AttributeWithExpression.TwinAttributeWithExpression;
+import org.example.Mapping.Interfaces.BaseTaxonomy.TwinExpression.PredicitiveLocalExpression.PredictiveLocalExpression;
+
+public interface PredictiveLocalAttributeUsage extends PredictiveLocalAttribute, TwinAttributeWithExpression<PredictiveLocalExpression> {
+}

@@ -1,7 +1,7 @@
 package TopLevelDefinitionTests;
 
 import org.example.Mapping.Interfaces.QueryResult;
-import org.example.Mapping.Interfaces.TwinAttribute;
+import org.example.Mapping.Interfaces.BaseTaxonomy.TwinAttribute.BaseTwinAttribute.Usage.TwinAttributeUsage;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -67,7 +67,7 @@ public class TestQueryResultHasOnlyResult extends AbstarctTest {
 		QueryResult queryResult =
 				named(QueryResult.class, "result");
 
-		List<TwinAttribute> fields =
+		List<TwinAttributeUsage> fields =
 				queryResult.getFields();
 
 		assertEquals(1, fields.size());
@@ -78,7 +78,7 @@ public class TestQueryResultHasOnlyResult extends AbstarctTest {
 		QueryResult queryResult =
 				named(QueryResult.class, "result");
 
-		TwinAttribute field =
+		TwinAttributeUsage field =
 				queryResult.getFields().getFirst();
 
 		assertEquals("result", field.getName());

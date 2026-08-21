@@ -1,0 +1,8 @@
+package org.example.Mapping.Interfaces.BaseTaxonomy.TwinAttribute.QueryConfigAttribute.Usage;
+
+import org.example.Mapping.Interfaces.BaseTaxonomy.TwinAttribute.QueryConfigAttribute.QueryConfigAttribute;
+import org.example.Mapping.Interfaces.BaseTaxonomy.TwinAttribute.AttributeWithExpression.TwinAttributeWithExpression;
+import org.example.Mapping.Interfaces.BaseTaxonomy.TwinExpression.QueryConfigExpression.QueryConfigExpression;
+
+public interface QueryConfigAttributeUsage extends QueryConfigAttribute, TwinAttributeWithExpression<QueryConfigExpression> {
+}

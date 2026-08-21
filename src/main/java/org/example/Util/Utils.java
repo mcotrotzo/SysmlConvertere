@@ -8,8 +8,6 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.example.ElemWithMult;
 import org.example.LoadedResources;
 import org.example.Mapping.NewVersion.BaseFunctionKind;
-import org.example.Mapping.NewVersion.MappingException;
-import org.example.Mapping.NewVersion.TwinAttributeMapped;
 import org.example.UtilClasses.RedefinitionGraph;
 import org.example.UtilClasses.SpecialicationGraph;
 import org.omg.sysml.lang.sysml.*;

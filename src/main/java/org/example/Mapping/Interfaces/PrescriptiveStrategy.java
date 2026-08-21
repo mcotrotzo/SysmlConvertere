@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface PrescriptiveStrategy extends Strategy {
-	Optional<TwinBooleanAttribute> getCondition();
+	Optional<TwinBooleanAttributeUsage> getCondition();
 
 	List<TriggerConfiguration> getTriggerConfiguration();
 

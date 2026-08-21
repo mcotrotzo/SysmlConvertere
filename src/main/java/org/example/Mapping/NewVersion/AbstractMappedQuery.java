@@ -2,14 +2,13 @@ package org.example.Mapping.NewVersion;
 
 import org.example.ElemWithMult;
 import org.example.Mapping.Interfaces.*;
+import org.example.Mapping.Interfaces.BaseTaxonomy.TwinAttribute.BaseTwinAttribute.Usage.TwinAttributeUsage;
 import org.example.Mapping.NewVersion.Abstract.MappedElement;
+import org.example.Mapping.NewVersion.TwinAttribute.TwinAttributeUsageMapped;
 import org.example.Mapping.TwinAction.MappedMetaclass;
 import org.example.Util.Utils;
-import org.omg.sysml.lang.sysml.Element;
-import org.omg.sysml.lang.sysml.Feature;
 import org.omg.sysml.lang.sysml.Function;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,15 +17,15 @@ public abstract class AbstractMappedQuery
 		extends FunctionMapped<Function>
 		implements Query {
 
-	protected TwinAttributeMapped twinAttribute;
+	protected TwinAttributeUsageMapped twinAttribute;
 
-	protected Optional<TwinIntegerMapped> since = Optional.empty();
+	protected Optional<TwinIntegerMappedUsage> since = Optional.empty();
 	protected Optional<EnumTimeUnitMapped> sinceUnit = Optional.empty();
 	protected Optional<EnumOrderByMapped> orderBy = Optional.empty();
-	protected Optional<TwinIntegerMapped> limit = Optional.empty();
-	protected Optional<TwinBooleanMapped> filterExpression = Optional.empty();
+	protected Optional<TwinIntegerMappedUsage> limit = Optional.empty();
+	protected Optional<TwinBooleanMappedUsage> filterExpression = Optional.empty();
 
-	protected TwinAttributeMapped result;
+	protected TwinAttributeUsageMapped result;
 
 	public AbstractMappedQuery(Function sysmlElement) {
 		super(sysmlElement);
@@ -38,13 +37,13 @@ public abstract class AbstractMappedQuery
 		twinAttribute = parseRequiredSlot(
 				context,
 				"twinAttribute",
-				TwinAttributeMapped.class
+				TwinAttributeUsageMapped.class
 		);
 
 		since = parseOptionalSlot(
 				context,
 				"since",
-				TwinIntegerMapped.class
+				TwinIntegerMappedUsage.class
 		);
 
 		sinceUnit = parseOptionalSlot(
@@ -62,20 +61,20 @@ public abstract class AbstractMappedQuery
 		limit = parseOptionalSlot(
 				context,
 				"limit",
-				TwinIntegerMapped.class
+				TwinIntegerMappedUsage.class
 		);
 
 
 		filterExpression = parseOptionalSlot(
 				context,
 				"filterExpression",
-				TwinBooleanMapped.class
+				TwinBooleanMappedUsage.class
 		);
 
 		result = parseRequiredSlot(
 				context,
 				"result",
-				TwinAttributeMapped.class
+				TwinAttributeUsageMapped.class
 		);
 
 		validateMulti(
@@ -146,7 +145,7 @@ public abstract class AbstractMappedQuery
 	}
 
 	protected void validateMulti(
-			TwinAttributeMapped attribute,
+			TwinAttributeUsageMapped attribute,
 			String slotName,
 			int requiredLower,
 			int requiredUpper
@@ -178,12 +177,12 @@ public abstract class AbstractMappedQuery
 	}
 
 	@Override
-	public TwinAttribute getTwinAttribute() {
+	public TwinAttributeUsage getTwinAttribute() {
 		return twinAttribute;
 	}
 
 	@Override
-	public Optional<TwinIntegerAttribute> getSince() {
+	public Optional<TwinIntegerAttributeUsage> getSince() {
 		return since.map(x -> x);
 	}
 
@@ -198,12 +197,12 @@ public abstract class AbstractMappedQuery
 	}
 
 	@Override
-	public Optional<TwinIntegerAttribute> getLimit() {
+	public Optional<TwinIntegerAttributeUsage> getLimit() {
 		return limit.map(x -> x);
 	}
 
 	@Override
-	public Optional<TwinBooleanAttribute> getFilterExpression() {
+	public Optional<TwinBooleanAttributeUsage> getFilterExpression() {
 		return filterExpression.map(x -> x);
 	}
 }

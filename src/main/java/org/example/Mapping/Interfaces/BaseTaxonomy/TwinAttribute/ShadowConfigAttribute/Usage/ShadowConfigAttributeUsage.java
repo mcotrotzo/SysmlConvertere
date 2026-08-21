@@ -1,0 +1,8 @@
+package org.example.Mapping.Interfaces.BaseTaxonomy.TwinAttribute.ShadowConfigAttribute.Usage;
+
+import org.example.Mapping.Interfaces.BaseTaxonomy.TwinAttribute.ShadowConfigAttribute.ShadowConfigAttribute;
+import org.example.Mapping.Interfaces.BaseTaxonomy.TwinAttribute.AttributeWithExpression.TwinAttributeWithExpression;
+import org.example.Mapping.Interfaces.BaseTaxonomy.TwinExpression.ShadowConfigExpression.ShadowConfigExpression;
+
+public interface ShadowConfigAttributeUsage extends ShadowConfigAttribute, TwinAttributeWithExpression<ShadowConfigExpression> {
+}

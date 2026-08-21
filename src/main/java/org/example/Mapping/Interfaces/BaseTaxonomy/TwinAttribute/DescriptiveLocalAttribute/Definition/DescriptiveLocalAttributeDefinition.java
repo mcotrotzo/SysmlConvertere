@@ -1,0 +1,7 @@
+package org.example.Mapping.Interfaces.BaseTaxonomy.TwinAttribute.DescriptiveLocalAttribute.Definition;
+
+import org.example.Mapping.Interfaces.BaseTaxonomy.TwinAttribute.DescriptiveLocalAttribute.DescriptiveLocalAttribute;
+import org.example.Mapping.Interfaces.BaseTaxonomy.TwinAttribute.BaseTwinAttribute.Definition.TwinAttributeDefinition;
+
+public interface DescriptiveLocalAttributeDefinition extends DescriptiveLocalAttribute, TwinAttributeDefinition {
+}

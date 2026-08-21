@@ -1,6 +1,6 @@
 package org.example.Mapping.Interfaces;
 
-import org.example.Mapping.NewVersion.Abstract.MappedReference;
+import org.example.Mapping.Interfaces.Base.Model;
 
 import java.util.List;
 
