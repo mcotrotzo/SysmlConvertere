@@ -1,8 +1,0 @@
-package org.example.Mapping.Interfaces.BaseTaxonomy.TwinAttribute.ShadowLocalAttribute.Usage;
-
-import org.example.Mapping.Interfaces.BaseTaxonomy.TwinAttribute.ShadowLocalAttribute.ShadowLocalAttribute;
-import org.example.Mapping.Interfaces.BaseTaxonomy.TwinAttribute.AttributeWithExpression.TwinAttributeWithExpression;
-import org.example.Mapping.Interfaces.BaseTaxonomy.TwinExpression.ShadowLocalExpression.ShadowLocalExpression;
-
-public interface ShadowLocalAttributeUsage extends ShadowLocalAttribute, TwinAttributeWithExpression<ShadowLocalExpression> {
-}

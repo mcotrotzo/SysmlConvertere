@@ -1,7 +1,0 @@
-package org.example.Mapping.Interfaces.BaseTaxonomy.TwinAttribute.PhysicalLocalAttribute.Definition;
-
-import org.example.Mapping.Interfaces.BaseTaxonomy.TwinAttribute.PhysicalLocalAttribute.PhysicalLocalAttribute;
-import org.example.Mapping.Interfaces.BaseTaxonomy.TwinAttribute.BaseTwinAttribute.Definition.TwinAttributeDefinition;
-
-public interface PhysicalLocalAttributeDefinition extends PhysicalLocalAttribute, TwinAttributeDefinition {
-}

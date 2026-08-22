@@ -7,7 +7,7 @@ import org.example.Mapping.Interfaces.Reference;
 import org.example.Mapping.Interfaces.BaseTaxonomy.TwinAttribute.BaseTwinAttribute.Usage.TwinAttributeUsage;
 import org.example.Mapping.NewVersion.Abstract.MappedElementType;
 import org.example.Mapping.NewVersion.Abstract.MappedReference;
-import org.example.Mapping.NewVersion.TwinAttribute.TwinAttributeUsageMapped;
+import org.example.Mapping.Mapper.TwinAttributeMapped.BaseTwinAttributeMapped.TwinAttributeUsageMapped;
 import org.example.Util.LibraryNameSpaces;
 import org.omg.sysml.lang.sysml.Definition;
 import org.omg.sysml.lang.sysml.Feature;
@@ -20,7 +20,7 @@ import java.util.List;
 public class CustomTypeMapped extends TwinAttributeUsageMapped implements CustomType {
 
 	protected List<TwinAttributeUsageMapped> fields = new ArrayList<>();
-	private MappedReference<? extends CustomTypeMappedDefintion> definition;
+	private MappedReference<? extends CustomAttributeMappedDefintion> definition;
 
 	public CustomTypeMapped(Feature sysmlElement) {
 		super(sysmlElement);
@@ -56,7 +56,7 @@ public class CustomTypeMapped extends TwinAttributeUsageMapped implements Custom
 
 			definition = context.mapReference(
 					customDefinition,
-					CustomTypeMappedDefintion.class
+					CustomAttributeMappedDefintion.class
 			);
 		}
 	}

@@ -1,8 +1,0 @@
-package org.example.Mapping.Interfaces.BaseTaxonomy.TwinAttribute.PrescriptiveLocalAttribute.Usage;
-
-import org.example.Mapping.Interfaces.BaseTaxonomy.TwinAttribute.PrescriptiveLocalAttribute.PrescriptiveLocalAttribute;
-import org.example.Mapping.Interfaces.BaseTaxonomy.TwinAttribute.AttributeWithExpression.TwinAttributeWithExpression;
-import org.example.Mapping.Interfaces.BaseTaxonomy.TwinExpression.PrescriptiveLocalExpression.PrescriptiveLocalExpression;
-
-public interface PrescriptiveLocalAttributeUsage extends PrescriptiveLocalAttribute, TwinAttributeWithExpression<PrescriptiveLocalExpression> {
-}

@@ -1,7 +1,0 @@
-package org.example.Mapping.Interfaces.BaseTaxonomy.TwinAttribute.PredictiveLocalAttribute.Definition;
-
-import org.example.Mapping.Interfaces.BaseTaxonomy.TwinAttribute.PredictiveLocalAttribute.PredictiveLocalAttribute;
-import org.example.Mapping.Interfaces.BaseTaxonomy.TwinAttribute.BaseTwinAttribute.Definition.TwinAttributeDefinition;
-
-public interface PredictiveLocalAttributeDefinition extends PredictiveLocalAttribute, TwinAttributeDefinition {
-}

@@ -1,6 +1,6 @@
 package org.example.Mapping.NewVersion;
 
-import org.example.Mapping.NewVersion.TwinAttribute.TwinAttributeUsageMapped;
+import org.example.Mapping.Mapper.TwinAttributeMapped.BaseTwinAttributeMapped.TwinAttributeUsageMapped;
 import org.omg.sysml.lang.sysml.ReferenceUsage;
 import org.omg.sysml.lang.sysml.Type;
 import org.omg.sysml.lang.sysml.Usage;
@@ -30,7 +30,7 @@ public class TwinAttributeUsageLoopVariableMapped extends TwinAttributeUsageMapp
 
 		typeReference = context.mapReference(
 				target,
-				BaseTypeDefinitionMapped.class
+				BaseAttributeDefinitionMapped.class
 		);
 	}
 }

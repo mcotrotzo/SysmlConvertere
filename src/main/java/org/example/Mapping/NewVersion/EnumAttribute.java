@@ -2,18 +2,11 @@ package org.example.Mapping.NewVersion;
 
 import lombok.Getter;
 import org.example.Mapping.Interfaces.TwinEnum;
-import org.example.Mapping.Mapper.TwinExpression.TwinExpression;
-import org.example.Mapping.Mapper.TwinExpression.TwinFeatureReferenceExpression;
 import org.example.Mapping.NewVersion.Abstract.MappedElement;
-import org.example.Mapping.TwinAction.MappedMetaclass;
-import org.omg.sysml.lang.sysml.Expression;
 import org.omg.sysml.lang.sysml.Feature;
 import org.omg.sysml.lang.sysml.FeatureReferenceExpression;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
 
 
 public abstract class EnumAttribute<E extends Enum<E> & TwinEnum>

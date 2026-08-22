@@ -1,7 +1,10 @@
 package org.example.Mapping.Interfaces.BaseTaxonomy.TwinAttribute.BaseTwinAttribute;
 
+import org.example.Mapping.Interfaces.Base.Model;
 import org.example.Mapping.Interfaces.Base.Type;
-import org.example.Mapping.Interfaces.BaseTaxonomy.Context.Context;
+import org.example.Util.LibraryNameSpaces;
 
-public interface TwinAttribute extends Context, Type {
+
+public interface TwinAttribute extends Type, Model {
+
 }

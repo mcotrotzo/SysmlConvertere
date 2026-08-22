@@ -3,5 +3,5 @@ package org.example.Mapping.Interfaces.BaseTaxonomy.TwinExpression.ConstExpressi
 import org.example.Mapping.Interfaces.BaseTaxonomy.TwinExpression.ConstructorCall;
 
 /** A constant constructor may itself only receive constant expressions. */
-public interface ConstConstructorExpression extends ConstructorCall<ConstExpression>, ConstExpression {
+public interface ConstConstructorExpression<T extends ConstExpression> extends ConstructorCall<T>, ConstExpression {
 }

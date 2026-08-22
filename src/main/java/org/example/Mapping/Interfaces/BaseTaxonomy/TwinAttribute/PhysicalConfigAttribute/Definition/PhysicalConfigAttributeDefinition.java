@@ -1,7 +1,0 @@
-package org.example.Mapping.Interfaces.BaseTaxonomy.TwinAttribute.PhysicalConfigAttribute.Definition;
-
-import org.example.Mapping.Interfaces.BaseTaxonomy.TwinAttribute.PhysicalConfigAttribute.PhysicalConfigAttribute;
-import org.example.Mapping.Interfaces.BaseTaxonomy.TwinAttribute.BaseTwinAttribute.Definition.TwinAttributeDefinition;
-
-public interface PhysicalConfigAttributeDefinition extends PhysicalConfigAttribute, TwinAttributeDefinition {
-}

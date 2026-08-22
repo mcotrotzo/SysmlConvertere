@@ -1,8 +1,0 @@
-package org.example.Mapping.Interfaces.BaseTaxonomy.TwinAttribute.PredictiveConfigAttribute.Usage;
-
-import org.example.Mapping.Interfaces.BaseTaxonomy.TwinAttribute.PredictiveConfigAttribute.PredictiveConfigAttribute;
-import org.example.Mapping.Interfaces.BaseTaxonomy.TwinAttribute.AttributeWithExpression.TwinAttributeWithExpression;
-import org.example.Mapping.Interfaces.BaseTaxonomy.TwinExpression.PredicitiveConfigExpression.PredictiveConfigExpression;
-
-public interface PredictiveConfigAttributeUsage extends PredictiveConfigAttribute, TwinAttributeWithExpression<PredictiveConfigExpression> {
-}

@@ -31,18 +31,11 @@ public interface Model {
 	 */
 	String getDeterministicId();
 
-	default boolean belongsTo(Class<? extends Model> type) {
-		Model current = this;
 
-		while (current != null) {
-			if (type.isInstance(current)) {
-				return true;
-			}
-
-			current = current.getParent().orElse(null);
-		}
-
-		return false;
+	default Context getContext() {
+		return getParent().isPresent()
+				? getParent().get().getContext()
+				: Context.NAMESPACE;
 	}
 
 }

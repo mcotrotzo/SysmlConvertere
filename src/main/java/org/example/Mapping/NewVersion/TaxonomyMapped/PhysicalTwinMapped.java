@@ -11,7 +11,7 @@ import org.example.Mapping.NewVersion.Abstract.MappedElementType;
 import org.example.Mapping.NewVersion.ControlUnitMapped;
 import org.example.Mapping.NewVersion.MappingContext;
 import org.example.Mapping.NewVersion.MappingException;
-import org.example.Mapping.NewVersion.TwinAttribute.TwinAttributeUsageMapped;
+import org.example.Mapping.Mapper.TwinAttributeMapped.BaseTwinAttributeMapped.TwinAttributeUsageMapped;
 import org.example.Mapping.NewVersion.TwinPort.Usage.ActuatorUsageMapped;
 import org.example.Mapping.NewVersion.TwinPort.Usage.SensorUsageMapped;
 import org.example.Util.LibraryNameSpaces;

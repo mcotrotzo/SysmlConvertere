@@ -5,11 +5,11 @@ import org.example.Mapping.Interfaces.Assignment;
 import org.example.Mapping.Interfaces.Expression;
 import org.example.Mapping.Interfaces.Reference;
 import org.example.Mapping.Interfaces.BaseTaxonomy.TwinAttribute.BaseTwinAttribute.Usage.TwinAttributeUsage;
-import org.example.Mapping.Mapper.TwinExpression.TwinExpression;
+import org.example.Mapping.Mapper.TwinExpression.TwinExpressionMapped.TwinExpression;
 import org.example.Mapping.NewVersion.Abstract.MappedReference;
 import org.example.Mapping.NewVersion.MappingContext;
 import org.example.Mapping.NewVersion.MappingException;
-import org.example.Mapping.NewVersion.TwinAttribute.TwinAttributeUsageMapped;
+import org.example.Mapping.Mapper.TwinAttributeMapped.BaseTwinAttributeMapped.TwinAttributeUsageMapped;
 import org.omg.sysml.lang.sysml.AssignmentActionUsage;
 
 @MappedMetaclass

@@ -6,7 +6,7 @@ import org.example.Mapping.Interfaces.BaseTaxonomy.TwinAttribute.BaseTwinAttribu
 import org.example.Mapping.Interfaces.BaseTaxonomy.TwinExpression.Calculation;
 import org.example.Mapping.Interfaces.BaseTaxonomy.TwinExpression.FeatureReference;
 import org.example.Mapping.NewVersion.Abstract.MappedElementType;
-import org.example.Mapping.NewVersion.TwinAttribute.TwinAttributeUsageMapped;
+import org.example.Mapping.Mapper.TwinAttributeMapped.BaseTwinAttributeMapped.TwinAttributeUsageMapped;
 import org.example.Util.LibraryNameSpaces;
 import org.omg.sysml.lang.sysml.Type;
 

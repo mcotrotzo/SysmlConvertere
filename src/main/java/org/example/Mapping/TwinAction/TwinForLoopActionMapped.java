@@ -3,7 +3,7 @@ package org.example.Mapping.TwinAction;
 import lombok.ToString;
 import org.example.Mapping.Interfaces.*;
 import org.example.Mapping.Interfaces.BaseTaxonomy.TwinAttribute.BaseTwinAttribute.Usage.TwinAttributeUsage;
-import org.example.Mapping.Mapper.TwinExpression.TwinExpression;
+import org.example.Mapping.Mapper.TwinExpression.TwinExpressionMapped.TwinExpression;
 import org.example.Mapping.NewVersion.MappingContext;
 import org.example.Mapping.NewVersion.MappingException;
 import org.example.Mapping.NewVersion.TwinAttributeUsageLoopVariableMapped;

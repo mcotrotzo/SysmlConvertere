@@ -5,7 +5,7 @@ import org.example.Mapping.Interfaces.Strategy;
 import org.example.Mapping.Interfaces.BaseTaxonomy.TwinAttribute.BaseTwinAttribute.Usage.TwinAttributeUsage;
 import org.example.Mapping.Interfaces.TwinStringAttributeUsage;
 import org.example.Mapping.NewVersion.Abstract.MappedElement;
-import org.example.Mapping.NewVersion.TwinAttribute.TwinAttributeUsageMapped;
+import org.example.Mapping.Mapper.TwinAttributeMapped.BaseTwinAttributeMapped.TwinAttributeUsageMapped;
 import org.example.Mapping.TwinAction.MappedMetaclass;
 import org.omg.sysml.lang.sysml.Type;
 

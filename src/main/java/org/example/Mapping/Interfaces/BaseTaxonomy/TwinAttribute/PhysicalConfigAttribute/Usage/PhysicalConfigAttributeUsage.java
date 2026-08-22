@@ -1,8 +1,0 @@
-package org.example.Mapping.Interfaces.BaseTaxonomy.TwinAttribute.PhysicalConfigAttribute.Usage;
-
-import org.example.Mapping.Interfaces.BaseTaxonomy.TwinAttribute.PhysicalConfigAttribute.PhysicalConfigAttribute;
-import org.example.Mapping.Interfaces.BaseTaxonomy.TwinAttribute.AttributeWithExpression.TwinAttributeWithExpression;
-import org.example.Mapping.Interfaces.BaseTaxonomy.TwinExpression.PhysicalConfigExpression.PhysicalConfigExpression;
-
-public interface PhysicalConfigAttributeUsage extends PhysicalConfigAttribute, TwinAttributeWithExpression<PhysicalConfigExpression> {
-}

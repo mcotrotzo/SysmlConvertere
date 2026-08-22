@@ -4,7 +4,7 @@ import lombok.ToString;
 import org.example.ElemWithMult;
 import org.example.Mapping.Interfaces.QueryResult;
 import org.example.Mapping.NewVersion.Abstract.MappedElementType;
-import org.example.Mapping.NewVersion.TwinAttribute.TwinAttributeUsageMapped;
+import org.example.Mapping.Mapper.TwinAttributeMapped.BaseTwinAttributeMapped.TwinAttributeUsageMapped;
 import org.example.Util.LibraryNameSpaces;
 import org.example.Util.Utils;
 import org.omg.sysml.lang.sysml.Usage;

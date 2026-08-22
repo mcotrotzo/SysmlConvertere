@@ -4,7 +4,7 @@ import lombok.ToString;
 import org.example.Mapping.Interfaces.Action;
 import org.example.Mapping.Interfaces.Expression;
 import org.example.Mapping.Interfaces.WhileLoop;
-import org.example.Mapping.Mapper.TwinExpression.TwinExpression;
+import org.example.Mapping.Mapper.TwinExpression.TwinExpressionMapped.TwinExpression;
 import org.example.Mapping.NewVersion.MappingContext;
 import org.example.Mapping.NewVersion.MappingException;
 import org.omg.sysml.lang.sysml.WhileLoopActionUsage;

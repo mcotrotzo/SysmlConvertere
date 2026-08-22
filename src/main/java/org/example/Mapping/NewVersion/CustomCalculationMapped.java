@@ -6,7 +6,7 @@ import org.example.Mapping.Interfaces.CustomCalculation;
 import org.example.Mapping.Interfaces.Succession;
 import org.example.Mapping.Interfaces.BaseTaxonomy.TwinAttribute.BaseTwinAttribute.Usage.TwinAttributeUsage;
 import org.example.Mapping.NewVersion.Abstract.MappedElementType;
-import org.example.Mapping.NewVersion.TwinAttribute.TwinAttributeUsageMapped;
+import org.example.Mapping.Mapper.TwinAttributeMapped.BaseTwinAttributeMapped.TwinAttributeUsageMapped;
 import org.example.Mapping.TwinAction.TwinActionBaseUsage;
 import org.example.Mapping.TwinAction.TwinSuccessionAction;
 import org.example.Util.LibraryNameSpaces;

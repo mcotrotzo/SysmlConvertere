@@ -1,10 +1,10 @@
 package TopLevelDefinitionTests;
 
 import org.example.Mapping.Interfaces.*;
-import org.example.Mapping.Mapper.TwinExpression.TwinCalculationExpression;
-import org.example.Mapping.Mapper.TwinExpression.TwinConstructorExpression;
-import org.example.Mapping.Mapper.TwinExpression.TwinLiteralExpressionElements.TwinLiteralBooleanExpression;
-import org.example.Mapping.Mapper.TwinExpression.TwinLiteralExpressionElements.TwinLiteralIntegerExpression;
+import org.example.Mapping.Mapper.TwinExpression.TwinExpressionMapped.TwinCalculationExpression;
+import org.example.Mapping.Mapper.TwinExpression.TwinExpressionMapped.TwinConstructorExpression;
+import org.example.Mapping.Mapper.TwinExpression.TwinExpressionMapped.TwinLiteralExpressionElements.TwinLiteralBooleanExpression;
+import org.example.Mapping.Mapper.TwinExpression.TwinExpressionMapped.TwinLiteralExpressionElements.TwinLiteralIntegerExpression;
 import org.example.Mapping.NewVersion.Abstract.MappedReference;
 import org.example.Mapping.NewVersion.BaseFunctionKind;
 import org.junit.jupiter.api.Test;
@@ -24,7 +24,7 @@ public class TestExpressions extends AbstarctTest {
 
 		TwinCalculationExpression outer = (TwinCalculationExpression) root;
 
-		MappedReference<?> ref = outer.getCalledFunction();
+		Reference<?> ref = outer.getCalledFunction();
 
 		var referentFunction = result.getByReference(ref, BaseFunction.class);
 
@@ -41,7 +41,7 @@ public class TestExpressions extends AbstarctTest {
 
 		TwinCalculationExpression inner = (TwinCalculationExpression) second;
 
-		MappedReference<?> innerRed = inner.getCalledFunction();
+		Reference<?> innerRed = inner.getCalledFunction();
 
 		var referentInnerFunction = result.getByReference(innerRed, BaseFunction.class);
 

@@ -1,7 +1,0 @@
-package org.example.Mapping.Interfaces.BaseTaxonomy.TwinAttribute.ShadowConfigAttribute.Definition;
-
-import org.example.Mapping.Interfaces.BaseTaxonomy.TwinAttribute.ShadowConfigAttribute.ShadowConfigAttribute;
-import org.example.Mapping.Interfaces.BaseTaxonomy.TwinAttribute.BaseTwinAttribute.Definition.TwinAttributeDefinition;
-
-public interface ShadowConfigAttributeDefinition extends ShadowConfigAttribute, TwinAttributeDefinition {
-}

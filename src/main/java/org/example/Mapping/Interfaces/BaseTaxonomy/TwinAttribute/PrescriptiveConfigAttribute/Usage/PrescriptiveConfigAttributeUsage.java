@@ -1,8 +1,0 @@
-package org.example.Mapping.Interfaces.BaseTaxonomy.TwinAttribute.PrescriptiveConfigAttribute.Usage;
-
-import org.example.Mapping.Interfaces.BaseTaxonomy.TwinAttribute.PrescriptiveConfigAttribute.PrescriptiveConfigAttribute;
-import org.example.Mapping.Interfaces.BaseTaxonomy.TwinAttribute.AttributeWithExpression.TwinAttributeWithExpression;
-import org.example.Mapping.Interfaces.BaseTaxonomy.TwinExpression.PrescriptiveConfigExpression.PrescriptiveConfigExpression;
-
-public interface PrescriptiveConfigAttributeUsage extends PrescriptiveConfigAttribute, TwinAttributeWithExpression<PrescriptiveConfigExpression> {
-}

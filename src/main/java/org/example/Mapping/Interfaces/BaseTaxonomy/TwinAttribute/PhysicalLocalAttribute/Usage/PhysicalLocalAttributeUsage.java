@@ -1,8 +1,0 @@
-package org.example.Mapping.Interfaces.BaseTaxonomy.TwinAttribute.PhysicalLocalAttribute.Usage;
-
-import org.example.Mapping.Interfaces.BaseTaxonomy.TwinAttribute.PhysicalLocalAttribute.PhysicalLocalAttribute;
-import org.example.Mapping.Interfaces.BaseTaxonomy.TwinAttribute.AttributeWithExpression.TwinAttributeWithExpression;
-import org.example.Mapping.Interfaces.BaseTaxonomy.TwinExpression.PhysicalLocalExpression.PhysicalLocalExpression;
-
-public interface PhysicalLocalAttributeUsage extends PhysicalLocalAttribute, TwinAttributeWithExpression<PhysicalLocalExpression> {
-}

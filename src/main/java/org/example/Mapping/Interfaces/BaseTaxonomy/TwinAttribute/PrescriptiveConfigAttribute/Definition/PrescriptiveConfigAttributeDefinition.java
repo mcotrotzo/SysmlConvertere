@@ -1,7 +1,0 @@
-package org.example.Mapping.Interfaces.BaseTaxonomy.TwinAttribute.PrescriptiveConfigAttribute.Definition;
-
-import org.example.Mapping.Interfaces.BaseTaxonomy.TwinAttribute.PrescriptiveConfigAttribute.PrescriptiveConfigAttribute;
-import org.example.Mapping.Interfaces.BaseTaxonomy.TwinAttribute.BaseTwinAttribute.Definition.TwinAttributeDefinition;
-
-public interface PrescriptiveConfigAttributeDefinition extends PrescriptiveConfigAttribute, TwinAttributeDefinition {
-}

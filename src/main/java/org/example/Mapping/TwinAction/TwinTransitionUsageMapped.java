@@ -4,16 +4,14 @@ import lombok.ToString;
 import org.example.Mapping.Interfaces.Action;
 import org.example.Mapping.Interfaces.Expression;
 import org.example.Mapping.Interfaces.Transition;
-import org.example.Mapping.Mapper.TwinExpression.TwinExpression;
+import org.example.Mapping.Mapper.TwinExpression.TwinExpressionMapped.TwinExpression;
 import org.example.Mapping.NewVersion.Abstract.MappedReference;
 import org.example.Mapping.NewVersion.MappingContext;
 import org.example.Mapping.NewVersion.MappingException;
 import org.omg.sysml.lang.sysml.TransitionUsage;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @MappedMetaclass
 @ToString(callSuper = true)
