@@ -3,7 +3,7 @@ package org.example.Mapping.NewVersion;
 
 import lombok.ToString;
 import org.example.Mapping.Interfaces.GroupedHistoryQuery;
-import org.example.Mapping.Interfaces.BaseTaxonomy.TwinAttribute.BaseTwinAttribute.Usage.TwinAttributeUsage;
+import org.example.Mapping.Interfaces.TwinAttribute.BaseTwinAttribute.Usage.TwinAttributeUsage;
 import org.example.Mapping.Interfaces.TwinTypeDefinition;
 import org.example.Mapping.NewVersion.Abstract.MappedElementType;
 import org.example.Util.LibraryNameSpaces;

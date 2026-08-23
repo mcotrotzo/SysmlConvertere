@@ -3,7 +3,7 @@ library package ShadowLibrary {
     private import TwinTypeSystem::*;
     private import TwinLibraryPackage::*;
     part def Database:>TwinLibraryElement {
-    
+        
         attribute durationInDays : TwinInteger default -1;
     }
 

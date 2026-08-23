@@ -1,7 +1,7 @@
 package org.example.Mapping.NewVersion.NameSpace.NameSpacePackage;
 
 import org.example.Mapping.Interfaces.FullTwin.Twin;
-import org.example.Mapping.Interfaces.TwinDefLibrary;
+import org.example.Mapping.Interfaces.Base.TwinDefLibrary;
 import org.example.Mapping.NewVersion.FullTwinMapped.TwinMapped;
 import org.example.Mapping.NewVersion.MappingContext;
 import org.example.Mapping.NewVersion.MappingException;

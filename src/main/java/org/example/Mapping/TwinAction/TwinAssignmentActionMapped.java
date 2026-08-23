@@ -1,20 +1,22 @@
 package org.example.Mapping.TwinAction;
 
 import lombok.ToString;
-import org.example.Mapping.Interfaces.Assignment;
-import org.example.Mapping.Interfaces.Expression;
+import org.example.Mapping.Interfaces.TwinAction.Assignment;
 import org.example.Mapping.Interfaces.Reference;
-import org.example.Mapping.Interfaces.BaseTaxonomy.TwinAttribute.BaseTwinAttribute.Usage.TwinAttributeUsage;
-import org.example.Mapping.Mapper.TwinExpression.TwinExpressionMapped.TwinExpression;
+import org.example.Mapping.Interfaces.TwinAttribute.BaseTwinAttribute.Usage.TwinAttributeUsage;
+
+import org.example.Mapping.TwinAction.Annotation.MappedMetaclass;
+import org.example.Mapping.TwinAction.Usage.TwinActionUsageMapped;
+import org.example.Mapping.TwinExpression.TwinExpression;
 import org.example.Mapping.NewVersion.Abstract.MappedReference;
 import org.example.Mapping.NewVersion.MappingContext;
 import org.example.Mapping.NewVersion.MappingException;
-import org.example.Mapping.Mapper.TwinAttributeMapped.BaseTwinAttributeMapped.TwinAttributeUsageMapped;
+import org.example.Mapping.TwinAttributeMapped.BaseTwinAttributeMapped.Usage.TwinAttributeUsageMapped;
 import org.omg.sysml.lang.sysml.AssignmentActionUsage;
 
 @MappedMetaclass
 @ToString
-public class TwinAssignmentActionMapped extends TwinActionBaseUsage<AssignmentActionUsage> implements Assignment {
+public class TwinAssignmentActionMapped extends TwinActionUsageMapped<AssignmentActionUsage> implements Assignment {
 	private MappedReference<TwinAttributeUsageMapped> referent;
 	private TwinExpression<?> value;
 
@@ -27,7 +29,7 @@ public class TwinAssignmentActionMapped extends TwinActionBaseUsage<AssignmentAc
 	}
 
 	@Override
-	public Expression getValue() {
+	public org.example.Mapping.Interfaces.TwinExpression.TwinExpression getValue() {
 		return value;
 	}
 
@@ -35,5 +37,21 @@ public class TwinAssignmentActionMapped extends TwinActionBaseUsage<AssignmentAc
 	public void parse(MappingContext context) throws MappingException {
 		referent = context.mapReference(getSysmlElement().getReferent(), TwinAttributeUsageMapped.class);
 		value = context.map(this.sysmlElement.getValueExpression(), this, TwinExpression.class);
+	}
+
+	@Override
+	public void postValidate() throws MappingException {
+		checkRole();
+	}
+
+	public void checkRole() throws MappingException {
+		switch(referent.getReferent().getRole()){
+			case LOCAL, ACTION, FOR_LOOP_VARIABLE -> {
+
+			}
+			default -> {
+				throw new MappingException("Assignment target must be a local variable, action or for loop variable, but got: " + referent.getReferent().getRole());
+			}
+		}
 	}
 }

@@ -1,6 +1,7 @@
 package org.example.Mapping.Interfaces;
 
-import org.example.Mapping.Interfaces.BaseTaxonomy.TwinAttribute.BaseTwinAttribute.Usage.TwinAttributeUsage;
+import org.example.Mapping.Interfaces.TwinAttribute.BaseTwinAttribute.Usage.TwinAttributeUsage;
+import org.example.Mapping.Interfaces.TwinAttribute.ConfigAttribute.TwinBooleanAttributeUsage;
 
 import java.util.List;
 

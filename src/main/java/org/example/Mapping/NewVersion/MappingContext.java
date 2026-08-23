@@ -1,11 +1,12 @@
 package org.example.Mapping.NewVersion;
 
 import org.example.Containers.ContainerManager;
-import org.example.Mapping.Interfaces.TwinEnum;
+import org.example.Mapping.Interfaces.TwinAttribute.BaseTwinAttribute.Role;
+import org.example.Mapping.Interfaces.TwinEnumPackage.TwinEnum;
 import org.example.Mapping.NewVersion.Abstract.MappedElement;
 import org.example.Mapping.NewVersion.Abstract.MappedReference;
 import org.example.Mapping.NewVersion.NameSpace.NameSpacePackage.MappedNamespaceElement;
-import org.example.Mapping.Mapper.TwinAttributeMapped.BaseTwinAttributeMapped.TwinAttributeUsageMapped;
+import org.example.Mapping.TwinAttributeMapped.BaseTwinAttributeMapped.Usage.TwinAttributeUsageMapped;
 import org.example.Util.Utils;
 import org.omg.sysml.lang.sysml.*;
 import org.omg.sysml.lang.sysml.Package;
@@ -33,7 +34,16 @@ public final class MappingContext {
 
 		parseAllPackages(elements);
 
+		validateAll();
+
 		return new ArrayList<>(mappedElements.values());
+	}
+
+	private void validateAll() throws MappingException {
+
+		for (MappedNamespaceElement<?> mapped : mappedElements.values()) {
+			mapped.postValidate();
+		}
 	}
 
 	public List<MappedNamespaceElement<?>> parseAllPackages(Collection<Package> elements) throws MappingException {
@@ -122,32 +132,7 @@ public final class MappingContext {
 		return result;
 	}
 
-	public TwinAttributeUsageLoopVariableMapped mapLoopVariable(Usage element, MappedNamespaceElement<?> owner) throws MappingException {
 
-		MappedNamespaceElement<?> existing = mappedElements.get(element);
-
-		if (existing != null) {
-			if (!(existing instanceof TwinAttributeUsageLoopVariableMapped loopVariable)) {
-				throw new MappingException("Loop variable '%s' was already mapped as '%s'.".formatted(element.getName(), existing.getClass().getSimpleName()));
-			}
-
-			assignOwner(loopVariable, owner);
-			return loopVariable;
-		}
-
-		TwinAttributeUsageLoopVariableMapped created = new TwinAttributeUsageLoopVariableMapped(element);
-
-		created.setOwner(owner);
-		mappedElements.put(element, created);
-
-		try {
-			created.parse(this);
-			return created;
-		} catch (MappingException | RuntimeException e) {
-			mappedElements.remove(element);
-			throw e;
-		}
-	}
 
 	public <T extends MappedNamespaceElement<?>> T map(Element element, MappedNamespaceElement<?> owner, Class<T> expectedClass) throws MappingException {
 
@@ -252,6 +237,35 @@ public final class MappingContext {
 		);
 	}
 
+	public <T extends TwinAttributeUsageMapped> List<T> mapAttributes(
+			MappedElement<?> mappedParent,
+			String slotName,
+			Class<T> expectedClass,
+			Role role
+	) throws MappingException {
+
+		List<T> attributes =
+				mapSlot(mappedParent, slotName, expectedClass);
+
+		for (T attribute : attributes) {
+			attribute.setRole(role);
+		}
+
+		return attributes;
+	}
+
+	public <T extends TwinAttributeUsageMapped> T mapAttribute(
+			Element element,
+			MappedNamespaceElement<?> owner,
+			Class<T> expectedClass,
+			Role role
+	) throws MappingException {
+
+		T attribute = map(element, owner, expectedClass);
+		attribute.setRole(role);
+
+		return attribute;
+	}
 
 	public Utils getUtils() {
 		return utils;

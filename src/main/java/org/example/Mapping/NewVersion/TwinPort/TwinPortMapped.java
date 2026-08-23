@@ -1,11 +1,10 @@
 package org.example.Mapping.NewVersion.TwinPort;
 
 import lombok.ToString;
-import org.example.Mapping.Interfaces.Protocol;
+import org.example.Mapping.Interfaces.TwinPort.Protocol;
 import org.example.Mapping.Interfaces.TwinPort.TwinPort;
 import org.example.Mapping.NewVersion.Abstract.MappedElement;
 import org.example.Mapping.NewVersion.Abstract.MappedElementType;
-import org.example.Mapping.NewVersion.CommunicationProtocolMapped;
 import org.example.Mapping.NewVersion.MappingContext;
 import org.example.Mapping.NewVersion.MappingException;
 import org.example.Util.LibraryNameSpaces;

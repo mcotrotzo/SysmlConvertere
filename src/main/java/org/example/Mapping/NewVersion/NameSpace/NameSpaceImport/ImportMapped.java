@@ -5,7 +5,7 @@ import org.example.Mapping.NewVersion.MappingContext;
 import org.example.Mapping.NewVersion.MappingException;
 import org.example.Mapping.NewVersion.NameSpace.NameSpacePackage.MappedNamespaceElement;
 import org.example.Mapping.NewVersion.NameSpace.NameSpacePackage.PackageElementType;
-import org.example.Mapping.TwinAction.MappedMetaclass;
+import org.example.Mapping.TwinAction.Annotation.MappedMetaclass;
 import org.omg.sysml.lang.sysml.Import;
 import org.omg.sysml.lang.sysml.Package;
 

@@ -3,8 +3,9 @@ package org.example.Mapping.NewVersion;
 import lombok.ToString;
 import org.example.Mapping.Interfaces.PrescriptiveStrategy;
 import org.example.Mapping.Interfaces.TriggerConfiguration;
-import org.example.Mapping.Interfaces.TwinBooleanAttributeUsage;
+import org.example.Mapping.Interfaces.TwinAttribute.ConfigAttribute.TwinBooleanAttributeUsage;
 import org.example.Mapping.NewVersion.Abstract.MappedElementType;
+import org.example.Mapping.TwinAttributeMapped.BaseTwinAttributeMapped.Usage.TwinBooleanMappedUsage;
 import org.example.Util.LibraryNameSpaces;
 import org.omg.sysml.lang.sysml.Type;
 

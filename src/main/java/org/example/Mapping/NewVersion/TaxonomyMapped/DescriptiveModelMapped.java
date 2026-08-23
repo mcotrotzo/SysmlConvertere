@@ -3,11 +3,11 @@ package org.example.Mapping.NewVersion.TaxonomyMapped;
 import lombok.ToString;
 import org.example.Mapping.Interfaces.*;
 import org.example.Mapping.Interfaces.BaseTaxonomy.DescriptiveModel;
-import org.example.Mapping.Interfaces.BaseTaxonomy.TwinAttribute.BaseTwinAttribute.Usage.TwinAttributeUsage;
+import org.example.Mapping.Interfaces.TwinAttribute.BaseTwinAttribute.Usage.TwinAttributeUsage;
 import org.example.Mapping.NewVersion.*;
 import org.example.Mapping.NewVersion.Abstract.MappedElement;
 import org.example.Mapping.NewVersion.Abstract.MappedElementType;
-import org.example.Mapping.Mapper.TwinAttributeMapped.BaseTwinAttributeMapped.TwinAttributeUsageMapped;
+import org.example.Mapping.TwinAttributeMapped.BaseTwinAttributeMapped.Usage.TwinAttributeUsageMapped;
 import org.example.Util.LibraryNameSpaces;
 import org.omg.sysml.lang.sysml.Type;
 
@@ -21,7 +21,7 @@ public abstract class DescriptiveModelMapped<T extends Type> extends MappedEleme
 	List<TwinAttributeUsageMapped> derivedAttributes = new ArrayList<>();
 	List<QueryHistoryMapped> flatQueries = new ArrayList<>();
 	List<GroupedHistoryQueryMapped> groupedQueries = new ArrayList<>();
-	List<DescriptiveStateMachineMapped> descriptiveStateMachines = new ArrayList<>();
+	List<DescriptiveTwinStateMachineMapped> descriptiveStateMachines = new ArrayList<>();
 	List<DescriptiveStrategyMapped> descriptiveStrategies = new ArrayList<>();
 
 	public DescriptiveModelMapped(T sysmlElement) {
@@ -32,7 +32,7 @@ public abstract class DescriptiveModelMapped<T extends Type> extends MappedEleme
 	@Override
 	public void parse(MappingContext context) throws MappingException {
 		derivedAttributes = context.mapSlot(this, "derivedAttributes", TwinAttributeUsageMapped.class);
-		descriptiveStateMachines = context.mapSlot(this, "descriptiveStateMachine_", DescriptiveStateMachineMapped.class);
+		descriptiveStateMachines = context.mapSlot(this, "descriptiveStateMachine_", DescriptiveTwinStateMachineMapped.class);
 		descriptiveStrategies = context.mapSlot(this, "descriptiveStrategies", DescriptiveStrategyMapped.class);
 	}
 
@@ -42,7 +42,7 @@ public abstract class DescriptiveModelMapped<T extends Type> extends MappedEleme
 	}
 
 	@Override
-	public List<DescriptiveStateMachine> getDescriptiveStateMachines() {
+	public List<DescriptiveTwinStateMachine> getDescriptiveStateMachines() {
 		return new ArrayList<>(descriptiveStateMachines);
 	}
 

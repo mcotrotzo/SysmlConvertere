@@ -1,17 +1,17 @@
 package org.example.Mapping.NewVersion.TaxonomyMapped;
 
 import lombok.ToString;
-import org.example.Mapping.Interfaces.*;
 import org.example.Mapping.Interfaces.BaseTaxonomy.PhysicalTwin;
-import org.example.Mapping.Interfaces.BaseTaxonomy.TwinAttribute.BaseTwinAttribute.Usage.TwinAttributeUsage;
+import org.example.Mapping.Interfaces.TwinAttribute.BaseTwinAttribute.Usage.TwinAttributeUsage;
 import org.example.Mapping.Interfaces.TwinPort.Usage.ActuatorUsage;
 import org.example.Mapping.Interfaces.TwinPort.Usage.SensorUsage;
+import org.example.Mapping.Interfaces.TwinStateMachine.Usage.TwinStateMachineUsage;
 import org.example.Mapping.NewVersion.Abstract.MappedElement;
 import org.example.Mapping.NewVersion.Abstract.MappedElementType;
-import org.example.Mapping.NewVersion.ControlUnitMapped;
 import org.example.Mapping.NewVersion.MappingContext;
 import org.example.Mapping.NewVersion.MappingException;
-import org.example.Mapping.Mapper.TwinAttributeMapped.BaseTwinAttributeMapped.TwinAttributeUsageMapped;
+import org.example.Mapping.NewVersion.TwinStateMachine.Usage.TwinStateMachineUsageMapped;
+import org.example.Mapping.TwinAttributeMapped.BaseTwinAttributeMapped.Usage.TwinAttributeUsageMapped;
 import org.example.Mapping.NewVersion.TwinPort.Usage.ActuatorUsageMapped;
 import org.example.Mapping.NewVersion.TwinPort.Usage.SensorUsageMapped;
 import org.example.Util.LibraryNameSpaces;
@@ -26,7 +26,7 @@ public class PhysicalTwinMapped<T extends Type> extends MappedElement<T> impleme
 
 	List<SensorUsageMapped> sensors = new ArrayList<>();
 	List<ActuatorUsageMapped> actuators = new ArrayList<>();
-	List<ControlUnitMapped> controlUnits = new ArrayList<>();
+	List<TwinStateMachineUsageMapped> controlUnits = new ArrayList<>();
 	List<TwinAttributeUsageMapped> constAttributes = new ArrayList<>();
 
 	public PhysicalTwinMapped(T sysmlElement) {
@@ -37,7 +37,7 @@ public class PhysicalTwinMapped<T extends Type> extends MappedElement<T> impleme
 	public void parse(MappingContext context) throws MappingException {
 		sensors = context.mapSlot(this, "sensors", SensorUsageMapped.class);
 		actuators =context.mapSlot(this, "actuators", ActuatorUsageMapped.class);
-		controlUnits = context.mapSlot(this, "controlUnit", ControlUnitMapped.class);
+		controlUnits = context.mapSlot(this, "controlUnit", TwinStateMachineUsageMapped.class);
 		constAttributes = context.mapSlot(this, "constAttributes", TwinAttributeUsageMapped.class);
 	}
 	@Override
@@ -51,7 +51,7 @@ public class PhysicalTwinMapped<T extends Type> extends MappedElement<T> impleme
 	}
 
 	@Override
-	public List<ControlUnit> getControlUnits() {
+	public List<TwinStateMachineUsage> getControlUnits() {
 		return new ArrayList<>(controlUnits);
 	}
 

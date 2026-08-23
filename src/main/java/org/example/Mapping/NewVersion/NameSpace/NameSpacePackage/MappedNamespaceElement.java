@@ -57,6 +57,8 @@ public abstract class MappedNamespaceElement<T extends Element> implements Model
 
 	public abstract void parse(MappingContext context) throws MappingException;
 
+	public void postValidate() throws MappingException {};
+
 	@Override
 	public Optional<Model> getParent() {
 		return Optional.ofNullable(owner).map(Model.class::cast);

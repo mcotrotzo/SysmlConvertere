@@ -1,16 +1,18 @@
 package org.example.Mapping.TwinAction;
 
 import lombok.ToString;
-import org.example.Mapping.Interfaces.Action;
+import org.example.Mapping.Interfaces.TwinAction.Action;
 import org.example.Mapping.Interfaces.Reference;
-import org.example.Mapping.Interfaces.Succession;
+import org.example.Mapping.Interfaces.TwinAction.Succession;
 import org.example.Mapping.NewVersion.Abstract.MappedElement;
 import org.example.Mapping.NewVersion.Abstract.MappedReference;
 import org.example.Mapping.NewVersion.MappingContext;
 import org.example.Mapping.NewVersion.MappingException;
+import org.example.Mapping.TwinAction.Annotation.MappedMetaclass;
+import org.example.Mapping.TwinAction.Usage.TwinActionBlockUsage;
+import org.example.Mapping.TwinAction.Usage.TwinActionUsageMapped;
 import org.omg.sysml.lang.sysml.ActionUsage;
 import org.omg.sysml.lang.sysml.Feature;
-import org.omg.sysml.lang.sysml.ReferenceUsage;
 import org.omg.sysml.lang.sysml.SuccessionAsUsage;
 
 import java.util.ArrayList;
@@ -19,7 +21,7 @@ import java.util.List;
 @MappedMetaclass
 @ToString(callSuper = true)
 public class TwinSuccessionAction extends MappedElement<SuccessionAsUsage> implements Succession {
-	private List<MappedReference<TwinActionBaseUsage<?>>> targets = new ArrayList<>();
+	private List<MappedReference<TwinActionUsageMapped<?>>> targets = new ArrayList<>();
 
 	public TwinSuccessionAction(SuccessionAsUsage sysmlElement) {
 		super(sysmlElement);
@@ -53,7 +55,7 @@ public class TwinSuccessionAction extends MappedElement<SuccessionAsUsage> imple
 		targets.add(
 				context.mapReference(
 						sourceAction,
-						TwinActionBaseUsage.getRawClass()
+						getRawUsage()
 				)
 		);
 
@@ -66,10 +68,14 @@ public class TwinSuccessionAction extends MappedElement<SuccessionAsUsage> imple
 			targets.add(
 					context.mapReference(
 							targetAction,
-							TwinActionBaseUsage.getRawClass()
+							getRawUsage()
 					)
 			);
 		}
+	}
+
+	private Class<TwinActionUsageMapped<?>>  getRawUsage(){
+		return (Class<TwinActionUsageMapped<?>>) (Class<?>) TwinActionUsageMapped.class;
 	}
 
 	@Override

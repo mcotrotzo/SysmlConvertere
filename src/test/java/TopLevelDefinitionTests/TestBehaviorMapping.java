@@ -6,9 +6,12 @@ import org.example.Mapping.Interfaces.BaseTaxonomy.DescriptiveModel;
 import org.example.Mapping.Interfaces.BaseTaxonomy.PhysicalTwin;
 import org.example.Mapping.Interfaces.BaseTaxonomy.PredictiveModel;
 import org.example.Mapping.Interfaces.BaseTaxonomy.PrescriptiveModel;
-import org.example.Mapping.Interfaces.BaseTaxonomy.TwinAttribute.BaseTwinAttribute.Usage.TwinAttributeUsage;
-import org.example.Mapping.Interfaces.BaseTaxonomy.TwinExpression.Calculation;
-import org.example.Mapping.Interfaces.BaseTaxonomy.TwinExpression.FeatureReference;
+import org.example.Mapping.Interfaces.TwinAttribute.BaseTwinAttribute.Usage.TwinAttributeUsage;
+import org.example.Mapping.Interfaces.TwinExpression.Calculation;
+import org.example.Mapping.Interfaces.TwinExpression.FeatureReference;
+import org.example.Mapping.Interfaces.TwinAction.*;
+import org.example.Mapping.Interfaces.TwinFunction.Definition.CustomCalculation;
+import org.example.Mapping.Interfaces.TwinStateMachine.TwinStateMachine;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -49,7 +52,7 @@ public class TestBehaviorMapping extends AbstarctTest {
 				controlUnit.getStates().size()
 		);
 
-		StateMachine idle =
+		TwinStateMachine idle =
 				controlUnit.getStates()
 						.stream()
 						.filter(x ->
@@ -57,7 +60,7 @@ public class TestBehaviorMapping extends AbstarctTest {
 						.findFirst()
 						.orElseThrow();
 
-		StateMachine charging =
+		TwinStateMachine charging =
 				controlUnit.getStates()
 						.stream()
 						.filter(x ->
@@ -73,7 +76,7 @@ public class TestBehaviorMapping extends AbstarctTest {
 				charging.getStates().size()
 		);
 
-		StateMachine test34 =
+		TwinStateMachine test34 =
 				charging.getStates().get(0);
 
 		assertEquals(
@@ -256,9 +259,9 @@ public class TestBehaviorMapping extends AbstarctTest {
 	@Test
 	public void testDescriptiveStateMachineComplete() {
 
-		DescriptiveStateMachine machine =
+		DescriptiveTwinStateMachine machine =
 				named(
-						DescriptiveStateMachine.class,
+						DescriptiveTwinStateMachine.class,
 						"test12"
 				);
 

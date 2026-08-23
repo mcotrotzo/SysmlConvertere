@@ -2,11 +2,9 @@ library package PhysicalTwinLibrary {
     private import TwinTypeSystem::*;
     private import TwinStateMachineLibrary::*;
     private import TwinLibraryPackage::*;
-    private import TwinTriggerConfigurationLibrary::*;
 
 
     abstract attribute def CommunicationProtocol:>TwinLibraryElementAttributeDef {
-
         
     }
 
@@ -23,22 +21,22 @@ library package PhysicalTwinLibrary {
 
 
     abstract port def TwinPort:>TwinLibraryElementPortDef{
-        abstract attribute communicationProtocol[0..1] : CommunicationProtocol;
+        abstract attribute communicationProtocol : CommunicationProtocol;
     }
 
     port def Sensor :> TwinPort {
-        attribute measurements[0..*] : TwinAttribute;
+        out attribute measurements[0..*] : TwinAttribute;
     }
 
     port def Actuator :> TwinPort {
-        attribute commands[0..*] : TwinAttribute;
+        in attribute commands[0..*] : TwinAttribute;
     }
 
   
 
 
     state def ControlUnit:>State  {
-        part triggerConfiguration : TriggerConfiguration[0..1];
+
         state states:ControlUnitState[0..*]:>>states;
     }
 

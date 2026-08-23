@@ -1,20 +1,21 @@
 package org.example.Mapping.TwinAction;
 
 import lombok.ToString;
-import org.example.Mapping.Interfaces.Action;
-import org.example.Mapping.Interfaces.Expression;
-import org.example.Mapping.Interfaces.IfElse;
-import org.example.Mapping.Mapper.TwinExpression.TwinExpressionMapped.TwinExpression;
+import org.example.Mapping.Interfaces.TwinAction.Action;
+import org.example.Mapping.Interfaces.TwinAction.IfElse;
+import org.example.Mapping.TwinAction.Annotation.MappedMetaclass;
+import org.example.Mapping.TwinAction.Usage.TwinActionUsageMapped;
+import org.example.Mapping.TwinExpression.TwinExpression;
 import org.example.Mapping.NewVersion.MappingContext;
 import org.example.Mapping.NewVersion.MappingException;
 import org.omg.sysml.lang.sysml.IfActionUsage;
 
 @MappedMetaclass
 @ToString(callSuper = true)
-public class TwinIfElseActionMapped extends TwinActionBaseUsage<IfActionUsage> implements IfElse {
+public class TwinIfElseActionMapped extends TwinActionUsageMapped<IfActionUsage> implements IfElse {
 	private TwinExpression<?> ifExpression;
-	private TwinActionBaseUsage<?> thenAction;
-	private TwinActionBaseUsage<?> elseAction;
+	private TwinActionUsageMapped<?> thenAction;
+	private TwinActionUsageMapped<?> elseAction;
 
 	public TwinIfElseActionMapped(IfActionUsage sysmlElement) {
 		super(sysmlElement);
@@ -22,7 +23,7 @@ public class TwinIfElseActionMapped extends TwinActionBaseUsage<IfActionUsage> i
 
 
 	@Override
-	public Expression getCondition() {
+	public org.example.Mapping.Interfaces.TwinExpression.TwinExpression getCondition() {
 		return ifExpression;
 	}
 
@@ -39,7 +40,7 @@ public class TwinIfElseActionMapped extends TwinActionBaseUsage<IfActionUsage> i
 	@Override
 	public void parse(MappingContext context) throws MappingException {
 		ifExpression = context.map(this.getSysmlElement().getIfArgument(), this, TwinExpression.class);
-		thenAction = context.map(this.getSysmlElement().getThenAction(), this, TwinActionBaseUsage.class);
-		elseAction = context.map(this.getSysmlElement().getElseAction(), this, TwinActionBaseUsage.class);
+		thenAction = context.map(this.getSysmlElement().getThenAction(), this, TwinActionUsageMapped.class);
+		elseAction = context.map(this.getSysmlElement().getElseAction(), this, TwinActionUsageMapped.class);
 	}
 }

@@ -1,11 +1,11 @@
 package org.example.Mapping.Interfaces.BaseTaxonomy;
 
-import org.checkerframework.checker.units.qual.C;
 import org.example.Mapping.Interfaces.BaseTaxonomy.Context.Context;
 import org.example.Mapping.Interfaces.ControlUnit;
-import org.example.Mapping.Interfaces.BaseTaxonomy.TwinAttribute.BaseTwinAttribute.Usage.TwinAttributeUsage;
+import org.example.Mapping.Interfaces.TwinAttribute.BaseTwinAttribute.Usage.TwinAttributeUsage;
 import org.example.Mapping.Interfaces.TwinPort.Usage.ActuatorUsage;
 import org.example.Mapping.Interfaces.TwinPort.Usage.SensorUsage;
+import org.example.Mapping.Interfaces.TwinStateMachine.Usage.TwinStateMachineUsage;
 
 import java.util.List;
 
@@ -15,7 +15,7 @@ public interface PhysicalTwin extends Taxonomy {
 
 	List<ActuatorUsage> getActuators();
 
-	List<ControlUnit> getControlUnits();
+	List<TwinStateMachineUsage> getControlUnits();
 
 	List<TwinAttributeUsage> getConstAttributes();
 

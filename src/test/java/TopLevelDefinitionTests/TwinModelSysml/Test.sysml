@@ -196,12 +196,8 @@ package Test{
                 in attribute maxCharge : TwinReal :>> inputs;
 
                 out attribute chargeCmd : TwinReal :>> outputs;
-
-                action :> execution {
-                    if LT_real(predictedCurrent, maxCharge) {
-                        assign chargeCmd := predictedCurrent;
-                    }
-                }
+                if LT_real(predictedCurrent, maxCharge) {
+                    assign chargeCmd := predictedCurrent;
             }
 
 

@@ -1,10 +1,11 @@
 package org.example.Mapping.TwinAction;
 
 import lombok.ToString;
-import org.example.Mapping.Interfaces.Action;
-import org.example.Mapping.Interfaces.Expression;
-import org.example.Mapping.Interfaces.Transition;
-import org.example.Mapping.Mapper.TwinExpression.TwinExpressionMapped.TwinExpression;
+import org.example.Mapping.Interfaces.TwinAction.Action;
+import org.example.Mapping.Interfaces.TwinAction.Transition;
+import org.example.Mapping.TwinAction.Annotation.MappedMetaclass;
+import org.example.Mapping.TwinAction.Usage.TwinActionUsageMapped;
+import org.example.Mapping.TwinExpression.TwinExpression;
 import org.example.Mapping.NewVersion.Abstract.MappedReference;
 import org.example.Mapping.NewVersion.MappingContext;
 import org.example.Mapping.NewVersion.MappingException;
@@ -15,11 +16,11 @@ import java.util.List;
 
 @MappedMetaclass
 @ToString(callSuper = true)
-public class TwinTransitionUsageMapped extends TwinActionBaseUsage<TransitionUsage> implements Transition {
-	private MappedReference<TwinActionBaseUsage<?>> source;
-	private MappedReference<TwinActionBaseUsage<?>> target;
+public class TwinTransitionUsageMapped extends TwinActionUsageMapped<TransitionUsage> implements Transition {
+	private MappedReference<TwinActionUsageMapped<?>> source;
+	private MappedReference<TwinActionUsageMapped<?>> target;
 	private List<TwinExpression<?>> guard = new ArrayList<>();
-	private TwinActionBaseUsage<?> effectAction;
+	private TwinActionUsageMapped<?> effectAction;
 
 	public TwinTransitionUsageMapped(TransitionUsage sysmlElement) {
 		super(sysmlElement);
@@ -27,17 +28,17 @@ public class TwinTransitionUsageMapped extends TwinActionBaseUsage<TransitionUsa
 
 
 	@Override
-	public MappedReference<TwinActionBaseUsage<?>> getSource() {
+	public MappedReference<TwinActionUsageMapped<?>> getSource() {
 		return source;
 	}
 
 	@Override
-	public MappedReference<TwinActionBaseUsage<?>> getTarget() {
+	public MappedReference<TwinActionUsageMapped<?>> getTarget() {
 		return target;
 	}
 
 	@Override
-	public List<Expression> getGuard() {
+	public List<org.example.Mapping.Interfaces.TwinExpression.TwinExpression> getGuard() {
 		return new ArrayList<>(guard);
 	}
 
@@ -48,8 +49,8 @@ public class TwinTransitionUsageMapped extends TwinActionBaseUsage<TransitionUsa
 
 	@Override
 	public void parse(MappingContext context) throws MappingException {
-		source = context.mapReference(getSysmlElement().getSource(), TwinActionBaseUsage.getRawClass());
-		target = context.mapReference(getSysmlElement().getTarget(), TwinActionBaseUsage.getRawClass());
+		source = context.mapReference(getSysmlElement().getSource(), getRawUsage());
+		target = context.mapReference(getSysmlElement().getTarget(), getRawUsage());
 		guard = this.getSysmlElement().getGuardExpression().stream().map(e -> {
 			try {
 				return context.map(e, this, TwinExpression.class);
@@ -60,10 +61,14 @@ public class TwinTransitionUsageMapped extends TwinActionBaseUsage<TransitionUsa
 
 		effectAction = this.getSysmlElement().getEffectAction().stream().map(x -> {
 			try {
-				return context.map(x, this, TwinActionBaseUsage.class);
+				return context.map(x, this, TwinActionUsageMapped.class);
 			} catch (MappingException ex) {
 				throw new RuntimeException(ex);
 			}
 		}).findFirst().orElse(null);
+	}
+
+	private Class<TwinActionUsageMapped<?>>  getRawUsage(){
+		return (Class<TwinActionUsageMapped<?>>) (Class<?>) TwinActionUsageMapped.class;
 	}
 }

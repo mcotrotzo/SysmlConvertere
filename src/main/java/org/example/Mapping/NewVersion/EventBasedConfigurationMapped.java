@@ -2,11 +2,13 @@ package org.example.Mapping.NewVersion;
 
 import lombok.ToString;
 import org.example.Mapping.Interfaces.*;
-import org.example.Mapping.Interfaces.BaseTaxonomy.TwinAttribute.BaseTwinAttribute.Usage.TwinAttributeUsage;
-import org.example.Mapping.Interfaces.BaseTaxonomy.TwinExpression.Calculation;
-import org.example.Mapping.Interfaces.BaseTaxonomy.TwinExpression.FeatureReference;
+import org.example.Mapping.Interfaces.TwinAttribute.BaseTwinAttribute.Usage.TwinAttributeUsage;
+import org.example.Mapping.Interfaces.TwinAttribute.ConfigAttribute.TwinBooleanAttributeUsage;
+import org.example.Mapping.Interfaces.TwinExpression.Calculation;
+import org.example.Mapping.Interfaces.TwinExpression.FeatureReference;
 import org.example.Mapping.NewVersion.Abstract.MappedElementType;
-import org.example.Mapping.Mapper.TwinAttributeMapped.BaseTwinAttributeMapped.TwinAttributeUsageMapped;
+import org.example.Mapping.TwinAttributeMapped.BaseTwinAttributeMapped.Usage.TwinAttributeUsageMapped;
+import org.example.Mapping.TwinAttributeMapped.BaseTwinAttributeMapped.Usage.TwinBooleanMappedUsage;
 import org.example.Util.LibraryNameSpaces;
 import org.omg.sysml.lang.sysml.Type;
 

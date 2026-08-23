@@ -7,7 +7,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.example.ElemWithMult;
 import org.example.LoadedResources;
-import org.example.Mapping.NewVersion.BaseFunctionKind;
+import org.example.Mapping.Interfaces.TwinFunction.Definition.BaseFunctionKind;
 import org.example.UtilClasses.RedefinitionGraph;
 import org.example.UtilClasses.SpecialicationGraph;
 import org.omg.sysml.lang.sysml.*;

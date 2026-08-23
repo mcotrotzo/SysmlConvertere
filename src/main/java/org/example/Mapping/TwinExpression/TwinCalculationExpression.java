@@ -1,0 +1,24 @@
+package org.example.Mapping.TwinExpression;
+
+import lombok.ToString;
+import org.example.Mapping.Interfaces.TwinExpression.Calculation;
+import org.example.Mapping.Interfaces.TwinFunction.Definition.Function;
+import org.example.Mapping.Interfaces.Reference;
+import org.example.Mapping.NewVersion.Abstract.MappedReference;
+import org.example.Mapping.TwinFunction.FunctionMapped;
+import org.example.Mapping.TwinAction.Annotation.MappedMetaclass;
+import org.omg.sysml.lang.sysml.InvocationExpression;
+
+@MappedMetaclass
+@ToString(callSuper = true)
+public class TwinCalculationExpression extends TwinInvocationExpression<InvocationExpression,FunctionMapped<?>> implements Calculation {
+	private MappedReference<? extends Function> calledFunction;
+	public TwinCalculationExpression(InvocationExpression sysmlElement) {
+		super(sysmlElement);
+
+	}
+	@Override
+	public Reference<? extends Function> getCalledFunction() {
+		return getInvokeType();
+	}
+}
