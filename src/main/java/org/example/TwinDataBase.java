@@ -73,14 +73,27 @@ public class TwinDataBase {
 			);
 		}
 
+		if (!(mappedTarget.getSysmlElement() instanceof Type targetType)) {
+			throw new IllegalArgumentException(
+					"Model element must wrap a SysML Type"
+			);
+		}
 
 		return mappedRaWElementzs.stream()
 				.filter(mapped -> mapped != mappedTarget)
 				.filter(mapped ->
-						TypeUtil.getSupertypesOf((Type) mapped.getSysmlElement(),
-								true
-						).contains(mappedTarget.getSysmlElement())
+						mapped.getSysmlElement() instanceof Type
 				)
+
+				.filter(mapped -> {
+					Type mappedType =
+							(Type) mapped.getSysmlElement();
+
+					return TypeUtil
+							.getSupertypesOf(mappedType, true)
+							.contains(targetType);
+				})
+
 				.map(mapped -> (Model) mapped)
 				.toList();
 	}
