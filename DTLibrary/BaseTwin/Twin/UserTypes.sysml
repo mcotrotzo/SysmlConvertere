@@ -6,6 +6,7 @@ library package UserLibrary{
     public import PhysicalElementsLibrary::*;
     public import TwinTypeSystem::*;
     public import TwinImp::*;
+    public import TwinActionLibrary::TwinAction;
 
     public import TwinEnumLibrary::*;
 

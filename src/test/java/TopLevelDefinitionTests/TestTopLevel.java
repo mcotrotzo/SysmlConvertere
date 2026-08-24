@@ -3,6 +3,7 @@ package TopLevelDefinitionTests;
 import org.example.Mapping.Interfaces.Base.Model;
 import org.example.Mapping.Interfaces.TwinPort.Sensors;
 import org.example.Mapping.Interfaces.FullTwin.Twin;
+import org.example.Mapping.Interfaces.TwinPort.Usage.SensorUsage;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -56,7 +57,7 @@ public class TestTopLevel extends AbstarctTest {
 	@Test
 	public void testSpecializationChildrenAndMultiplicity() {
 
-		var ports = result.get(Sensors.class);
+		var ports = result.get(SensorUsage.class);
 
 		var p11 = ports.stream()
 				.filter(x -> x.getName().equals("p11"))

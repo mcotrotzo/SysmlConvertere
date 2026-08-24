@@ -22,6 +22,10 @@ public class LowerBoundOnNoneLibraryFeatures extends AbstarctTest {
 				    part def Battery :> Twin {
 				part physicalBattery :>> physicalTwin {
 				        port p11 :> sensors {
+				         c1 :>>communicationProtocol:MQTT_Protocol{
+				                                attribute :>>broker = "localhost";
+				                                attribute :>>topic = "battery/measurements";
+				                            }
 				        attribute pos[3] : Position :> measurements;
 				        }
 			}
@@ -42,9 +46,6 @@ public class LowerBoundOnNoneLibraryFeatures extends AbstarctTest {
 				        attribute z[1] : TwinInteger :> fields;
 				    }
 				
-				    attribute def PositionQueryResult :> QueryResult {
-				        :>> result : TwinReal[0..*];
-				    }
 				}
 				""");
 	}

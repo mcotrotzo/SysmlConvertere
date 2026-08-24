@@ -44,10 +44,7 @@ public class LowerBoundLibraryFeaturesFromUserLibraryNotThrows extends AbstarctT
 				        attribute y[1] : TwinInteger :> fields;
 				        attribute z[1] : TwinInteger :> fields;
 				    }
-				
-				    attribute def PositionQueryResult :> QueryResult {
-				        :>> result : TwinReal[0..*];
-				    }
+			
 				}
 				""");
 	}

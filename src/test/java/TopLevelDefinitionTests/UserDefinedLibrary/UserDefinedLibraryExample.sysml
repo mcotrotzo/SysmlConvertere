@@ -36,8 +36,10 @@ package PositionThings{
             else{
                 while EQ_real(SIZE_seq(reals), 0){
                     assign avg := 0;
+                    action test:TwinAction;
                 }
                 assign avg := 0;
+
             }
             assign avg := PLUS_real(avg, value);
         }

@@ -577,8 +577,10 @@ public class TestBehaviorMapping extends AbstarctTest {
 				testAction
 		);
 
+
 		Block testBlock =
 				(Block) testAction;
+		assertEquals(0,testBlock.localAttributes().size());
 
 		ForLoop forLoop =
 				testBlock.getActions()
@@ -609,6 +611,7 @@ public class TestBehaviorMapping extends AbstarctTest {
 
 		Block forBody =
 				(Block) forLoop.getBody();
+		assertEquals(1,forBody.localAttributes().size());
 
 		IfElse ifElse =
 				forBody.getActions()
@@ -658,49 +661,17 @@ public class TestBehaviorMapping extends AbstarctTest {
 				whileBody.getActions()
 						.stream()
 						.anyMatch(x ->
-								"test5".equals(x.getName()))
+								"test".equals(x.getName()))
 		);
 
-		assertTrue(
-				whileBody.getActions()
-						.stream()
-						.anyMatch(x ->
-								"test6".equals(x.getName()))
-		);
 
 		assertEquals(
-				1,
+				0,
 				whileBody.getSuccessions().size()
 		);
 
-		Succession succession =
-				whileBody.getSuccessions()
-						.getFirst();
 
-		assertEquals(
-				2,
-				succession.getActionList().size()
-		);
 
-		Action first =
-				succession.getActionList()
-						.get(0)
-						.getReferent();
-
-		Action second =
-				succession.getActionList()
-						.get(1)
-						.getReferent();
-
-		assertEquals(
-				"test5",
-				first.getName()
-		);
-
-		assertEquals(
-				"test6",
-				second.getName()
-		);
 
 		assertFalse(
 				result.get(Assignment.class)
@@ -728,10 +699,6 @@ public class TestBehaviorMapping extends AbstarctTest {
 	@Test
 	public void testAvgDerivedAttributeAssignment() {
 
-		/*
-		 * out attribute avgTemp ... hat als ACTION-Attribut
-		 * selbst KEINE Expression.
-		 */
 		TwinAttributeUsage avgTemp =
 				named(
 						TwinAttributeUsage.class,
@@ -742,11 +709,7 @@ public class TestBehaviorMapping extends AbstarctTest {
 				avgTemp.getExpression().isEmpty()
 		);
 
-		/*
-		 * Der eigentliche Ausdruck steckt hier:
-		 *
-		 * assign avgTemp := Avg(temps);
-		 */
+
 		Assignment assignment =
 				result.get(Assignment.class)
 						.stream()

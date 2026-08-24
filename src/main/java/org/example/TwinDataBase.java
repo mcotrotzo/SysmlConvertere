@@ -67,7 +67,7 @@ public class TwinDataBase {
 			);
 		}
 
-		if (target instanceof Usage) {
+		if (!(target instanceof Usage)) {
 			throw new IllegalArgumentException(
 					"Model element must be a usage"
 			);
