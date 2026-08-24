@@ -45,9 +45,6 @@ public class LowerBoundLibraryFeatures extends AbstarctTest {
 				        attribute z[1] : TwinInteger :> fields;
 				    }
 				
-				    attribute def PositionQueryResult :> QueryResult {
-				        :>> result : TwinReal[0..*];
-				    }
 				}
 				""");
 	}

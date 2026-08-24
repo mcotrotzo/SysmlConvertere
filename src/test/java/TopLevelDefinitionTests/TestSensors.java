@@ -26,7 +26,7 @@ public class TestSensors extends AbstarctTest {
 		assertNotNull(p11.getId());
 		assertTrue(p11.getParent().isPresent());
 
-		assertTrue(p11.getProtocol().isEmpty());
+		assertTrue(p11.getProtocol().isPresent());
 
 		assertEquals(8, p11.getAttributes().size());
 	}

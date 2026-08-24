@@ -1,6 +1,7 @@
 package org.example;
 
 
+import org.example.Mapping.Interfaces.Base.Usage;
 import org.example.Mapping.Interfaces.KIND;
 import org.example.Mapping.Interfaces.Base.Model;
 import org.example.Mapping.Interfaces.Reference;
@@ -66,7 +67,7 @@ public class TwinDataBase {
 			);
 		}
 
-		if (target.getKind().equals(KIND.DEFINITION)) {
+		if (target instanceof Usage) {
 			throw new IllegalArgumentException(
 					"Model element must be a usage"
 			);

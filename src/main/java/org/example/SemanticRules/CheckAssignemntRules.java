@@ -1,11 +1,6 @@
-package SemanticRules;
+package org.example.SemanticRules;
 
-import org.example.Mapping.Interfaces.*;
 import org.example.TwinDataBase;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 
 public class CheckAssignemntRules implements SemanticRule {
 

@@ -1,8 +1,9 @@
 package org.example;
 
 
-import SemanticRules.SemanticException;
-import SemanticRules.SemanticRule;
+import org.example.SemanticRules.SemanticException;
+import org.example.SemanticRules.CheckAssignemntRules;
+import org.example.SemanticRules.SemanticRule;
 import org.example.Containers.ContainerManager;
 import org.example.GenerelRules.*;
 import org.example.Mapping.NewVersion.MappingContext;
@@ -52,8 +53,8 @@ public class MapperService {
 	}
 
 	private void postRules(TwinDataBase database) throws SemanticException {
-		var semanticRules = List.of(new SemanticRules.CheckAssignemntRules());
-		for (SemanticRules.SemanticRule rule : semanticRules) {
+		var semanticRules = List.of(new CheckAssignemntRules());
+		for (SemanticRule rule : semanticRules) {
 			rule.isValid(database);
 		}
 	}

@@ -1,4 +1,4 @@
-package SemanticRules;
+package org.example.SemanticRules;
 
 
 import org.example.TwinDataBase;

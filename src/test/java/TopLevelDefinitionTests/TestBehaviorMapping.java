@@ -6,16 +6,15 @@ import org.example.Mapping.Interfaces.BaseTaxonomy.DescriptiveModel;
 import org.example.Mapping.Interfaces.BaseTaxonomy.PhysicalTwin;
 import org.example.Mapping.Interfaces.BaseTaxonomy.PredictiveModel;
 import org.example.Mapping.Interfaces.BaseTaxonomy.PrescriptiveModel;
+import org.example.Mapping.Interfaces.TwinAction.*;
 import org.example.Mapping.Interfaces.TwinAttribute.BaseTwinAttribute.Usage.TwinAttributeUsage;
 import org.example.Mapping.Interfaces.TwinExpression.Calculation;
 import org.example.Mapping.Interfaces.TwinExpression.FeatureReference;
-import org.example.Mapping.Interfaces.TwinAction.*;
 import org.example.Mapping.Interfaces.TwinExpression.TwinExpression;
 import org.example.Mapping.Interfaces.TwinFunction.Definition.CustomCalculation;
 import org.example.Mapping.Interfaces.TwinStateMachine.TwinStateMachine;
 import org.example.Mapping.Interfaces.TwinStateMachine.Usage.TwinStateMachineUsage;
 import org.example.Mapping.Interfaces.TwinStrategy.Usage.StrategyUsage;
-import org.example.Mapping.NewVersion.TwinStrategy.Usage.TwinStrategyUsageMapped;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -40,15 +39,20 @@ public class TestBehaviorMapping extends AbstarctTest {
 		);
 
 		assertEquals(
-				1,
+				0,
 				controlUnit.localAttributes().size()
 		);
 
+		assertEquals(
+				3,
+				controlUnit.getInputs().size()
+		);
+		assertEquals(1, controlUnit.getOutputs().size());
+
 		assertTrue(
-				controlUnit.localAttributes()
+				controlUnit.getInputs()
 						.stream()
-						.anyMatch(x ->
-								"maxCharge".equals(x.getName()))
+						.anyMatch(x -> "maxCharge".equals(x.getName()))
 		);
 
 		assertEquals(
@@ -59,21 +63,16 @@ public class TestBehaviorMapping extends AbstarctTest {
 		TwinStateMachine idle =
 				controlUnit.getStates()
 						.stream()
-						.filter(x ->
-								"idle".equals(x.getName()))
+						.filter(x -> "idle".equals(x.getName()))
 						.findFirst()
 						.orElseThrow();
 
 		TwinStateMachine charging =
 				controlUnit.getStates()
 						.stream()
-						.filter(x ->
-								"charging".equals(x.getName()))
+						.filter(x -> "charging".equals(x.getName()))
 						.findFirst()
 						.orElseThrow();
-
-		assertNotNull(idle);
-		assertNotNull(charging);
 
 		assertEquals(
 				1,
@@ -81,26 +80,26 @@ public class TestBehaviorMapping extends AbstarctTest {
 		);
 
 		TwinStateMachine test34 =
-				charging.getStates().get(0);
+				charging.getStates().getFirst();
 
 		assertEquals(
 				"test34",
 				test34.getName()
 		);
 
-		assertTrue(
+		assertInstanceOf(
+				Assignment.class,
 				charging.getEntryAction()
-						instanceof Assignment
 		);
 
-		assertTrue(
+		assertInstanceOf(
+				Assignment.class,
 				charging.getDoAction()
-						instanceof Assignment
 		);
 
-		assertTrue(
+		assertInstanceOf(
+				Assignment.class,
 				charging.getExitAction()
-						instanceof Assignment
 		);
 
 		assertAssignmentTo(
@@ -118,19 +117,19 @@ public class TestBehaviorMapping extends AbstarctTest {
 				"charge"
 		);
 
-		assertTrue(
+		assertInstanceOf(
+				Assignment.class,
 				test34.getEntryAction()
-						instanceof Assignment
 		);
 
-		assertTrue(
+		assertInstanceOf(
+				Assignment.class,
 				test34.getDoAction()
-						instanceof Assignment
 		);
 
-		assertTrue(
+		assertInstanceOf(
+				Assignment.class,
 				test34.getExitAction()
-						instanceof Assignment
 		);
 
 		Assignment test34Entry =
@@ -143,17 +142,17 @@ public class TestBehaviorMapping extends AbstarctTest {
 						.getName()
 		);
 
-		assertTrue(
+		assertInstanceOf(
+				FeatureReference.class,
 				test34Entry.getValue()
-						instanceof FeatureReference
 		);
 
-		FeatureReference chain =
+		FeatureReference reference =
 				(FeatureReference) test34Entry.getValue();
 
 		assertEquals(
 				"temp",
-				chain.getTarget()
+				reference.getTarget()
 						.getReferent()
 						.getName()
 		);
@@ -208,9 +207,6 @@ public class TestBehaviorMapping extends AbstarctTest {
 					transition.getTarget()
 							.getReferent();
 
-			assertNotNull(source);
-			assertNotNull(target);
-
 			String sourceName =
 					source.getName();
 
@@ -227,10 +223,9 @@ public class TestBehaviorMapping extends AbstarctTest {
 						transition.getGuard().size()
 				);
 
-				TwinExpression guard =
-						transition.getGuard().get(0);
-
-				assertTrue(guard instanceof FeatureReference
+				assertInstanceOf(
+						FeatureReference.class,
+						transition.getGuard().getFirst()
 				);
 			}
 
@@ -269,11 +264,6 @@ public class TestBehaviorMapping extends AbstarctTest {
 						"test12"
 				);
 
-		assertEquals(
-				"test12",
-				machine.getName()
-		);
-
 		assertParent(
 				machine,
 				DescriptiveModel.class,
@@ -288,94 +278,74 @@ public class TestBehaviorMapping extends AbstarctTest {
 		assertTrue(
 				machine.getStates()
 						.stream()
-						.anyMatch(x ->
-								"sa".equals(x.getName()))
+						.anyMatch(x -> "sa".equals(x.getName()))
 		);
 
 		assertTrue(
 				machine.getStates()
 						.stream()
-						.anyMatch(x ->
-								"sd".equals(x.getName()))
+						.anyMatch(x -> "sd".equals(x.getName()))
 		);
-
 	}
 
 	@Test
 	public void testDescriptiveStrategyComplete() {
 
-		TwinStrategyUsageMapped strategy =
+		StrategyUsage strategy =
 				named(
-						TwinStrategyUsageMapped.class,
+						StrategyUsage.class,
 						"LLM_Request"
 				);
 
-		List<TwinAttributeUsage> inputs = strategy.getInputs();
-		List<TwinAttributeUsage> outputs = strategy.getOutputs();
-
-
-
-		assertEquals(2, inputs.size());
-
-		TwinAttributeUsage avgTemperature =
-				inputs.stream()
-						.filter(x -> "avgTemperature".equals(x.getName()))
-						.findFirst()
-						.orElseThrow();
-
-		TwinAttributeUsage current =
-				inputs.stream()
-						.filter(x -> "current".equals(x.getName()))
-						.findFirst()
-						.orElseThrow();
-
-
-		assertTrue(
-				avgTemperature.getExpression().isPresent()
+		assertParent(
+				strategy,
+				DescriptiveModel.class,
+				"descriptiveBattery"
 		);
 
-		TwinExpression avgTemperatureExpression =
-				avgTemperature.getExpression().orElseThrow();
+		List<TwinAttributeUsage> inputs =
+				strategy.getInputs();
 
-		assertTrue(
-				avgTemperatureExpression instanceof FeatureReference
-		);
-
-		FeatureReference avgTemperatureReference =
-				(FeatureReference) avgTemperatureExpression;
+		List<TwinAttributeUsage> outputs =
+				strategy.getOutputs();
 
 		assertEquals(
-				"avgTemp",
-				avgTemperatureReference
-						.getTarget()
-						.getReferent()
-						.getName()
+				3,
+				inputs.size()
 		);
 
 		assertTrue(
-				current.getExpression().isPresent()
+				inputs.stream()
+						.anyMatch(x ->
+								"avgTemperature".equals(x.getName()))
 		);
-
-		TwinExpression currentExpression =
-				current.getExpression().orElseThrow();
 
 		assertTrue(
-				currentExpression instanceof FeatureReference
+				inputs.stream()
+						.anyMatch(x ->
+								"current".equals(x.getName()))
 		);
 
-		FeatureReference currentReference =
-				(FeatureReference) currentExpression;
+		assertTrue(
+				inputs.stream()
+						.anyMatch(x ->
+								"soc".equals(x.getName()))
+		);
+
+		/*
+		 * Diese Attribute werden über Flows gespeist.
+		 * Sie besitzen deshalb selbst keine Expression.
+		 */
+		for (TwinAttributeUsage input : inputs) {
+			assertTrue(
+					input.getExpression().isEmpty()
+			);
+		}
 
 		assertEquals(
-				"current",
-				currentReference
-						.getTarget()
-						.getReferent()
-						.getName()
+				1,
+				outputs.size()
 		);
-
-
-		assertEquals(1, outputs.size());
 
 		TwinAttributeUsage llmCurrent =
 				outputs.getFirst();
@@ -383,6 +353,10 @@ public class TestBehaviorMapping extends AbstarctTest {
 		assertEquals(
 				"llmCurrent",
 				llmCurrent.getName()
+		);
+
+		assertTrue(
+				llmCurrent.getExpression().isEmpty()
 		);
 	}
 
@@ -420,27 +394,39 @@ public class TestBehaviorMapping extends AbstarctTest {
 								"current".equals(x.getName()))
 		);
 
+		for (TwinAttributeUsage input :
+				strategy.getInputs()) {
+
+			assertTrue(
+					input.getExpression().isEmpty()
+			);
+		}
+
 		assertEquals(
 				1,
 				strategy.getOutputs().size()
 		);
 
+		TwinAttributeUsage predicted =
+				strategy.getOutputs().getFirst();
+
 		assertEquals(
 				"predicted",
-				strategy.getOutputs()
-						.get(0)
-						.getName()
+				predicted.getName()
 		);
 
+		assertTrue(
+				predicted.getExpression().isEmpty()
+		);
 	}
 
 	@Test
-	public void testPrescriptiveStrategyComplete() {
+	public void testPrescriptiveStrategyInternalComplete() {
 
 		StrategyUsage strategy =
 				named(
 						StrategyUsage.class,
-						"chargeStrategy"
+						"chargeStrategyInternal"
 				);
 
 		assertParent(
@@ -450,27 +436,99 @@ public class TestBehaviorMapping extends AbstarctTest {
 		);
 
 		assertEquals(
+				3,
+				strategy.getInputs().size()
+		);
+
+		assertTrue(
+				strategy.getInputs()
+						.stream()
+						.anyMatch(x ->
+								"predictedCurrent".equals(x.getName()))
+		);
+
+		assertTrue(
+				strategy.getInputs()
+						.stream()
+						.anyMatch(x ->
+								"maxCharge".equals(x.getName()))
+		);
+
+		assertTrue(
+				strategy.getInputs()
+						.stream()
+						.anyMatch(x ->
+								"posTest12".equals(x.getName()))
+		);
+
+		assertEquals(
 				1,
 				strategy.getOutputs().size()
 		);
 
 		TwinAttributeUsage chargeCmd =
-				strategy.getOutputs().get(0);
+				strategy.getOutputs().getFirst();
 
 		assertEquals(
 				"chargeCmd",
 				chargeCmd.getName()
 		);
 
+		/*
+		 * ACTION-Output:
+		 * Wert wird über assign gesetzt, nicht über
+		 * eine Attribute-Expression.
+		 */
 		assertTrue(
-				chargeCmd.getExpression().isPresent()
+				chargeCmd.getExpression().isEmpty()
+		);
+	}
+
+	@Test
+	public void testPrescriptiveStrategyExternalComplete() {
+
+		StrategyUsage strategy =
+				named(
+						StrategyUsage.class,
+						"chargeStrategyExternal"
+				);
+
+		assertParent(
+				strategy,
+				PrescriptiveModel.class,
+				"prescriptiveBattery"
 		);
 
-		TwinExpression outputExpression =
-				chargeCmd.getExpression().get();
+		assertEquals(
+				2,
+				strategy.getInputs().size()
+		);
 
-		assertInstanceOf(FeatureReference.class, outputExpression);
+		assertEquals(
+				1,
+				strategy.getOutputs().size()
+		);
 
+		assertTrue(
+				strategy.getInputs()
+						.stream()
+						.anyMatch(x ->
+								"predictedCurrent".equals(x.getName()))
+		);
+
+		assertTrue(
+				strategy.getInputs()
+						.stream()
+						.anyMatch(x ->
+								"maxCharge".equals(x.getName()))
+		);
+
+		assertEquals(
+				"chargeCmd",
+				strategy.getOutputs()
+						.getFirst()
+						.getName()
+		);
 	}
 
 	@Test
@@ -490,7 +548,7 @@ public class TestBehaviorMapping extends AbstarctTest {
 		assertEquals(
 				"reals",
 				avg.getInputs()
-						.get(0)
+						.getFirst()
 						.getName()
 		);
 
@@ -502,7 +560,7 @@ public class TestBehaviorMapping extends AbstarctTest {
 		assertEquals(
 				"avg",
 				avg.getOutputs()
-						.get(0)
+						.getFirst()
 						.getName()
 		);
 
@@ -514,13 +572,13 @@ public class TestBehaviorMapping extends AbstarctTest {
 						.findFirst()
 						.orElseThrow();
 
-		assertTrue(
-				testAction instanceof Block
+		assertInstanceOf(
+				Block.class,
+				testAction
 		);
 
 		Block testBlock =
 				(Block) testAction;
-
 
 		ForLoop forLoop =
 				testBlock.getActions()
@@ -544,13 +602,9 @@ public class TestBehaviorMapping extends AbstarctTest {
 				forLoop.getCollection()
 		);
 
-		assertNotNull(
+		assertInstanceOf(
+				Block.class,
 				forLoop.getBody()
-		);
-
-		assertTrue(
-				forLoop.getBody()
-						instanceof Block
 		);
 
 		Block forBody =
@@ -572,13 +626,9 @@ public class TestBehaviorMapping extends AbstarctTest {
 				ifElse.getThenAction()
 		);
 
-		assertNotNull(
+		assertInstanceOf(
+				Block.class,
 				ifElse.getElseAction()
-		);
-
-		assertTrue(
-				ifElse.getElseAction()
-						instanceof Block
 		);
 
 		Block elseBlock =
@@ -596,13 +646,9 @@ public class TestBehaviorMapping extends AbstarctTest {
 				whileLoop.getCondition()
 		);
 
-		assertNotNull(
+		assertInstanceOf(
+				Block.class,
 				whileLoop.getBody()
-		);
-
-		assertTrue(
-				whileLoop.getBody()
-						instanceof Block
 		);
 
 		Block whileBody =
@@ -628,7 +674,8 @@ public class TestBehaviorMapping extends AbstarctTest {
 		);
 
 		Succession succession =
-				whileBody.getSuccessions().get(0);
+				whileBody.getSuccessions()
+						.getFirst();
 
 		assertEquals(
 				2,
@@ -679,8 +726,12 @@ public class TestBehaviorMapping extends AbstarctTest {
 	}
 
 	@Test
-	public void testAvgDerivedAttributeExpression() {
+	public void testAvgDerivedAttributeAssignment() {
 
+		/*
+		 * out attribute avgTemp ... hat als ACTION-Attribut
+		 * selbst KEINE Expression.
+		 */
 		TwinAttributeUsage avgTemp =
 				named(
 						TwinAttributeUsage.class,
@@ -688,14 +739,88 @@ public class TestBehaviorMapping extends AbstarctTest {
 				);
 
 		assertTrue(
-				avgTemp.getExpression().isPresent()
+				avgTemp.getExpression().isEmpty()
+		);
+
+		/*
+		 * Der eigentliche Ausdruck steckt hier:
+		 *
+		 * assign avgTemp := Avg(temps);
+		 */
+		Assignment assignment =
+				result.get(Assignment.class)
+						.stream()
+						.filter(x ->
+								x.getTarget() != null
+										&& x.getTarget().getReferent() != null
+										&& "avgTemp".equals(
+										x.getTarget()
+												.getReferent()
+												.getName()
+								)
+						)
+						.findFirst()
+						.orElseThrow();
+
+		assertInstanceOf(
+				Calculation.class,
+				assignment.getValue()
+		);
+
+		Calculation avgCall =
+				(Calculation) assignment.getValue();
+
+		assertEquals(
+				1,
+				avgCall.getArguments().size()
+		);
+
+		TwinExpression argument =
+				avgCall.getArguments()
+						.getFirst();
+
+		assertInstanceOf(
+				FeatureReference.class,
+				argument
+		);
+
+		FeatureReference reference =
+				(FeatureReference) argument;
+
+		assertEquals(
+				"temps",
+				reference.getTarget()
+						.getReferent()
+						.getName()
+		);
+	}
+
+	@Test
+	public void testLocalFeatureChainExpression() {
+
+		/*
+		 * attribute test12:TwinReal:>local_Attributes
+		 *     = Avg(posTest12.x);
+		 *
+		 * LOCAL darf eine Expression besitzen.
+		 */
+		TwinAttributeUsage test12 =
+				named(
+						TwinAttributeUsage.class,
+						"test12"
+				);
+
+		assertTrue(
+				test12.getExpression().isPresent()
 		);
 
 		TwinExpression expression =
-				avgTemp.getExpression().get();
+				test12.getExpression()
+						.orElseThrow();
 
-		assertTrue(
-				expression instanceof Calculation
+		assertInstanceOf(
+				Calculation.class,
+				expression
 		);
 
 		Calculation avgCall =
@@ -707,16 +832,20 @@ public class TestBehaviorMapping extends AbstarctTest {
 		);
 
 		TwinExpression argument =
-				avgCall.getArguments().get(0);
+				avgCall.getArguments()
+						.getFirst();
 
-		assertInstanceOf(FeatureReference.class, argument);
+		assertInstanceOf(
+				FeatureReference.class,
+				argument
+		);
 
-		FeatureReference chain =
+		FeatureReference reference =
 				(FeatureReference) argument;
 
 		assertEquals(
-				"temp30",
-				chain.getTarget()
+				"x",
+				reference.getTarget()
 						.getReferent()
 						.getName()
 		);
@@ -757,13 +886,13 @@ public class TestBehaviorMapping extends AbstarctTest {
 				guards.size()
 		);
 
-		assertTrue(
-				guards.get(0)
-						instanceof Calculation
+		assertInstanceOf(
+				Calculation.class,
+				guards.getFirst()
 		);
 
 		Calculation calculation =
-				(Calculation) guards.get(0);
+				(Calculation) guards.getFirst();
 
 		assertFalse(
 				calculation.getArguments().isEmpty()
