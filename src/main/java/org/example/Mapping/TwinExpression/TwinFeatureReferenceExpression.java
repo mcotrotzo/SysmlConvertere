@@ -13,7 +13,7 @@ import org.omg.sysml.lang.sysml.FeatureReferenceExpression;
 
 @MappedMetaclass
 @ToString(callSuper = true, onlyExplicitlyIncluded = false)
-public abstract class TwinFeatureReferenceExpression<T extends TwinAttributeUsageMapped> extends TwinExpression<FeatureReferenceExpression> implements FeatureReference {
+public class TwinFeatureReferenceExpression<T extends TwinAttributeUsageMapped> extends TwinExpression<FeatureReferenceExpression> implements FeatureReference {
 	private MappedReference<? extends TwinAttributeUsageMapped> target;
 
 	public TwinFeatureReferenceExpression(FeatureReferenceExpression sysmlElement) {

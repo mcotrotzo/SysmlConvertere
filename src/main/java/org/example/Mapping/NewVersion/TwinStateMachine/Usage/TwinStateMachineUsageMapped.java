@@ -9,6 +9,7 @@ import org.example.Mapping.NewVersion.MappingContext;
 import org.example.Mapping.NewVersion.MappingException;
 
 import org.example.Mapping.TwinAction.Usage.TwinActionBlockUsage;
+import org.example.Mapping.TwinAction.Usage.TwinActionUsageMapped;
 import org.example.Mapping.TwinAttributeMapped.BaseTwinAttributeMapped.Usage.TwinAttributeUsageMapped;
 import org.example.Util.LibraryNameSpaces;
 import org.omg.sysml.lang.sysml.ActionUsage;
@@ -23,9 +24,9 @@ public class TwinStateMachineUsageMapped extends TwinActionBlockUsage<StateUsage
 
 	private List<TwinStateMachineUsageMapped> states = new ArrayList<>();
 	private List<Transition> transitions = new ArrayList<>();
-	private TwinActionBlockUsage<?> entryAction;
-	private TwinActionBlockUsage<?> exitAction;
-	private TwinActionBlockUsage<?> doAction;
+	private TwinActionUsageMapped<?> entryAction;
+	private TwinActionUsageMapped<?> exitAction;
+	private TwinActionUsageMapped<?> doAction;
 
 	public TwinStateMachineUsageMapped(StateUsage sysmlElement) {
 		super(sysmlElement);
@@ -51,7 +52,7 @@ public class TwinStateMachineUsageMapped extends TwinActionBlockUsage<StateUsage
 			doAction = context.map(doActionUsage, this, TwinActionBlockUsage.getRawClass());
 		}
 
-		List<TwinActionBlockUsage<?>> s = new ArrayList<>();
+		List<TwinActionUsageMapped<?>> s = new ArrayList<>();
 
 		for (ActionUsage action : getSysmlElement().getNestedAction()) {
 

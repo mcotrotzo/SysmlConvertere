@@ -1,6 +1,7 @@
 package org.example.Mapping.TwinExpression.TwinLiteralExpressionElements;
 
 import lombok.ToString;
+import org.example.Mapping.Interfaces.TwinExpression.IntegerLiteral;
 import org.example.Mapping.NewVersion.MappingContext;
 import org.example.Mapping.NewVersion.MappingException;
 import org.example.Mapping.TwinAction.Annotation.MappedMetaclass;
@@ -8,7 +9,7 @@ import org.omg.sysml.lang.sysml.LiteralInteger;
 
 @MappedMetaclass
 @ToString(callSuper = true)
-public class TwinLiteralIntegerExpression extends TwinLiteralExpression<Integer, LiteralInteger> {
+public class TwinLiteralIntegerExpression extends TwinLiteralExpression<Integer, LiteralInteger> implements IntegerLiteral {
 
 	public TwinLiteralIntegerExpression(LiteralInteger sysmlElement) {
 		super(sysmlElement);

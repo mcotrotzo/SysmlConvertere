@@ -9,8 +9,7 @@ import org.example.Mapping.TwinAction.Annotation.MappedMetaclass;
 import org.example.Util.LibraryNameSpaces;
 import org.omg.sysml.lang.sysml.Type;
 
-@ToString(callSuper = true)
-@MappedElementType(LibraryNameSpaces.TWIN_ACTION)
+
 @MappedMetaclass
 public abstract class TwinActionMapped<T extends Type> extends MappedElement<T> implements Action {
 	public TwinActionMapped(T sysmlElement) {

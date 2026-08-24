@@ -56,9 +56,6 @@ public class TwinAttributeUsageMapped
 				.stream()
 				.filter(Classifier.class::isInstance)
 				.map(Classifier.class::cast)
-				.filter(type ->
-						!context.getUtils().isFromStandardOrDTLibrary(type)
-				)
 				.findFirst()
 				.orElseThrow(() ->
 						new MappingException(
@@ -105,7 +102,6 @@ public class TwinAttributeUsageMapped
 		if (expression == null) {
 			return;
 		}
-
 		switch (getRole()) {
 			case CONST -> checkConstRules();
 			case CONFIG -> checkConfigRules();

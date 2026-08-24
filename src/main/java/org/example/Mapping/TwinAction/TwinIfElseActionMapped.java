@@ -41,6 +41,9 @@ public class TwinIfElseActionMapped extends TwinActionUsageMapped<IfActionUsage>
 	public void parse(MappingContext context) throws MappingException {
 		ifExpression = context.map(this.getSysmlElement().getIfArgument(), this, TwinExpression.class);
 		thenAction = context.map(this.getSysmlElement().getThenAction(), this, TwinActionUsageMapped.class);
-		elseAction = context.map(this.getSysmlElement().getElseAction(), this, TwinActionUsageMapped.class);
+		if(this.getSysmlElement().getElseAction() != null){
+			elseAction = context.map(this.getSysmlElement().getElseAction(), this, TwinActionUsageMapped.class);
+
+		}
 	}
 }

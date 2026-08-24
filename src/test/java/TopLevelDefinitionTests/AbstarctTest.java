@@ -110,6 +110,23 @@ public abstract class AbstarctTest {
 	}
 
 	protected <T extends Model> T named(Class<T> type, String name) {
-		return result.get(type).stream().filter(element -> name.equals(element.getName())).findFirst().orElseThrow(() -> new AssertionError(type.getSimpleName() + " not found: " + name));
+		var matches = result.get(type).stream()
+				.filter(element -> name.equals(element.getName()))
+				.toList();
+
+		if (matches.isEmpty()) {
+			throw new AssertionError(
+					type.getSimpleName() + " not found: " + name
+			);
+		}
+
+		if (matches.size() > 1) {
+			throw new AssertionError(
+					"Expected exactly one %s named '%s', but found %d."
+							.formatted(type.getSimpleName(), name, matches.size())
+			);
+		}
+
+		return matches.getFirst();
 	}
 }

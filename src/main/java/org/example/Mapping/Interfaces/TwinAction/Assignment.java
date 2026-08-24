@@ -1,12 +1,10 @@
 package org.example.Mapping.Interfaces.TwinAction;
 
 import org.example.Mapping.Interfaces.TwinAttribute.BaseTwinAttribute.Usage.TwinAttributeUsage;
-import org.example.Mapping.Interfaces.Expression;
+
 import org.example.Mapping.Interfaces.Reference;
-import org.example.Mapping.Interfaces.TwinAttribute.LocalAttribute.Usage.LocalAttributeUsage;
-import org.example.Mapping.Interfaces.TwinExpression.LocalExpression.LocalExpression;
+
 import org.example.Mapping.Interfaces.TwinExpression.TwinExpression;
-import org.example.Mapping.TwinAttributeMapped.LocalAttributeMapped.LocalAttributeUsageMapped;
 
 /**
  * Represents an assignment action in the model.

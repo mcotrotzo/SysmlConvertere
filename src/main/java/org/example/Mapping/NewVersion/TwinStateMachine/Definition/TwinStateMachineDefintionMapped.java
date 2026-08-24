@@ -11,6 +11,7 @@ import org.example.Mapping.NewVersion.MappingException;
 import org.example.Mapping.NewVersion.TwinStateMachine.Usage.TwinStateMachineUsageMapped;
 import org.example.Mapping.TwinAction.Definition.TwinActionBlockDefinitionMapped;
 import org.example.Mapping.TwinAction.Usage.TwinActionBlockUsage;
+import org.example.Mapping.TwinAction.Usage.TwinActionUsageMapped;
 import org.example.Util.LibraryNameSpaces;
 import org.omg.sysml.lang.sysml.ActionUsage;
 import org.omg.sysml.lang.sysml.StateDefinition;
@@ -24,9 +25,9 @@ import java.util.List;
 public class TwinStateMachineDefintionMapped extends TwinActionBlockDefinitionMapped<StateDefinition> implements TwinStateMachineDefinition {
 	private List<TwinStateMachineUsageMapped> states = new ArrayList<>();
 	private List<Transition> transitions = new ArrayList<>();
-	private TwinActionBlockUsage<?> entryAction;
-	private TwinActionBlockUsage<?> exitAction;
-	private TwinActionBlockUsage<?> doAction;
+	private TwinActionUsageMapped<?> entryAction;
+	private TwinActionUsageMapped<?> exitAction;
+	private TwinActionUsageMapped<?> doAction;
 
 	public TwinStateMachineDefintionMapped(StateDefinition sysmlElement) {
 		super(sysmlElement);
@@ -52,7 +53,7 @@ public class TwinStateMachineDefintionMapped extends TwinActionBlockDefinitionMa
 			doAction = context.map(doActionUsage, this, TwinActionBlockUsage.getRawClass());
 		}
 
-		List<TwinActionBlockUsage<?>> s = new ArrayList<>();
+		List<TwinActionUsageMapped<?>> s = new ArrayList<>();
 
 		for (ActionUsage action : getSysmlElement().getOwnedAction()) {
 

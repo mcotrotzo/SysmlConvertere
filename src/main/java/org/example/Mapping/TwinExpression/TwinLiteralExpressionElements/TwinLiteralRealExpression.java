@@ -1,6 +1,7 @@
 package org.example.Mapping.TwinExpression.TwinLiteralExpressionElements;
 
 import lombok.ToString;
+import org.example.Mapping.Interfaces.TwinExpression.RealLiteral;
 import org.example.Mapping.NewVersion.MappingContext;
 import org.example.Mapping.NewVersion.MappingException;
 import org.example.Mapping.TwinAction.Annotation.MappedMetaclass;
@@ -8,7 +9,7 @@ import org.omg.sysml.lang.sysml.LiteralRational;
 
 @MappedMetaclass
 @ToString(callSuper = true)
-public class TwinLiteralRealExpression extends TwinLiteralExpression<Double, LiteralRational> {
+public class TwinLiteralRealExpression extends TwinLiteralExpression<Double, LiteralRational> implements RealLiteral {
 
 	public TwinLiteralRealExpression(LiteralRational sysmlElement) {
 		super(sysmlElement);

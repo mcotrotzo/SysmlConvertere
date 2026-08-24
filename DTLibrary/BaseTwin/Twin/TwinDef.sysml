@@ -16,7 +16,7 @@ library package TwinDefLibrary {
         out port sensors [0..*] : Sensor;
         state controlUnit:ControlUnit[0..*];
         in port actuators [0..*] : Actuator;
-        out attribute constAttributes: TwinAttribute[0..*];  
+        out port constPort: ConstPort[0..1];
         abstract flow physicalFlows:PhysicalFlow[0..*];
     }
 

@@ -1,10 +1,9 @@
 package org.example.GenerelRules;
 
+
 import org.example.Mapping.NewVersion.MappingException;
 import org.example.Util.Utils;
-import org.omg.sysml.lang.sysml.Feature;
-import org.omg.sysml.lang.sysml.Function;
-import org.omg.sysml.lang.sysml.Redefinition;
+import org.omg.sysml.lang.sysml.*;
 
 import java.util.List;
 
@@ -24,14 +23,19 @@ public class CalcInputOutputRules extends GenerelRules {
 
 	private void checkOnlyRedefinitions() throws MappingException {
 
-		for (Function calcDef : this.utilsManager.collect(Function.class)) {
+		for (ActionDefinition calcDef : this.utilsManager.collect(ActionDefinition.class)) {
+
+			checkCalculation(calcDef);
+		}
+
+		for (ActionUsage calcDef : this.utilsManager.collect(ActionUsage.class)) {
 
 			checkCalculation(calcDef);
 		}
 	}
 
 
-	private void checkCalculation(Function calcDef) throws MappingException {
+	private void checkCalculation(Type calcDef) throws MappingException {
 
 		for (Feature feature : calcDef.getOwnedFeature()) {
 

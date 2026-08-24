@@ -14,7 +14,10 @@ package Test{
          part physicalBattery :>> physicalTwin {
 
              port p11[30] :> sensors {
-
+                   c1 :>>communicationProtocol:MQTT_Protocol{
+                       attribute :>>broker = "localhost";
+                       attribute :>>topic = "battery/measurements";
+                   }
                   out attribute temp[2]    : TwinReal    :>> measurements;
                   out attribute temp2[2] :>temp;
 
@@ -26,16 +29,28 @@ package Test{
                   out attribute pos3     : Position    :>> measurements;
              }
 
-            out attribute collectionTest    : TwinReal    :>> constAttributes = (2, 3, 4);
-            out attribute baseFunctionTest : TwinReal    :>> constAttributes = DIV_real(y=2, x=10);
-            out attribute constructorTest : TwinReal    :>> constAttributes = new TwinReal(0);
-            out attribute constructorTestBoolean    : TwinBoolean :>> constAttributes = new TwinBoolean(false);
-            out attribute customCalculationTest     : Position    :>> constAttributes = AddPosition(pos_a=new Position(x=10, y=20, z=30), pos_b=new Position(x=0, y=0, z=0));
-            out attribute maxCharge        : TwinReal :>> constAttributes = 100;
-            out attribute nominalVoltage   : TwinReal :>> constAttributes = 48;
-            out attribute defaultNetDemand : TwinReal :>> constAttributes = 0;
+            out port constPort:>>constPort{
+                c1 :>>communicationProtocol:MQTT_Protocol{
+                                   attribute :>>broker = "localhost";
+                                   attribute :>>topic = "battery/measurements";
+                               }
+                out attribute collectionTest    : TwinReal    :>> measurements = (2, 3, 4);
+                out attribute baseFunctionTest : TwinReal    :>> measurements = DIV_real(y=2, x=10);
+                out attribute constructorTest : TwinBoolean    :>> measurements = new TwinBoolean(true);
+                out attribute constructorTestBoolean    : TwinBoolean :>> measurements = new TwinBoolean(false);
+                out attribute customCalculationTest     : Position    :>> measurements = AddPosition(pos_a=new Position(x=10, y=20, z=30), pos_b=new Position(x=0, y=0, z=0));
+                out attribute maxCharge        : TwinReal :>> measurements = 100;
+                out attribute nominalVoltage   : TwinReal :>> measurements = 48;
+                out attribute defaultNetDemand : TwinReal :>> measurements = 0;
+                out attribute defaultNetSupply : TwinReal :>> measurements = DIV_real(y=defaultNetDemand, x=defaultNetDemand);
+
+            }
 
              port p12 :> actuators {
+             c1 :>>communicationProtocol:MQTT_Protocol{
+                                    attribute :>>broker = "localhost";
+                                    attribute :>>topic = "battery/measurements";
+                                }
                  in attribute charge : TwinReal :>> commands;
              }
 
@@ -47,8 +62,8 @@ package Test{
              state cm1 :> controlUnit {
 
                  in attribute temp:TwinReal :>> inputs;
-                 in attribute plug:TwinBoolean :>> inputs;
                  out attribute charge:TwinReal :>> outputs;
+                 in attribute plug:TwinBoolean :>> inputs;
                  in attribute maxCharge:TwinReal :>>inputs;
 
                  state idle:>>states;
@@ -83,7 +98,7 @@ package Test{
              }
              flow :>physicalFlows from p11.temp to cm1.temp;
              flow :>physicalFlows from p11.plug to cm1.plug;
-             flow :>physicalFlows from maxCharge to cm1.maxCharge;
+             flow :>physicalFlows from constPort.maxCharge to cm1.maxCharge;
          }
 
 
@@ -97,7 +112,7 @@ package Test{
         flow :>queryFlows from physicalBattery.p11.voltage to descriptiveBattery.soc.voltage{
             :>>limit = 1;
         }
-        flow :>queryFlows from physicalBattery.nominalVoltage to descriptiveBattery.soc.nominalVoltage{
+        flow :>queryFlows from physicalBattery.constPort.nominalVoltage to descriptiveBattery.soc.nominalVoltage{
             :>>limit = 1;
         }
 
@@ -109,11 +124,11 @@ package Test{
             :>>limit = 30;
         }
 
-        flow :>queryFlows from physicalBattery.maxCharge to prescriptiveBattery.chargeStrategyExternal.maxCharge {
+        flow :>queryFlows from physicalBattery.constPort.maxCharge to prescriptiveBattery.chargeStrategyExternal.maxCharge {
             :>> limit = 1;
         }
 
-        flow :>queryFlows from physicalBattery.maxCharge to prescriptiveBattery.chargeStrategyInternal.maxCharge {
+        flow :>queryFlows from physicalBattery.constPort.maxCharge to prescriptiveBattery.chargeStrategyInternal.maxCharge {
             :>> limit = 1;
         }
 
@@ -121,8 +136,8 @@ package Test{
 
              action soc :> derivedAttributes{
                 in attribute voltage:TwinReal:>>inputs;
-                in attribute nominalVoltage:TwinReal:>>inputs;
                 out attribute soc:TwinReal:>>outputs;
+                in attribute nominalVoltage:TwinReal:>>inputs;
 
                 assign soc := MULT_real(DIV_real(voltage, nominalVoltage), 100);
              }
@@ -143,15 +158,14 @@ package Test{
                  attribute :> contentPath = "battery/LLM_Request";
                  attribute :> strategyType = CustomStrategyType::CONTAINER;
                  in attribute avgTemperature :TwinReal:>> inputs;
+                 out attribute llmCurrent:TwinReal[1]:>> outputs;
                  in attribute current:TwinReal:>>inputs;
                  in attribute soc:TwinReal:>>inputs;
-
-                 out attribute llmCurrent:TwinReal[1]:>> outputs;
              }
 
              action avgTemp :> derivedAttributes{
                 in attribute temps:TwinReal[0..*]:>>inputs;
-                out attribute avgTemp:TwinReal:>>outputs = Avg(temps);
+                out attribute avgTemp:TwinReal:>>outputs;
                 assign avgTemp := Avg(temps);
              }
 
@@ -169,35 +183,38 @@ package Test{
                  attribute :>strategyType = CustomStrategyType::LAMBDA;
                  attribute :>> contentPath = "battery/consForecast";
                  in attribute avgTemperature:TwinReal:>> inputs;
+                 out attribute predicted : TwinReal :>> outputs;
                  in attribute current:TwinReal :>>inputs;
-                 out attribute predicted : TwinReal :> outputs;
+
              }
          }
 
         flow :>predictiveToPrescriptiveFlows from predictiveBattery.consForecast.predicted to prescriptiveBattery.chargeStrategyExternal.predictedCurrent;
         flow :>predictiveToPrescriptiveFlows from predictiveBattery.consForecast.predicted to prescriptiveBattery.chargeStrategyInternal.predictedCurrent;
-        flow :>prescriptiveToPhysicalFlows from prescriptiveBattery.chargeStrategyExternal.chargeCmd to physicalBattery.p12.charge;
+        flow :>prescriptiveToPhysicalFlows from prescriptiveBattery.chargeStrategyInternal.chargeCmd to physicalBattery.p12.charge;
         flow :>prescriptiveToPhysicalFlows from prescriptiveBattery.chargeStrategyInternal.chargeCmd to physicalBattery.p12.charge;
 
         part prescriptiveBattery :>> prescriptiveModel {
 
             action chargeStrategyExternal : ExternalStrategy :> prescriptiveStrategies {
-                attribute :> strategyType = CustomStrategyType::LAMBDA;
+                attribute :> strategyType = CustomStrategyType::CONTAINER;
                 attribute :> contentPath = "battery/chargeStrategy";
 
                 in attribute predictedCurrent : TwinReal :>> inputs;
-                in attribute maxCharge : TwinReal :>> inputs;
-
                 out attribute chargeCmd : TwinReal :>> outputs;
+                in attribute maxCharge : TwinReal :>> inputs;
             }
 
             action chargeStrategyInternal : CustomStrategy :> prescriptiveStrategies {
                 in attribute predictedCurrent : TwinReal :>> inputs;
-                in attribute maxCharge : TwinReal :>> inputs;
-
                 out attribute chargeCmd : TwinReal :>> outputs;
+                in attribute maxCharge : TwinReal :>> inputs;
+                in attribute posTest12:Position:>>inputs;
+
+                attribute test12:TwinReal:>local_Attributes = Avg(posTest12.x);
                 if LT_real(predictedCurrent, maxCharge) {
                     assign chargeCmd := predictedCurrent;
+                    }
             }
 
 

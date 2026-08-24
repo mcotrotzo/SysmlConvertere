@@ -162,7 +162,7 @@ public enum LibraryNameSpaces {
 	TWIN_REAL("ScalarValues::Real"),
 	TWIN_INTEGER("ScalarValues::Integer"),
 	TWIN_BOOLEAN("ScalarValues::Boolean"),
-	TWIN_STRING("ScalarValues::String");
+	TWIN_STRING("ScalarValues::String"), CONST_PORT("PhysicalTwinLibrary::ConstPort");
 
 
 	private final String namespace;

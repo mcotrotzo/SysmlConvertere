@@ -47,7 +47,6 @@ public class TwinForLoopActionMapped extends TwinActionUsageMapped<ForLoopAction
 				getSysmlElement().getLoopVariable(),
 				this,TwinAttributeUsageMapped.class, Role.FOR_LOOP_VARIABLE
 		);
-
 		expr = context.map(
 				getSysmlElement().getSeqArgument(),
 				this,

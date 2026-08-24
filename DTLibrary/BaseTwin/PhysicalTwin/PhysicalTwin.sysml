@@ -32,6 +32,11 @@ library package PhysicalTwinLibrary {
         in attribute commands[0..*] : TwinAttribute;
     }
 
+    port def ConstPort :> TwinPort {
+        out attribute measurements[0..*] : TwinAttribute;
+
+    }
+
   
 
 

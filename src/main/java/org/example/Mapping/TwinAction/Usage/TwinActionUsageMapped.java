@@ -10,4 +10,9 @@ public abstract class TwinActionUsageMapped <T extends Feature> extends MappedEl
 	public TwinActionUsageMapped(T sysmlElement) {
 		super(sysmlElement);
 	}
+
+	public static Class<TwinActionUsageMapped<?>> getRawClass() {
+		return (Class<TwinActionUsageMapped<?>>) (Class<?>) TwinActionUsageMapped.class;
+
+	}
 }

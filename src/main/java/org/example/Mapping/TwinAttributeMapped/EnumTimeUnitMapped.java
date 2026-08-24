@@ -1,7 +1,8 @@
 package org.example.Mapping.TwinAttributeMapped;
 
 import lombok.ToString;
-import EnumTimeUnit;
+
+import org.example.Mapping.Interfaces.TwinEnumPackage.EnumTimeUnit;
 import org.example.Mapping.NewVersion.Abstract.MappedElementType;
 import org.example.Util.LibraryNameSpaces;
 import org.omg.sysml.lang.sysml.Feature;

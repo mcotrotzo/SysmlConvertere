@@ -1,11 +1,13 @@
 package org.example.Mapping.NewVersion.TaxonomyMapped;
 
 import lombok.ToString;
-import org.example.Mapping.Interfaces.Database;
+import org.example.Mapping.Interfaces.DataBase.Database;
 import org.example.Mapping.Interfaces.BaseTaxonomy.Shadow;
+import org.example.Mapping.Interfaces.DataBase.Usage.DataBaseUsage;
 import org.example.Mapping.NewVersion.Abstract.MappedElement;
 import org.example.Mapping.NewVersion.Abstract.MappedElementType;
-import org.example.Mapping.NewVersion.DatabaseMapped;
+import org.example.Mapping.NewVersion.Database.DatabaseMapped;
+import org.example.Mapping.NewVersion.Database.Usage.DatabaseUsageMapped;
 import org.example.Mapping.NewVersion.MappingContext;
 import org.example.Mapping.NewVersion.MappingException;
 import org.example.Util.LibraryNameSpaces;
@@ -17,7 +19,7 @@ import java.util.List;
 @MappedElementType(LibraryNameSpaces.SHADOW)
 @ToString(callSuper = true)
 public class ShadowMapped<T extends Type> extends MappedElement<T> implements Shadow {
-	List<DatabaseMapped> databases = new ArrayList<>();
+	List<DatabaseUsageMapped> databases = new ArrayList<>();
 
 	public ShadowMapped(T sysmlElement) {
 		super(sysmlElement);
@@ -26,13 +28,13 @@ public class ShadowMapped<T extends Type> extends MappedElement<T> implements Sh
 
 	@Override
 	public void parse(MappingContext context) throws MappingException {
-		databases = context.mapSlot(this, "databases", DatabaseMapped.class);
+		databases = context.mapSlot(this, "databases", DatabaseUsageMapped.class);
 	}
 
 
 
 	@Override
-	public List<Database> getDatabases() {
+	public List<DataBaseUsage> getDatabases() {
 		return new ArrayList<>(databases);
 	}
 }

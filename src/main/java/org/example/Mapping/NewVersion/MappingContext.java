@@ -20,8 +20,8 @@ public final class MappingContext {
 	private final Utils utils;
 	private final ContainerManager containerManager;
 
-	private final Map<Element, MappedNamespaceElement<?>> mappedElements = new IdentityHashMap<>();
-
+	private final Map<Element, MappedNamespaceElement<?>> mappedElements =
+			new IdentityHashMap<>();
 	public MappingContext(Utils utils, ContainerManager containerManager) {
 		this.utils = utils;
 		this.containerManager = containerManager;
@@ -62,8 +62,8 @@ public final class MappingContext {
 
 		Objects.requireNonNull(element, "element");
 
-		MappedNamespaceElement<?> existing = mappedElements.get(element);
 
+		MappedNamespaceElement<?> existing = mappedElements.get(element);
 		if (existing != null) {
 			assignOwner(existing, owner);
 			return existing;
@@ -96,6 +96,7 @@ public final class MappingContext {
 
 
 	private void assignOwner(MappedNamespaceElement<?> mapped, MappedNamespaceElement<?> owner) {
+
 		if (owner == null) {
 			return;
 		}

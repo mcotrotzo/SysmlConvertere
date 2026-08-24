@@ -38,9 +38,12 @@ public class MultiType extends GenerelRules{
 				}
 
 				boolean related =
-						TypeUtil.specializes(a, b)
-								|| TypeUtil.specializes(b, a);
+						TypeUtil.isCompatible(a, b)
+								|| TypeUtil.isCompatible(b, a);
 
+				if(a.getName().equals("Flow")|| b.getName().equals("Flow")){
+					continue;
+				}
 				if (!related) {
 					throw new MappingException(
 							("Type '%s' has incompatible typings '%s' and '%s'.")

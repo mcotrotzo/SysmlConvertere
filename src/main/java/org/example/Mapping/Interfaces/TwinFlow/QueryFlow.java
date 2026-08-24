@@ -1,8 +1,9 @@
 package org.example.Mapping.Interfaces.TwinFlow;
 
-import EnumOrderBy;
-import EnumTimeUnit;
+
 import org.example.Mapping.Interfaces.TwinAttribute.BaseTwinAttribute.Usage.TwinBaseIntegerUsage;
+import org.example.Mapping.Interfaces.TwinEnumPackage.EnumOrderBy;
+import org.example.Mapping.Interfaces.TwinEnumPackage.EnumTimeUnit;
 
 import java.util.Optional;
 

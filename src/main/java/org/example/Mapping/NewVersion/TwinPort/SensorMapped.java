@@ -2,6 +2,7 @@ package org.example.Mapping.NewVersion.TwinPort;
 
 
 import lombok.ToString;
+import org.example.Mapping.Interfaces.TwinAttribute.BaseTwinAttribute.Role;
 import org.example.Mapping.Interfaces.TwinPort.Sensors;
 import org.example.Mapping.Interfaces.TwinAttribute.BaseTwinAttribute.Usage.TwinAttributeUsage;
 import org.example.Mapping.NewVersion.Abstract.MappedElementType;
@@ -32,6 +33,6 @@ public class SensorMapped<T extends Type> extends TwinPortMapped<T> implements S
 	@Override
 	public void parse(MappingContext context) throws MappingException {
 		super.parse(context);
-		attributes = context.mapSlot(this, "measurements", TwinAttributeUsageMapped.class);
+		attributes = context.mapAttributes(this, "measurements", TwinAttributeUsageMapped.class, Role.SENSOR);
 	}
 }

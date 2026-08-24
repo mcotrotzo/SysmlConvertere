@@ -1,10 +1,11 @@
 package org.example.Mapping.NewVersion.TwinFlow.Definition;
 
 import org.example.Mapping.Interfaces.BaseTaxonomy.Context.Context;
-import EnumOrderBy;
-import EnumTimeUnit;
+
 import org.example.Mapping.Interfaces.TwinAttribute.BaseTwinAttribute.Role;
 import org.example.Mapping.Interfaces.TwinAttribute.BaseTwinAttribute.Usage.TwinBaseIntegerUsage;
+import org.example.Mapping.Interfaces.TwinEnumPackage.EnumOrderBy;
+import org.example.Mapping.Interfaces.TwinEnumPackage.EnumTimeUnit;
 import org.example.Mapping.Interfaces.TwinFlow.QueryFlowDefinition;
 import org.example.Mapping.NewVersion.Abstract.MappedElement;
 import org.example.Mapping.NewVersion.Abstract.MappedElementType;

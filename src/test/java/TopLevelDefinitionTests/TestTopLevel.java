@@ -24,21 +24,33 @@ public class TestTopLevel extends AbstarctTest {
 		var descriptive = battery.getDescriptiveModel().orElseThrow();
 		var predictive = battery.getPredictiveModel().orElseThrow();
 		var prescriptive = battery.getPrescriptiveModel().orElseThrow();
+		var queryFlows = battery.getQueryFlows();
+		var descriptiveToPredictiveFlows = battery.getDescriptiveToPredictiveFlows();
+		var descriptiveToPrescriptiveFlows = battery.getDescriptiveToPrescriptiveFlows();
+		var predictiveToPrescriptiveFlows = battery.getPredictiveToPrescriptiveFlows();
+		var prescriptiveToPhysicalFlows = battery.getPrescriptiveToPhysicalFlows();
 
 		assertEquals(4, physical.getSensors().size());
 		assertEquals(1, physical.getActuators().size());
 		assertEquals(1, physical.getControlUnits().size());
-		assertEquals(9, physical.getConstAttributes().size());
+		assertEquals(9, physical.getConstPort().get().getAttributes().size());
 
-		assertEquals(4, descriptive.getDerivedAttributes().size());
+		assertEquals(3, descriptive.getDerivedAttributes().size());
 		assertEquals(1, descriptive.getDescriptiveStateMachines().size());
 		assertEquals(1, descriptive.getDescriptiveStrategies().size());
 
 		assertEquals(1, predictive.getPredictiveStrategies().size());
 
-		assertEquals(1, prescriptive.getPrescriptiveStrategies().size());
+		assertEquals(2, prescriptive.getPrescriptiveStrategies().size());
 
 		assertEquals(1, shadow.getDatabases().size());
+
+		assertEquals(6,queryFlows.size());
+		assertEquals(2,descriptiveToPredictiveFlows.size());
+		assertEquals(0,descriptiveToPrescriptiveFlows.size());
+		assertEquals(2,predictiveToPrescriptiveFlows.size());
+		assertEquals(2,prescriptiveToPhysicalFlows.size());
+
 	}
 
 	@Test

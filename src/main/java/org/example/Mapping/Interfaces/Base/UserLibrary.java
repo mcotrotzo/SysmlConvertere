@@ -2,7 +2,7 @@ package org.example.Mapping.Interfaces.Base;
 
 import org.example.Mapping.Interfaces.TwinAttribute.BaseTwinAttribute.Definition.TwinBaseTypeDefinition;
 import org.example.Mapping.Interfaces.TwinAttribute.CustomType.Definition.CustomTypeDefinition;
-import org.example.Mapping.Interfaces.Query;
+import org.example.Mapping.Interfaces.TwinFlow.QueryFlowDefinition;
 import org.example.Mapping.Interfaces.TwinFunction.Definition.BaseFunction;
 import org.example.Mapping.Interfaces.TwinFunction.Definition.CustomCalculation;
 
@@ -13,5 +13,5 @@ public interface UserLibrary extends Package {
 	List<? extends CustomCalculation> getCustomCalculations();
 	List<? extends TwinBaseTypeDefinition> getBaseTypeDefinitions();
 	List<? extends CustomTypeDefinition> getCustomTypeDefinitions();
-	List<? extends Query> getQueryDefinitions();
+	List<? extends QueryFlowDefinition> getQueryDefinitions();
 }

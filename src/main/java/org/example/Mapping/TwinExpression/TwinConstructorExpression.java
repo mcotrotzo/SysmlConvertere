@@ -18,6 +18,11 @@ public class TwinConstructorExpression extends TwinInvocationExpression<Construc
 	}
 
 	@Override
+	protected Class<TwinAttributeDefinitionMapped> resolveInvokeType() {
+		return TwinAttributeDefinitionMapped.class;
+	}
+
+	@Override
 	public Reference<? extends TwinAttributeDefinition> getConstructedType() {
 		return getInvokeType();
 	}

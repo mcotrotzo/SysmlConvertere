@@ -11,12 +11,26 @@ import org.omg.sysml.lang.sysml.InvocationExpression;
 
 @MappedMetaclass
 @ToString(callSuper = true)
-public class TwinCalculationExpression extends TwinInvocationExpression<InvocationExpression,FunctionMapped<?>> implements Calculation {
-	private MappedReference<? extends Function> calledFunction;
+public class TwinCalculationExpression
+		extends TwinInvocationExpression<
+		InvocationExpression,
+		FunctionMapped<?>
+		>
+		implements Calculation {
+
 	public TwinCalculationExpression(InvocationExpression sysmlElement) {
 		super(sysmlElement);
-
 	}
+	@SuppressWarnings("unchecked")
+	public static Class<FunctionMapped<?>> getFunctionRawClass() {
+		return (Class<FunctionMapped<?>>) (Class<?>) FunctionMapped.class;
+	}
+
+	@Override
+	protected Class<FunctionMapped<?>> resolveInvokeType() {
+		return getFunctionRawClass();
+	}
+
 	@Override
 	public Reference<? extends Function> getCalledFunction() {
 		return getInvokeType();

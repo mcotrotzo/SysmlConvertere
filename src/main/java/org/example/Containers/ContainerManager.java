@@ -74,12 +74,6 @@ public final class ContainerManager {
 	}
 
 
-	/*
-	 * ============================================================
-	 * MAPPED CLASS DISCOVERY
-	 * ============================================================
-	 */
-
 	public List<Class<? extends MappedElement<?>>> getLibraryMappedClasses() {
 		return getMappedElementClasses(MappedElementType.class);
 	}
@@ -140,11 +134,6 @@ public final class ContainerManager {
 	}
 
 
-	/*
-	 * ============================================================
-	 * GENERIC CONSTRUCTOR MATCHING
-	 * ============================================================
-	 */
 
 	private Constructor<?> findCompatibleConstructor(
 			Class<? extends MappedNamespaceElement<?>> mappedClass,
@@ -299,9 +288,6 @@ public final class ContainerManager {
 			}
 		}
 
-		/*
-		 * Then SysML metaclass mapping.
-		 */
 		Constructor<? extends MappedElement<?>> metaclassConstructor =
 				findTypeMetaclassConstructor(sysmlElement);
 
@@ -309,10 +295,6 @@ public final class ContainerManager {
 			return metaclassConstructor;
 		}
 
-		/*
-		 * InvocationExpression:
-		 * library typing comes after metaclass matching.
-		 */
 		if (sysmlElement instanceof InvocationExpression) {
 
 			Constructor<? extends MappedElement<?>> libraryConstructor =
@@ -377,13 +359,6 @@ public final class ContainerManager {
 	}
 
 
-	/*
-	 * ============================================================
-	 * NON-TYPE @MappedMetaclass
-	 *
-	 * e.g. ImportMapped
-	 * ============================================================
-	 */
 
 	private Constructor<? extends MappedNamespaceElement<?>> findNamespaceMetaclassConstructor(
 			Element sysmlElement

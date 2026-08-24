@@ -1,19 +1,22 @@
 package org.example.Mapping.Interfaces.BaseTaxonomy;
 
 import org.example.Mapping.Interfaces.BaseTaxonomy.Context.Context;
-import org.example.Mapping.Interfaces.DescriptiveTwinStateMachine;
-import org.example.Mapping.Interfaces.DescriptiveStrategy;
+import org.example.Mapping.Interfaces.TwinAction.Usage.ActionUsage;
 import org.example.Mapping.Interfaces.TwinAttribute.BaseTwinAttribute.Usage.TwinAttributeUsage;
+import org.example.Mapping.Interfaces.TwinFlow.FlowUsage;
+import org.example.Mapping.Interfaces.TwinStateMachine.Usage.TwinStateMachineUsage;
+import org.example.Mapping.Interfaces.TwinStrategy.Usage.StrategyUsage;
 
 import java.util.List;
 
 public interface DescriptiveModel extends Taxonomy {
 
-	List<TwinAttributeUsage> getDerivedAttributes();
+	List<ActionUsage> getDerivedAttributes();
 
-	List<DescriptiveTwinStateMachine> getDescriptiveStateMachines();
+	List<TwinStateMachineUsage> getDescriptiveStateMachines();
 
-	List<DescriptiveStrategy> getDescriptiveStrategies();
+	List<StrategyUsage> getDescriptiveStrategies();
+	List<FlowUsage> getDescriptiveFlows();
 
 	@Override
 	default Context getContext() {

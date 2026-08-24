@@ -1,6 +1,7 @@
 package org.example.Mapping.NewVersion.TwinPort;
 
 import lombok.ToString;
+import org.example.Mapping.Interfaces.TwinAttribute.BaseTwinAttribute.Role;
 import org.example.Mapping.Interfaces.TwinAttribute.BaseTwinAttribute.Usage.TwinBaseStringUsage;
 import org.example.Mapping.Interfaces.TwinPort.HTTPProtocol;
 import org.example.Mapping.NewVersion.Abstract.MappedElementType;
@@ -32,6 +33,6 @@ public class CommunicationHTTPProtocolMapped extends CommunicationProtocolMapped
 	public void parse(MappingContext context) throws MappingException {
 		super.parse(context);
 
-		url = context.mapSlot(this, "url", TwinStringMappedUsage.class);
+		url = context.mapAttributes(this, "url", TwinStringMappedUsage.class, Role.CONFIG);
 	}
 }

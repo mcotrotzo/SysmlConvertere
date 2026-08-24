@@ -2,6 +2,7 @@ package org.example.Mapping.NewVersion.TwinPort;
 
 
 import lombok.ToString;
+import org.example.Mapping.Interfaces.TwinAttribute.BaseTwinAttribute.Role;
 import org.example.Mapping.Interfaces.TwinAttribute.BaseTwinAttribute.Usage.TwinBaseStringUsage;
 import org.example.Mapping.Interfaces.TwinPort.MQTTProtocol;
 import org.example.Mapping.NewVersion.Abstract.MappedElementType;
@@ -27,9 +28,9 @@ public class CommunicationMQTTProtocolMapped extends CommunicationProtocolMapped
 	@Override
 	public void parse(MappingContext context) throws MappingException {
 		super.parse(context);
-		topic = context.mapSlot(this, "topic", TwinStringMappedUsage.class);
+		topic = context.mapAttributes(this, "topic", TwinStringMappedUsage.class, Role.CONFIG);
 
-		broker = context.mapSlot(this, "broker", TwinStringMappedUsage.class);
+		broker = context.mapAttributes(this, "broker", TwinStringMappedUsage.class, Role.CONFIG);
 	}
 
 	@Override

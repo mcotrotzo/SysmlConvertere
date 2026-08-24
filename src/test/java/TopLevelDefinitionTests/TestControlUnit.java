@@ -7,7 +7,7 @@ public class TestControlUnit extends AbstarctTest {
 
 	@Test
 	public void testControlUnit() {
-		assertAmount(org.example.Mapping.Interfaces.ControlUnit.class, 1);
+		assertAmount(org.example.Mapping.Interfaces.TwinStateMachine.TwinStateMachine.class, 1);
 	}
 
 

@@ -1,7 +1,8 @@
 package org.example.Mapping.TwinAttributeMapped;
 
 import lombok.ToString;
-import CustomStrategyType;
+
+import org.example.Mapping.Interfaces.TwinEnumPackage.CustomStrategyType;
 import org.example.Mapping.NewVersion.Abstract.MappedElementType;
 import org.example.Util.LibraryNameSpaces;
 import org.omg.sysml.lang.sysml.Feature;
