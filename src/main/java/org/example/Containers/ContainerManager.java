@@ -74,15 +74,15 @@ public final class ContainerManager {
 	}
 
 
-	public List<Class<? extends MappedElement<?>>> getLibraryMappedClasses() {
+	public List<Class<? extends MappedElement<?,?>>> getLibraryMappedClasses() {
 		return getMappedElementClasses(MappedElementType.class);
 	}
 
-	public List<Class<? extends MappedElement<?>>> getTypeMetaclassMappedClasses() {
+	public List<Class<? extends MappedElement<?,?>>> getTypeMetaclassMappedClasses() {
 		return getMappedElementClasses(MappedMetaclass.class);
 	}
 
-	public List<Class<? extends MappedNamespaceElement<?>>> getNamespaceMetaclassMappedClasses() {
+	public List<Class<? extends MappedNamespaceElement<?,?>>> getNamespaceMetaclassMappedClasses() {
 		return getMappedNamespaceClasses(MappedMetaclass.class);
 	}
 
@@ -99,7 +99,7 @@ public final class ContainerManager {
 				.collect(Collectors.toCollection(ArrayList::new));
 	}
 
-	private List<Class<? extends MappedElement<?>>> getMappedElementClasses(
+	private List<Class<? extends MappedElement<?,?>>> getMappedElementClasses(
 			Class<? extends Annotation> annotation
 	) {
 		return containers
@@ -111,7 +111,7 @@ public final class ContainerManager {
 				.collect(Collectors.toCollection(ArrayList::new));
 	}
 
-	private List<Class<? extends MappedNamespaceElement<?>>> getMappedNamespaceClasses(
+	private List<Class<? extends MappedNamespaceElement<?,?>>> getMappedNamespaceClasses(
 			Class<? extends Annotation> annotation
 	) {
 		return containers
@@ -123,9 +123,9 @@ public final class ContainerManager {
 				.collect(Collectors.toCollection(ArrayList::new));
 	}
 
-	public List<Class<? extends MappedElement<?>>> getMappedElementClasses() {
+	public List<Class<? extends MappedElement<?,?>>> getMappedElementClasses() {
 
-		List<Class<? extends MappedElement<?>>> result =
+		List<Class<? extends MappedElement<?,?>>> result =
 				getLibraryMappedClasses();
 
 		sortBySysmlTypeSpecificity(result);
@@ -136,7 +136,7 @@ public final class ContainerManager {
 
 
 	private Constructor<?> findCompatibleConstructor(
-			Class<? extends MappedNamespaceElement<?>> mappedClass,
+			Class<? extends MappedNamespaceElement<?,?>> mappedClass,
 			Element sysmlElement
 	) {
 		Constructor<?> bestConstructor = null;
@@ -174,7 +174,7 @@ public final class ContainerManager {
 
 
 
-	public Constructor<? extends MappedNamespaceElement<?>> getMappedConstructor(
+	public Constructor<? extends MappedNamespaceElement<?,?>> getMappedConstructor(
 			Element sysmlElement
 	) throws MappingException {
 
@@ -188,7 +188,7 @@ public final class ContainerManager {
 
 		if (sysmlElement instanceof org.omg.sysml.lang.sysml.Package sysmlPackage) {
 
-			Constructor<? extends MappedNamespaceElement<?>> constructor =
+			Constructor<? extends MappedNamespaceElement<?,?>> constructor =
 					findPackageConstructor(sysmlPackage);
 
 			if (constructor != null) {
@@ -196,7 +196,7 @@ public final class ContainerManager {
 			}
 		}
 
-		Constructor<? extends MappedNamespaceElement<?>> metaclassConstructor =
+		Constructor<? extends MappedNamespaceElement<?,?>> metaclassConstructor =
 				findNamespaceMetaclassConstructor(sysmlElement);
 
 		if (metaclassConstructor != null) {
@@ -214,7 +214,7 @@ public final class ContainerManager {
 
 
 
-	private Constructor<? extends MappedNamespaceElement<?>> findPackageConstructor(
+	private Constructor<? extends MappedNamespaceElement<?,?>> findPackageConstructor(
 			org.omg.sysml.lang.sysml.Package sysmlPackage
 	) throws MappingException {
 
@@ -272,7 +272,7 @@ public final class ContainerManager {
 
 
 
-	public Constructor<? extends MappedElement<?>> getMappedConstructor(
+	public Constructor<? extends MappedElement<?,?>> getMappedConstructor(
 			Type sysmlElement
 	) throws MappingException {
 
@@ -280,7 +280,7 @@ public final class ContainerManager {
 
 		if (!(sysmlElement instanceof InvocationExpression)) {
 
-			Constructor<? extends MappedElement<?>> libraryConstructor =
+			Constructor<? extends MappedElement<?,?>> libraryConstructor =
 					findLibraryConstructor(sysmlElement);
 
 			if (libraryConstructor != null) {
@@ -288,7 +288,7 @@ public final class ContainerManager {
 			}
 		}
 
-		Constructor<? extends MappedElement<?>> metaclassConstructor =
+		Constructor<? extends MappedElement<?,?>> metaclassConstructor =
 				findTypeMetaclassConstructor(sysmlElement);
 
 		if (metaclassConstructor != null) {
@@ -297,7 +297,7 @@ public final class ContainerManager {
 
 		if (sysmlElement instanceof InvocationExpression) {
 
-			Constructor<? extends MappedElement<?>> libraryConstructor =
+			Constructor<? extends MappedElement<?,?>> libraryConstructor =
 					findLibraryConstructor(sysmlElement);
 
 			if (libraryConstructor != null) {
@@ -321,12 +321,12 @@ public final class ContainerManager {
 	 * ============================================================
 	 */
 
-	private Constructor<? extends MappedElement<?>> findTypeMetaclassConstructor(
+	private Constructor<? extends MappedElement<?,?>> findTypeMetaclassConstructor(
 			Type sysmlElement
 	) {
 		Constructor<?> best = null;
 
-		for (Class<? extends MappedElement<?>> mappedClass :
+		for (Class<? extends MappedElement<?,?>> mappedClass :
 				getTypeMetaclassMappedClasses()) {
 
 			Constructor<?> constructor =
@@ -360,12 +360,12 @@ public final class ContainerManager {
 
 
 
-	private Constructor<? extends MappedNamespaceElement<?>> findNamespaceMetaclassConstructor(
+	private Constructor<? extends MappedNamespaceElement<?,?>> findNamespaceMetaclassConstructor(
 			Element sysmlElement
 	) {
 		Constructor<?> best = null;
 
-		for (Class<? extends MappedNamespaceElement<?>> mappedClass :
+		for (Class<? extends MappedNamespaceElement<?,?>> mappedClass :
 				getNamespaceMetaclassMappedClasses()) {
 
 			Constructor<?> constructor =
@@ -406,7 +406,7 @@ public final class ContainerManager {
 
 	private boolean isLibraryTypeCompatible(
 			Type sysmlElement,
-			Class<? extends MappedElement<?>> mappedClass
+			Class<? extends MappedElement<?,?>> mappedClass
 	) {
 		Type mappedLibraryType =
 				getMappedLibraryType(mappedClass);
@@ -418,11 +418,11 @@ public final class ContainerManager {
 		);
 	}
 
-	private Constructor<? extends MappedElement<?>> findLibraryConstructor(
+	private Constructor<? extends MappedElement<?,?>> findLibraryConstructor(
 			Type sysmlElement
 	) throws MappingException {
 
-		List<Class<? extends MappedElement<?>>> classes =
+		List<Class<? extends MappedElement<?,?>>> classes =
 				getLibraryMappedClasses();
 
 		sortBySysmlTypeSpecificity(classes);
@@ -430,7 +430,7 @@ public final class ContainerManager {
 		Map<Constructor<?>, Type> candidates =
 				new LinkedHashMap<>();
 
-		for (Class<? extends MappedElement<?>> mappedClass : classes) {
+		for (Class<? extends MappedElement<?,?>> mappedClass : classes) {
 
 			if (!isLibraryTypeCompatible(
 					sysmlElement,
@@ -486,9 +486,9 @@ public final class ContainerManager {
 	}
 
 	private void sortBySysmlTypeSpecificity(
-			List<Class<? extends MappedElement<?>>> classes
+			List<Class<? extends MappedElement<?,?>>> classes
 	) {
-		Map<Class<? extends MappedElement<?>>, Type> libraryTypes =
+		Map<Class<? extends MappedElement<?,?>>, Type> libraryTypes =
 				new HashMap<>();
 
 		for (var mappedClass : classes) {
@@ -498,11 +498,11 @@ public final class ContainerManager {
 			);
 		}
 
-		Map<Class<? extends MappedElement<?>>,
-				List<Class<? extends MappedElement<?>>>> edges =
+		Map<Class<? extends MappedElement<?,?>>,
+				List<Class<? extends MappedElement<?,?>>>> edges =
 				new HashMap<>();
 
-		Map<Class<? extends MappedElement<?>>, Integer> indegree =
+		Map<Class<? extends MappedElement<?,?>>, Integer> indegree =
 				new HashMap<>();
 
 		for (var c : classes) {
@@ -578,7 +578,7 @@ public final class ContainerManager {
 			}
 		}
 
-		TreeSet<Class<? extends MappedElement<?>>> ready =
+		TreeSet<Class<? extends MappedElement<?,?>>> ready =
 				new TreeSet<>(
 						Comparator.comparing(Class::getName)
 				);
@@ -590,7 +590,7 @@ public final class ContainerManager {
 			}
 		}
 
-		List<Class<? extends MappedElement<?>>> result =
+		List<Class<? extends MappedElement<?,?>>> result =
 				new ArrayList<>();
 
 		while (!ready.isEmpty()) {
@@ -617,7 +617,7 @@ public final class ContainerManager {
 
 		if (result.size() != classes.size()) {
 
-			List<Class<? extends MappedElement<?>>> remaining =
+			List<Class<? extends MappedElement<?,?>>> remaining =
 					new ArrayList<>(classes);
 
 			remaining.removeAll(result);
@@ -635,7 +635,7 @@ public final class ContainerManager {
 
 
 	private Type getMappedLibraryType(
-			Class<? extends MappedElement<?>> mappedClass
+			Class<? extends MappedElement<?,?>> mappedClass
 	) {
 		MappedElementType annotation =
 				mappedClass.getAnnotation(
@@ -652,17 +652,17 @@ public final class ContainerManager {
 	}
 
 	@SuppressWarnings("unchecked")
-	private Class<? extends MappedElement<?>> castMappedElementClass(
+	private Class<? extends MappedElement<?,?>> castMappedElementClass(
 			Class<?> mappedClass
 	) {
-		return (Class<? extends MappedElement<?>>) mappedClass;
+		return (Class<? extends MappedElement<?,?>>) mappedClass;
 	}
 
 	@SuppressWarnings("unchecked")
-	private Class<? extends MappedNamespaceElement<?>> castMappedNamespaceClass(
+	private Class<? extends MappedNamespaceElement<?,?>> castMappedNamespaceClass(
 			Class<?> mappedClass
 	) {
-		return (Class<? extends MappedNamespaceElement<?>>) mappedClass;
+		return (Class<? extends MappedNamespaceElement<?,?>>) mappedClass;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -673,21 +673,21 @@ public final class ContainerManager {
 	}
 
 	@SuppressWarnings("unchecked")
-	private Constructor<? extends MappedElement<?>> castMappedConstructor(
+	private Constructor<? extends MappedElement<?,?>> castMappedConstructor(
 			Constructor<?> constructor
 	) {
 		return constructor == null
 				? null
-				: (Constructor<? extends MappedElement<?>>) constructor;
+				: (Constructor<? extends MappedElement<?,?>>) constructor;
 	}
 
 	@SuppressWarnings("unchecked")
-	private Constructor<? extends MappedNamespaceElement<?>> castNamespaceConstructor(
+	private Constructor<? extends MappedNamespaceElement<?,?>> castNamespaceConstructor(
 			Constructor<?> constructor
 	) {
 		return constructor == null
 				? null
-				: (Constructor<? extends MappedNamespaceElement<?>>) constructor;
+				: (Constructor<? extends MappedNamespaceElement<?,?>>) constructor;
 	}
 
 	private String safeName(Element element) {

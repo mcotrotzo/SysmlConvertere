@@ -1,8 +1,11 @@
 package org.example.Mapping.Interfaces.DataBase;
 
 import org.example.Mapping.Interfaces.Base.Model;
-import org.example.Mapping.Interfaces.TwinAttribute.BaseTwinAttribute.Usage.TwinBaseIntegerUsage;
+import org.example.Mapping.Interfaces.Base.Type;
+import org.example.Mapping.Interfaces.Base.TypeKind.TypeKind;
+import org.example.Mapping.Interfaces.Base.TypeKind.Usage;
+import org.example.Mapping.Interfaces.TwinAttribute.BaseTwinAttribute.TwinBaseInteger;
 
-public interface Database extends Model {
-	TwinBaseIntegerUsage getDurationInDays();
+public interface Database<T extends TypeKind> extends Type<T> {
+	TwinBaseInteger<Usage> getDurationInDays();
 }

@@ -10,7 +10,7 @@ import org.omg.sysml.lang.sysml.Import;
 import org.omg.sysml.lang.sysml.Package;
 
 @MappedMetaclass
-public class ImportMapped extends MappedNamespaceElement<Import> {
+public class ImportMapped extends MappedNamespaceElement<Import> implements org.example.Mapping.Interfaces.Base.Import {
 
 
 	MappedReference<PackageElementType> importPackages;

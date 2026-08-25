@@ -4,7 +4,6 @@ package org.example.Mapping.TwinExpression;
 import lombok.Getter;
 import lombok.ToString;
 import org.example.Mapping.NewVersion.Abstract.MappedElement;
-import org.example.Mapping.NewVersion.Abstract.MappedElementDefinition;
 import org.example.Mapping.NewVersion.Abstract.MappedReference;
 import org.example.Mapping.NewVersion.MappingContext;
 import org.example.Mapping.NewVersion.MappingException;
@@ -16,7 +15,7 @@ import java.util.List;
 @MappedMetaclass
 public abstract class TwinInvocationExpression<
 		U extends InstantiationExpression,
-		Z extends MappedElement<?>
+		Z extends MappedElement<?,?>
 		> extends TwinExpression<U> {
 
 	private final List<TwinExpression<?>> arguments = new ArrayList<>();

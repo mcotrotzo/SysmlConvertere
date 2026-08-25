@@ -1,4 +1,6 @@
 package org.example.Mapping.Interfaces.TwinPort;
 
-public interface ConstPort extends TwinPort{
+import org.example.Mapping.Interfaces.Base.TypeKind.TypeKind;
+
+public interface ConstPort<T extends TypeKind> extends TwinPort<T>{
 }

@@ -1,13 +1,11 @@
 package org.example.Mapping.NewVersion.TaxonomyMapped;
 
 import lombok.ToString;
-import org.example.Mapping.Interfaces.DataBase.Database;
 import org.example.Mapping.Interfaces.BaseTaxonomy.Shadow;
 import org.example.Mapping.Interfaces.DataBase.Usage.DataBaseUsage;
 import org.example.Mapping.NewVersion.Abstract.MappedElement;
 import org.example.Mapping.NewVersion.Abstract.MappedElementType;
-import org.example.Mapping.NewVersion.Database.DatabaseMapped;
-import org.example.Mapping.NewVersion.Database.Usage.DatabaseUsageMapped;
+import org.example.Mapping.NewVersion.Database.DatabaseUsageMapped;
 import org.example.Mapping.NewVersion.MappingContext;
 import org.example.Mapping.NewVersion.MappingException;
 import org.example.Util.LibraryNameSpaces;

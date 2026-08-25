@@ -1,13 +1,13 @@
 package org.example.Mapping.TwinAction;
 
 import lombok.ToString;
+import org.example.Mapping.Interfaces.Base.TypeKind.Usage;
 import org.example.Mapping.Interfaces.TwinAttribute.BaseTwinAttribute.Role;
-import org.example.Mapping.Interfaces.TwinAttribute.BaseTwinAttribute.Usage.TwinAttributeUsage;
 import org.example.Mapping.Interfaces.TwinAction.Action;
 import org.example.Mapping.Interfaces.TwinAction.ForLoop;
+import org.example.Mapping.Interfaces.TwinAttribute.BaseTwinAttribute.TwinAttribute;
 import org.example.Mapping.TwinAction.Annotation.MappedMetaclass;
-import org.example.Mapping.TwinAction.Usage.TwinActionUsageMapped;
-import org.example.Mapping.TwinAttributeMapped.BaseTwinAttributeMapped.Usage.TwinAttributeUsageMapped;
+import org.example.Mapping.TwinAttributeMapped.BaseTwinAttributeMapped.Definition.TwinAttributeMapped;
 import org.example.Mapping.TwinExpression.TwinExpression;
 import org.example.Mapping.NewVersion.MappingContext;
 import org.example.Mapping.NewVersion.MappingException;
@@ -15,10 +15,10 @@ import org.omg.sysml.lang.sysml.ForLoopActionUsage;
 
 @MappedMetaclass
 @ToString(callSuper = true)
-public class TwinForLoopActionMapped extends TwinActionUsageMapped<ForLoopActionUsage> implements ForLoop {
-	private TwinAttributeUsageMapped loopVariable;
+public class TwinForLoopActionMapped extends TwinActionMapped<ForLoopActionUsage, Usage> implements ForLoop {
+	private TwinAttributeMapped<Usage> loopVariable;
 	private TwinExpression<?> expr;
-	private TwinActionUsageMapped<?> body;
+	private TwinActionMapped<?,Usage> body;
 
 	public TwinForLoopActionMapped(ForLoopActionUsage sysmlElement) {
 		super(sysmlElement);
@@ -26,7 +26,7 @@ public class TwinForLoopActionMapped extends TwinActionUsageMapped<ForLoopAction
 
 
 	@Override
-	public TwinAttributeUsage getLoopVariable() {
+	public TwinAttribute<Usage> getLoopVariable() {
 		return loopVariable;
 	}
 
@@ -36,7 +36,7 @@ public class TwinForLoopActionMapped extends TwinActionUsageMapped<ForLoopAction
 	}
 
 	@Override
-	public Action getBody() {
+	public Action<Usage> getBody() {
 		return body;
 	}
 
@@ -45,7 +45,7 @@ public class TwinForLoopActionMapped extends TwinActionUsageMapped<ForLoopAction
 
 		loopVariable = context.mapAttribute(
 				getSysmlElement().getLoopVariable(),
-				this,TwinAttributeUsageMapped.class, Role.FOR_LOOP_VARIABLE
+				this,TwinAttributeMapped.getRawUsageClass(), Role.FOR_LOOP_VARIABLE
 		);
 		expr = context.map(
 				getSysmlElement().getSeqArgument(),
@@ -56,7 +56,7 @@ public class TwinForLoopActionMapped extends TwinActionUsageMapped<ForLoopAction
 		body = context.map(
 				getSysmlElement().getBodyAction(),
 				this,
-				TwinActionUsageMapped.class
+				TwinActionMapped.getActionMappedUsageClass()
 		);
 	}
 }

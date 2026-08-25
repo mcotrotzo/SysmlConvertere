@@ -1,4 +1,6 @@
 package org.example.Mapping.Interfaces.DataBase;
 
-public interface RelationalDatabase extends Database {
+import org.example.Mapping.Interfaces.Base.TypeKind.TypeKind;
+
+public interface RelationalDatabase<T extends TypeKind> extends Database<T> {
 }

@@ -1,9 +1,11 @@
 package org.example.Mapping.Interfaces.TwinPort;
 
-import org.example.Mapping.Interfaces.TwinAttribute.BaseTwinAttribute.Usage.TwinBaseStringUsage;
+import org.example.Mapping.Interfaces.Base.TypeKind.TypeKind;
+import org.example.Mapping.Interfaces.Base.TypeKind.Usage;
+import org.example.Mapping.Interfaces.TwinAttribute.BaseTwinAttribute.TwinBaseString;
 
 import java.util.List;
 
-public interface HTTPProtocol extends Protocol {
-	List<TwinBaseStringUsage> getUrl();
+public interface HTTPProtocol<T extends TypeKind> extends Protocol<T> {
+	List<TwinBaseString<Usage>> getUrl();
 }

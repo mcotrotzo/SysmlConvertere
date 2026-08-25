@@ -1,4 +1,7 @@
 package org.example.Mapping.Interfaces.Base;
 
-public interface Import extends NameSpace{
+import org.example.Mapping.Interfaces.Base.TypeKind.NamespaceKind;
+
+public interface Import extends NameSpace<NamespaceKind>{
+
 }

@@ -1,26 +1,28 @@
 package org.example.Mapping.Interfaces.BaseTaxonomy;
 
+import org.example.Mapping.Interfaces.Base.Type;
+import org.example.Mapping.Interfaces.Base.TypeKind.TypeKind;
+import org.example.Mapping.Interfaces.Base.TypeKind.Usage;
 import org.example.Mapping.Interfaces.BaseTaxonomy.Context.Context;
-import org.example.Mapping.Interfaces.TwinAttribute.BaseTwinAttribute.Usage.TwinAttributeUsage;
-import org.example.Mapping.Interfaces.TwinFlow.FlowUsage;
-import org.example.Mapping.Interfaces.TwinPort.Usage.ActuatorUsage;
-import org.example.Mapping.Interfaces.TwinPort.Usage.ConstPortUsage;
-import org.example.Mapping.Interfaces.TwinPort.Usage.SensorUsage;
-import org.example.Mapping.Interfaces.TwinStateMachine.Usage.TwinStateMachineUsage;
+import org.example.Mapping.Interfaces.TwinFlow.Flow;
+import org.example.Mapping.Interfaces.TwinPort.Actuators;
+import org.example.Mapping.Interfaces.TwinPort.ConstPort;
+import org.example.Mapping.Interfaces.TwinPort.Sensors;
+import org.example.Mapping.Interfaces.TwinStateMachine.TwinStateMachine;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface PhysicalTwin extends Taxonomy {
+public interface PhysicalTwin <T extends TypeKind> extends Type<T> {
 
-	List<SensorUsage> getSensors();
+	List<Sensors<Usage>> getSensors();
 
-	List<ActuatorUsage> getActuators();
+	List<Actuators<Usage>> getActuators();
 
-	List<TwinStateMachineUsage> getControlUnits();
-	List<FlowUsage> getPhysicalFlows();
+	List<TwinStateMachine<Usage>> getControlUnits();
+	List<Flow<Usage>> getPhysicalFlows();
 
-	Optional<ConstPortUsage> getConstPort();
+	Optional<ConstPort<Usage>> getConstPort();
 
 
 	@Override

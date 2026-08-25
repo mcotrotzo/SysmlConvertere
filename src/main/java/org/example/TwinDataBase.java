@@ -1,7 +1,7 @@
 package org.example;
 
 
-import org.example.Mapping.Interfaces.Base.Usage;
+import org.example.Mapping.Interfaces.Base.TypeKind.Usage;
 import org.example.Mapping.Interfaces.KIND;
 import org.example.Mapping.Interfaces.Base.Model;
 import org.example.Mapping.Interfaces.Reference;

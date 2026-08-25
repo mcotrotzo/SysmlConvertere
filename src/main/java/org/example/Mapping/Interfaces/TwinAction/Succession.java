@@ -1,17 +1,16 @@
 package org.example.Mapping.Interfaces.TwinAction;
 
-import org.example.Mapping.Interfaces.Base.Model;
-import org.example.Mapping.Interfaces.Base.Usage;
+import org.example.Mapping.Interfaces.Base.TypeKind.Usage;
 import org.example.Mapping.Interfaces.Reference;
-import org.example.Mapping.Interfaces.TwinAction.Usage.ActionUsage;
+
 
 import java.util.List;
 
-public interface Succession extends ActionUsage {
+public interface Succession extends Action<Usage> {
 	/**
 	 * Returns a list of references to Action objects that are part of the succession.
 	 * Order is important, as it defines the sequence of actions to be executed.
 	 * @return a list of references to Action objects
 	 */
-	List<Reference<? extends Action>> getActionList();
+	List<Reference<? extends Action<Usage>>> getActionList();
 }

@@ -1,4 +1,6 @@
 package org.example.Mapping.Interfaces.TwinPort;
 
-public interface Sensors extends TwinPort {
+import org.example.Mapping.Interfaces.Base.TypeKind.TypeKind;
+
+public interface Sensors<T extends TypeKind> extends TwinPort<T> {
 }

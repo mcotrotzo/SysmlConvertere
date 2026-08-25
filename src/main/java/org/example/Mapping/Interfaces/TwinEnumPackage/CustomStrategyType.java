@@ -1,5 +1,4 @@
 package org.example.Mapping.Interfaces.TwinEnumPackage;
-
 import lombok.Getter;
 
 public enum CustomStrategyType  implements TwinEnum {

@@ -1,13 +1,13 @@
 package org.example.Mapping.Interfaces.TwinAction;
 
 
-import org.example.Mapping.Interfaces.TwinAction.Usage.ActionUsage;
+import org.example.Mapping.Interfaces.Base.TypeKind.Usage;
 import org.example.Mapping.Interfaces.TwinExpression.TwinExpression;
 
-public interface WhileLoop extends ActionUsage {
+public interface WhileLoop extends Action<Usage> {
 	TwinExpression getCondition();
 
 	TwinExpression getUntil();
 
-	Action getBody();
+	Action<Usage> getBody();
 }

@@ -9,20 +9,19 @@ import org.example.Mapping.NewVersion.Abstract.MappedElementType;
 import org.example.Mapping.NewVersion.MappingContext;
 import org.example.Mapping.NewVersion.MappingException;
 import org.example.Mapping.NewVersion.TwinStateMachine.Usage.TwinStateMachineUsageMapped;
-import org.example.Mapping.TwinAction.Definition.TwinActionBlockDefinitionMapped;
+import org.example.Mapping.TwinAction.TwinActionBlockMapped;
 import org.example.Mapping.TwinAction.Usage.TwinActionBlockUsage;
 import org.example.Mapping.TwinAction.Usage.TwinActionUsageMapped;
 import org.example.Util.LibraryNameSpaces;
 import org.omg.sysml.lang.sysml.ActionUsage;
 import org.omg.sysml.lang.sysml.StateDefinition;
-import org.omg.sysml.lang.sysml.StateUsage;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @MappedElementType(LibraryNameSpaces.STATE)
 @ToString(callSuper = true)
-public class TwinStateMachineDefintionMapped extends TwinActionBlockDefinitionMapped<StateDefinition> implements TwinStateMachineDefinition {
+public class TwinStateMachineDefintionMapped extends TwinActionBlockMapped<StateDefinition> implements TwinStateMachineDefinition {
 	private List<TwinStateMachineUsageMapped> states = new ArrayList<>();
 	private List<Transition> transitions = new ArrayList<>();
 	private TwinActionUsageMapped<?> entryAction;

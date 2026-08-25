@@ -1,6 +1,7 @@
 package org.example.Mapping.NewVersion.FullTwinMapped;
 
 import lombok.ToString;
+import org.example.Mapping.Interfaces.Base.TypeKind.TypeKind;
 import org.example.Mapping.Interfaces.BaseTaxonomy.*;
 import org.example.Mapping.Interfaces.FullTwin.Twin;
 import org.example.Mapping.Interfaces.TwinFlow.FlowUsage;
@@ -20,7 +21,7 @@ import java.util.Optional;
 
 @MappedElementType(value = LibraryNameSpaces.TWIN)
 @ToString(callSuper = true)
-public class TwinMapped<T extends Type> extends MappedElement<T> implements Twin {
+public class TwinMapped<T extends Type,Z extends TypeKind> extends MappedElement<T,Z> implements Twin<Z> {
 
 	private Optional<PhysicalTwinUsageMapped> physicalTwin = Optional.empty();
 	private Optional<ShadowUsageMapped> shadowTwin = Optional.empty();

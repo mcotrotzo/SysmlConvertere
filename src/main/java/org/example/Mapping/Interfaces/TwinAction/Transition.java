@@ -1,16 +1,17 @@
 package org.example.Mapping.Interfaces.TwinAction;
 
 
+import org.example.Mapping.Interfaces.Base.TypeKind.Usage;
 import org.example.Mapping.Interfaces.Reference;
-import org.example.Mapping.Interfaces.TwinAction.Usage.ActionUsage;
+
 import org.example.Mapping.Interfaces.TwinExpression.TwinExpression;
 
 import java.util.List;
 
-public interface Transition extends ActionUsage {
-	Reference<? extends Action> getSource();
+public interface Transition extends Action<Usage> {
+	Reference<? extends Action<Usage>> getSource();
 
-	Reference<? extends Action> getTarget();
+	Reference<? extends Action<Usage>> getTarget();
 	/**
 	 * Returns the guard expressions associated with this transition.
 	 *
@@ -23,5 +24,5 @@ public interface Transition extends ActionUsage {
 	 *
 	 * @return the effect action
 	 */
-	Action getEffectAction();
+	Action<Usage> getEffectAction();
 }

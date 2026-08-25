@@ -1,4 +1,6 @@
 package org.example.Mapping.Interfaces.TwinStrategy;
 
-public interface CustomStrategy extends Strategy{
+import org.example.Mapping.Interfaces.Base.TypeKind.TypeKind;
+
+public interface CustomStrategy<T extends TypeKind> extends Strategy<T>{
 }

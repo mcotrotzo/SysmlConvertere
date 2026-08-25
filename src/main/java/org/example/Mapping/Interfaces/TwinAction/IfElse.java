@@ -1,13 +1,13 @@
 package org.example.Mapping.Interfaces.TwinAction;
 
 
-import org.example.Mapping.Interfaces.TwinAction.Usage.ActionUsage;
+import org.example.Mapping.Interfaces.Base.TypeKind.Usage;
 import org.example.Mapping.Interfaces.TwinExpression.TwinExpression;
 
-public interface IfElse extends ActionUsage {
+public interface IfElse extends Action<Usage> {
 	TwinExpression getCondition();
 
-	Action getThenAction();
+	Action<Usage> getThenAction();
 
-	Action getElseAction();
+	Action<Usage> getElseAction();
 }

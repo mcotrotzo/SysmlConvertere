@@ -1,22 +1,24 @@
 package org.example.Mapping.Interfaces.BaseTaxonomy;
 
+import org.example.Mapping.Interfaces.Base.Type;
+import org.example.Mapping.Interfaces.Base.TypeKind.TypeKind;
+import org.example.Mapping.Interfaces.Base.TypeKind.Usage;
 import org.example.Mapping.Interfaces.BaseTaxonomy.Context.Context;
-import org.example.Mapping.Interfaces.TwinAction.Usage.ActionUsage;
-import org.example.Mapping.Interfaces.TwinAttribute.BaseTwinAttribute.Usage.TwinAttributeUsage;
-import org.example.Mapping.Interfaces.TwinFlow.FlowUsage;
-import org.example.Mapping.Interfaces.TwinStateMachine.Usage.TwinStateMachineUsage;
-import org.example.Mapping.Interfaces.TwinStrategy.Usage.StrategyUsage;
+import org.example.Mapping.Interfaces.TwinAction.Action;
+import org.example.Mapping.Interfaces.TwinFlow.Flow;
+import org.example.Mapping.Interfaces.TwinStateMachine.TwinStateMachine;
+import org.example.Mapping.Interfaces.TwinStrategy.Strategy;
 
 import java.util.List;
 
-public interface DescriptiveModel extends Taxonomy {
+public interface DescriptiveModel<T extends TypeKind> extends Type<T> {
 
-	List<ActionUsage> getDerivedAttributes();
+	List<Action<Usage>> getDerivedAttributes();
 
-	List<TwinStateMachineUsage> getDescriptiveStateMachines();
+	List<TwinStateMachine<Usage>> getDescriptiveStateMachines();
 
-	List<StrategyUsage> getDescriptiveStrategies();
-	List<FlowUsage> getDescriptiveFlows();
+	List<Strategy<Usage>> getDescriptiveStrategies();
+	List<Flow<Usage>> getDescriptiveFlows();
 
 	@Override
 	default Context getContext() {

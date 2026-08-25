@@ -1,4 +1,6 @@
 package org.example.Mapping.Interfaces.DataBase;
 
-public interface KeyValueDatabase extends Database {
+import org.example.Mapping.Interfaces.Base.TypeKind.TypeKind;
+
+public interface KeyValueDatabase<T extends TypeKind> extends Database<T> {
 }

@@ -1,8 +1,7 @@
 package TopLevelDefinitionTests;
 
 import org.example.Mapping.Interfaces.*;
-import org.example.Mapping.Interfaces.TwinAttribute.BaseTwinAttribute.Definition.TwinBaseBooleanDefinition;
-import org.example.Mapping.Interfaces.TwinAttribute.BaseTwinAttribute.Definition.TwinBaseRealDefinition;
+import org.example.Mapping.Interfaces.TwinAttribute.BaseTwinAttribute.TwinBaseBoolean;
 
 import org.example.Mapping.Interfaces.TwinAttribute.BaseTwinAttribute.Usage.TwinBaseBooleanUsage;
 import org.example.Mapping.Interfaces.TwinAttribute.BaseTwinAttribute.Usage.TwinBaseIntegerUsage;
@@ -14,16 +13,12 @@ import org.example.Mapping.Interfaces.TwinExpression.FeatureReference;
 import org.example.Mapping.Interfaces.TwinExpression.TwinExpression;
 import org.example.Mapping.Interfaces.TwinFunction.Definition.BaseFunction;
 import org.example.Mapping.TwinAttributeMapped.BaseTwinAttributeMapped.Usage.TwinRealMappedUsage;
-import org.example.Mapping.TwinAttributeMapped.CustomTypeMapped.CustomTypeUsageMapped;
-import org.example.Mapping.TwinExpression.TwinBooleanExpression;
 import org.example.Mapping.TwinExpression.TwinCalculationExpression;
 import org.example.Mapping.TwinExpression.TwinConstructorExpression;
-import org.example.Mapping.TwinExpression.TwinFeatureChainExpression;
 import org.example.Mapping.TwinExpression.TwinLiteralExpressionElements.TwinLiteralBooleanExpression;
 import org.example.Mapping.TwinExpression.TwinLiteralExpressionElements.TwinLiteralIntegerExpression;
 import org.example.Mapping.Interfaces.TwinFunction.Definition.BaseFunctionKind;
 import org.junit.jupiter.api.Test;
-import org.omg.sysml.lang.sysml.FeatureChainExpression;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -119,7 +114,7 @@ public class TestExpressions extends AbstarctTest {
 
 		TwinConstructorExpression calculation = (TwinConstructorExpression) root;
 
-		TwinBaseBooleanDefinition referentType = result.getByReference(calculation.getConstructedType(), TwinBaseBooleanDefinition.class);
+		TwinBaseBoolean referentType = result.getByReference(calculation.getConstructedType(), TwinBaseBoolean.class);
 
 		assertNotNull(referentType);
 
@@ -143,7 +138,7 @@ public class TestExpressions extends AbstarctTest {
 
 		TwinConstructorExpression calculation = (TwinConstructorExpression) root;
 
-		TwinBaseBooleanDefinition referentType = result.getByReference(calculation.getConstructedType(), TwinBaseBooleanDefinition.class);
+		TwinBaseBoolean referentType = result.getByReference(calculation.getConstructedType(), TwinBaseBoolean.class);
 
 		assertNotNull(referentType);
 

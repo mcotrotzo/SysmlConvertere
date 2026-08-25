@@ -3,22 +3,22 @@ package org.example.Mapping.NewVersion.NameSpace.NameSpacePackage;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.example.Mapping.Interfaces.Base.NameSpace;
+import org.example.Mapping.Interfaces.Base.TypeKind.NamespaceKind;
+import org.example.Mapping.Interfaces.Base.TypeKind.TypeKindNamespace;
 import org.example.Mapping.Interfaces.KIND;
 import org.example.Mapping.Interfaces.Base.Model;
 import org.example.Mapping.Interfaces.Base.Package;
 import org.example.Mapping.NewVersion.MappingContext;
 import org.example.Mapping.NewVersion.MappingException;
-import org.omg.sysml.lang.sysml.Definition;
-import org.omg.sysml.lang.sysml.Element;
-import org.omg.sysml.lang.sysml.Import;
-import org.omg.sysml.lang.sysml.Usage;
+import org.omg.sysml.lang.sysml.*;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 @ToString(of = {"name", "id"})
-public abstract class MappedNamespaceElement<T extends Element> implements Model {
+public abstract class MappedNamespaceElement<T extends Element,Z extends TypeKindNamespace> implements NameSpace<Z> {
 
 	@Getter
 	protected T sysmlElement;
@@ -27,7 +27,7 @@ public abstract class MappedNamespaceElement<T extends Element> implements Model
 
 	@Getter
 	@Setter
-	private MappedNamespaceElement<?> owner;
+	private MappedNamespaceElement<?,?> owner;
 
 	@Getter
 	private String name;
@@ -60,7 +60,7 @@ public abstract class MappedNamespaceElement<T extends Element> implements Model
 	public void postValidate() throws MappingException {};
 
 	@Override
-	public Optional<Model> getParent() {
+	public Optional<Model<?>> getParent() {
 		return Optional.ofNullable(owner).map(Model.class::cast);
 	}
 
@@ -72,7 +72,7 @@ public abstract class MappedNamespaceElement<T extends Element> implements Model
 	@Override
 	public final boolean equals(Object obj) {
 		if (this == obj) return true;
-		if (!(obj instanceof MappedNamespaceElement<?> other)) return false;
+		if (!(obj instanceof MappedNamespaceElement<?,?> other)) return false;
 		return sysmlElement == other.sysmlElement;
 	}
 
@@ -83,17 +83,17 @@ public abstract class MappedNamespaceElement<T extends Element> implements Model
 
 	@Override
 	public KIND getKind() {
-		if(sysmlElement instanceof Definition) {
+		if(sysmlElement instanceof Classifier) {
 			return KIND.DEFINITION;
 		}
 		if(sysmlElement instanceof Usage){
 			return KIND.USAGE;
 		}
-		if(sysmlElement instanceof Package){
-			return KIND.PACKAGE;
-		}
 		if(sysmlElement instanceof Import){
 			return KIND.IMPORT;
+		}
+		if(sysmlElement instanceof Namespace){
+			return KIND.NAMESPACE;
 		}
 		throw new IllegalArgumentException("Unknown kind for sysmlElement: " + sysmlElement.getClass().getName());
 	}

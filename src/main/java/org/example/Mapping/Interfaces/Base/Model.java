@@ -1,17 +1,18 @@
 package org.example.Mapping.Interfaces.Base;
 
+import org.example.Mapping.Interfaces.Base.TypeKind.TypeKindNamespace;
 import org.example.Mapping.Interfaces.BaseTaxonomy.Context.Context;
 import org.example.Mapping.Interfaces.KIND;
 
 import java.util.Optional;
 
-public interface Model {
+public interface Model<T extends TypeKindNamespace> {
 	/**
 	 * Returns the parent model of this model, if it exists. The parent contains this model as member
 	 *
 	 * @return an Optional containing the parent model, or an empty Optional if there is no parent
 	 */
-	Optional<Model> getParent();
+	Optional<? extends Model<?>> getParent();
 
 	/**
 	 * Returns the unique identifier of this model. The ID is used to distinguish this model from other models in the system.
@@ -32,10 +33,6 @@ public interface Model {
 	String getDeterministicId();
 
 
-	default Context getContext() {
-		return getParent().isPresent()
-				? getParent().get().getContext()
-				: Context.NAMESPACE;
-	}
+	Context getContext();
 
 }

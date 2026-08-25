@@ -1,8 +1,11 @@
 package org.example.Mapping.NewVersion.Database;
 
 import lombok.ToString;
+import org.example.Mapping.Interfaces.Base.TypeKind.TypeKind;
+import org.example.Mapping.Interfaces.Base.TypeKind.Usage;
 import org.example.Mapping.Interfaces.DataBase.Database;
 import org.example.Mapping.Interfaces.TwinAttribute.BaseTwinAttribute.Role;
+import org.example.Mapping.Interfaces.TwinAttribute.BaseTwinAttribute.TwinBaseInteger;
 import org.example.Mapping.Interfaces.TwinAttribute.BaseTwinAttribute.Usage.TwinBaseIntegerUsage;
 import org.example.Mapping.NewVersion.Abstract.MappedElement;
 import org.example.Mapping.NewVersion.Abstract.MappedElementType;
@@ -14,7 +17,7 @@ import org.omg.sysml.lang.sysml.Type;
 
 @MappedElementType(LibraryNameSpaces.DATABASE)
 @ToString(callSuper = true)
-public class DatabaseMapped<T extends Type> extends MappedElement<T> implements Database {
+public class DatabaseMapped<T extends Type,Z extends TypeKind> extends MappedElement<T,Z> implements Database<Z> {
 
 
 	private TwinIntegerMappedUsage durationInDays;
@@ -24,7 +27,7 @@ public class DatabaseMapped<T extends Type> extends MappedElement<T> implements 
 	}
 
 	@Override
-	public TwinBaseIntegerUsage getDurationInDays() {
+	public TwinBaseInteger<Usage> getDurationInDays() {
 		return durationInDays;
 	}
 
