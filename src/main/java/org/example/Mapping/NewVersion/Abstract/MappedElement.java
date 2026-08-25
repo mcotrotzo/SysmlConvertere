@@ -40,6 +40,7 @@ public abstract class MappedElement<T extends Type, Z extends TypeKind> extends 
 	@Override
 	public void parse(MappingContext context) throws MappingException {
 		parseTypeRelations(context);
+		parseTaxonomy(context);
 	}
 
 	protected final void parseTypeRelations(MappingContext context) throws MappingException {
@@ -94,6 +95,60 @@ public abstract class MappedElement<T extends Type, Z extends TypeKind> extends 
 	}
 
 	private void parseTaxonomy(MappingContext context) {
+		System.out.println("\n=== TAXONOMY DEBUG ===");
+		System.out.println("element      = " + getSysmlElement().path());
+		System.out.println("java class   = " + getClass().getName());
+		System.out.println("isTaxonomy   = " + (this instanceof Taxonomy<?>));
+
+		System.out.println(
+				"parent       = " +
+						getParent()
+								.map(Model::getName)
+								.orElse("NONE")
+		);
+
+		System.out.println(
+				"parent tax   = " +
+						getParent()
+								.flatMap(Model::getTaxonomy)
+								.map(x -> x.getReferent().getName())
+								.orElse("NONE")
+		);
+
+		System.out.println(
+				"definition   = " +
+						getDefinitionOfUsage()
+								.map(x -> x.getReferent().getName())
+								.orElse("NONE")
+		);
+
+		System.out.println(
+				"definition class = " +
+						getDefinitionOfUsage()
+								.map(x -> x.getReferent().getClass().getName())
+								.orElse("NONE")
+		);
+
+		System.out.println(
+				"definition isTaxonomy = " +
+						getDefinitionOfUsage()
+								.map(x -> x.getReferent() instanceof Taxonomy<?>)
+								.orElse(false)
+		);
+
+		System.out.println(
+				"supertypes   = " +
+						getSuperTypeOfDefinitions().stream()
+								.map(x ->
+										x.getReferent().getName()
+												+ "["
+												+ x.getReferent().getClass().getSimpleName()
+												+ ", taxonomy="
+												+ (x.getReferent() instanceof Taxonomy<?>)
+												+ "]"
+								)
+								.toList()
+		);
 
 		// 1. Das Element IST selbst eine Taxonomy
 		if (this instanceof Taxonomy<?>) {
@@ -164,9 +219,4 @@ public abstract class MappedElement<T extends Type, Z extends TypeKind> extends 
 				.anyMatch(root -> root.toString().equals(qn));
 	}
 
-	@Override
-	public void postParse(MappingContext mappingContext) {
-		super.postParse(mappingContext);
-		parseTaxonomy(mappingContext);
-	}
 }
