@@ -1,6 +1,5 @@
 package org.example.Mapping.Interfaces.DataBase;
 
-import org.example.Mapping.Interfaces.Base.Model;
 import org.example.Mapping.Interfaces.Base.Type;
 import org.example.Mapping.Interfaces.Base.TypeKind.TypeKind;
 import org.example.Mapping.Interfaces.Base.TypeKind.Usage;

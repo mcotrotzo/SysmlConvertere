@@ -2,7 +2,6 @@ package org.example.Mapping.TwinExpression;
 
 
 import lombok.Getter;
-import lombok.ToString;
 import org.example.Mapping.NewVersion.Abstract.MappedElement;
 import org.example.Mapping.NewVersion.Abstract.MappedReference;
 import org.example.Mapping.NewVersion.MappingContext;
@@ -12,11 +11,9 @@ import org.omg.sysml.lang.sysml.InstantiationExpression;
 
 import java.util.ArrayList;
 import java.util.List;
+
 @MappedMetaclass
-public abstract class TwinInvocationExpression<
-		U extends InstantiationExpression,
-		Z extends MappedElement<?,?>
-		> extends TwinExpression<U> {
+public abstract class TwinInvocationExpression<U extends InstantiationExpression, Z extends MappedElement<?, ?>> extends TwinExpression<U> {
 
 	private final List<TwinExpression<?>> arguments = new ArrayList<>();
 
@@ -31,20 +28,15 @@ public abstract class TwinInvocationExpression<
 
 	@Override
 	public void parse(MappingContext context) throws MappingException {
+
 		for (var arg : getSysmlElement().getArgument()) {
-			arguments.add(
-					context.map(arg, this, TwinExpression.class)
-			);
+			arguments.add(context.map(arg, this, TwinExpression.class));
 		}
 
-		invokeType = context.mapReference(
-				getSysmlElement().getInstantiatedType(),
-				resolveInvokeType()
-		);
+		invokeType = context.mapReference(getSysmlElement().getInstantiatedType(), resolveInvokeType());
 	}
 
-	public List<? extends org.example.Mapping.Interfaces.TwinExpression.TwinExpression>
-	getArguments() {
+	public List<? extends org.example.Mapping.Interfaces.TwinExpression.TwinExpression> getArguments() {
 		return List.copyOf(arguments);
 	}
 }

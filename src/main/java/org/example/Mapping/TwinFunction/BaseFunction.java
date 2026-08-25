@@ -17,7 +17,7 @@ public class BaseFunction extends FunctionMapped<Function> implements org.exampl
 
 	@Override
 	public void parse(MappingContext context) throws MappingException {
-
+		super.parse(context);
 		try {
 			functionKind = BaseFunctionKind.fromSymbol(getSysmlElement().getName());
 		} catch (IllegalArgumentException e) {

@@ -29,20 +29,17 @@ public class MultiplicityRule extends GenerelRules {
 		return true;
 	}
 
-	private void validateType(Type userType, Set<Type> visited)
-			throws MappingException {
+	private void validateType(Type userType, Set<Type> visited) throws MappingException {
 
 		if (!visited.add(userType)) {
 			return;
 		}
 
-		if (utilsManager.isFromStandardLibrary(userType)
-				|| utilsManager.isFromDTLibrary(userType)) {
+		if (utilsManager.isFromStandardLibrary(userType) || utilsManager.isFromDTLibrary(userType)) {
 			return;
 		}
 
-		Set<Feature> features =
-				new HashSet<>(TypeUtil.getPublicFeaturesOf(userType));
+		Set<Feature> features = new HashSet<>(TypeUtil.getPublicFeaturesOf(userType));
 
 		features.addAll(userType.getOwnedFeature());
 
@@ -55,16 +52,10 @@ public class MultiplicityRule extends GenerelRules {
 				continue;
 			}
 
-			validateInheritedFeature(
-					userType,
-					feature
-			);
+			validateInheritedFeature(userType, feature);
 
 			if (feature instanceof Usage usage) {
-				validateType(
-						usage,
-						visited
-				);
+				validateType(usage, visited);
 			}
 		}
 	}

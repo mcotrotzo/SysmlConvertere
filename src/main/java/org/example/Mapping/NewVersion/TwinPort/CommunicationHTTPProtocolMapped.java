@@ -1,13 +1,15 @@
 package org.example.Mapping.NewVersion.TwinPort;
 
 import lombok.ToString;
+import org.example.Mapping.Interfaces.Base.TypeKind.TypeKind;
+import org.example.Mapping.Interfaces.Base.TypeKind.Usage;
 import org.example.Mapping.Interfaces.TwinAttribute.BaseTwinAttribute.Role;
-import org.example.Mapping.Interfaces.TwinAttribute.BaseTwinAttribute.Usage.TwinBaseStringUsage;
+import org.example.Mapping.Interfaces.TwinAttribute.BaseTwinAttribute.TwinBaseString;
 import org.example.Mapping.Interfaces.TwinPort.HTTPProtocol;
 import org.example.Mapping.NewVersion.Abstract.MappedElementType;
 import org.example.Mapping.NewVersion.MappingContext;
 import org.example.Mapping.NewVersion.MappingException;
-import org.example.Mapping.TwinAttributeMapped.BaseTwinAttributeMapped.Usage.TwinStringMappedUsage;
+import org.example.Mapping.TwinAttributeMapped.BaseTwinAttributeMapped.Definition.TwinBaseAttributeStringMapped;
 import org.example.Util.LibraryNameSpaces;
 import org.omg.sysml.lang.sysml.Feature;
 
@@ -16,8 +18,8 @@ import java.util.List;
 
 @MappedElementType(LibraryNameSpaces.HTTP_PROTOCOL)
 @ToString(callSuper = true)
-public class CommunicationHTTPProtocolMapped extends CommunicationProtocolMapped implements HTTPProtocol {
-	private List<TwinStringMappedUsage> url = new ArrayList<>();
+public class CommunicationHTTPProtocolMapped<T extends TypeKind> extends CommunicationProtocolMapped<T> implements HTTPProtocol<T> {
+	private List<TwinBaseAttributeStringMapped<Usage>> url = new ArrayList<>();
 
 
 	public CommunicationHTTPProtocolMapped(Feature sysmlElement) {
@@ -25,7 +27,7 @@ public class CommunicationHTTPProtocolMapped extends CommunicationProtocolMapped
 	}
 
 	@Override
-	public List<TwinBaseStringUsage> getUrl() {
+	public List<TwinBaseString<Usage>> getUrl() {
 		return new ArrayList<>(url);
 	}
 
@@ -33,6 +35,6 @@ public class CommunicationHTTPProtocolMapped extends CommunicationProtocolMapped
 	public void parse(MappingContext context) throws MappingException {
 		super.parse(context);
 
-		url = context.mapAttributes(this, "url", TwinStringMappedUsage.class, Role.CONFIG);
+		url = context.mapAttributes(this, "url", TwinBaseAttributeStringMapped.getRawStringUsageClass(), Role.CONFIG);
 	}
 }

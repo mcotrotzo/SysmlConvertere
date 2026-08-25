@@ -1,25 +1,14 @@
 package org.example.Mapping.NewVersion.TwinFlow.Definition;
 
-import org.example.Mapping.Interfaces.BaseTaxonomy.Context.Context;
+import org.example.Mapping.Interfaces.Base.TypeKind.TypeKind;
 import org.example.Mapping.NewVersion.Abstract.MappedElementType;
 import org.example.Util.LibraryNameSpaces;
-import org.omg.sysml.lang.sysml.FlowDefinition;
-
-import java.util.Set;
+import org.omg.sysml.lang.sysml.Type;
 
 @MappedElementType(LibraryNameSpaces.DESCRIPTIVE_FLOW)
-public class DescriptiveFlowMapped extends FlowDefinitionMapped {
-    public DescriptiveFlowMapped(FlowDefinition sysmlElement) {
-        super(sysmlElement);
-    }
+public class DescriptiveFlowMapped<T extends TypeKind> extends FlowMapped<T> {
+	public DescriptiveFlowMapped(Type sysmlElement) {
+		super(sysmlElement);
+	}
 
-    @Override
-    public Set<Context> sourceContexts() {
-        return Set.of(Context.DESCRIPTIVE);
-    }
-
-    @Override
-    public Set<Context> targetContexts() {
-        return Set.of(Context.DESCRIPTIVE);
-    }
 }

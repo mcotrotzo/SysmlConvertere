@@ -1,23 +1,20 @@
 package TopLevelDefinitionTests;
 
-import org.example.Mapping.Interfaces.*;
+import org.example.Mapping.Interfaces.Base.TypeKind.Usage;
+import org.example.Mapping.Interfaces.Reference;
 import org.example.Mapping.Interfaces.TwinAttribute.BaseTwinAttribute.TwinBaseBoolean;
-
-import org.example.Mapping.Interfaces.TwinAttribute.BaseTwinAttribute.Usage.TwinBaseBooleanUsage;
-import org.example.Mapping.Interfaces.TwinAttribute.BaseTwinAttribute.Usage.TwinBaseIntegerUsage;
-import org.example.Mapping.Interfaces.TwinAttribute.BaseTwinAttribute.Usage.TwinBaseRealUsage;
-import org.example.Mapping.Interfaces.TwinAttribute.CustomType.Usage.CustomTypeUsage;
+import org.example.Mapping.Interfaces.TwinAttribute.BaseTwinAttribute.TwinBaseReal;
+import org.example.Mapping.Interfaces.TwinAttribute.CustomType.CustomType;
 import org.example.Mapping.Interfaces.TwinExpression.BooleanLiteral;
 import org.example.Mapping.Interfaces.TwinExpression.Calculation;
 import org.example.Mapping.Interfaces.TwinExpression.FeatureReference;
 import org.example.Mapping.Interfaces.TwinExpression.TwinExpression;
 import org.example.Mapping.Interfaces.TwinFunction.Definition.BaseFunction;
-import org.example.Mapping.TwinAttributeMapped.BaseTwinAttributeMapped.Usage.TwinRealMappedUsage;
+import org.example.Mapping.Interfaces.TwinFunction.Definition.BaseFunctionKind;
 import org.example.Mapping.TwinExpression.TwinCalculationExpression;
 import org.example.Mapping.TwinExpression.TwinConstructorExpression;
 import org.example.Mapping.TwinExpression.TwinLiteralExpressionElements.TwinLiteralBooleanExpression;
 import org.example.Mapping.TwinExpression.TwinLiteralExpressionElements.TwinLiteralIntegerExpression;
-import org.example.Mapping.Interfaces.TwinFunction.Definition.BaseFunctionKind;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -27,7 +24,7 @@ public class TestExpressions extends AbstarctTest {
 
 	@Test
 	public void testCollectionExpressionTest() {
-		TwinBaseRealUsage temp = named(TwinBaseRealUsage.class, "collectionTest");
+		TwinBaseReal<Usage> temp = named(TwinBaseReal.class, Usage.class, "collectionTest");
 
 		TwinExpression root = temp.getExpression().get();
 
@@ -37,7 +34,8 @@ public class TestExpressions extends AbstarctTest {
 
 		Reference<?> ref = outer.getCalledFunction();
 
-		var referentFunction = result.getByReference(ref, BaseFunction.class);
+		assertInstanceOf(BaseFunction.class, ref.getReferent());
+		BaseFunction referentFunction = (BaseFunction) ref.getReferent();
 
 		assertNotNull(referentFunction);
 		assertEquals(BaseFunctionKind.COLLECTION, referentFunction.getFunctionKind());
@@ -48,13 +46,14 @@ public class TestExpressions extends AbstarctTest {
 
 		assertInstanceOf(TwinLiteralIntegerExpression.class, first);
 
-		assertInstanceOf(TwinCalculationExpression.class,second);
+		assertInstanceOf(TwinCalculationExpression.class, second);
 
 		TwinCalculationExpression inner = (TwinCalculationExpression) second;
 
 		Reference<?> innerRed = inner.getCalledFunction();
 
-		var referentInnerFunction = result.getByReference(innerRed, BaseFunction.class);
+		assertInstanceOf(BaseFunction.class, innerRed.getReferent());
+		BaseFunction referentInnerFunction = (BaseFunction) innerRed.getReferent();
 
 		assertNotNull(referentInnerFunction);
 		assertEquals(BaseFunctionKind.COLLECTION, referentInnerFunction.getFunctionKind());
@@ -67,7 +66,7 @@ public class TestExpressions extends AbstarctTest {
 
 	@Test
 	public void testBaseFunctionExpression() {
-		TwinRealMappedUsage voltage = named(TwinRealMappedUsage.class, "baseFunctionTest");
+		TwinBaseReal<Usage> voltage = named(TwinBaseReal.class, Usage.class, "baseFunctionTest");
 
 		assertNotNull(voltage.getExpression().get());
 
@@ -77,7 +76,8 @@ public class TestExpressions extends AbstarctTest {
 
 		TwinCalculationExpression calculation = (TwinCalculationExpression) root;
 
-		BaseFunction function = result.getByReference(calculation.getCalledFunction(), BaseFunction.class);
+		assertInstanceOf(BaseFunction.class, calculation.getCalledFunction().getReferent());
+		BaseFunction function = (BaseFunction) calculation.getCalledFunction().getReferent();
 
 		assertNotNull(function);
 		assertEquals(BaseFunctionKind.DIVIDE, function.getFunctionKind());
@@ -104,7 +104,7 @@ public class TestExpressions extends AbstarctTest {
 
 	@Test
 	public void testConstructorExpression() {
-		TwinBaseBooleanUsage current = named(TwinBaseBooleanUsage.class, "constructorTest");
+		TwinBaseBoolean<Usage> current = named(TwinBaseBoolean.class, Usage.class, "constructorTest");
 
 		assertNotNull(current.getExpression().get());
 
@@ -114,7 +114,8 @@ public class TestExpressions extends AbstarctTest {
 
 		TwinConstructorExpression calculation = (TwinConstructorExpression) root;
 
-		TwinBaseBoolean referentType = result.getByReference(calculation.getConstructedType(), TwinBaseBoolean.class);
+		assertInstanceOf(TwinBaseBoolean.class, calculation.getConstructedType().getReferent());
+		TwinBaseBoolean<?> referentType = (TwinBaseBoolean<?>) calculation.getConstructedType().getReferent();
 
 		assertNotNull(referentType);
 
@@ -128,7 +129,7 @@ public class TestExpressions extends AbstarctTest {
 
 	@Test
 	public void testConstructorBooleanExpression() {
-		TwinBaseBooleanUsage current = named(TwinBaseBooleanUsage.class, "constructorTestBoolean");
+		TwinBaseBoolean<Usage> current = named(TwinBaseBoolean.class, Usage.class, "constructorTestBoolean");
 
 		assertNotNull(current.getExpression().get());
 
@@ -138,7 +139,8 @@ public class TestExpressions extends AbstarctTest {
 
 		TwinConstructorExpression calculation = (TwinConstructorExpression) root;
 
-		TwinBaseBoolean referentType = result.getByReference(calculation.getConstructedType(), TwinBaseBoolean.class);
+		assertInstanceOf(TwinBaseBoolean.class, calculation.getConstructedType().getReferent());
+		TwinBaseBoolean<?> referentType = (TwinBaseBoolean<?>) calculation.getConstructedType().getReferent();
 
 		assertNotNull(referentType);
 
@@ -152,8 +154,7 @@ public class TestExpressions extends AbstarctTest {
 
 	@Test
 	public void testFeatureChainExpression() {
-		TwinBaseRealUsage current =
-				named(TwinBaseRealUsage.class, "test12");
+		TwinBaseReal<Usage> current = named(TwinBaseReal.class, Usage.class, "test12");
 
 		TwinExpression root = current.getExpression().orElseThrow();
 
@@ -169,27 +170,14 @@ public class TestExpressions extends AbstarctTest {
 
 		FeatureReference chain = (FeatureReference) argument;
 
-		assertEquals(
-				"x",
-				chain.getTarget().getReferent().getName()
-		);
+		assertEquals("x", chain.getTarget().getReferent().getName());
 
-		assertNotNull(
-				chain.getTarget().getReferent().getParent()
-		);
+		assertNotNull(chain.getTarget().getReferent().getParent());
 
-		CustomTypeUsage posTest12 =
-				named(CustomTypeUsage.class, "posTest12");
+		CustomType<Usage> posTest12 = named(CustomType.class, Usage.class, "posTest12");
 
-		TwinBaseIntegerUsage x = posTest12.getFields().stream()
-				.filter(y -> y.getName().equals("x"))
-				.map(TwinBaseIntegerUsage.class::cast)
-				.findFirst()
-				.orElseThrow();
+		var x = posTest12.getFields().stream().filter(y -> y.getName().equals("x")).findFirst().orElseThrow();
 
-		assertEquals(
-				x.getId(),
-				chain.getTarget().getReferent().getId()
-		);
+		assertEquals(x.getId(), chain.getTarget().getReferent().getId());
 	}
 }

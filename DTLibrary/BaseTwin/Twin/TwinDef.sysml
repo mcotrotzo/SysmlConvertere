@@ -41,7 +41,7 @@ library package TwinDefLibrary {
     }
 
 
-    part def Twin:>TwinLibraryElement{
+    part def Twin:>CloudTwinTaxonomy{
         part physicalTwin : PhysicalTwin[0..1];
         part shadow : Shadow[0..1];
         part descriptiveModel : DescriptiveModel[0..1];

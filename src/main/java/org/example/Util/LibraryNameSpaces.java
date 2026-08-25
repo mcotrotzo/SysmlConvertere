@@ -8,25 +8,15 @@ public enum LibraryNameSpaces {
 
 	TWIN("TwinDefLibrary::Twin"),
 
-	PHYSICAL_TWIN("TwinDefLibrary::PhysicalTwin"),
-	DESCRIPTIVE_MODEL("TwinDefLibrary::DescriptiveModel"),
-	PREDICTIVE_MODEL("TwinDefLibrary::PredictiveModel"),
-	PRESCRIPTIVE_MODEL("TwinDefLibrary::PrescriptiveModel"),
-	SHADOW("TwinDefLibrary::Shadow"),
-
-
+	PHYSICAL_TWIN("TwinDefLibrary::PhysicalTwin"), DESCRIPTIVE_MODEL("TwinDefLibrary::DescriptiveModel"), PREDICTIVE_MODEL("TwinDefLibrary::PredictiveModel"), PRESCRIPTIVE_MODEL("TwinDefLibrary::PrescriptiveModel"), SHADOW("TwinDefLibrary::Shadow"),
+	TWIN_FLOW("TwinActionLibrary::TwinFlow"),
 	// ========================================================================
 	// Taxonomy
 	// ========================================================================
 
-	TWIN_TAXONOMY("TwinTaxonomyLibrary::TwinTaxonomy"),
-	PHYSICAL_TAXONOMY("TwinTaxonomyLibrary::PhysicalTaxonomy"),
-	CLOUD_TWIN_TAXONOMY("TwinTaxonomyLibrary::CloudTwinTaxonomy"),
+	TWIN_TAXONOMY("TwinTaxonomyLibrary::TwinTaxonomy"), PHYSICAL_TAXONOMY("TwinTaxonomyLibrary::PhysicalTaxonomy"), CLOUD_TWIN_TAXONOMY("TwinTaxonomyLibrary::CloudTwinTaxonomy"),
 
-	DESCRIPTIVE_TAXONOMY("TwinTaxonomyLibrary::DescriptiveTaxonomy"),
-	PREDICTIVE_TAXONOMY("TwinTaxonomyLibrary::PredictiveTaxonomy"),
-	PRESCRIPTIVE_TAXONOMY("TwinTaxonomyLibrary::PrescriptiveTaxonomy"),
-	SHADOW_TAXONOMY("TwinTaxonomyLibrary::ShadowTaxonomy"),
+	DESCRIPTIVE_TAXONOMY("TwinTaxonomyLibrary::DescriptiveTaxonomy"), PREDICTIVE_TAXONOMY("TwinTaxonomyLibrary::PredictiveTaxonomy"), PRESCRIPTIVE_TAXONOMY("TwinTaxonomyLibrary::PrescriptiveTaxonomy"), SHADOW_TAXONOMY("TwinTaxonomyLibrary::ShadowTaxonomy"),
 
 
 	// ========================================================================
@@ -35,37 +25,24 @@ public enum LibraryNameSpaces {
 
 	TWIN_ACTION("TwinActionLibrary::TwinAction"),
 
-	PHYSICAL_FLOW("TwinActionLibrary::PhysicalFlow"),
-	DESCRIPTIVE_FLOW("TwinActionLibrary::DescriptiveFlow"),
-	PREDICTIVE_FLOW("TwinActionLibrary::PredictiveFlow"),
-	PRESCRIPTIVE_FLOW("TwinActionLibrary::PrescriptiveFlow"),
+	PHYSICAL_FLOW("TwinActionLibrary::PhysicalFlow"), DESCRIPTIVE_FLOW("TwinActionLibrary::DescriptiveFlow"), PREDICTIVE_FLOW("TwinActionLibrary::PredictiveFlow"), PRESCRIPTIVE_FLOW("TwinActionLibrary::PrescriptiveFlow"),
 
 	QUERY_FLOW("TwinActionLibrary::QueryFlow"),
 
-	DESCRIPTIVE_TO_PREDICTIVE_FLOW(
-			"TwinActionLibrary::DescriptiveToPredictiveFlow"
-	),
+	DESCRIPTIVE_TO_PREDICTIVE_FLOW("TwinActionLibrary::DescriptiveToPredictiveFlow"),
 
-	DESCRIPTIVE_TO_PRESCRIPTIVE_FLOW(
-			"TwinActionLibrary::DescriptiveToPrescriptiveFlow"
-	),
+	DESCRIPTIVE_TO_PRESCRIPTIVE_FLOW("TwinActionLibrary::DescriptiveToPrescriptiveFlow"),
 
-	PREDICTIVE_TO_PRESCRIPTIVE_FLOW(
-			"TwinActionLibrary::PredictiveToPrescriptiveFlow"
-	),
+	PREDICTIVE_TO_PRESCRIPTIVE_FLOW("TwinActionLibrary::PredictiveToPrescriptiveFlow"),
 
-	PRESCRIPTIVE_TO_PHYSICAL_FLOW(
-			"TwinActionLibrary::PrescriptiveToPhysicalFlow"
-	),
+	PRESCRIPTIVE_TO_PHYSICAL_FLOW("TwinActionLibrary::PrescriptiveToPhysicalFlow"),
 
 
 	// ========================================================================
 	// Strategies
 	// ========================================================================
 
-	STRATEGY("TwinStrategyLibrary::Strategy"),
-	CUSTOM_STRATEGY("TwinStrategyLibrary::CustomStrategy"),
-	EXTERNAL_STRATEGY("TwinStrategyLibrary::ExternalStrategy"),
+	STRATEGY("TwinStrategyLibrary::Strategy"), CUSTOM_STRATEGY("TwinStrategyLibrary::CustomStrategy"), EXTERNAL_STRATEGY("TwinStrategyLibrary::ExternalStrategy"),
 
 
 	// ========================================================================
@@ -74,37 +51,24 @@ public enum LibraryNameSpaces {
 
 	STATE("TwinStateMachineLibrary::State"),
 
-	DESCRIPTIVE_STATE_MACHINE(
-			"DescriptiveModelLibrary::DescriptiveStateMachine"
-	),
+	DESCRIPTIVE_STATE_MACHINE("DescriptiveModelLibrary::DescriptiveStateMachine"),
 
-	DESCRIPTIVE_STATE(
-			"DescriptiveModelLibrary::DescriptiveState"
-	),
+	DESCRIPTIVE_STATE("DescriptiveModelLibrary::DescriptiveState"),
 
 
 	// ========================================================================
 	// Physical Twin
 	// ========================================================================
 
-	ACTUATOR("PhysicalTwinLibrary::Actuator"),
-	SENSOR("PhysicalTwinLibrary::Sensor"),
-	TWIN_PORT("PhysicalTwinLibrary::TwinPort"),
+	ACTUATOR("PhysicalTwinLibrary::Actuator"), SENSOR("PhysicalTwinLibrary::Sensor"), TWIN_PORT("PhysicalTwinLibrary::TwinPort"),
 
-	CONTROL_UNIT("PhysicalTwinLibrary::ControlUnit"),
-	CONTROL_UNIT_STATE("PhysicalTwinLibrary::ControlUnitState"),
+	CONTROL_UNIT("PhysicalTwinLibrary::ControlUnit"), CONTROL_UNIT_STATE("PhysicalTwinLibrary::ControlUnitState"),
 
-	COMMUNICATION_PROTOCOL(
-			"PhysicalTwinLibrary::CommunicationProtocol"
-	),
+	COMMUNICATION_PROTOCOL("PhysicalTwinLibrary::CommunicationProtocol"),
 
-	HTTP_PROTOCOL(
-			"PhysicalTwinLibrary::HTTP_Protocol"
-	),
+	HTTP_PROTOCOL("PhysicalTwinLibrary::HTTP_Protocol"),
 
-	MQTT_PROTOCOL(
-			"PhysicalTwinLibrary::MQTT_Protocol"
-	),
+	MQTT_PROTOCOL("PhysicalTwinLibrary::MQTT_Protocol"),
 
 
 	// ========================================================================
@@ -113,42 +77,30 @@ public enum LibraryNameSpaces {
 
 	DATABASE("ShadowLibrary::Database"),
 
-	RELATIONAL_DATABASE(
-			"ShadowLibrary::RelationalDatabase"
-	),
+	RELATIONAL_DATABASE("ShadowLibrary::RelationalDatabase"),
 
-	KEY_VALUE_DATABASE(
-			"ShadowLibrary::KeyValueDatabase"
-	),
+	KEY_VALUE_DATABASE("ShadowLibrary::KeyValueDatabase"),
 
 
 	// ========================================================================
 	// Calculations
 	// ========================================================================
 
-	CUSTOM_CALCULATION(
-			"TwinImp::CustomCalculationAction"
-	),
+	CUSTOM_CALCULATION("TwinImp::CustomCalculationAction"),
 
 
 	// ========================================================================
 	// User Types
 	// ========================================================================
 
-	TWIN_CUSTOM_TYPE(
-			"UserLibrary::TwinCustomType"
-	),
+	TWIN_CUSTOM_TYPE("UserLibrary::TwinCustomType"),
 
 
 	// ========================================================================
 	// Enums
 	// ========================================================================
 
-	ORDER_BY("TwinEnumLibrary::ORDER_BY"),
-	TIME_UNIT("TwinEnumLibrary::TimeUnit"),
-	CUSTOM_STRATEGY_TYPE(
-			"TwinEnumLibrary::CustomStrategyType"
-	),
+	ORDER_BY("TwinEnumLibrary::ORDER_BY"), TIME_UNIT("TwinEnumLibrary::TimeUnit"), CUSTOM_STRATEGY_TYPE("TwinEnumLibrary::CustomStrategyType"),
 
 
 	// ========================================================================
@@ -159,10 +111,7 @@ public enum LibraryNameSpaces {
 
 	TWIN_ATTRIBUTE("Base::DataValue"),
 
-	TWIN_REAL("ScalarValues::Real"),
-	TWIN_INTEGER("ScalarValues::Integer"),
-	TWIN_BOOLEAN("ScalarValues::Boolean"),
-	TWIN_STRING("ScalarValues::String"), CONST_PORT("PhysicalTwinLibrary::ConstPort");
+	TWIN_REAL("ScalarValues::Real"), TWIN_INTEGER("ScalarValues::Integer"), TWIN_BOOLEAN("ScalarValues::Boolean"), TWIN_STRING("ScalarValues::String"), CONST_PORT("PhysicalTwinLibrary::ConstPort");
 
 
 	private final String namespace;

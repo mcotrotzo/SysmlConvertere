@@ -4,8 +4,7 @@ import lombok.Getter;
 
 public enum EnumOrderBy implements TwinEnum {
 
-	ASC("ASCENDING"),
-	DESC("DESCENDING");
+	ASC("ASCENDING"), DESC("DESCENDING");
 	@Getter
 	private final String stringRepresentation;
 

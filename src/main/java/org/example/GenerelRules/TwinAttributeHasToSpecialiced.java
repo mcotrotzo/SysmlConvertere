@@ -1,15 +1,15 @@
 package org.example.GenerelRules;
 
-import org.eclipse.emf.common.util.EList;
 import org.example.Mapping.NewVersion.MappingException;
 import org.example.Util.LibraryNameSpaces;
 import org.example.Util.Utils;
-import org.omg.sysml.lang.sysml.*;
+import org.omg.sysml.lang.sysml.AttributeUsage;
+import org.omg.sysml.lang.sysml.Type;
 
 import java.util.List;
 import java.util.Set;
 
-public class TwinAttributeHasToSpecialiced extends GenerelRules{
+public class TwinAttributeHasToSpecialiced extends GenerelRules {
 	public TwinAttributeHasToSpecialiced(Utils utils) {
 		super(utils);
 	}
@@ -20,36 +20,22 @@ public class TwinAttributeHasToSpecialiced extends GenerelRules{
 
 		for (AttributeUsage attributeUsage : userTypes) {
 			validateAttribute(attributeUsage);
-			validateType(attributeUsage,attributeUsage.getType());
+			validateType(attributeUsage, attributeUsage.getType());
 
 		}
 
 		return true;
 	}
 
-	private void validateType(
-			AttributeUsage attributeUsage,
-			List<Type> types
-	) throws MappingException {
+	private void validateType(AttributeUsage attributeUsage, List<Type> types) throws MappingException {
 
 
-		Type twinAttributeType =
-				utilsManager.getLibTypeFromAnnotation(
-						LibraryNameSpaces.TWIN_ATTRIBUTE
-				);
+		Type twinAttributeType = utilsManager.getLibTypeFromAnnotation(LibraryNameSpaces.TWIN_ATTRIBUTE);
 
-		boolean hasGenericTwinAttribute =
-				types.stream()
-						.anyMatch(type -> type == twinAttributeType);
+		boolean hasGenericTwinAttribute = types.stream().anyMatch(type -> type == twinAttributeType);
 
 		if (hasGenericTwinAttribute) {
-			throw new MappingException(
-					("Attribute '%s' is typed only through TwinAttribute, "
-							+ "but TwinAttribute must be specialized.")
-							.formatted(
-									attributeUsage.getQualifiedName()
-							)
-			);
+			throw new MappingException(("Attribute '%s' is typed only through TwinAttribute, " + "but TwinAttribute must be specialized.").formatted(attributeUsage.getQualifiedName()));
 		}
 	}
 
@@ -62,10 +48,7 @@ public class TwinAttributeHasToSpecialiced extends GenerelRules{
 
 		if (!hasExplicitType && !hasSubsetting && !hasRedefinition) {
 			System.out.println(attribute);
-			throw new MappingException(
-					"Attribute '%s' is freestanding and cannot be mapped."
-							.formatted(attribute.getQualifiedName())
-			);
+			throw new MappingException("Attribute '%s' is freestanding and cannot be mapped.".formatted(attribute.getQualifiedName()));
 		}
 	}
 }

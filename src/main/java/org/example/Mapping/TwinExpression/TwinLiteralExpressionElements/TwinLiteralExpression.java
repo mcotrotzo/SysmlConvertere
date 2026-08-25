@@ -3,8 +3,8 @@ package org.example.Mapping.TwinExpression.TwinLiteralExpressionElements;
 import lombok.Setter;
 import lombok.ToString;
 import org.example.Mapping.Interfaces.TwinExpression.Literal;
-import org.example.Mapping.TwinExpression.TwinExpression;
 import org.example.Mapping.TwinAction.Annotation.MappedMetaclass;
+import org.example.Mapping.TwinExpression.TwinExpression;
 import org.omg.sysml.lang.sysml.LiteralExpression;
 
 

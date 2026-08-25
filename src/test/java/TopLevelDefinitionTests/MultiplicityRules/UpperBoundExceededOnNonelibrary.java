@@ -31,7 +31,7 @@ public class UpperBoundExceededOnNonelibrary extends AbstarctTest {
 				        t2[0..1] :> pos;
 				        t3[0..2] :> pos;
 				        }
-			
+				
 				    }
 				    }
 				}
@@ -50,7 +50,7 @@ public class UpperBoundExceededOnNonelibrary extends AbstarctTest {
 				        attribute z[1] : TwinInteger :> fields;
 				    }
 				
-
+				
 				}
 				""");
 	}

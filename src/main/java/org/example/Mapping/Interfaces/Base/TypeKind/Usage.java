@@ -1,6 +1,17 @@
 package org.example.Mapping.Interfaces.Base.TypeKind;
 
-public final class Usage implements TypeKind {
+import org.omg.sysml.lang.sysml.Element;
+import org.omg.sysml.lang.sysml.Feature;
 
-	private Usage() {}
+public final class Usage implements TypeKind {
+	public static final Usage INSTANCE = new Usage();
+
+	private Usage() {
+	}
+
+
+	@Override
+	public Class<? extends Element> sysmlType() {
+		return Feature.class;
+	}
 }

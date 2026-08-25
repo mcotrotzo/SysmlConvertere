@@ -2,10 +2,10 @@ package TopLevelDefinitionTests;
 
 import org.example.MapperService;
 import org.example.Mapping.Interfaces.Base.Model;
+import org.example.Mapping.Interfaces.Base.TypeKind.TypeKindNamespace;
 import org.example.Mapping.NewVersion.MappingException;
 import org.example.TwinDataBase;
 import org.junit.jupiter.api.BeforeEach;
-
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -13,7 +13,7 @@ import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public abstract class AbstarctTest {
 
@@ -97,34 +97,25 @@ public abstract class AbstarctTest {
 		}
 	}
 
-	protected void assertParent(Model child, Class<? extends Model> parentType, String parentName) {
-		Model expectedParent = named(parentType, parentName);
-
-		Model actualParent = child.getParent().orElseThrow(() -> new AssertionError(child.getName() + " has no parent"));
-
+	protected <P extends Model<Z>, Z extends TypeKindNamespace> void assertParent(Model<?> child, Class<P> parentType, Class<Z> parentKind, String parentName) {
+		P expectedParent = named(parentType, parentKind, parentName);
+		Model<?> actualParent = child.getParent().orElseThrow(() -> new AssertionError(child.getName() + " has no parent"));
 		assertEquals(expectedParent.getId(), actualParent.getId());
 	}
 
-	protected void assertAmount(Class<? extends Model> type, int expected) {
-		assertEquals(expected, result.get(type).size());
+	protected <T extends Model<Z>, Z extends TypeKindNamespace> void assertAmount(Class<T> type, Class<Z> typeKind, int expected) {
+		assertEquals(expected, result.get(type, typeKind).size());
 	}
 
-	protected <T extends Model> T named(Class<T> type, String name) {
-		var matches = result.get(type).stream()
-				.filter(element -> name.equals(element.getName()))
-				.toList();
+	protected <T extends Model<Z>, Z extends TypeKindNamespace> T named(Class<T> type, Class<Z> typeKind, String name) {
+		var matches = result.get(type, typeKind).stream().filter(element -> name.equals(element.getName())).toList();
 
 		if (matches.isEmpty()) {
-			throw new AssertionError(
-					type.getSimpleName() + " not found: " + name
-			);
+			throw new AssertionError(type.getSimpleName() + " not found: " + name);
 		}
 
 		if (matches.size() > 1) {
-			throw new AssertionError(
-					"Expected exactly one %s named '%s', but found %d."
-							.formatted(type.getSimpleName(), name, matches.size())
-			);
+			throw new AssertionError("Expected exactly one %s named '%s', but found %d.".formatted(type.getSimpleName(), name, matches.size()));
 		}
 
 		return matches.getFirst();

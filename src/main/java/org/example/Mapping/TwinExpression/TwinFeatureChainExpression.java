@@ -1,16 +1,14 @@
 package org.example.Mapping.TwinExpression;
 
 import lombok.ToString;
-
 import org.example.Mapping.Interfaces.Base.TypeKind.Usage;
 import org.example.Mapping.Interfaces.TwinAttribute.BaseTwinAttribute.TwinAttribute;
 import org.example.Mapping.Interfaces.TwinExpression.FeatureReference;
-import org.example.Mapping.TwinAttributeMapped.BaseTwinAttributeMapped.Definition.TwinAttributeMapped;
 import org.example.Mapping.NewVersion.Abstract.MappedReference;
 import org.example.Mapping.NewVersion.MappingContext;
 import org.example.Mapping.NewVersion.MappingException;
-
 import org.example.Mapping.TwinAction.Annotation.MappedMetaclass;
+import org.example.Mapping.TwinAttributeMapped.BaseTwinAttributeMapped.Definition.TwinAttributeMapped;
 import org.omg.sysml.lang.sysml.FeatureChainExpression;
 import org.omg.sysml.util.FeatureUtil;
 
@@ -31,7 +29,6 @@ public class TwinFeatureChainExpression extends TwinExpression<FeatureChainExpre
 		target = context.mapReference(targetFeature, TwinAttributeMapped.getRawUsageClass());
 
 	}
-
 
 
 	@Override

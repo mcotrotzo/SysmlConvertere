@@ -4,7 +4,7 @@ import lombok.Getter;
 import org.example.Mapping.Interfaces.Reference;
 import org.example.Mapping.NewVersion.NameSpace.NameSpacePackage.MappedNamespaceElement;
 
-public final class MappedReference<T extends MappedNamespaceElement<?,?>> implements Reference<T> {
+public final class MappedReference<T extends MappedNamespaceElement<?, ?>> implements Reference<T> {
 
 	@Getter
 	private final String targetId;

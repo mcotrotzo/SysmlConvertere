@@ -2,16 +2,17 @@ package org.example.Mapping.NewVersion.FullTwinMapped;
 
 import lombok.ToString;
 import org.example.Mapping.Interfaces.Base.TypeKind.TypeKind;
+import org.example.Mapping.Interfaces.Base.TypeKind.Usage;
 import org.example.Mapping.Interfaces.BaseTaxonomy.*;
 import org.example.Mapping.Interfaces.FullTwin.Twin;
-import org.example.Mapping.Interfaces.TwinFlow.FlowUsage;
-import org.example.Mapping.Interfaces.TwinFlow.QueryFlowUsage;
-import org.example.Mapping.NewVersion.*;
-import org.example.Mapping.NewVersion.Abstract.MappedElement;
+import org.example.Mapping.Interfaces.TwinFlow.Flow;
+import org.example.Mapping.Interfaces.TwinFlow.QueryFlow;
 import org.example.Mapping.NewVersion.Abstract.MappedElementType;
-import org.example.Mapping.NewVersion.TaxonomyMapped.Usage.*;
-import org.example.Mapping.NewVersion.TwinFlow.Usage.FlowUsageMapped;
-import org.example.Mapping.NewVersion.TwinFlow.Usage.QueryFlowUsageMapped;
+import org.example.Mapping.NewVersion.MappingContext;
+import org.example.Mapping.NewVersion.MappingException;
+import org.example.Mapping.NewVersion.TaxonomyMapped.*;
+import org.example.Mapping.NewVersion.TaxonomyMapped.Taxonomy.CloudTwinTaxonomyMapped;
+import org.example.Mapping.NewVersion.TwinFlow.Definition.*;
 import org.example.Util.LibraryNameSpaces;
 import org.omg.sysml.lang.sysml.Type;
 
@@ -19,145 +20,95 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@MappedElementType(value = LibraryNameSpaces.TWIN)
+@MappedElementType(LibraryNameSpaces.TWIN)
 @ToString(callSuper = true)
-public class TwinMapped<T extends Type,Z extends TypeKind> extends MappedElement<T,Z> implements Twin<Z> {
+public class TwinMapped<Z extends TypeKind> extends CloudTwinTaxonomyMapped<Z> implements Twin<Z> {
 
-	private Optional<PhysicalTwinUsageMapped> physicalTwin = Optional.empty();
-	private Optional<ShadowUsageMapped> shadowTwin = Optional.empty();
-	private Optional<DescriptiveModelUsageMapped> descriptiveModel = Optional.empty();
-	private Optional<PrescriptiveModelUsageMapped> prescriptiveModel = Optional.empty();
-	private Optional<PredictiveModelUsageMapped> predictiveModel = Optional.empty();
-	private List<QueryFlowUsageMapped> queryFlows = new ArrayList<>();
-	private List<FlowUsageMapped> descriptiveToPredictiveFlows = new ArrayList<>();
-	private List <FlowUsageMapped> descriptiveToPrescriptiveFlows = new ArrayList<>();
-	private List<FlowUsageMapped>predictiveToPrescriptiveFlows = new ArrayList<>();
-	private List<FlowUsageMapped> prescriptiveToPhysicalFlows = new ArrayList<>();
+	private Optional<PhysicalTwinMapped<Usage>> physicalTwin = Optional.empty();
+	private Optional<ShadowMapped<Usage>> shadowTwin = Optional.empty();
+	private Optional<DescriptiveModelMapped<Usage>> descriptiveModel = Optional.empty();
+	private Optional<PrescriptiveModelMapped<Usage>> prescriptiveModel = Optional.empty();
+	private Optional<PredictiveModelMapped<Usage>> predictiveModel = Optional.empty();
 
-	public TwinMapped(T sysmlElement) {
+	private List<QueryFlowMapped<Usage>> queryFlows = new ArrayList<>();
+	private List<DescriptiveToPredictiveFlowMapped<Usage>> descriptiveToPredictiveFlows = new ArrayList<>();
+	private List<DescriptiveToPrescriptiveFlowMapped<Usage>> descriptiveToPrescriptiveFlows = new ArrayList<>();
+	private List<PredictiveToPrescriptiveFlowMapped<Usage>> predictiveToPrescriptiveFlows = new ArrayList<>();
+	private List<PrescriptiveToPhysicalFlowMapped<Usage>> prescriptiveToPhysicalFlows = new ArrayList<>();
+
+	public TwinMapped(Type sysmlElement) {
 		super(sysmlElement);
 	}
 
 	@Override
 	public void parse(MappingContext context) throws MappingException {
-		queryFlows = context.mapSlot(
-				this,
-				"queryFlows",
-				QueryFlowUsageMapped.class
-		);
-		descriptiveToPredictiveFlows = context.mapSlot(
-				this,
-				"descriptiveToPredictiveFlows",
-				FlowUsageMapped.class
-		);
-		descriptiveToPrescriptiveFlows = context.mapSlot(
-				this,
-				"descriptiveToPrescriptiveFlows",
-				FlowUsageMapped.class
-		);
-		predictiveToPrescriptiveFlows = context.mapSlot(
-				this,
-				"predictiveToPrescriptiveFlows",
-			FlowUsageMapped.class
-		);
-		prescriptiveToPhysicalFlows = context.mapSlot(
-				this,
-				"prescriptiveToPhysicalFlows",
-				FlowUsageMapped.class
-		);
+		super.parse(context);
+		queryFlows = context.mapSlot(this, "queryFlows", rawClassOf(QueryFlowMapped.class));
+		descriptiveToPredictiveFlows = context.mapSlot(this, "descriptiveToPredictiveFlows", rawClassOf(DescriptiveToPredictiveFlowMapped.class));
+		descriptiveToPrescriptiveFlows = context.mapSlot(this, "descriptiveToPrescriptiveFlows", rawClassOf(DescriptiveToPrescriptiveFlowMapped.class));
+		predictiveToPrescriptiveFlows = context.mapSlot(this, "predictiveToPrescriptiveFlows", rawClassOf(PredictiveToPrescriptiveFlowMapped.class));
+		prescriptiveToPhysicalFlows = context.mapSlot(this, "prescriptiveToPhysicalFlows", rawClassOf(PrescriptiveToPhysicalFlowMapped.class));
 
-		physicalTwin = first(
-				context.mapSlot(
-						this,
-						"physicalTwin",
-						PhysicalTwinUsageMapped.class
-				)
-		);
+		Class<PhysicalTwinMapped<Usage>> physicalTwinClass = rawClassOf(PhysicalTwinMapped.class);
+		Class<ShadowMapped<Usage>> shadowTwinClass = rawClassOf(ShadowMapped.class);
+		Class<DescriptiveModelMapped<Usage>> descriptiveModelClass = rawClassOf(DescriptiveModelMapped.class);
+		Class<PredictiveModelMapped<Usage>> predictiveModelClass = rawClassOf(PredictiveModelMapped.class);
+		Class<PrescriptiveModelMapped<Usage>> prescriptiveModelClass = rawClassOf(PrescriptiveModelMapped.class);
 
-		shadowTwin = first(
-				context.mapSlot(
-						this,
-						"shadow",
-						ShadowUsageMapped.class
-				)
-		);
-
-		descriptiveModel = first(
-				context.mapSlot(
-						this,
-						"descriptiveModel",
-						DescriptiveModelUsageMapped.class
-				)
-		);
-
-		predictiveModel = first(
-				context.mapSlot(
-						this,
-						"predictiveModel",
-						PredictiveModelUsageMapped.class
-				)
-		);
-
-		prescriptiveModel = first(
-				context.mapSlot(
-						this,
-						"prescriptiveModel",
-						PrescriptiveModelUsageMapped.class
-				)
-		);
-	}
-
-	private static <T> Optional<T> first(List<T> values) {
-		return values.stream().findFirst();
+		physicalTwin = context.mapSlot(this, "physicalTwin", physicalTwinClass).stream().findFirst();
+		shadowTwin = context.mapSlot(this, "shadow", shadowTwinClass).stream().findFirst();
+		descriptiveModel = context.mapSlot(this, "descriptiveModel", descriptiveModelClass).stream().findFirst();
+		predictiveModel = context.mapSlot(this, "predictiveModel", predictiveModelClass).stream().findFirst();
+		prescriptiveModel = context.mapSlot(this, "prescriptiveModel", prescriptiveModelClass).stream().findFirst();
 	}
 
 	@Override
-	public Optional<PhysicalTwinUsage> getPhysicalTwin() {
+	public Optional<PhysicalTwin<Usage>> getPhysicalTwin() {
 		return physicalTwin.map(x -> x);
 	}
 
 	@Override
-	public Optional<ShadowUsage> getShadow() {
+	public Optional<Shadow<Usage>> getShadow() {
 		return shadowTwin.map(x -> x);
 	}
 
 	@Override
-	public Optional<DescriptiveModelUsage> getDescriptiveModel() {
+	public Optional<DescriptiveModel<Usage>> getDescriptiveModel() {
 		return descriptiveModel.map(x -> x);
 	}
 
 	@Override
-	public Optional<PredictiveModelUsage> getPredictiveModel() {
+	public Optional<PredictiveModel<Usage>> getPredictiveModel() {
 		return predictiveModel.map(x -> x);
 	}
 
 	@Override
-	public Optional<PrescriptiveModelUsage> getPrescriptiveModel() {
+	public Optional<PrescriptiveModel<Usage>> getPrescriptiveModel() {
 		return prescriptiveModel.map(x -> x);
 	}
 
 	@Override
-	public List<QueryFlowUsage> getQueryFlows() {
+	public List<QueryFlow<Usage>> getQueryFlows() {
 		return new ArrayList<>(queryFlows);
 	}
 
 	@Override
-	public List<FlowUsage> getDescriptiveToPredictiveFlows() {
+	public List<Flow<Usage>> getDescriptiveToPredictiveFlows() {
 		return new ArrayList<>(descriptiveToPredictiveFlows);
 	}
 
 	@Override
-	public List<FlowUsage> getDescriptiveToPrescriptiveFlows() {
+	public List<Flow<Usage>> getDescriptiveToPrescriptiveFlows() {
 		return new ArrayList<>(descriptiveToPrescriptiveFlows);
 	}
 
 	@Override
-	public List<FlowUsage> getPredictiveToPrescriptiveFlows() {
+	public List<Flow<Usage>> getPredictiveToPrescriptiveFlows() {
 		return new ArrayList<>(predictiveToPrescriptiveFlows);
 	}
 
 	@Override
-	public List<FlowUsage> getPrescriptiveToPhysicalFlows() {
+	public List<Flow<Usage>> getPrescriptiveToPhysicalFlows() {
 		return new ArrayList<>(prescriptiveToPhysicalFlows);
 	}
 }

@@ -1,10 +1,22 @@
 package TopLevelDefinitionTests;
 
 import org.example.Mapping.Interfaces.Base.Model;
-import org.example.Mapping.Interfaces.TwinPort.Sensors;
+import org.example.Mapping.Interfaces.Base.TypeKind.Definition;
+import org.example.Mapping.Interfaces.Base.TypeKind.Usage;
+import org.example.Mapping.Interfaces.BaseTaxonomy.*;
+import org.example.Mapping.Interfaces.DataBase.Database;
+import org.example.Mapping.Interfaces.DataBase.RelationalDatabase;
 import org.example.Mapping.Interfaces.FullTwin.Twin;
-import org.example.Mapping.Interfaces.TwinPort.Usage.SensorUsage;
+import org.example.Mapping.Interfaces.TwinFlow.Flow;
+import org.example.Mapping.Interfaces.TwinFlow.QueryFlow;
+import org.example.Mapping.Interfaces.TwinPort.Actuators;
+import org.example.Mapping.Interfaces.TwinPort.ConstPort;
+import org.example.Mapping.Interfaces.TwinPort.Sensors;
+import org.example.Mapping.Interfaces.TwinStateMachine.TwinStateMachine;
+import org.example.Mapping.Interfaces.TwinStrategy.Strategy;
 import org.junit.jupiter.api.Test;
+
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -13,8 +25,8 @@ public class TestTopLevel extends AbstarctTest {
 	@Test
 	public void testBatteryTwinInterface() {
 
-		assertAmount(Twin.class, 1);
-		Twin battery = named(Twin.class, "Battery");
+		assertAmount(Twin.class, Definition.class, 2);
+		Twin<Definition> battery = named(Twin.class, Definition.class, "Battery");
 
 		assertEquals("Battery", battery.getName());
 		assertNotNull(battery.getId());
@@ -32,6 +44,7 @@ public class TestTopLevel extends AbstarctTest {
 		var prescriptiveToPhysicalFlows = battery.getPrescriptiveToPhysicalFlows();
 
 		assertEquals(4, physical.getSensors().size());
+		assertEquals(1, result.get(Sensors.class, Definition.class).size());
 		assertEquals(1, physical.getActuators().size());
 		assertEquals(1, physical.getControlUnits().size());
 		assertEquals(9, physical.getConstPort().get().getAttributes().size());
@@ -46,38 +59,26 @@ public class TestTopLevel extends AbstarctTest {
 
 		assertEquals(1, shadow.getDatabases().size());
 
-		assertEquals(6,queryFlows.size());
-		assertEquals(2,descriptiveToPredictiveFlows.size());
-		assertEquals(0,descriptiveToPrescriptiveFlows.size());
-		assertEquals(2,predictiveToPrescriptiveFlows.size());
-		assertEquals(2,prescriptiveToPhysicalFlows.size());
+		assertEquals(6, queryFlows.size());
+		assertEquals(2, descriptiveToPredictiveFlows.size());
+		assertEquals(0, descriptiveToPrescriptiveFlows.size());
+		assertEquals(2, predictiveToPrescriptiveFlows.size());
+		assertEquals(2, prescriptiveToPhysicalFlows.size());
 
 	}
 
 	@Test
 	public void testSpecializationChildrenAndMultiplicity() {
 
-		var ports = result.get(SensorUsage.class);
+		Set<Sensors<Usage>> ports = result.get(Sensors.class, Usage.class);
 
-		var p11 = ports.stream()
-				.filter(x -> x.getName().equals("p11"))
-				.findFirst()
-				.orElseThrow();
+		var p11 = ports.stream().filter(x -> x.getName().equals("p11")).findFirst().orElseThrow();
 
-		var p13 = ports.stream()
-				.filter(x -> x.getName().equals("p13"))
-				.findFirst()
-				.orElseThrow();
+		var p13 = ports.stream().filter(x -> x.getName().equals("p13")).findFirst().orElseThrow();
 
-		var p14 = ports.stream()
-				.filter(x -> x.getName().equals("p14"))
-				.findFirst()
-				.orElseThrow();
+		var p14 = ports.stream().filter(x -> x.getName().equals("p14")).findFirst().orElseThrow();
 
-		var p15 = ports.stream()
-				.filter(x -> x.getName().equals("p15"))
-				.findFirst()
-				.orElseThrow();
+		var p15 = ports.stream().filter(x -> x.getName().equals("p15")).findFirst().orElseThrow();
 
 		var p11Mult = result.getMultiplicity(p11);
 		assertEquals(30, p11Mult.getLowerBound());
@@ -95,36 +96,55 @@ public class TestTopLevel extends AbstarctTest {
 		assertEquals(1, p15Mult.getLowerBound());
 		assertEquals(1, p15Mult.getUpperBound());
 
-		var p11Children =
-				result.getSpecializationChildren(p11);
+		var p11Children = result.getSpecializationChildren(p11);
 
-		var p13Children =
-				result.getSpecializationChildren(p13);
+		var p13Children = result.getSpecializationChildren(p13);
 
-		var p14Children =
-				result.getSpecializationChildren(p14);
+		var p14Children = result.getSpecializationChildren(p14);
 
-		var p15Children =
-				result.getSpecializationChildren(p15);
+		var p15Children = result.getSpecializationChildren(p15);
 
-		System.out.println(
-				"p11 children: " +
-						p11Children.stream().map(Model::getName).toList()
-		);
+		System.out.println("p11 children: " + p11Children.stream().map(Model::getName).toList());
 
-		System.out.println(
-				"p13 children: " +
-						p13Children.stream().map(Model::getName).toList()
-		);
+		System.out.println("p13 children: " + p13Children.stream().map(Model::getName).toList());
 
-		System.out.println(
-				"p14 children: " +
-						p14Children.stream().map(Model::getName).toList()
-		);
+		System.out.println("p14 children: " + p14Children.stream().map(Model::getName).toList());
 
-		System.out.println(
-				"p15 children: " +
-						p15Children.stream().map(Model::getName).toList()
-		);
+		System.out.println("p15 children: " + p15Children.stream().map(Model::getName).toList());
+	}
+
+
+	@Test
+	public void testLibraryDefinitionAmounts() {
+
+		assertAmount(Sensors.class, Definition.class, 1);
+		assertAmount(Actuators.class, Definition.class, 1);
+		assertAmount(ConstPort.class, Definition.class, 1);
+
+
+		assertAmount(TwinStateMachine.class, Definition.class, 5);
+		assertAmount(TwinStateMachine.class, Usage.class, 14);
+
+
+		assertAmount(Database.class, Definition.class, 2);
+		assertAmount(RelationalDatabase.class, Definition.class, 1);
+
+
+		assertAmount(QueryFlow.class, Definition.class, 1);
+		assertAmount(Flow.class, Definition.class, 9);
+
+		Set<Strategy<Definition>> strategies = result.get(Strategy.class, Definition.class);
+		Set<Strategy<Usage>> usages = result.get(Strategy.class, Usage.class);
+
+		strategies.forEach(x -> System.out.println("Strategy: " + x.getName() + " id: " + x.getId()));
+		usages.forEach(x -> System.out.println("Strategy usage: " + x.getName() + " id: " + x.getId()));
+		assertAmount(Strategy.class, Definition.class, 1);
+
+
+		assertAmount(PhysicalTwin.class, Definition.class, 1);
+		assertAmount(DescriptiveModel.class, Definition.class, 1);
+		assertAmount(PredictiveModel.class, Definition.class, 1);
+		assertAmount(PrescriptiveModel.class, Definition.class, 1);
+		assertAmount(Shadow.class, Definition.class, 1);
 	}
 }

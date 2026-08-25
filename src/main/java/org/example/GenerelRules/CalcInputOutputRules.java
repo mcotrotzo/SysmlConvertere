@@ -5,8 +5,6 @@ import org.example.Mapping.NewVersion.MappingException;
 import org.example.Util.Utils;
 import org.omg.sysml.lang.sysml.*;
 
-import java.util.List;
-
 public class CalcInputOutputRules extends GenerelRules {
 
 	public CalcInputOutputRules(Utils utils) {
@@ -50,7 +48,6 @@ public class CalcInputOutputRules extends GenerelRules {
 			}
 		}
 	}
-
 
 
 	private boolean isParameter(Feature feature) {

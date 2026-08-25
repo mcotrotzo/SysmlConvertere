@@ -1,5 +1,6 @@
 package org.example.Mapping.NewVersion.NameSpace.NameSpaceImport;
 
+import org.example.Mapping.Interfaces.Base.TypeKind.NamespaceKind;
 import org.example.Mapping.NewVersion.Abstract.MappedReference;
 import org.example.Mapping.NewVersion.MappingContext;
 import org.example.Mapping.NewVersion.MappingException;
@@ -10,7 +11,7 @@ import org.omg.sysml.lang.sysml.Import;
 import org.omg.sysml.lang.sysml.Package;
 
 @MappedMetaclass
-public class ImportMapped extends MappedNamespaceElement<Import> implements org.example.Mapping.Interfaces.Base.Import {
+public class ImportMapped extends MappedNamespaceElement<Import, NamespaceKind> implements org.example.Mapping.Interfaces.Base.Import {
 
 
 	MappedReference<PackageElementType> importPackages;
@@ -22,11 +23,11 @@ public class ImportMapped extends MappedNamespaceElement<Import> implements org.
 	@Override
 	public void parse(MappingContext context) throws MappingException {
 
-		if(getSysmlElement().getImportOwningNamespace() instanceof Package packageType){
+		if (getSysmlElement().getImportOwningNamespace() instanceof Package packageType) {
 			importPackages = context.mapReference(packageType, PackageElementType.class);
 		}
 
-		if(importPackages == null){
+		if (importPackages == null) {
 			throw new MappingException("ImportMapped: importPackages is null for " + getSysmlElement().getName() + "Each file needs to import TwinDefLibrary or UserLibrary");
 		}
 	}

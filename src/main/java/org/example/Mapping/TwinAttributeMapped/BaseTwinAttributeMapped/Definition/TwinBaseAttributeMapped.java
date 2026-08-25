@@ -3,11 +3,10 @@ package org.example.Mapping.TwinAttributeMapped.BaseTwinAttributeMapped.Definiti
 import lombok.ToString;
 import org.example.Mapping.Interfaces.Base.TypeKind.TypeKind;
 import org.example.Mapping.Interfaces.TwinAttribute.BaseTwinAttribute.TwinBaseType;
+import org.example.Mapping.NewVersion.Abstract.MappedElementType;
 import org.example.Mapping.NewVersion.MappingContext;
 import org.example.Mapping.NewVersion.MappingException;
-import org.example.Mapping.NewVersion.Abstract.MappedElementType;
 import org.example.Util.LibraryNameSpaces;
-import org.omg.sysml.lang.sysml.Classifier;
 import org.omg.sysml.lang.sysml.Type;
 
 @ToString(callSuper = true)

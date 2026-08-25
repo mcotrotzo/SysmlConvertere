@@ -1,13 +1,13 @@
 package org.example;
 
 
-import org.example.SemanticRules.SemanticException;
-import org.example.SemanticRules.CheckAssignemntRules;
-import org.example.SemanticRules.SemanticRule;
 import org.example.Containers.ContainerManager;
 import org.example.GenerelRules.*;
 import org.example.Mapping.NewVersion.MappingContext;
 import org.example.Mapping.NewVersion.MappingException;
+import org.example.SemanticRules.CheckAssignemntRules;
+import org.example.SemanticRules.SemanticException;
+import org.example.SemanticRules.SemanticRule;
 import org.example.Util.Utils;
 
 import java.util.List;
@@ -34,11 +34,9 @@ public class MapperService {
 			postRules(db);
 			return db;
 
-		}
-		catch (SemanticException e) {
+		} catch (SemanticException e) {
 			throw new MappingException("Semantic exception: " + e.getClass().getName() + ": " + e.getMessage());
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 
 			throw new MappingException("Unexpected exception: " + e.getClass().getName() + ": " + e.getMessage());
@@ -46,7 +44,7 @@ public class MapperService {
 	}
 
 	private void preRules() throws MappingException {
-		var genereRules = List.of(new MultiType(utilsManager),new TwinAttributeHasToSpecialiced(utilsManager),new MultiplicityRule(utilsManager),new CalcInputOutputRules(utilsManager));
+		var genereRules = List.of(new MultiType(utilsManager), new TwinAttributeHasToSpecialiced(utilsManager), new MultiplicityRule(utilsManager), new CalcInputOutputRules(utilsManager));
 		for (GenerelRules rule : genereRules) {
 			rule.isValid();
 		}

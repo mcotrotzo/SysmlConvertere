@@ -6,7 +6,8 @@ import org.example.Mapping.Interfaces.TwinAttribute.BaseTwinAttribute.TwinAttrib
 
 import java.util.List;
 
-public interface CustomType<T extends TypeKind> extends TwinAttribute<T> {/**
+public interface CustomType<T extends TypeKind> extends TwinAttribute<T> {
+	/**
 	 * Returns the list of fields (twin attributes) that make up this custom type.
 	 *
 	 * @return a list of twin attributes representing the fields of the custom type

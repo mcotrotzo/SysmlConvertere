@@ -1,15 +1,17 @@
 package org.example.Mapping.NewVersion.NameSpace.NameSpacePackage;
 
+import org.example.Mapping.Interfaces.Base.TypeKind.Definition;
 import org.example.Mapping.Interfaces.Base.UserLibrary;
 import org.example.Mapping.Interfaces.TwinAttribute.BaseTwinAttribute.TwinBaseType;
-import org.example.Mapping.Interfaces.TwinAttribute.CustomType.Definition.CustomType;
-import org.example.Mapping.Interfaces.TwinFlow.QueryFlowDefinition;
+import org.example.Mapping.Interfaces.TwinAttribute.CustomType.CustomType;
+import org.example.Mapping.Interfaces.TwinFlow.QueryFlow;
 import org.example.Mapping.Interfaces.TwinFunction.Definition.CustomCalculation;
-import org.example.Mapping.NewVersion.*;
-import org.example.Mapping.NewVersion.TwinFlow.Definition.QueryFlowMappedDefinition;
-import org.example.Mapping.TwinFunction.BaseFunction;
+import org.example.Mapping.NewVersion.MappingContext;
+import org.example.Mapping.NewVersion.MappingException;
+import org.example.Mapping.NewVersion.TwinFlow.Definition.QueryFlowMapped;
 import org.example.Mapping.TwinAttributeMapped.BaseTwinAttributeMapped.Definition.TwinBaseAttributeMapped;
 import org.example.Mapping.TwinAttributeMapped.CustomTypeMapped.CustomAttributeMapped;
+import org.example.Mapping.TwinFunction.BaseFunction;
 import org.example.Mapping.TwinFunction.CustomCalculationMapped;
 import org.example.Util.LibraryPackageNames;
 import org.omg.sysml.lang.sysml.Classifier;
@@ -22,9 +24,9 @@ import java.util.List;
 public class UserLibraryMapped extends PackageElementType implements UserLibrary {
 	List<BaseFunction> baseFunctionDefinitions = new ArrayList<>();
 	List<CustomCalculationMapped> customCalculationDefinitions = new ArrayList<>();
-	List<CustomAttributeMapped> customTypeDefinitions = new ArrayList<>();
-	List<TwinBaseAttributeMapped> baseTypedDefinitions = new ArrayList<>();
-	List<QueryFlowMappedDefinition> queryDefinitions = new ArrayList<>();
+	List<CustomAttributeMapped<Definition>> customTypeDefinitions = new ArrayList<>();
+	List<? extends TwinBaseAttributeMapped<Definition>> baseTypedDefinitions = new ArrayList<>();
+	List<QueryFlowMapped<Definition>> queryDefinitions = new ArrayList<>();
 
 	public UserLibraryMapped(Package sysmlElement) {
 		super(sysmlElement);
@@ -34,10 +36,10 @@ public class UserLibraryMapped extends PackageElementType implements UserLibrary
 	public void parse(MappingContext context) throws MappingException {
 		super.parse(context);
 		baseFunctionDefinitions = context.mapOwnedNamespace(this, Classifier.class, BaseFunction.class);
-		baseTypedDefinitions = context.mapOwnedNamespace(this, Classifier.class, TwinBaseAttributeMapped.class);
-		customCalculationDefinitions = context.mapOwnedNamespace(this, Classifier.class, CustomCalculationMapped.class);
-		customTypeDefinitions = context.mapOwnedNamespace(this, Classifier.class, CustomAttributeMapped.class);
-		queryDefinitions = context.mapOwnedNamespace(this, Classifier.class, QueryFlowMappedDefinition.class);
+		baseTypedDefinitions = context.mapOwnedNamespace(this, Classifier.class, rawClassOf(TwinBaseAttributeMapped.class));
+		customCalculationDefinitions = context.mapOwnedNamespace(this, Classifier.class, rawClassOf(CustomCalculationMapped.class));
+		customTypeDefinitions = context.mapOwnedNamespace(this, Classifier.class, rawClassOf(CustomAttributeMapped.class));
+		queryDefinitions = context.mapOwnedNamespace(this, Classifier.class, rawClassOf(QueryFlowMapped.class));
 	}
 
 	@Override
@@ -56,17 +58,19 @@ public class UserLibraryMapped extends PackageElementType implements UserLibrary
 	}
 
 	@Override
-	public List<? extends TwinBaseType> getBaseTypeDefinitions() {
-		return baseTypedDefinitions;
+	public List<? extends TwinBaseType<Definition>> getBaseTypeDefinitions() {
+		return new ArrayList<>(baseTypedDefinitions);
 	}
 
 	@Override
-	public List<? extends CustomType> getCustomTypeDefinitions() {
-		return customTypeDefinitions;
+	public List<? extends CustomType<Definition>> getCustomTypeDefinitions() {
+		return new ArrayList<>(customTypeDefinitions);
 	}
 
 	@Override
-	public List<? extends QueryFlowDefinition> getQueryDefinitions() {
-		return queryDefinitions;
+	public List<? extends QueryFlow<Definition>> getQueryDefinitions() {
+		return new ArrayList<>(queryDefinitions);
 	}
+
+
 }

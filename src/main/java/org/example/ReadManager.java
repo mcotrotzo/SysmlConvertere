@@ -1,7 +1,6 @@
 package org.example;
 
 import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.xtext.diagnostics.Severity;
 import org.omg.sysml.interactive.SysMLInteractive;
 import org.omg.sysml.interactive.SysMLInteractiveResult;
 import org.omg.sysml.lang.sysml.Element;
@@ -17,6 +16,7 @@ import java.util.stream.Stream;
 public final class ReadManager {
 
 	private static final Path STANDARD_LIBRARY;
+	private static final Path DT_LIBRARY;
 
 	static {
 		try {
@@ -25,8 +25,6 @@ public final class ReadManager {
 			throw new RuntimeException(e);
 		}
 	}
-
-	private static final Path DT_LIBRARY;
 
 	static {
 		try {
@@ -46,55 +44,6 @@ public final class ReadManager {
 	private final Element rootElement;
 	private final LoadedResources loadedResources;
 
-
-	private static Path extractStandardLibrary(String ressourceName) throws IOException {
-
-		Path tempDirectory = Files.createTempDirectory(ressourceName+"_temp");
-
-		try (var input = ReadManager.class
-				.getClassLoader()
-				.getResourceAsStream(ressourceName+".zip")) {
-
-			if (input == null) {
-				throw new IllegalStateException(
-						"Bundled SysML standard library not found."
-				);
-			}
-
-			try (var zip = new java.util.zip.ZipInputStream(input)) {
-
-				java.util.zip.ZipEntry entry;
-
-				while ((entry = zip.getNextEntry()) != null) {
-
-					Path destination = tempDirectory
-							.resolve(entry.getName())
-							.normalize();
-
-					if (!destination.startsWith(tempDirectory)) {
-						throw new IOException(
-								"Invalid ZIP entry: " + entry.getName()
-						);
-					}
-
-					if (entry.isDirectory()) {
-						Files.createDirectories(destination);
-					} else {
-						Files.createDirectories(destination.getParent());
-						Files.copy(
-								zip,
-								destination,
-								java.nio.file.StandardCopyOption.REPLACE_EXISTING
-						);
-					}
-
-					zip.closeEntry();
-				}
-			}
-		}
-
-		return tempDirectory;
-	}
 
 	public ReadManager(String userTwinModelPath, String userLibraryPath) {
 		try {
@@ -136,6 +85,43 @@ public final class ReadManager {
 		} catch (IOException exception) {
 			throw new RuntimeException("Failed to initialize ReadManager.", exception);
 		}
+	}
+
+	private static Path extractStandardLibrary(String ressourceName) throws IOException {
+
+		Path tempDirectory = Files.createTempDirectory(ressourceName + "_temp");
+
+		try (var input = ReadManager.class.getClassLoader().getResourceAsStream(ressourceName + ".zip")) {
+
+			if (input == null) {
+				throw new IllegalStateException("Bundled SysML standard library not found.");
+			}
+
+			try (var zip = new java.util.zip.ZipInputStream(input)) {
+
+				java.util.zip.ZipEntry entry;
+
+				while ((entry = zip.getNextEntry()) != null) {
+
+					Path destination = tempDirectory.resolve(entry.getName()).normalize();
+
+					if (!destination.startsWith(tempDirectory)) {
+						throw new IOException("Invalid ZIP entry: " + entry.getName());
+					}
+
+					if (entry.isDirectory()) {
+						Files.createDirectories(destination);
+					} else {
+						Files.createDirectories(destination.getParent());
+						Files.copy(zip, destination, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+					}
+
+					zip.closeEntry();
+				}
+			}
+		}
+
+		return tempDirectory;
 	}
 
 	private static Resource requireResultResource(SysMLInteractiveResult result, String description) {

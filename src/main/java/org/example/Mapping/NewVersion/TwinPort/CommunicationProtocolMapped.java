@@ -1,24 +1,20 @@
 package org.example.Mapping.NewVersion.TwinPort;
 
 import lombok.ToString;
+import org.example.Mapping.Interfaces.Base.TypeKind.TypeKind;
 import org.example.Mapping.Interfaces.TwinPort.Protocol;
 import org.example.Mapping.NewVersion.Abstract.MappedElement;
 import org.example.Mapping.NewVersion.Abstract.MappedElementType;
-import org.example.Mapping.NewVersion.MappingContext;
-import org.example.Mapping.NewVersion.MappingException;
 import org.example.Util.LibraryNameSpaces;
-import org.omg.sysml.lang.sysml.Feature;
+import org.omg.sysml.lang.sysml.Type;
 
 @MappedElementType(LibraryNameSpaces.COMMUNICATION_PROTOCOL)
 @ToString(callSuper = true)
-public class CommunicationProtocolMapped extends MappedElement<Feature> implements Protocol {
+public class CommunicationProtocolMapped<T extends TypeKind> extends MappedElement<Type, T> implements Protocol<T> {
 
-	public CommunicationProtocolMapped(Feature sysmlElement) {
+	public CommunicationProtocolMapped(Type sysmlElement) {
 		super(sysmlElement);
 	}
 
-	@Override
-	public void parse(MappingContext context) throws MappingException {
 
-	}
 }

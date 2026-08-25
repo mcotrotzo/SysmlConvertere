@@ -1,11 +1,12 @@
 package org.example.Mapping.TwinAttributeMapped.BaseTwinAttributeMapped.Definition;
 
 import lombok.ToString;
+import org.example.Mapping.Interfaces.Base.TypeKind.Definition;
 import org.example.Mapping.Interfaces.Base.TypeKind.TypeKind;
+import org.example.Mapping.Interfaces.Base.TypeKind.Usage;
 import org.example.Mapping.Interfaces.TwinAttribute.BaseTwinAttribute.TwinBaseString;
 import org.example.Mapping.NewVersion.Abstract.MappedElementType;
 import org.example.Util.LibraryNameSpaces;
-import org.omg.sysml.lang.sysml.Classifier;
 import org.omg.sysml.lang.sysml.Type;
 
 @MappedElementType(LibraryNameSpaces.TWIN_STRING)
@@ -14,5 +15,15 @@ public class TwinBaseAttributeStringMapped<T extends TypeKind> extends TwinBaseA
 
 	public TwinBaseAttributeStringMapped(Type sysmlElement) {
 		super(sysmlElement);
+	}
+
+	@SuppressWarnings("unchecked")
+	public static Class<TwinBaseAttributeStringMapped<Usage>> getRawStringUsageClass() {
+		return (Class<TwinBaseAttributeStringMapped<Usage>>) (Class<?>) TwinBaseAttributeStringMapped.class;
+	}
+
+	@SuppressWarnings("unchecked")
+	public static Class<TwinBaseAttributeStringMapped<Definition>> getRawStringDefinitionClass() {
+		return (Class<TwinBaseAttributeStringMapped<Definition>>) (Class<?>) TwinBaseAttributeStringMapped.class;
 	}
 }

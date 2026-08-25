@@ -2,7 +2,8 @@
 
 `sysml-twin-mapper` maps SysML v2 Digital Twin models to a Java object model.
 
-The library parses a Twin model together with a user-defined SysML library and exposes the mapped model through Java interfaces and `TwinDataBase`.
+The library parses a Twin model together with a user-defined SysML library and exposes the mapped model through Java
+interfaces and `TwinDataBase`.
 
 For the supported SysML modeling conventions, see [`MODELING.md`](MODELING.md).
 
@@ -89,7 +90,8 @@ After that the project can be built normally:
 mvn clean compile
 ```
 
-The SysML standard library and the Digital Twin library required internally by the mapper are bundled with the mapper library. Users do not have to download them manually.
+The SysML standard library and the Digital Twin library required internally by the mapper are bundled with the mapper
+library. Users do not have to download them manually.
 
 ---
 
@@ -126,7 +128,8 @@ MapperService mapperService = new MapperService(
 TwinDataBase database = mapperService.map();
 ```
 
-The mapper loads the required libraries, parses the supplied SysML model and maps supported SysML elements to the public Java model interfaces.
+The mapper loads the required libraries, parses the supplied SysML model and maps supported SysML elements to the public
+Java model interfaces.
 
 Application code should normally work with these interfaces rather than the internal mapper implementation classes.
 
@@ -191,7 +194,8 @@ TwinAttribute attribute =
         );
 ```
 
-References themselves also retain their referenced model relationship, so consumers can work directly with the reference API when appropriate instead of manually reconstructing references from names.
+References themselves also retain their referenced model relationship, so consumers can work directly with the reference
+API when appropriate instead of manually reconstructing references from names.
 
 ---
 
@@ -279,15 +283,22 @@ because the multiplicity of the base feature contributes to the semantic multipl
 
 Mapped model objects implement `Model`.
 
-`Model` provides the common information shared by mapped elements, including their identity, name, kind and parent relationship.
+`Model` provides the common information shared by mapped elements, including their identity, name, kind and parent
+relationship.
 
 Typical access looks like:
 
 ```java
 model.getId();
-model.getName();
-model.getKind();
-model.getParent();
+model.
+
+getName();
+model.
+
+getKind();
+model.
+
+getParent();
 ```
 
 The parent describes structural containment in the mapped model.
@@ -298,29 +309,52 @@ The parent describes structural containment in the mapped model.
 
 `Twin` represents a mapped Digital Twin definition.
 
-A Twin exposes the different Digital Twin components belonging to it, including sensors, actuators, attributes, state machines, strategies, queries and databases.
+A Twin exposes the different Digital Twin components belonging to it, including sensors, actuators, attributes, state
+machines, strategies, queries and databases.
 
 Typical access includes:
 
 ```java
 twin.getSensors();
-twin.getActuators();
+twin.
 
-twin.getConstAttributes();
-twin.getDerivedAttributes();
+getActuators();
 
-twin.getControlUnits();
+twin.
 
-twin.getQueriesHistory();
-twin.getGroupQueriesHistory();
+getConstAttributes();
+twin.
 
-twin.getDescriptiveStateMachines();
+getDerivedAttributes();
 
-twin.getDescriptiveStrategies();
-twin.getPredictiveStrategies();
-twin.getPrescriptiveStrategies();
+twin.
 
-twin.getDatabases();
+getControlUnits();
+
+twin.
+
+getQueriesHistory();
+twin.
+
+getGroupQueriesHistory();
+
+twin.
+
+getDescriptiveStateMachines();
+
+twin.
+
+getDescriptiveStrategies();
+twin.
+
+getPredictiveStrategies();
+twin.
+
+getPrescriptiveStrategies();
+
+twin.
+
+getDatabases();
 ```
 
 These relationships correspond to the Digital Twin library features specialized by the SysML model.
@@ -425,7 +459,8 @@ This allows downstream applications to inspect the structure of custom values.
 
 Expressions are represented as mapped objects.
 
-The mapper distinguishes between different expression forms instead of storing arbitrary SysML expressions as source-code strings.
+The mapper distinguishes between different expression forms instead of storing arbitrary SysML expressions as
+source-code strings.
 
 Supported mapped expression categories include:
 
@@ -511,7 +546,8 @@ is represented structurally.
 
 The called calculation is therefore represented as a model reference rather than merely storing its textual name.
 
-Arguments are mapped expressions and can themselves contain references, feature chains, constructors or nested calculations.
+Arguments are mapped expressions and can themselves contain references, feature chains, constructors or nested
+calculations.
 
 ---
 
@@ -535,7 +571,8 @@ part temp30 :> queryHistory {
 
 The type of the result corresponds to the type of the queried Twin attribute.
 
-If the queried expression crosses a usage with multiplicity, the resulting histories are represented as one flat result collection.
+If the queried expression crosses a usage with multiplicity, the resulting histories are represented as one flat result
+collection.
 
 For example:
 
@@ -668,12 +705,15 @@ Mapped behavior includes actions such as:
 ```sysml
 assign p12.charge := 50;
 ```
+
 We allow:
+
 + assignment actions;
 + for loops;
 + while loops;
 + if else
 + successions
+
 ---
 
 # Strategies

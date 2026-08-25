@@ -14,7 +14,6 @@ import org.example.Mapping.NewVersion.MappingException;
 import org.example.Mapping.TwinAttributeMapped.BaseTwinAttributeMapped.Definition.TwinAttributeMapped;
 import org.example.Util.LibraryNameSpaces;
 import org.omg.sysml.lang.sysml.ActionUsage;
-import org.omg.sysml.lang.sysml.Classifier;
 import org.omg.sysml.lang.sysml.SuccessionAsUsage;
 import org.omg.sysml.lang.sysml.Type;
 
@@ -22,53 +21,30 @@ import java.util.ArrayList;
 import java.util.List;
 
 @MappedElementType(LibraryNameSpaces.TWIN_ACTION)
-public abstract class TwinActionBlockMapped<T extends Type,Z extends TypeKind> extends TwinActionMapped<T,Z> implements Block<Z> {
-	public TwinActionBlockMapped(T sysmlElement) {
-		super(sysmlElement);
-
-	}
-	private List<TwinActionMapped<?, Usage>> twinActionBlockUsages = new ArrayList<>();
+public class TwinActionBlockMapped<T extends Type, Z extends TypeKind> extends TwinActionMapped<T, Z> implements Block<Z> {
+	protected List<TwinActionMapped<?, Usage>> twinActionBlockUsages = new ArrayList<>();
 	private List<TwinSuccessionAction> twinSuccessionActions = new ArrayList<>();
 	private List<TwinAttributeMapped<Usage>> inputs = new ArrayList<>();
 	private List<TwinAttributeMapped<Usage>> outputs = new ArrayList<>();
 	private List<TwinAttributeMapped<Usage>> localAttributes = new ArrayList<>();
+	public TwinActionBlockMapped(T sysmlElement) {
+		super(sysmlElement);
+
+	}
 
 	@Override
 	public void parse(MappingContext context) throws MappingException {
-		inputs = context.mapAttributes(
-				this,
-				"inputs",
-				TwinAttributeMapped.getRawUsageClass(),
-				Role.ACTION
-		);
+		super.parse(context);
+		inputs = context.mapAttributes(this, "inputs", TwinAttributeMapped.getRawUsageClass(), Role.ACTION);
 
-		outputs = context.mapAttributes(
-				this,
-				"outputs",
-				TwinAttributeMapped.getRawUsageClass(),
-				Role.ACTION
-		);
+		outputs = context.mapAttributes(this, "outputs", TwinAttributeMapped.getRawUsageClass(), Role.ACTION);
 
-		localAttributes = context.mapAttributes(
-				this,
-				"local_Attributes",
-				TwinAttributeMapped.getRawUsageClass(),
-				Role.LOCAL
-		);
+		localAttributes = context.mapAttributes(this, "local_Attributes", TwinAttributeMapped.getRawUsageClass(), Role.LOCAL);
 
 
+		twinActionBlockUsages = context.mapOwned(this, ActionUsage.class, getActionMappedUsageClass());
 
-		twinActionBlockUsages = context.mapOwned(
-				this,
-				ActionUsage.class,
-				getActionMappedUsageClass()
-		);
-
-		twinSuccessionActions = context.mapOwned(
-				this,
-				SuccessionAsUsage.class,
-				TwinSuccessionAction.class
-		);
+		twinSuccessionActions = context.mapOwned(this, SuccessionAsUsage.class, TwinSuccessionAction.class);
 	}
 
 

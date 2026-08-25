@@ -7,10 +7,10 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class UpperBoundExceeded  extends AbstarctTest {
+public class UpperBoundExceeded extends AbstarctTest {
 
 	@Override
 	public Optional<String> getTestModel() {
@@ -31,7 +31,7 @@ public class UpperBoundExceeded  extends AbstarctTest {
 							:>>topic[1];
 				        }
 				        }
-			
+				
 				    }
 				    }
 				}

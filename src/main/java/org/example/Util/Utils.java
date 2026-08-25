@@ -39,6 +39,19 @@ public class Utils {
 		collectAllUserElements();
 	}
 
+	public static ElemWithMult getMultiplicityRange(Type type) {
+		MultiplicityRange mult = FeatureUtil.getMultiplicityRangeOf(type.getMultiplicity());
+		if (mult != null) {
+			int lower = mult.valueOf(mult.getLowerBound());
+			int upper = mult.valueOf(mult.getUpperBound());
+			if (lower < 0) lower = upper;
+
+			return new ElemWithMult(lower, upper);
+		} else {
+			return new ElemWithMult(1, 1);
+		}
+	}
+
 	private void initLibraryElements() {
 		for (LibraryNameSpaces libraryNameSpaces : LibraryNameSpaces.values()) {
 			libraryMap.put(libraryNameSpaces, SysMLLibraryUtil.getLibraryType(rootElement, String.valueOf(libraryNameSpaces)));
@@ -169,19 +182,6 @@ public class Utils {
 			}
 		}
 		return result;
-	}
-
-	public static ElemWithMult getMultiplicityRange(Type type) {
-		MultiplicityRange mult = FeatureUtil.getMultiplicityRangeOf(type.getMultiplicity());
-		if (mult != null) {
-			int lower = mult.valueOf(mult.getLowerBound());
-			int upper = mult.valueOf(mult.getUpperBound());
-			if (lower < 0) lower = upper;
-
-			return new ElemWithMult(lower, upper);
-		} else {
-			return new ElemWithMult(1, 1);
-		}
 	}
 
 	public boolean redefinesOrSubsets(Feature candidate, String targetName) {

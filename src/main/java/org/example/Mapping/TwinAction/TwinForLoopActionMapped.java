@@ -2,15 +2,15 @@ package org.example.Mapping.TwinAction;
 
 import lombok.ToString;
 import org.example.Mapping.Interfaces.Base.TypeKind.Usage;
-import org.example.Mapping.Interfaces.TwinAttribute.BaseTwinAttribute.Role;
 import org.example.Mapping.Interfaces.TwinAction.Action;
 import org.example.Mapping.Interfaces.TwinAction.ForLoop;
+import org.example.Mapping.Interfaces.TwinAttribute.BaseTwinAttribute.Role;
 import org.example.Mapping.Interfaces.TwinAttribute.BaseTwinAttribute.TwinAttribute;
+import org.example.Mapping.NewVersion.MappingContext;
+import org.example.Mapping.NewVersion.MappingException;
 import org.example.Mapping.TwinAction.Annotation.MappedMetaclass;
 import org.example.Mapping.TwinAttributeMapped.BaseTwinAttributeMapped.Definition.TwinAttributeMapped;
 import org.example.Mapping.TwinExpression.TwinExpression;
-import org.example.Mapping.NewVersion.MappingContext;
-import org.example.Mapping.NewVersion.MappingException;
 import org.omg.sysml.lang.sysml.ForLoopActionUsage;
 
 @MappedMetaclass
@@ -18,7 +18,7 @@ import org.omg.sysml.lang.sysml.ForLoopActionUsage;
 public class TwinForLoopActionMapped extends TwinActionMapped<ForLoopActionUsage, Usage> implements ForLoop {
 	private TwinAttributeMapped<Usage> loopVariable;
 	private TwinExpression<?> expr;
-	private TwinActionMapped<?,Usage> body;
+	private TwinActionMapped<?, Usage> body;
 
 	public TwinForLoopActionMapped(ForLoopActionUsage sysmlElement) {
 		super(sysmlElement);
@@ -43,20 +43,11 @@ public class TwinForLoopActionMapped extends TwinActionMapped<ForLoopActionUsage
 	@Override
 	public void parse(MappingContext context) throws MappingException {
 
-		loopVariable = context.mapAttribute(
-				getSysmlElement().getLoopVariable(),
-				this,TwinAttributeMapped.getRawUsageClass(), Role.FOR_LOOP_VARIABLE
-		);
-		expr = context.map(
-				getSysmlElement().getSeqArgument(),
-				this,
-				TwinExpression.class
-		);
+		loopVariable = context.mapAttribute(getSysmlElement().getLoopVariable(), this, TwinAttributeMapped.getRawUsageClass(), Role.FOR_LOOP_VARIABLE);
 
-		body = context.map(
-				getSysmlElement().getBodyAction(),
-				this,
-				TwinActionMapped.getActionMappedUsageClass()
-		);
+		System.out.println("Class name of seq " + sysmlElement.getSeqArgument().getClass().getSimpleName());
+		expr = context.map(getSysmlElement().getSeqArgument(), this, TwinExpression.class);
+
+		body = context.map(getSysmlElement().getBodyAction(), this, TwinActionMapped.getActionMappedUsageClass());
 	}
 }

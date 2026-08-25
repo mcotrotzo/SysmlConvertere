@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 public class LowerBoundLibraryFeaturesFromUserLibraryNotThrows extends AbstarctTest {
 
@@ -32,7 +32,7 @@ public class LowerBoundLibraryFeaturesFromUserLibraryNotThrows extends AbstarctT
 		return Optional.of("""
 				package PositionThings {
 				    private import UserLibrary::*;
-					
+				
 					port def P11:>Sensor{
 					:>> communicationProtocol:MQTT_Protocol{
 						:>>broker;
@@ -44,7 +44,7 @@ public class LowerBoundLibraryFeaturesFromUserLibraryNotThrows extends AbstarctT
 				        attribute y[1] : TwinInteger :> fields;
 				        attribute z[1] : TwinInteger :> fields;
 				    }
-			
+				
 				}
 				""");
 	}
@@ -56,7 +56,7 @@ public class LowerBoundLibraryFeaturesFromUserLibraryNotThrows extends AbstarctT
 
 	@Test
 	public void lowerBoundFullfiled() {
-		assertAll(()->super.testTopLevelDefinition());
+		assertAll(() -> super.testTopLevelDefinition());
 
 	}
 

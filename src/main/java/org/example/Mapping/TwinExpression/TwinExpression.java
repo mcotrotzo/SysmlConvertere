@@ -1,6 +1,5 @@
 package org.example.Mapping.TwinExpression;
 
-import org.example.Mapping.NewVersion.Abstract.MappedElement;
 import org.example.Mapping.NewVersion.Abstract.MappedElementExpression;
 import org.example.Mapping.TwinAction.Annotation.MappedMetaclass;
 import org.omg.sysml.lang.sysml.Expression;

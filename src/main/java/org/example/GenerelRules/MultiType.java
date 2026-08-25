@@ -11,7 +11,7 @@ import org.omg.sysml.util.TypeUtil;
 import java.util.HashSet;
 import java.util.Set;
 
-public class MultiType extends GenerelRules{
+public class MultiType extends GenerelRules {
 	public MultiType(Utils utils) {
 		super(utils);
 	}
@@ -37,22 +37,13 @@ public class MultiType extends GenerelRules{
 					continue;
 				}
 
-				boolean related =
-						TypeUtil.isCompatible(a, b)
-								|| TypeUtil.isCompatible(b, a);
+				boolean related = TypeUtil.isCompatible(a, b) || TypeUtil.isCompatible(b, a);
 
-				if(a.getName().equals("Flow")|| b.getName().equals("Flow")){
+				if (a.getName().equals("Flow") || b.getName().equals("Flow")) {
 					continue;
 				}
 				if (!related) {
-					throw new MappingException(
-							("Type '%s' has incompatible typings '%s' and '%s'.")
-									.formatted(
-											element.getQualifiedName(),
-											a.getName(),
-											b.getName()
-									)
-					);
+					throw new MappingException(("Type '%s' has incompatible typings '%s' and '%s'.").formatted(element.getQualifiedName(), a.getName(), b.getName()));
 				}
 			}
 		}

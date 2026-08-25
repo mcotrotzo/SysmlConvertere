@@ -28,7 +28,7 @@ public class LowerBoundLibraryFeaturesFromUserLibrary extends AbstarctTest {
 				        }
 				        }
 				    }
-				    
+				
 				    }
 				}
 				""");
@@ -39,7 +39,7 @@ public class LowerBoundLibraryFeaturesFromUserLibrary extends AbstarctTest {
 		return Optional.of("""
 				package PositionThings {
 				    private import UserLibrary::*;
-					
+				
 					port def P11:>Sensor{
 					:>> communicationProtocol:MQTT_Protocol;
 					}

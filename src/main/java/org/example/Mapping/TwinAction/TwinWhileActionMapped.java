@@ -1,23 +1,22 @@
 package org.example.Mapping.TwinAction;
 
 import lombok.ToString;
+import org.example.Mapping.Interfaces.Base.TypeKind.Usage;
 import org.example.Mapping.Interfaces.TwinAction.Action;
 import org.example.Mapping.Interfaces.TwinAction.WhileLoop;
-import org.example.Mapping.TwinAction.Annotation.MappedMetaclass;
-import org.example.Mapping.TwinAction.Usage.TwinActionBlockUsage;
-import org.example.Mapping.TwinAction.Usage.TwinActionUsageMapped;
-import org.example.Mapping.TwinExpression.TwinExpression;
 import org.example.Mapping.NewVersion.MappingContext;
 import org.example.Mapping.NewVersion.MappingException;
+import org.example.Mapping.TwinAction.Annotation.MappedMetaclass;
+import org.example.Mapping.TwinExpression.TwinExpression;
 import org.omg.sysml.lang.sysml.WhileLoopActionUsage;
 
 @MappedMetaclass
 @ToString(callSuper = true)
-public class TwinWhileActionMapped extends TwinActionUsageMapped<WhileLoopActionUsage> implements WhileLoop {
+public class TwinWhileActionMapped extends TwinActionMapped<WhileLoopActionUsage, Usage> implements WhileLoop {
 
 	private TwinExpression<?> condition;
 	private TwinExpression<?> until;
-	private TwinActionBlockUsage<?> body;
+	private TwinActionMapped<?, Usage> body;
 
 	public TwinWhileActionMapped(WhileLoopActionUsage sysmlElement) {
 		super(sysmlElement);
@@ -33,7 +32,7 @@ public class TwinWhileActionMapped extends TwinActionUsageMapped<WhileLoopAction
 			until = context.map(this.getSysmlElement().getUntilArgument(), this, TwinExpression.class);
 		}
 		if (sysmlElement.getBodyAction() != null) {
-			body = context.map(this.getSysmlElement().getBodyAction(), this, TwinActionBlockUsage.class);
+			body = context.map(this.getSysmlElement().getBodyAction(), this, TwinActionMapped.getActionMappedUsageClass());
 		}
 	}
 
@@ -48,7 +47,7 @@ public class TwinWhileActionMapped extends TwinActionUsageMapped<WhileLoopAction
 	}
 
 	@Override
-	public Action getBody() {
-		return  body;
+	public Action<Usage> getBody() {
+		return body;
 	}
 }

@@ -37,10 +37,17 @@ public class TwinAttributeMapped<T extends TypeKind> extends MappedElement<Type,
 		super(sysmlElement);
 	}
 
+	public static Class<TwinAttributeMapped<Definition>> getRawClass() {
+		return (Class<TwinAttributeMapped<Definition>>) (Class<?>) TwinAttributeMapped.class;
+	}
 
+	public static Class<TwinAttributeMapped<Usage>> getRawUsageClass() {
+		return (Class<TwinAttributeMapped<Usage>>) (Class<?>) TwinAttributeMapped.class;
+	}
 
 	@Override
 	public void parse(MappingContext context) throws MappingException {
+		super.parse(context);
 		if (getSysmlElement() instanceof Feature feature) parseUsage(context, feature);
 		if (getSysmlElement() instanceof Classifier classifier) parseDefinition(context, classifier);
 	}
@@ -64,14 +71,6 @@ public class TwinAttributeMapped<T extends TypeKind> extends MappedElement<Type,
 		}
 	}
 
-
-	public static Class<TwinAttributeMapped<Definition>> getRawClass() {
-		return (Class<TwinAttributeMapped<Definition>>) (Class<?>) TwinAttributeMapped.class;
-	}
-
-	public static Class<TwinAttributeMapped<Usage>> getRawUsageClass() {
-		return (Class<TwinAttributeMapped<Usage>>) (Class<?>) TwinAttributeMapped.class;
-	}
 	private MappedReference<? extends TwinAttributeMapped<Definition>> mapDefinitionReference(MappingContext context, Classifier definition) throws MappingException {
 		return context.mapReference(definition, getRawClass());
 	}
