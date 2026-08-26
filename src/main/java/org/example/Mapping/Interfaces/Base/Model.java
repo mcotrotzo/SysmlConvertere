@@ -2,6 +2,7 @@ package org.example.Mapping.Interfaces.Base;
 
 import org.example.Mapping.Interfaces.Base.TypeKind.Definition;
 import org.example.Mapping.Interfaces.Base.TypeKind.TypeKindNamespace;
+import org.example.Mapping.Interfaces.BaseTaxonomy.NoTaxonomyClass;
 import org.example.Mapping.Interfaces.BaseTaxonomy.Taxonomy;
 import org.example.Mapping.Interfaces.Reference;
 
@@ -35,5 +36,11 @@ public interface Model<T extends TypeKindNamespace> {
 	 */
 	String getDeterministicId();
 
-	Optional<Reference<? extends Taxonomy<Definition>>> getTaxonomy();
+
+	default Class<? extends Taxonomy> getTaxonomy(){
+		if(getParent().isEmpty()){
+			return NoTaxonomyClass.class;
+		}
+		return getParent().get().getTaxonomy();
+	}
 }

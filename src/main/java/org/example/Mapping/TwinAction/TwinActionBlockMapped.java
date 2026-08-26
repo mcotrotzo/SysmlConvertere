@@ -13,24 +13,30 @@ import org.example.Mapping.NewVersion.MappingContext;
 import org.example.Mapping.NewVersion.MappingException;
 import org.example.Mapping.TwinAttributeMapped.BaseTwinAttributeMapped.Definition.TwinAttributeMapped;
 import org.example.Util.LibraryNameSpaces;
-import org.omg.sysml.lang.sysml.ActionUsage;
-import org.omg.sysml.lang.sysml.SuccessionAsUsage;
-import org.omg.sysml.lang.sysml.Type;
+import org.omg.sysml.lang.sysml.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @MappedElementType(LibraryNameSpaces.TWIN_ACTION)
-public class TwinActionBlockMapped<T extends Type, Z extends TypeKind> extends TwinActionMapped<T, Z> implements Block<Z> {
-	protected List<TwinActionMapped<?, Usage>> twinActionBlockUsages = new ArrayList<>();
+public class TwinActionBlockMapped<T extends Type,Z extends TypeKind> extends TwinActionMapped<T,Z> implements Block<Z> {
+	protected List<TwinActionMapped<ActionUsage,Usage>> twinActionBlockUsages = new ArrayList<>();
 	private List<TwinSuccessionAction> twinSuccessionActions = new ArrayList<>();
 	private List<TwinAttributeMapped<Usage>> inputs = new ArrayList<>();
 	private List<TwinAttributeMapped<Usage>> outputs = new ArrayList<>();
 	private List<TwinAttributeMapped<Usage>> localAttributes = new ArrayList<>();
-	public TwinActionBlockMapped(T sysmlElement) {
-		super(sysmlElement);
 
+	@SuppressWarnings("unchecked")
+	public TwinActionBlockMapped(ActionUsage sysmlElement) {
+		super((T) sysmlElement);
 	}
+
+	@SuppressWarnings("unchecked")
+	public TwinActionBlockMapped(ActionDefinition sysmlElement) {
+		super((T) sysmlElement);
+	}
+
+
 
 	@Override
 	public void parse(MappingContext context) throws MappingException {
@@ -42,7 +48,7 @@ public class TwinActionBlockMapped<T extends Type, Z extends TypeKind> extends T
 		localAttributes = context.mapAttributes(this, "local_Attributes", TwinAttributeMapped.getRawUsageClass(), Role.LOCAL);
 
 
-		twinActionBlockUsages = context.mapOwned(this, ActionUsage.class, getActionMappedUsageClass());
+		twinActionBlockUsages = context.mapOwned(this, ActionUsage.class, rawClassOf(TwinActionBlockMapped.class));
 
 		twinSuccessionActions = context.mapOwned(this, SuccessionAsUsage.class, TwinSuccessionAction.class);
 	}

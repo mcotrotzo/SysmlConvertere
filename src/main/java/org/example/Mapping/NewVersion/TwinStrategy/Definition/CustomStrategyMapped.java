@@ -5,12 +5,19 @@ import org.example.Mapping.Interfaces.Base.TypeKind.TypeKind;
 import org.example.Mapping.Interfaces.TwinStrategy.CustomStrategy;
 import org.example.Mapping.NewVersion.Abstract.MappedElementType;
 import org.example.Util.LibraryNameSpaces;
+import org.omg.sysml.lang.sysml.ActionDefinition;
+import org.omg.sysml.lang.sysml.ActionUsage;
 import org.omg.sysml.lang.sysml.Classifier;
 
 @MappedElementType(LibraryNameSpaces.CUSTOM_STRATEGY)
 @ToString(callSuper = true)
 public class CustomStrategyMapped<T extends TypeKind> extends TwinStrategyMapped<T> implements CustomStrategy<T> {
-	public CustomStrategyMapped(Classifier sysmlElement) {
+
+	public CustomStrategyMapped(ActionUsage sysmlElement) {
+		super(sysmlElement);
+	}
+
+	public CustomStrategyMapped(ActionDefinition sysmlElement) {
 		super(sysmlElement);
 	}
 }

@@ -1,13 +1,16 @@
 package org.example.Mapping.TwinFunction;
 
+import org.example.Mapping.Interfaces.Base.TypeKind.Definition;
 import org.example.Mapping.Interfaces.TwinFunction.Definition.BaseFunctionKind;
+import org.example.Mapping.NewVersion.Abstract.MappedElement;
 import org.example.Mapping.NewVersion.MappingContext;
 import org.example.Mapping.NewVersion.MappingException;
 import org.example.Mapping.TwinAction.Annotation.MappedMetaclass;
+import org.omg.sysml.lang.sysml.CalculationDefinition;
 import org.omg.sysml.lang.sysml.Function;
 
 @MappedMetaclass
-public class BaseFunction extends FunctionMapped<Function> implements org.example.Mapping.Interfaces.TwinFunction.Definition.BaseFunction {
+public class BaseFunction extends MappedElement<Function, Definition> implements org.example.Mapping.Interfaces.TwinFunction.Definition.BaseFunction {
 
 	private BaseFunctionKind functionKind;
 

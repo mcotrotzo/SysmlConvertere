@@ -39,7 +39,7 @@ package Test{
                 out attribute constructorTest : TwinBoolean    :>> measurements = new TwinBoolean(true);
                 out attribute constructorTestBoolean    : TwinBoolean :>> measurements = new TwinBoolean(false);
                 out attribute customCalculationTest     : Position    :>> measurements = AddPosition(pos_a=new Position(x=10, y=20, z=30), pos_b=new Position(x=0, y=0, z=0));
-                out attribute maxCharge        : TwinReal :>> measurements = 100;
+                out attribute maxCharge        : TwinReal :>> measurements = INDEX_seq(nominalVoltage, 1) * 10;
                 out attribute nominalVoltage   : TwinReal :>> measurements = 48;
                 out attribute defaultNetDemand : TwinReal :>> measurements = 0;
                 out attribute defaultNetSupply : TwinReal :>> measurements = DIV_real(y=defaultNetDemand, x=defaultNetDemand);

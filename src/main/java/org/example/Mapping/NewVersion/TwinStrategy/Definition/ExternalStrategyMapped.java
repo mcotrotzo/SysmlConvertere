@@ -14,6 +14,8 @@ import org.example.Mapping.NewVersion.MappingException;
 import org.example.Mapping.TwinAttributeMapped.BaseTwinAttributeMapped.Definition.TwinBaseAttributeStringMapped;
 import org.example.Mapping.TwinAttributeMapped.EnumCustomStrategyMapped;
 import org.example.Util.LibraryNameSpaces;
+import org.omg.sysml.lang.sysml.ActionDefinition;
+import org.omg.sysml.lang.sysml.ActionUsage;
 import org.omg.sysml.lang.sysml.Type;
 
 @MappedElementType(LibraryNameSpaces.EXTERNAL_STRATEGY)
@@ -21,9 +23,15 @@ import org.omg.sysml.lang.sysml.Type;
 public class ExternalStrategyMapped<T extends TypeKind> extends TwinStrategyMapped<T> implements ExternalStrategy<T> {
 	EnumCustomStrategyMapped customStrategyType;
 	TwinBaseAttributeStringMapped<Usage> contentPath;
-	public ExternalStrategyMapped(Type sysmlElement) {
+
+	public ExternalStrategyMapped(ActionUsage sysmlElement) {
 		super(sysmlElement);
 	}
+
+	public ExternalStrategyMapped(ActionDefinition sysmlElement) {
+		super(sysmlElement);
+	}
+
 
 	@Override
 	public void parse(MappingContext context) throws MappingException {

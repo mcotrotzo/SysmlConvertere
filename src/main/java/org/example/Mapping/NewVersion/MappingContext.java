@@ -212,7 +212,6 @@ public final class MappingContext {
 	}
 
 	public <S extends Element, T> List<T> mapOwned(MappedElement<?, ?> mappedOwner, Class<S> sysmlMetaclass, Class<T> expectedClass) throws MappingException {
-
 		List<T> result = new ArrayList<>();
 
 		for (Element member : mappedOwner.getSysmlElement().getOwnedMember()) {
@@ -302,6 +301,27 @@ public final class MappingContext {
 		attribute.setRole(role);
 
 		return attribute;
+	}
+
+	public <T extends MappedNamespaceElement<?, ?>>
+	MappedReference<T> tryMapReference(
+			Element referent,
+			Class<T> expectedClass
+	) throws MappingException {
+
+		Objects.requireNonNull(referent, "referent");
+		Objects.requireNonNull(expectedClass, "expectedClass");
+
+		MappedNamespaceElement<?, ?> mapped =
+				map(referent, null);
+
+		if (!expectedClass.isInstance(mapped)) {
+			return null;
+		}
+
+		return new MappedReference<>(
+				expectedClass.cast(mapped)
+		);
 	}
 
 	public Utils getUtils() {

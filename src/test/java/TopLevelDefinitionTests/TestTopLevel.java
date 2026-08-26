@@ -15,6 +15,7 @@ import org.example.Mapping.Interfaces.TwinPort.Sensors;
 import org.example.Mapping.Interfaces.TwinStateMachine.TwinStateMachine;
 import org.example.Mapping.Interfaces.TwinStrategy.Strategy;
 import org.junit.jupiter.api.Test;
+import org.omg.sysml.lang.sysml.impl.FunctionImpl;
 
 import java.util.Set;
 
@@ -131,14 +132,14 @@ public class TestTopLevel extends AbstarctTest {
 
 
 		assertAmount(QueryFlow.class, Definition.class, 1);
-		assertAmount(Flow.class, Definition.class, 9);
+		assertAmount(Flow.class, Definition.class, 10);
 
 		Set<Strategy<Definition>> strategies = result.get(Strategy.class, Definition.class);
 		Set<Strategy<Usage>> usages = result.get(Strategy.class, Usage.class);
 
 		strategies.forEach(x -> System.out.println("Strategy: " + x.getName() + " id: " + x.getId()));
 		usages.forEach(x -> System.out.println("Strategy usage: " + x.getName() + " id: " + x.getId()));
-		assertAmount(Strategy.class, Definition.class, 1);
+		assertAmount(Strategy.class, Definition.class, 3);
 
 
 		assertAmount(PhysicalTwin.class, Definition.class, 1);

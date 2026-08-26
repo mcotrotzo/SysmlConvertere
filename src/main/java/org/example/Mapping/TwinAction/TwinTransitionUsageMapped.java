@@ -9,18 +9,20 @@ import org.example.Mapping.NewVersion.MappingContext;
 import org.example.Mapping.NewVersion.MappingException;
 import org.example.Mapping.TwinAction.Annotation.MappedMetaclass;
 import org.example.Mapping.TwinExpression.TwinExpression;
+import org.omg.sysml.lang.sysml.ActionUsage;
 import org.omg.sysml.lang.sysml.TransitionUsage;
+import org.omg.sysml.lang.sysml.Type;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @MappedMetaclass
 @ToString(callSuper = true)
-public class TwinTransitionUsageMapped extends TwinActionMapped<TransitionUsage, Usage> implements Transition {
-	private MappedReference<TwinActionMapped<?, Usage>> source;
-	private MappedReference<TwinActionMapped<?, Usage>> target;
+public class TwinTransitionUsageMapped extends TwinActionMapped<TransitionUsage,Usage> implements Transition {
+	private MappedReference<TwinActionMapped<ActionUsage,Usage>> source;
+	private MappedReference<TwinActionMapped<ActionUsage,Usage>> target;
 	private List<TwinExpression<?>> guard = new ArrayList<>();
-	private TwinActionMapped<?, Usage> effectAction;
+	private TwinActionMapped<ActionUsage,Usage> effectAction;
 
 	public TwinTransitionUsageMapped(TransitionUsage sysmlElement) {
 		super(sysmlElement);
@@ -28,12 +30,12 @@ public class TwinTransitionUsageMapped extends TwinActionMapped<TransitionUsage,
 
 
 	@Override
-	public MappedReference<TwinActionMapped<?, Usage>> getSource() {
+	public MappedReference<TwinActionMapped<ActionUsage,Usage>> getSource() {
 		return source;
 	}
 
 	@Override
-	public MappedReference<TwinActionMapped<?, Usage>> getTarget() {
+	public MappedReference<TwinActionMapped<ActionUsage,Usage>> getTarget() {
 		return target;
 	}
 
@@ -49,8 +51,10 @@ public class TwinTransitionUsageMapped extends TwinActionMapped<TransitionUsage,
 
 	@Override
 	public void parse(MappingContext context) throws MappingException {
-		source = context.mapReference(getSysmlElement().getSource(), TwinActionMapped.getActionMappedUsageClass());
-		target = context.mapReference(getSysmlElement().getTarget(), TwinActionMapped.getActionMappedUsageClass());
+
+
+		source = context.mapReference(getSysmlElement().getSource(), rawClassOf(TwinActionMapped.class));
+		target = context.mapReference(getSysmlElement().getTarget(), rawClassOf(TwinActionMapped.class));
 		guard = this.getSysmlElement().getGuardExpression().stream().map(e -> {
 			try {
 				return context.map(e, this, TwinExpression.class);
@@ -59,9 +63,10 @@ public class TwinTransitionUsageMapped extends TwinActionMapped<TransitionUsage,
 			}
 		}).collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
 
+		Class<TwinActionMapped<ActionUsage,Usage>> twinActionMappedClass = rawClassOf(TwinActionMapped.class);
 		effectAction = this.getSysmlElement().getEffectAction().stream().map(x -> {
 			try {
-				return context.map(x, this, TwinActionMapped.getActionMappedUsageClass());
+				return context.map(x, this, twinActionMappedClass);
 			} catch (MappingException ex) {
 				throw new RuntimeException(ex);
 			}

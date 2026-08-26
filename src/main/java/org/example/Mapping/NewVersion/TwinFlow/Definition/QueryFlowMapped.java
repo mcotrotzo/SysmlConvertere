@@ -16,6 +16,8 @@ import org.example.Mapping.TwinAttributeMapped.BaseTwinAttributeMapped.Definitio
 import org.example.Mapping.TwinAttributeMapped.EnumOrderByMapped;
 import org.example.Mapping.TwinAttributeMapped.EnumTimeUnitMapped;
 import org.example.Util.LibraryNameSpaces;
+import org.omg.sysml.lang.sysml.FlowDefinition;
+import org.omg.sysml.lang.sysml.FlowUsage;
 import org.omg.sysml.lang.sysml.Type;
 
 import java.util.List;
@@ -27,7 +29,12 @@ public class QueryFlowMapped<T extends TypeKind> extends FlowMapped<T> implement
 	private Optional<? extends org.example.Mapping.TwinAttributeMapped.EnumAttribute<EnumTimeUnit>> sinceUnit = Optional.empty();
 	private Optional<? extends org.example.Mapping.TwinAttributeMapped.EnumAttribute<EnumOrderBy>> orderBy = Optional.empty();
 	private TwinBaseAttributeIntegerMapped<Usage> limit;
-	public QueryFlowMapped(Type sysmlElement) {
+
+	public QueryFlowMapped(FlowDefinition sysmlElement) {
+		super(sysmlElement);
+	}
+
+	public QueryFlowMapped(FlowUsage sysmlElement) {
 		super(sysmlElement);
 	}
 

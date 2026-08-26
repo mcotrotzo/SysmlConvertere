@@ -6,9 +6,10 @@ library package TwinTaxonomyLibrary {
     
     part def PhysicalTaxonomy:>TwinTaxonomy;
     part def CloudTwinTaxonomy:>TwinTaxonomy;
+
     
-    part def DescriptiveTaxonomy:>TwinTaxonomy;
-    part def PredictiveTaxonomy:>TwinTaxonomy;
-    part def PrescriptiveTaxonomy:>TwinTaxonomy;
+    part def DescriptiveTaxonomy:>CloudTwinTaxonomy;
+    part def PredictiveTaxonomy:>CloudTwinTaxonomy;
+    part def PrescriptiveTaxonomy:>CloudTwinTaxonomy;
     part def ShadowTaxonomy:>TwinTaxonomy;
 }

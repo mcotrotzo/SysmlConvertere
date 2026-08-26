@@ -70,10 +70,10 @@ public class TwinStateMachineMapped<T extends TypeKind> extends TwinActionBlockM
 		if (doActionUsage != null)
 			doAction = context.map(doActionUsage, this, TwinActionMapped.getActionMappedUsageClass());
 
-		List<TwinActionMapped<?, Usage>> s = new ArrayList<>();
+		List<TwinActionMapped<ActionUsage, Usage>> s = new ArrayList<>();
 		for (ActionUsage action : actionsToScan) {
 			if (action.equals(entry) || action.equals(exit) || action.equals(doActionUsage)) continue;
-			s.add(context.map(action, this, TwinActionMapped.getActionMappedUsageClass()));
+			s.add(context.map(action, this, rawClassOf(TwinActionMapped.class)));
 		}
 
 		twinActionBlockUsages = s;

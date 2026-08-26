@@ -13,18 +13,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 @MappedMetaclass
-public abstract class TwinInvocationExpression<U extends InstantiationExpression, Z extends MappedElement<?, ?>> extends TwinExpression<U> {
+public abstract class TwinInvocationExpression<U extends InstantiationExpression> extends TwinExpression<U> {
 
 	private final List<TwinExpression<?>> arguments = new ArrayList<>();
-
-	@Getter
-	private MappedReference<Z> invokeType;
 
 	public TwinInvocationExpression(U sysmlElement) {
 		super(sysmlElement);
 	}
-
-	protected abstract Class<Z> resolveInvokeType();
 
 	@Override
 	public void parse(MappingContext context) throws MappingException {
@@ -32,8 +27,6 @@ public abstract class TwinInvocationExpression<U extends InstantiationExpression
 		for (var arg : getSysmlElement().getArgument()) {
 			arguments.add(context.map(arg, this, TwinExpression.class));
 		}
-
-		invokeType = context.mapReference(getSysmlElement().getInstantiatedType(), resolveInvokeType());
 	}
 
 	public List<? extends org.example.Mapping.Interfaces.TwinExpression.TwinExpression> getArguments() {

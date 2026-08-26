@@ -1,6 +1,7 @@
 package org.example.Mapping.TwinAttributeMapped.CustomTypeMapped;
 
 import lombok.ToString;
+import org.example.Mapping.Interfaces.Base.TypeKind.Definition;
 import org.example.Mapping.Interfaces.Base.TypeKind.TypeKind;
 import org.example.Mapping.Interfaces.Base.TypeKind.Usage;
 import org.example.Mapping.Interfaces.TwinAttribute.BaseTwinAttribute.Role;
@@ -35,5 +36,15 @@ public class CustomAttributeMapped<T extends TypeKind> extends TwinAttributeMapp
 	public void parse(MappingContext context) throws MappingException {
 		super.parse(context);
 		fields = context.mapAttributes(this, "fields", TwinAttributeMapped.getRawUsageClass(), Role.CUSTOM_TYPE_MEMBER);
+	}
+
+	@Override
+	public void setRole(Role role) {
+		super.setRole(role);
+		if(getKind() instanceof Usage){
+			for (TwinAttributeMapped<Usage> field : fields) {
+				field.setRole(role);
+			}
+		}
 	}
 }

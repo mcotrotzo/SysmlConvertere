@@ -8,12 +8,15 @@ import org.example.Mapping.Interfaces.Reference;
 import org.example.Mapping.Interfaces.TwinAttribute.BaseTwinAttribute.Direction;
 import org.example.Mapping.Interfaces.TwinAttribute.BaseTwinAttribute.Role;
 import org.example.Mapping.Interfaces.TwinAttribute.BaseTwinAttribute.TwinAttribute;
+import org.example.Mapping.Interfaces.TwinExpression.FeatureReference;
 import org.example.Mapping.Interfaces.TwinExpression.TwinExpression;
 import org.example.Mapping.NewVersion.Abstract.MappedElement;
 import org.example.Mapping.NewVersion.Abstract.MappedElementType;
 import org.example.Mapping.NewVersion.Abstract.MappedReference;
 import org.example.Mapping.NewVersion.MappingContext;
 import org.example.Mapping.NewVersion.MappingException;
+import org.example.Mapping.NewVersion.Utils.ExpressionRoleValidator;
+import org.example.Mapping.TwinExpression.TwinInvocationExpression;
 import org.example.Util.LibraryNameSpaces;
 import org.omg.sysml.lang.sysml.Classifier;
 import org.omg.sysml.lang.sysml.Expression;
@@ -23,6 +26,7 @@ import org.omg.sysml.lang.sysml.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
 
 @MappedElementType(LibraryNameSpaces.TWIN_ATTRIBUTE)
 @ToString(callSuper = true)
@@ -47,15 +51,68 @@ public class TwinAttributeMapped<T extends TypeKind> extends MappedElement<Type,
 
 	@Override
 	public void parse(MappingContext context) throws MappingException {
+		System.out.println(
+				"### ATTRIBUTE PARSE ENTER "
+						+ getClass().getName()
+						+ " sysml="
+						+ getSysmlElement().path()
+		);
+
 		super.parse(context);
-		if (getSysmlElement() instanceof Feature feature) parseUsage(context, feature);
+		if (getSysmlElement() instanceof Feature feature){
+			System.out.println(
+					"### PARSE USAGE "
+							+ getClass().getName()
+							+ " sysml="
+							+ getSysmlElement().path()
+			);
+
+			parseUsage(context, feature);
+		}
 		if (getSysmlElement() instanceof Classifier classifier) parseDefinition(context, classifier);
 	}
 
-	private void parseUsage(MappingContext context, Feature feature) throws MappingException {
-		expression = context.mapOwned(this, Expression.class, org.example.Mapping.TwinExpression.TwinExpression.class).stream().findFirst().orElse(null);
+	private void parseUsage(
+			MappingContext context,
+			Feature feature
+	) throws MappingException {
 
-		Classifier definition = feature.getType().stream().filter(Classifier.class::isInstance).map(Classifier.class::cast).findFirst().orElseThrow(() -> new MappingException(("No twin attribute definition found for '%s'.").formatted(getName())));
+		System.out.println(
+				"### EXPRESSION SEARCH "
+						+ feature.path()
+						+ " ownedMember="
+						+ feature.getOwnedMember()
+		);
+
+		var expressions = context.mapOwned(
+				this,
+				Expression.class,
+				org.example.Mapping.TwinExpression.TwinExpression.class
+		);
+
+		System.out.println(
+				"### EXPRESSIONS FOUND "
+						+ feature.path()
+						+ " -> "
+						+ expressions
+		);
+
+		expression = expressions
+				.stream()
+				.findFirst()
+				.orElse(null);
+
+		Classifier definition = feature.getType()
+				.stream()
+				.filter(Classifier.class::isInstance)
+				.map(Classifier.class::cast)
+				.findFirst()
+				.orElseThrow(() ->
+						new MappingException(
+								"No twin attribute definition found for '%s'."
+										.formatted(getName())
+						)
+				);
 
 		typeReference = mapDefinitionReference(context, definition);
 	}
@@ -109,4 +166,13 @@ public class TwinAttributeMapped<T extends TypeKind> extends MappedElement<Type,
 	public Optional<TwinExpression> getExpression() {
 		return Optional.ofNullable(expression);
 	}
+
+	@Override
+	public void postValidate() throws MappingException {
+		super.postValidate();
+		ExpressionRoleValidator.validateAttributeExpression(this,expression);
+
+	}
+
+
 }

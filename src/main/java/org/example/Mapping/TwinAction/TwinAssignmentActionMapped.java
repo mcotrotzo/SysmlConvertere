@@ -5,13 +5,18 @@ import org.example.Mapping.Interfaces.Base.TypeKind.Usage;
 import org.example.Mapping.Interfaces.Reference;
 import org.example.Mapping.Interfaces.TwinAction.Assignment;
 import org.example.Mapping.Interfaces.TwinAttribute.BaseTwinAttribute.TwinAttribute;
+import org.example.Mapping.Interfaces.TwinExpression.FeatureReference;
 import org.example.Mapping.NewVersion.Abstract.MappedReference;
 import org.example.Mapping.NewVersion.MappingContext;
 import org.example.Mapping.NewVersion.MappingException;
+import org.example.Mapping.NewVersion.Utils.ExpressionRoleValidator;
 import org.example.Mapping.TwinAction.Annotation.MappedMetaclass;
 import org.example.Mapping.TwinAttributeMapped.BaseTwinAttributeMapped.Definition.TwinAttributeMapped;
 import org.example.Mapping.TwinExpression.TwinExpression;
+import org.example.Mapping.TwinExpression.TwinInvocationExpression;
 import org.omg.sysml.lang.sysml.AssignmentActionUsage;
+
+import java.util.function.Predicate;
 
 @MappedMetaclass
 @ToString
@@ -45,13 +50,7 @@ public class TwinAssignmentActionMapped extends TwinActionMapped<AssignmentActio
 	}
 
 	public void checkRole() throws MappingException {
-		switch (referent.getReferent().getRole()) {
-			case LOCAL, ACTION, FOR_LOOP_VARIABLE -> {
-
-			}
-			default -> {
-				throw new MappingException("Assignment target must be a local variable, action or for loop variable, but got: " + referent.getReferent().getRole());
-			}
-		}
+		ExpressionRoleValidator.validateAssignment(this.getTarget().getReferent(),getValue());
 	}
+
 }

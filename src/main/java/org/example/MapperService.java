@@ -9,6 +9,7 @@ import org.example.SemanticRules.CheckAssignemntRules;
 import org.example.SemanticRules.SemanticException;
 import org.example.SemanticRules.SemanticRule;
 import org.example.Util.Utils;
+import org.omg.sysml.lang.sysml.ActionDefinition;
 
 import java.util.List;
 
@@ -24,6 +25,7 @@ public class MapperService {
 		this.utilsManager = utils;
 		this.containerManager = new ContainerManager(utilsManager);
 		this.mappingContext = new MappingContext(utils, containerManager);
+
 	}
 
 	public TwinDataBase map() throws MappingException {

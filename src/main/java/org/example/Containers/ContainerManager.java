@@ -198,42 +198,47 @@ public final class ContainerManager {
 	}
 
 
-	public Constructor<? extends MappedNamespaceElement<?, ?>> getMappedConstructor(Type sysmlElement) throws MappingException {
+	public Constructor<? extends MappedNamespaceElement<?, ?>> getMappedConstructor(
+			Type sysmlElement
+	) throws MappingException {
 
 		Objects.requireNonNull(sysmlElement, "sysmlElement");
 
-		if (!(sysmlElement instanceof InvocationExpression)) {
+		// 1. Library zuerst
+		Constructor<? extends MappedNamespaceElement<?, ?>> libraryConstructor =
+				findLibraryConstructor(sysmlElement);
 
-			Constructor<? extends MappedNamespaceElement<?, ?>> libraryConstructor = findLibraryConstructor(sysmlElement);
-
-			if (libraryConstructor != null) {
-				return libraryConstructor;
-			}
+		if (libraryConstructor != null) {
+			return libraryConstructor;
 		}
 
-
-		if (utils.isFromDTLibrary(sysmlElement)) {
-			throw new MappingException("No library mapper found for DT library element '%s' (%s)".formatted(sysmlElement.getQualifiedName(), sysmlElement.getClass().getSimpleName()));
-		}
-
-		Constructor<? extends MappedElement<?, ?>> metaclassConstructor = findTypeMetaclassConstructor(sysmlElement);
+		// 2. Keine Library-Zuordnung -> Metaclass
+		Constructor<? extends MappedElement<?, ?>> metaclassConstructor =
+				findTypeMetaclassConstructor(sysmlElement);
 
 		if (metaclassConstructor != null) {
 			return metaclassConstructor;
 		}
 
-		if (sysmlElement instanceof InvocationExpression) {
-
-			Constructor<? extends MappedNamespaceElement<?, ?>> libraryConstructor = findLibraryConstructor(sysmlElement);
-
-			if (libraryConstructor != null) {
-				return libraryConstructor;
-			}
+		// 3. DT-Library-Element ohne Library-Mapper
+		if (utils.isFromDTLibrary(sysmlElement)) {
+			throw new MappingException(
+					"No library mapper found for DT library element '%s' (%s)"
+							.formatted(
+									sysmlElement.getQualifiedName(),
+									sysmlElement.getClass().getSimpleName()
+							)
+			);
 		}
 
-		throw new NoMappedElementException("No mapped constructor found for '%s' (%s).".formatted(safeName(sysmlElement), sysmlElement.getClass().getSimpleName()));
+		throw new NoMappedElementException(
+				"No mapped constructor found for '%s' (%s)."
+						.formatted(
+								safeName(sysmlElement),
+								sysmlElement.getClass().getSimpleName()
+						)
+		);
 	}
-
 
 	/*
 	 * ============================================================

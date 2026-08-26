@@ -17,12 +17,13 @@ import org.example.Mapping.TwinAction.TwinActionMapped;
 import org.example.Mapping.TwinAttributeMapped.BaseTwinAttributeMapped.Definition.TwinAttributeMapped;
 import org.example.Util.LibraryNameSpaces;
 import org.omg.sysml.lang.sysml.Feature;
+import org.omg.sysml.lang.sysml.FlowDefinition;
 import org.omg.sysml.lang.sysml.FlowUsage;
 import org.omg.sysml.lang.sysml.Type;
 import org.omg.sysml.util.FeatureUtil;
 @MappedElementType(LibraryNameSpaces.TWIN_FLOW)
 @ToString(callSuper = true)
-public class FlowMapped<T extends TypeKind> extends TwinActionMapped<Type, T> implements Flow<T> {
+public class FlowMapped<T extends TypeKind> extends TwinActionMapped<Type,T> implements Flow<T> {
 
 	private TaxonomyMapped<Usage> taxonomySource;
 	private TaxonomyMapped<Usage> taxonomyTarget;
@@ -30,7 +31,11 @@ public class FlowMapped<T extends TypeKind> extends TwinActionMapped<Type, T> im
 	private MappedReference<? extends TwinAttributeMapped<Usage>> source;
 	private MappedReference<? extends TwinAttributeMapped<Usage>> target;
 
-	public FlowMapped(Type sysmlElement) {
+	public FlowMapped(FlowDefinition sysmlElement) {
+		super(sysmlElement);
+	}
+
+	public FlowMapped(FlowUsage sysmlElement) {
 		super(sysmlElement);
 	}
 
@@ -128,10 +133,17 @@ public class FlowMapped<T extends TypeKind> extends TwinActionMapped<Type, T> im
 	}
 
 	private void validateTaxonomy(TwinAttributeMapped<Usage> attribute, Taxonomy<?> expected, String endpoint) throws MappingException {
-		Taxonomy<?> actual = attribute.getTaxonomy().orElseThrow(() -> new MappingException("Flow '%s' %s '%s' has no taxonomy.".formatted(getName(), endpoint, attribute.getName()))).getReferent();
 
-		if (!expected.getClass().isInstance(actual)) {
-			throw new MappingException("Flow '%s' %s '%s' has taxonomy '%s', expected '%s'.".formatted(getName(), endpoint, attribute.getName(), actual.getName(), expected.getName()));
+		Class<? extends Taxonomy> actual = attribute.getTaxonomy();
+
+		Class<? extends Taxonomy> expectedClass = expected.getTaxonomy();
+
+		if (!expectedClass.isAssignableFrom(actual)) {
+			throw new MappingException(
+					"Flow '%s' %s '%s' has taxonomy '%s', expected '%s' (or a specialization of it)."
+							.formatted(this.sysmlElement.path(), endpoint, attribute.getName(),
+									actual.getSimpleName(), expectedClass.getSimpleName())
+			);
 		}
 	}
 }

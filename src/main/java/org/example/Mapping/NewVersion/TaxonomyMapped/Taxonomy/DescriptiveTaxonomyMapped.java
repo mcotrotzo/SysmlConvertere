@@ -9,7 +9,7 @@ import org.omg.sysml.lang.sysml.Type;
 
 @MappedElementType(LibraryNameSpaces.DESCRIPTIVE_TAXONOMY)
 @ToString(callSuper = true)
-public class DescriptiveTaxonomyMapped<Z extends TypeKind> extends TaxonomyMapped<Z> implements DescriptiveTaxonomy<Z> {
+public class DescriptiveTaxonomyMapped<Z extends TypeKind> extends CloudTwinTaxonomyMapped<Z> implements DescriptiveTaxonomy<Z> {
 	public DescriptiveTaxonomyMapped(Type sysmlElement) {
 		super(sysmlElement);
 	}

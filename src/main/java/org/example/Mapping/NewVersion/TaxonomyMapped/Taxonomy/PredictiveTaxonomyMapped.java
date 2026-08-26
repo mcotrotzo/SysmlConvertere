@@ -9,7 +9,7 @@ import org.omg.sysml.lang.sysml.Type;
 
 @MappedElementType(LibraryNameSpaces.PREDICTIVE_TAXONOMY)
 @ToString(callSuper = true)
-public class PredictiveTaxonomyMapped<Z extends TypeKind> extends TaxonomyMapped<Z> implements PredictiveTaxonomy<Z> {
+public class PredictiveTaxonomyMapped<Z extends TypeKind> extends CloudTwinTaxonomyMapped<Z> implements PredictiveTaxonomy<Z> {
 	public PredictiveTaxonomyMapped(Type sysmlElement) {
 		super(sysmlElement);
 	}

@@ -11,7 +11,7 @@ import org.example.Mapping.NewVersion.MappingException;
 import org.example.Mapping.NewVersion.TwinFlow.Definition.QueryFlowMapped;
 import org.example.Mapping.TwinAttributeMapped.BaseTwinAttributeMapped.Definition.TwinBaseAttributeMapped;
 import org.example.Mapping.TwinAttributeMapped.CustomTypeMapped.CustomAttributeMapped;
-import org.example.Mapping.TwinFunction.BaseFunction;
+
 import org.example.Mapping.TwinFunction.CustomCalculationMapped;
 import org.example.Util.LibraryPackageNames;
 import org.omg.sysml.lang.sysml.Classifier;
@@ -22,7 +22,6 @@ import java.util.List;
 
 @PackageTypeMeta(value = LibraryPackageNames.USER_LIBRARY)
 public class UserLibraryMapped extends PackageElementType implements UserLibrary {
-	List<BaseFunction> baseFunctionDefinitions = new ArrayList<>();
 	List<CustomCalculationMapped> customCalculationDefinitions = new ArrayList<>();
 	List<CustomAttributeMapped<Definition>> customTypeDefinitions = new ArrayList<>();
 	List<? extends TwinBaseAttributeMapped<Definition>> baseTypedDefinitions = new ArrayList<>();
@@ -35,7 +34,6 @@ public class UserLibraryMapped extends PackageElementType implements UserLibrary
 	@Override
 	public void parse(MappingContext context) throws MappingException {
 		super.parse(context);
-		baseFunctionDefinitions = context.mapOwnedNamespace(this, Classifier.class, BaseFunction.class);
 		baseTypedDefinitions = context.mapOwnedNamespace(this, Classifier.class, rawClassOf(TwinBaseAttributeMapped.class));
 		customCalculationDefinitions = context.mapOwnedNamespace(this, Classifier.class, rawClassOf(CustomCalculationMapped.class));
 		customTypeDefinitions = context.mapOwnedNamespace(this, Classifier.class, rawClassOf(CustomAttributeMapped.class));
@@ -49,7 +47,7 @@ public class UserLibraryMapped extends PackageElementType implements UserLibrary
 
 	@Override
 	public List<? extends org.example.Mapping.Interfaces.TwinFunction.Definition.BaseFunction> getDefinitions() {
-		return baseFunctionDefinitions;
+		return List.of();
 	}
 
 	@Override

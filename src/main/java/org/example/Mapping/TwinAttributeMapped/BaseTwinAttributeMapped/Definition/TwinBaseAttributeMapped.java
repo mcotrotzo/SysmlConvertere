@@ -16,8 +16,4 @@ public class TwinBaseAttributeMapped<T extends TypeKind> extends TwinAttributeMa
 		super(sysmlElement);
 	}
 
-	@Override
-	public void parse(MappingContext context) throws MappingException {
-
-	}
 }

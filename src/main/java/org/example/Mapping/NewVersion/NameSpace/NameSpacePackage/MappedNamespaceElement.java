@@ -92,10 +92,6 @@ public abstract class MappedNamespaceElement<T extends Element, Z extends TypeKi
 		return TypeKindNamespace.of(getSysmlElement());
 	}
 
-	@Override
-	public Optional<Reference<? extends Taxonomy<Definition>>> getTaxonomy() {
-		return Optional.empty();
-	}
 
 	public void postParse(MappingContext mappingContext) {
 	}
