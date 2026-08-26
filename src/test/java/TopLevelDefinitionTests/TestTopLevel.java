@@ -140,7 +140,7 @@ public class TestTopLevel extends AbstarctTest {
 		strategies.forEach(x -> System.out.println("Strategy: " + x.getName() + " id: " + x.getId()));
 		usages.forEach(x -> System.out.println("Strategy usage: " + x.getName() + " id: " + x.getId()));
 		assertAmount(Strategy.class, Definition.class, 3);
-
+		assertAmount(Strategy.class,Usage.class, 7);
 
 		assertAmount(PhysicalTwin.class, Definition.class, 1);
 		assertAmount(DescriptiveModel.class, Definition.class, 1);

@@ -13,9 +13,13 @@ public class TestSensors extends AbstarctTest {
 
 	@Test
 	public void TestGeneralSensor() {
-		assertAmount(Sensors.class, Usage.class, 4);
+		assertAmount(Sensors.class, Usage.class, 5);
 		Set<Sensors<Usage>> sensors = result.get(Sensors.class, Usage.class);
-		sensors.forEach(sensor -> this.assertParent(sensor, PhysicalTwin.class, Usage.class, "physicalBattery"));
+
+		var librarySensor = sensors.stream().filter(x -> x.getParent().get().getName().equals("PhysicalTwin")).collect(java.util.stream.Collectors.toList());
+		assertEquals(1, librarySensor.size());
+
+		sensors.stream().filter(x -> !x.getParent().get().getName().equals("PhysicalTwin")).forEach(sensor -> this.assertParent(sensor, PhysicalTwin.class, Usage.class, "physicalBattery"));
 
 	}
 

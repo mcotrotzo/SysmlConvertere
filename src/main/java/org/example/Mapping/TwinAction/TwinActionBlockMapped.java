@@ -48,7 +48,7 @@ public class TwinActionBlockMapped<T extends Type,Z extends TypeKind> extends Tw
 		localAttributes = context.mapAttributes(this, "local_Attributes", TwinAttributeMapped.getRawUsageClass(), Role.LOCAL);
 
 
-		twinActionBlockUsages = context.mapOwned(this, ActionUsage.class, rawClassOf(TwinActionBlockMapped.class));
+		twinActionBlockUsages = context.mapOwned(this, ActionUsage.class, rawClassOf(TwinActionMapped.class));
 
 		twinSuccessionActions = context.mapOwned(this, SuccessionAsUsage.class, TwinSuccessionAction.class);
 	}

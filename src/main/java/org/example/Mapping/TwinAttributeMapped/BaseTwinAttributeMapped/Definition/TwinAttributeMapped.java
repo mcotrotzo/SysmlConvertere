@@ -32,8 +32,6 @@ import java.util.function.Predicate;
 @ToString(callSuper = true)
 public class TwinAttributeMapped<T extends TypeKind> extends MappedElement<Type, T> implements TwinAttribute<T> {
 
-	private final List<MappedReference<? extends TwinAttributeMapped<Definition>>> superTypes = new ArrayList<>();
-	private MappedReference<? extends TwinAttributeMapped<Definition>> typeReference;
 	private Role role;
 	private org.example.Mapping.TwinExpression.TwinExpression<?> expression;
 
@@ -69,7 +67,6 @@ public class TwinAttributeMapped<T extends TypeKind> extends MappedElement<Type,
 
 			parseUsage(context, feature);
 		}
-		if (getSysmlElement() instanceof Classifier classifier) parseDefinition(context, classifier);
 	}
 
 	private void parseUsage(
@@ -101,46 +98,13 @@ public class TwinAttributeMapped<T extends TypeKind> extends MappedElement<Type,
 				.stream()
 				.findFirst()
 				.orElse(null);
-
-		Classifier definition = feature.getType()
-				.stream()
-				.filter(Classifier.class::isInstance)
-				.map(Classifier.class::cast)
-				.findFirst()
-				.orElseThrow(() ->
-						new MappingException(
-								"No twin attribute definition found for '%s'."
-										.formatted(getName())
-						)
-				);
-
-		typeReference = mapDefinitionReference(context, definition);
 	}
 
-	private void parseDefinition(MappingContext context, Classifier classifier) throws MappingException {
-		for (var subclassification : classifier.getOwnedSubclassification()) {
-			var superClassifier = subclassification.getSuperclassifier();
-
-			if (!(superClassifier instanceof Classifier definition)) continue;
-			if (context.getUtils().isFromStandardOrDTLibrary(definition)) continue;
-
-			superTypes.add(mapDefinitionReference(context, definition));
-		}
-	}
 
 	private MappedReference<? extends TwinAttributeMapped<Definition>> mapDefinitionReference(MappingContext context, Classifier definition) throws MappingException {
 		return context.mapReference(definition, getRawClass());
 	}
 
-	@Override
-	public Optional<Reference<? extends TwinAttribute<Definition>>> getDefinitionOfUsage() {
-		return Optional.ofNullable(typeReference);
-	}
-
-	@Override
-	public List<Reference<? extends TwinAttribute<Definition>>> getSuperTypeOfDefinitions() {
-		return List.copyOf(superTypes);
-	}
 
 	@Override
 	public Optional<Direction> getDirection() {

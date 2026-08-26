@@ -34,6 +34,7 @@ public abstract class MappedElement<T extends Type, Z extends TypeKind> extends 
 
 	@Override
 	public void parse(MappingContext context) throws MappingException {
+		super.parse(context);
 		parseTypeRelations(context);
 	}
 
@@ -55,14 +56,18 @@ public abstract class MappedElement<T extends Type, Z extends TypeKind> extends 
 				var superClassifier = subclassification.getSuperclassifier();
 				System.out.println(" Subclassification of " + classifier.getQualifiedName() + " -> " + (superClassifier != null ? superClassifier.getQualifiedName() : "null"));
 				if (!(superClassifier instanceof Classifier definition)) continue;
+
+
 				if (context.getUtils().isFromStandardLibrary(definition)) continue;
 				if (isTwinLibraryRoot(definition)) {
-					return;
+					continue;
 				}
 				superTypeOfDefinitions.add(context.mapReference(definition, rawClassOf(MappedElement.class)));
 			}
 		}
 	}
+
+
 
 	private Classifier mostSpecificDefinition(List<Classifier> definitions) throws MappingException {
 		List<Classifier> mostSpecific = definitions.stream().filter(candidate -> definitions.stream().filter(other -> other != candidate).noneMatch(other -> TypeUtil.getSupertypesOf(other, true).contains(candidate))).toList();

@@ -15,4 +15,6 @@ public interface Flow<T extends TypeKind> extends Type<T> {
 	Reference<? extends TwinAttribute<Usage>> getSource();
 
 	Reference<? extends TwinAttribute<Usage>> getTarget();
+
+
 }

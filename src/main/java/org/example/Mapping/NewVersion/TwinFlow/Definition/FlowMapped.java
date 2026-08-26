@@ -21,6 +21,8 @@ import org.omg.sysml.lang.sysml.FlowDefinition;
 import org.omg.sysml.lang.sysml.FlowUsage;
 import org.omg.sysml.lang.sysml.Type;
 import org.omg.sysml.util.FeatureUtil;
+import org.omg.sysml.util.TypeUtil;
+
 @MappedElementType(LibraryNameSpaces.TWIN_FLOW)
 @ToString(callSuper = true)
 public class FlowMapped<T extends TypeKind> extends TwinActionMapped<Type,T> implements Flow<T> {
@@ -116,6 +118,7 @@ public class FlowMapped<T extends TypeKind> extends TwinActionMapped<Type,T> imp
 		TwinAttributeMapped<Usage> sourceAttribute = source.getReferent();
 		TwinAttributeMapped<Usage> targetAttribute = target.getReferent();
 
+		validateEndpointTypes();
 		validateTaxonomy(sourceAttribute, taxonomySource, "source");
 		validateTaxonomy(targetAttribute, taxonomyTarget, "target");
 
@@ -143,6 +146,36 @@ public class FlowMapped<T extends TypeKind> extends TwinActionMapped<Type,T> imp
 					"Flow '%s' %s '%s' has taxonomy '%s', expected '%s' (or a specialization of it)."
 							.formatted(this.sysmlElement.path(), endpoint, attribute.getName(),
 									actual.getSimpleName(), expectedClass.getSimpleName())
+			);
+		}
+	}
+
+	private void validateEndpointTypes() throws MappingException {
+		if (source == null || target == null) return;
+
+		var sourceDefinition = source.getReferent()
+				.getDefinitionOfUsage()
+				.map(Reference::getReferent)
+				.orElse(null);
+
+		var targetDefinition = target.getReferent()
+				.getDefinitionOfUsage()
+				.map(Reference::getReferent)
+				.orElse(null);
+		if (sourceDefinition == null || targetDefinition == null) {
+			return;
+		}
+
+		if (!sourceDefinition.isSubtypeOf(targetDefinition)) {
+			throw new MappingException(
+					"Flow '%s' has incompatible endpoint types: source '%s' has type '%s', target '%s' expects '%s'."
+							.formatted(
+									getSysmlElement().path(),
+									source.getReferent().getName(),
+									sourceDefinition.getName(),
+									target.getReferent().getName(),
+									targetDefinition.getName()
+							)
 			);
 		}
 	}

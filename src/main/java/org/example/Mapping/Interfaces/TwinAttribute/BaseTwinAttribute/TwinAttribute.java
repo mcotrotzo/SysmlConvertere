@@ -10,15 +10,13 @@ import java.util.List;
 import java.util.Optional;
 
 public interface TwinAttribute<T extends TypeKind> extends Type<T> {
-	@Override
-	Optional<Reference<? extends TwinAttribute<Definition>>> getDefinitionOfUsage();
-
-	@Override
-	List<Reference<? extends TwinAttribute<Definition>>> getSuperTypeOfDefinitions();
 
 	Optional<Direction> getDirection();
 
 	Role getRole();
 
 	Optional<TwinExpression> getExpression();
+
+	default void test(){
+	}
 }

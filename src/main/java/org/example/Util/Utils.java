@@ -52,6 +52,8 @@ public class Utils {
 		}
 	}
 
+
+
 	private void initLibraryElements() {
 		for (LibraryNameSpaces libraryNameSpaces : LibraryNameSpaces.values()) {
 			libraryMap.put(libraryNameSpaces, SysMLLibraryUtil.getLibraryType(rootElement, String.valueOf(libraryNameSpaces)));

@@ -45,7 +45,6 @@ public class TwinForLoopActionMapped extends TwinActionMapped<ForLoopActionUsage
 
 		loopVariable = context.mapAttribute(getSysmlElement().getLoopVariable(), this, TwinAttributeMapped.getRawUsageClass(), Role.FOR_LOOP_VARIABLE);
 
-		System.out.println("Class name of seq " + sysmlElement.getSeqArgument().getClass().getSimpleName());
 		expr = context.map(getSysmlElement().getSeqArgument(), this, TwinExpression.class);
 
 		body = context.map(getSysmlElement().getBodyAction(), this, TwinActionMapped.getActionMappedUsageClass());

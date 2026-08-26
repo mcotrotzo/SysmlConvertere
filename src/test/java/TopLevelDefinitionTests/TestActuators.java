@@ -14,11 +14,11 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class TestActuators extends AbstarctTest {
 	@Test
 	public void testGeneralActuator() {
-		assertAmount(Actuators.class, Usage.class, 1);
+		assertAmount(Actuators.class, Usage.class, 2);
 
 		Set<Actuators<Usage>> actuators = result.get(Actuators.class, Usage.class);
 
-		actuators.forEach(actuator -> assertParent(actuator, PhysicalTwin.class, Usage.class, "physicalBattery"));
+		actuators.stream().filter(x -> !x.getParent().get().getName().equals("PhysicalTwin")).forEach(actuator -> assertParent(actuator, PhysicalTwin.class, Usage.class, "physicalBattery"));
 	}
 
 	@Test

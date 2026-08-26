@@ -11,6 +11,7 @@ import org.example.Mapping.Interfaces.BaseTaxonomy.Taxonomy;
 import org.example.Mapping.Interfaces.Reference;
 import org.example.Mapping.NewVersion.MappingContext;
 import org.example.Mapping.NewVersion.MappingException;
+import org.example.Util.Utils;
 import org.omg.sysml.lang.sysml.Element;
 
 import java.nio.charset.StandardCharsets;
@@ -38,6 +39,9 @@ public abstract class MappedNamespaceElement<T extends Element, Z extends TypeKi
 	@Getter
 	private String deterministicId;
 
+	@Getter
+	boolean isLibraryElement;
+
 
 	public MappedNamespaceElement(T sysmlElement) {
 		bindSysmlElement(sysmlElement);
@@ -58,7 +62,10 @@ public abstract class MappedNamespaceElement<T extends Element, Z extends TypeKi
 
 	}
 
-	public abstract void parse(MappingContext context) throws MappingException;
+
+	public void parse(MappingContext context) throws MappingException{
+		context.getUtils().isFromDTLibrary(this.getSysmlElement());
+	}
 
 	;
 

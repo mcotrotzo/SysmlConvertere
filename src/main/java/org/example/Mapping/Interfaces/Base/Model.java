@@ -43,4 +43,7 @@ public interface Model<T extends TypeKindNamespace> {
 		}
 		return getParent().get().getTaxonomy();
 	}
+
+
+	boolean isLibraryElement();
 }
