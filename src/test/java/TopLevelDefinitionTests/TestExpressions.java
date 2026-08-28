@@ -19,7 +19,6 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-
 public class TestExpressions extends AbstarctTest {
 
 	@Test
@@ -45,7 +44,6 @@ public class TestExpressions extends AbstarctTest {
 		TwinExpression second = outer.getArguments().get(1);
 
 		assertInstanceOf(TwinLiteralIntegerExpression.class, first);
-
 		assertInstanceOf(TwinCalculationExpression.class, second);
 
 		TwinCalculationExpression inner = (TwinCalculationExpression) second;
@@ -60,7 +58,6 @@ public class TestExpressions extends AbstarctTest {
 		assertEquals(2, inner.getArguments().size());
 
 		assertTrue(inner.getArguments().get(0) instanceof TwinLiteralIntegerExpression);
-
 		assertTrue(inner.getArguments().get(1) instanceof TwinLiteralIntegerExpression);
 	}
 
@@ -85,20 +82,15 @@ public class TestExpressions extends AbstarctTest {
 		assertEquals(2, calculation.getArguments().size());
 
 		TwinExpression firstArgument = calculation.getArguments().get(0);
-
 		TwinExpression secondArgument = calculation.getArguments().get(1);
 
-
 		assertInstanceOf(TwinLiteralIntegerExpression.class, firstArgument);
-
 		assertInstanceOf(TwinLiteralIntegerExpression.class, secondArgument);
 
 		TwinLiteralIntegerExpression firstLiteral = (TwinLiteralIntegerExpression) firstArgument;
-
 		TwinLiteralIntegerExpression secondLiteral = (TwinLiteralIntegerExpression) secondArgument;
 
 		assertEquals(Integer.valueOf(10), firstLiteral.getLiteralValue());
-
 		assertEquals(Integer.valueOf(2), secondLiteral.getLiteralValue());
 	}
 
@@ -115,21 +107,23 @@ public class TestExpressions extends AbstarctTest {
 		TwinConstructorExpression calculation = (TwinConstructorExpression) root;
 
 		assertInstanceOf(TwinBaseBoolean.class, calculation.getConstructedType().getReferent());
-		TwinBaseBoolean<?> referentType = (TwinBaseBoolean<?>) calculation.getConstructedType().getReferent();
+		TwinBaseBoolean<?> referentType =
+				(TwinBaseBoolean<?>) calculation.getConstructedType().getReferent();
 
 		assertNotNull(referentType);
 
 		assertEquals(1, calculation.getArguments().size());
+
 		TwinExpression firstArgument = calculation.getArguments().get(0);
 
 		assertInstanceOf(BooleanLiteral.class, firstArgument);
 		assertEquals(Boolean.TRUE, ((BooleanLiteral) firstArgument).getLiteralValue());
-
 	}
 
 	@Test
 	public void testConstructorBooleanExpression() {
-		TwinBaseBoolean<Usage> current = named(TwinBaseBoolean.class, Usage.class, "constructorTestBoolean");
+		TwinBaseBoolean<Usage> current =
+				named(TwinBaseBoolean.class, Usage.class, "constructorTestBoolean");
 
 		assertNotNull(current.getExpression().get());
 
@@ -140,21 +134,24 @@ public class TestExpressions extends AbstarctTest {
 		TwinConstructorExpression calculation = (TwinConstructorExpression) root;
 
 		assertInstanceOf(TwinBaseBoolean.class, calculation.getConstructedType().getReferent());
-		TwinBaseBoolean<?> referentType = (TwinBaseBoolean<?>) calculation.getConstructedType().getReferent();
+		TwinBaseBoolean<?> referentType =
+				(TwinBaseBoolean<?>) calculation.getConstructedType().getReferent();
 
 		assertNotNull(referentType);
 
 		assertEquals(1, calculation.getArguments().size());
+
 		TwinExpression firstArgument = calculation.getArguments().get(0);
 
 		assertInstanceOf(TwinLiteralBooleanExpression.class, firstArgument);
-		assertEquals(Boolean.valueOf(false), ((TwinLiteralBooleanExpression) firstArgument).getLiteralValue());
-
+		assertEquals(Boolean.valueOf(false),
+				((TwinLiteralBooleanExpression) firstArgument).getLiteralValue());
 	}
 
 	@Test
 	public void testFeatureChainExpression() {
-		TwinBaseReal<Usage> current = named(TwinBaseReal.class, Usage.class, "test12");
+		TwinBaseReal<Usage> current =
+				named(TwinBaseReal.class, Usage.class, "test12");
 
 		TwinExpression root = current.getExpression().orElseThrow();
 
@@ -170,14 +167,42 @@ public class TestExpressions extends AbstarctTest {
 
 		FeatureReference chain = (FeatureReference) argument;
 
-		assertEquals("x", chain.getTarget().getReferent().getName());
+		assertFalse(chain.getChain().isEmpty());
+		assertEquals(2, chain.getChain().size());
 
-		assertNotNull(chain.getTarget().getReferent().getParent());
+		assertEquals(
+				"posTest12",
+				chain.getChain().getFirst().getReferent().getName()
+		);
 
-		CustomType<Usage> posTest12 = named(CustomType.class, Usage.class, "posTest12");
+		assertEquals(
+				"x",
+				chain.getChain().getLast().getReferent().getName()
+		);
 
-		var x = posTest12.getFields().stream().filter(y -> y.getName().equals("x")).findFirst().orElseThrow();
+		CustomType<Usage> posTest12 =
+				named(CustomType.class, Usage.class, "posTest12");
 
-		assertEquals(x.getId(), chain.getTarget().getReferent().getId());
+		var x = posTest12.getFields()
+				.getCompartment()
+				.stream()
+				.map(c -> c.getElement())
+				.filter(y -> "x".equals(y.getName()))
+				.findFirst()
+				.orElseThrow();
+
+		assertEquals(
+				posTest12.getId(),
+				chain.getChain().getFirst().getReferent().getId()
+		);
+
+		assertEquals(
+				x.getId(),
+				chain.getChain().getLast().getReferent().getId()
+		);
+
+		assertNotNull(
+				chain.getChain().getLast().getReferent().getParent()
+		);
 	}
 }

@@ -1,5 +1,7 @@
 package org.example.Mapping.Interfaces.BaseTaxonomy;
 
+import org.example.Mapping.Interfaces.Base.Compartment;
+import org.example.Mapping.Interfaces.Base.CompartmentContainer;
 import org.example.Mapping.Interfaces.Base.TypeKind.TypeKind;
 import org.example.Mapping.Interfaces.Base.TypeKind.Usage;
 import org.example.Mapping.Interfaces.TwinFlow.Flow;
@@ -13,14 +15,13 @@ import java.util.Optional;
 
 public interface PhysicalTwin<T extends TypeKind> extends PhysicalTaxonomy<T> {
 
-	List<Sensors<Usage>> getSensors();
+	CompartmentContainer<? extends Sensors<Usage>> getSensors();
 
-	List<Actuators<Usage>> getActuators();
+	CompartmentContainer<? extends Actuators<Usage>> getActuators();
 
-	List<TwinStateMachine<Usage>> getControlUnits();
+	CompartmentContainer<? extends TwinStateMachine<Usage>> getControlUnits();
 
-	List<Flow<Usage>> getPhysicalFlows();
+	CompartmentContainer<? extends Flow<Usage>> getPhysicalFlows();
 
-	Optional<ConstPort<Usage>> getConstPort();
-
+	CompartmentContainer<? extends ConstPort<Usage>> getConstPort();
 }

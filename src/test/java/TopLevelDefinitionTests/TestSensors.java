@@ -33,7 +33,7 @@ public class TestSensors extends AbstarctTest {
 
 		assertTrue(p11.getProtocol().isPresent());
 
-		assertEquals(8, p11.getAttributes().size());
+		assertEquals(8, p11.getAttributes().getCompartment().size());
 	}
 
 	@Test
@@ -44,9 +44,12 @@ public class TestSensors extends AbstarctTest {
 		assertEquals("p13", p13.getName());
 		assertNotNull(p13.getId());
 		assertTrue(p13.getParent().isPresent());
-		assertEquals(p13.getProtocol(), p11.getProtocol());
+		assertEquals(
+			p13.getProtocol().orElseThrow().getElement().getId(),
+			p11.getProtocol().orElseThrow().getElement().getId()
+		);
 
-		assertEquals(p13.getAttributes().size(), p11.getAttributes().size());
+		assertEquals(p13.getAttributes().getCompartment().size(), p11.getAttributes().getCompartment().size());
 
 	}
 
@@ -55,6 +58,15 @@ public class TestSensors extends AbstarctTest {
 		Sensors<Usage> p13 = named(Sensors.class, Usage.class, "p13");
 		Sensors<Usage> p11 = named(Sensors.class, Usage.class, "p11");
 
-		assertEquals(p11.getAttributes(), p13.getAttributes());
+		var p11Attributes = p11.getAttributes().getCompartment();
+		var p13Attributes = p13.getAttributes().getCompartment();
+
+		assertEquals(
+			p11Attributes.stream().map(c -> c.getElement().getId()).toList(),
+			p13Attributes.stream().map(c -> c.getElement().getId()).toList()
+		);
+
+		assertTrue(p11Attributes.stream().noneMatch(c -> c.isInherited()));
+		assertTrue(p13Attributes.stream().allMatch(c -> c.isInherited()));
 	}
 }

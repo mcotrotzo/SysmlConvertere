@@ -12,7 +12,7 @@ package PositionThings{
         in attribute pos_a[1]:>>inputs:Position;
         return pos_c[1]:>>outputs:Position;
         in attribute pos_b[1]:>>inputs:Position;
-        assign pos_c := new Position(x = PLUS_int(pos_a.x, pos_b.x), y = PLUS_int(pos_a.y, pos_b.y), z = PLUS_int(pos_a.z, pos_b.z));
+        assign pos_c := new Position(x = PLUS_int(pos_a.y, pos_b.y), y = PLUS_int(pos_a.z, pos_b.z), z = PLUS_int(pos_a.z, pos_b.z));
 
     }
 

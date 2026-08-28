@@ -16,6 +16,7 @@ import org.example.Mapping.Interfaces.TwinFunction.Definition.CustomCalculation;
 import org.example.Mapping.Interfaces.TwinStateMachine.TwinStateMachine;
 import org.example.Mapping.Interfaces.TwinStrategy.Strategy;
 import org.junit.jupiter.api.Test;
+import org.omg.sysml.lang.sysml.Element;
 
 import java.util.List;
 
@@ -33,44 +34,44 @@ public class TestBehaviorMapping extends AbstarctTest {
 
 		assertParent(controlUnit, PhysicalTwin.class, Usage.class, "physicalBattery");
 
-		assertEquals(0, controlUnit.localAttributes().size());
+		assertEquals(0, controlUnit.localAttributes().getCompartment().size());
 
-		assertEquals(3, controlUnit.getInputs().size());
-		assertEquals(1, controlUnit.getOutputs().size());
+		assertEquals(3, controlUnit.getInputs().getCompartment().size());
+		assertEquals(1, controlUnit.getOutputs().getCompartment().size());
 
-		assertTrue(controlUnit.getInputs().stream().anyMatch(x -> "maxCharge".equals(x.getName())));
+		assertTrue(controlUnit.getInputs().getCompartment().stream().map(c -> c.getElement()).anyMatch(x -> "maxCharge".equals(x.getName())));
 
-		assertEquals(2, controlUnit.getStates().size());
+		assertEquals(2, controlUnit.getStates().getCompartment().size());
 
-		TwinStateMachine<Usage> idle = controlUnit.getStates().stream().filter(x -> "idle".equals(x.getName())).findFirst().orElseThrow();
+		TwinStateMachine<Usage> idle = controlUnit.getStates().getCompartment().stream().map(c -> c.getElement()).filter(x -> "idle".equals(x.getName())).findFirst().orElseThrow();
 
-		TwinStateMachine<Usage> charging = controlUnit.getStates().stream().filter(x -> "charging".equals(x.getName())).findFirst().orElseThrow();
+		TwinStateMachine<Usage> charging = controlUnit.getStates().getCompartment().stream().map(c -> c.getElement()).filter(x -> "charging".equals(x.getName())).findFirst().orElseThrow();
 
-		assertEquals(1, charging.getStates().size());
+		assertEquals(1, charging.getStates().getCompartment().size());
 
-		TwinStateMachine<Usage> test34 = charging.getStates().getFirst();
+		TwinStateMachine<Usage> test34 = charging.getStates().getCompartment().getFirst().getElement();
 
 		assertEquals("test34", test34.getName());
 
-		assertInstanceOf(Assignment.class, charging.getEntryAction());
+		assertInstanceOf(Assignment.class, charging.getEntryAction().getElement());
 
-		assertInstanceOf(Assignment.class, charging.getDoAction());
+		assertInstanceOf(Assignment.class, charging.getDoAction().getElement());
 
-		assertInstanceOf(Assignment.class, charging.getExitAction());
+		assertInstanceOf(Assignment.class, charging.getExitAction().getElement());
 
-		assertAssignmentTo((Assignment) charging.getEntryAction(), "charge");
+		assertAssignmentTo((Assignment) charging.getEntryAction().getElement(), "charge");
 
-		assertAssignmentTo((Assignment) charging.getDoAction(), "charge");
+		assertAssignmentTo((Assignment) charging.getDoAction().getElement(), "charge");
 
-		assertAssignmentTo((Assignment) charging.getExitAction(), "charge");
+		assertAssignmentTo((Assignment) charging.getExitAction().getElement(), "charge");
 
-		assertInstanceOf(Assignment.class, test34.getEntryAction());
+		assertInstanceOf(Assignment.class, test34.getEntryAction().getElement());
 
-		assertInstanceOf(Assignment.class, test34.getDoAction());
+		assertInstanceOf(Assignment.class, test34.getDoAction().getElement());
 
-		assertInstanceOf(Assignment.class, test34.getExitAction());
+		assertInstanceOf(Assignment.class, test34.getExitAction().getElement());
 
-		Assignment test34Entry = (Assignment) test34.getEntryAction();
+		Assignment test34Entry = (Assignment) test34.getEntryAction().getElement();
 
 		assertEquals("charge", test34Entry.getTarget().getReferent().getName());
 
@@ -78,7 +79,7 @@ public class TestBehaviorMapping extends AbstarctTest {
 
 		FeatureReference reference = (FeatureReference) test34Entry.getValue();
 
-		assertEquals("temp", reference.getTarget().getReferent().getName());
+		assertEquals("temp", reference.getChain().getLast().getReferent().getName());
 
 		assertEquals(3, controlUnit.getTransitions().size());
 
@@ -151,11 +152,11 @@ public class TestBehaviorMapping extends AbstarctTest {
 
 		assertParent(machine, DescriptiveModel.class, Usage.class, "descriptiveBattery");
 
-		assertEquals(2, machine.getStates().size());
+		assertEquals(2, machine.getStates().getCompartment().size());
 
-		assertTrue(machine.getStates().stream().anyMatch(x -> "sa".equals(x.getName())));
+		assertTrue(machine.getStates().getCompartment().stream().map(c -> c.getElement()).anyMatch(x -> "sa".equals(x.getName())));
 
-		assertTrue(machine.getStates().stream().anyMatch(x -> "sd".equals(x.getName())));
+		assertTrue(machine.getStates().getCompartment().stream().map(c -> c.getElement()).anyMatch(x -> "sd".equals(x.getName())));
 	}
 
 	@Test
@@ -165,9 +166,9 @@ public class TestBehaviorMapping extends AbstarctTest {
 
 		assertParent(strategy, DescriptiveModel.class, Usage.class, "descriptiveBattery");
 
-		List<TwinAttribute<Usage>> inputs = strategy.getInputs();
+		var inputs = strategy.getInputs().getCompartment().stream().map(c -> c.getElement()).toList();
 
-		List<TwinAttribute<Usage>> outputs = strategy.getOutputs();
+		var outputs = strategy.getOutputs().getCompartment().stream().map(c -> c.getElement()).toList();
 
 		assertEquals(3, inputs.size());
 
@@ -201,20 +202,20 @@ public class TestBehaviorMapping extends AbstarctTest {
 
 		assertParent(strategy, PredictiveModel.class, Usage.class, "predictiveBattery");
 
-		assertEquals(2, strategy.getInputs().size());
+		assertEquals(2, strategy.getInputs().getCompartment().size());
 
-		assertTrue(strategy.getInputs().stream().anyMatch(x -> "avgTemperature".equals(x.getName())));
+		assertTrue(strategy.getInputs().getCompartment().stream().map(c -> c.getElement()).anyMatch(x -> "avgTemperature".equals(x.getName())));
 
-		assertTrue(strategy.getInputs().stream().anyMatch(x -> "current".equals(x.getName())));
+		assertTrue(strategy.getInputs().getCompartment().stream().map(c -> c.getElement()).anyMatch(x -> "current".equals(x.getName())));
 
-		for (TwinAttribute<Usage> input : strategy.getInputs()) {
+		for (TwinAttribute<Usage> input : strategy.getInputs().getCompartment().stream().map(c -> c.getElement()).toList()) {
 
 			assertTrue(input.getExpression().isEmpty());
 		}
 
-		assertEquals(1, strategy.getOutputs().size());
+		assertEquals(1, strategy.getOutputs().getCompartment().size());
 
-		TwinAttribute<Usage> predicted = strategy.getOutputs().getFirst();
+		TwinAttribute<Usage> predicted = strategy.getOutputs().getCompartment().getFirst().getElement();
 
 		assertEquals("predicted", predicted.getName());
 
@@ -228,17 +229,17 @@ public class TestBehaviorMapping extends AbstarctTest {
 
 		assertParent(strategy, PrescriptiveModel.class, Usage.class, "prescriptiveBattery");
 
-		assertEquals(3, strategy.getInputs().size());
+		assertEquals(3, strategy.getInputs().getCompartment().size());
 
-		assertTrue(strategy.getInputs().stream().anyMatch(x -> "predictedCurrent".equals(x.getName())));
+		assertTrue(strategy.getInputs().getCompartment().stream().map(c -> c.getElement()).anyMatch(x -> "predictedCurrent".equals(x.getName())));
 
-		assertTrue(strategy.getInputs().stream().anyMatch(x -> "maxCharge".equals(x.getName())));
+		assertTrue(strategy.getInputs().getCompartment().stream().map(c -> c.getElement()).anyMatch(x -> "maxCharge".equals(x.getName())));
 
-		assertTrue(strategy.getInputs().stream().anyMatch(x -> "posTest12".equals(x.getName())));
+		assertTrue(strategy.getInputs().getCompartment().stream().map(c -> c.getElement()).anyMatch(x -> "posTest12".equals(x.getName())));
 
-		assertEquals(1, strategy.getOutputs().size());
+		assertEquals(1, strategy.getOutputs().getCompartment().size());
 
-		TwinAttribute<Usage> chargeCmd = strategy.getOutputs().getFirst();
+		TwinAttribute<Usage> chargeCmd = strategy.getOutputs().getCompartment().getFirst().getElement();
 
 		assertEquals("chargeCmd", chargeCmd.getName());
 
@@ -257,15 +258,15 @@ public class TestBehaviorMapping extends AbstarctTest {
 
 		assertParent(strategy, PrescriptiveModel.class, Usage.class, "prescriptiveBattery");
 
-		assertEquals(2, strategy.getInputs().size());
+		assertEquals(2, strategy.getInputs().getCompartment().size());
 
-		assertEquals(1, strategy.getOutputs().size());
+		assertEquals(1, strategy.getOutputs().getCompartment().size());
 
-		assertTrue(strategy.getInputs().stream().anyMatch(x -> "predictedCurrent".equals(x.getName())));
+		assertTrue(strategy.getInputs().getCompartment().stream().map(c -> c.getElement()).anyMatch(x -> "predictedCurrent".equals(x.getName())));
 
-		assertTrue(strategy.getInputs().stream().anyMatch(x -> "maxCharge".equals(x.getName())));
+		assertTrue(strategy.getInputs().getCompartment().stream().map(c -> c.getElement()).anyMatch(x -> "maxCharge".equals(x.getName())));
 
-		assertEquals("chargeCmd", strategy.getOutputs().getFirst().getName());
+		assertEquals("chargeCmd", strategy.getOutputs().getCompartment().getFirst().getElement().getName());
 	}
 
 	@Test
@@ -273,13 +274,13 @@ public class TestBehaviorMapping extends AbstarctTest {
 
 		CustomCalculation avg = named(CustomCalculation.class, Definition.class, "Avg");
 
-		assertEquals(1, avg.getInputs().size());
+		assertEquals(1, avg.getInputs().getCompartment().size());
 
-		assertEquals("reals", avg.getInputs().getFirst().getName());
+		assertEquals("reals", avg.getInputs().getCompartment().getFirst().getElement().getName());
 
-		assertEquals(1, avg.getOutputs().size());
+		assertEquals(1, avg.getOutputs().getCompartment().size());
 
-		assertEquals("avg", avg.getOutputs().getFirst().getName());
+		assertEquals("avg", avg.getOutputs().getCompartment().getFirst().getElement().getName());
 
 		Action<Usage> testAction = avg.getActions().stream().filter(x -> "test".equals(x.getName())).findFirst().orElseThrow();
 
@@ -287,38 +288,38 @@ public class TestBehaviorMapping extends AbstarctTest {
 
 
 		Block<?> testBlock = (Block<?>) testAction;
-		assertEquals(0, testBlock.localAttributes().size());
+		assertEquals(0, testBlock.localAttributes().getCompartment().size());
 
 		ForLoop forLoop = testBlock.getActions().stream().filter(ForLoop.class::isInstance).map(ForLoop.class::cast).findFirst().orElseThrow();
 
 		assertNotNull(forLoop.getLoopVariable());
 
-		assertEquals("value", forLoop.getLoopVariable().getName());
+		assertEquals("value", forLoop.getLoopVariable().getElement().getName());
 
 		assertNotNull(forLoop.getCollection());
 
-		assertInstanceOf(Block.class, forLoop.getBody());
+		assertInstanceOf(Block.class, forLoop.getBody().getElement());
 
-		Block<?> forBody = (Block<?>) forLoop.getBody();
-		assertEquals(1, forBody.localAttributes().size());
+		Block<?> forBody = (Block<?>) forLoop.getBody().getElement();
+		assertEquals(1, forBody.localAttributes().getCompartment().size());
 
 		IfElse ifElse = forBody.getActions().stream().filter(IfElse.class::isInstance).map(IfElse.class::cast).findFirst().orElseThrow();
 
 		assertNotNull(ifElse.getCondition());
 
-		assertNotNull(ifElse.getThenAction());
+		assertNotNull(ifElse.getThenAction().getElement());
 
-		assertInstanceOf(Block.class, ifElse.getElseAction());
+		assertInstanceOf(Block.class, ifElse.getElseAction().get().getElement());
 
-		Block<?> elseBlock = (Block<?>) ifElse.getElseAction();
+		Block<?> elseBlock = (Block<?>) ifElse.getElseAction().get().getElement();
 
 		WhileLoop whileLoop = elseBlock.getActions().stream().filter(WhileLoop.class::isInstance).map(WhileLoop.class::cast).findFirst().orElseThrow();
 
 		assertNotNull(whileLoop.getCondition());
 
-		assertInstanceOf(Block.class, whileLoop.getBody());
+		assertInstanceOf(Block.class, whileLoop.getBody().orElseThrow().getElement());
 
-		Block<?> whileBody = (Block<?>) whileLoop.getBody();
+		Block<?> whileBody = (Block<?>) whileLoop.getBody().orElseThrow().getElement();
 
 		assertTrue(whileBody.getActions().stream().anyMatch(x -> "test".equals(x.getName())));
 
@@ -360,7 +361,7 @@ public class TestBehaviorMapping extends AbstarctTest {
 
 		FeatureReference reference = (FeatureReference) argument;
 
-		assertEquals("temps", reference.getTarget().getReferent().getName());
+		assertEquals("temps", reference.getChain().getLast().getReferent().getName());
 	}
 
 	@Test
@@ -390,7 +391,7 @@ public class TestBehaviorMapping extends AbstarctTest {
 
 		FeatureReference reference = (FeatureReference) argument;
 
-		assertEquals("x", reference.getTarget().getReferent().getName());
+		assertEquals("x", reference.getChain().getLast().getReferent().getName());
 	}
 
 	private void assertAssignmentTo(Assignment assignment, String targetName) {

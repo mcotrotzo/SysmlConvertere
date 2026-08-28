@@ -1,11 +1,13 @@
 package org.example.Mapping.NewVersion.TwinPort;
 
 import lombok.ToString;
+import org.example.Mapping.Interfaces.Base.CompartmentContainer;
 import org.example.Mapping.Interfaces.Base.TypeKind.TypeKind;
 import org.example.Mapping.Interfaces.Base.TypeKind.Usage;
 import org.example.Mapping.Interfaces.TwinAttribute.BaseTwinAttribute.Role;
 import org.example.Mapping.Interfaces.TwinAttribute.BaseTwinAttribute.TwinBaseString;
 import org.example.Mapping.Interfaces.TwinPort.HTTPProtocol;
+import org.example.Mapping.NewVersion.Abstract.CompartmentContainerMapped;
 import org.example.Mapping.NewVersion.Abstract.MappedElementType;
 import org.example.Mapping.NewVersion.MappingContext;
 import org.example.Mapping.NewVersion.MappingException;
@@ -19,7 +21,7 @@ import java.util.List;
 @MappedElementType(LibraryNameSpaces.HTTP_PROTOCOL)
 @ToString(callSuper = true)
 public class CommunicationHTTPProtocolMapped<T extends TypeKind> extends CommunicationProtocolMapped<T> implements HTTPProtocol<T> {
-	private List<TwinBaseAttributeStringMapped<Usage>> url = new ArrayList<>();
+	private CompartmentContainerMapped<TwinBaseAttributeStringMapped<Usage>> url;
 
 
 	public CommunicationHTTPProtocolMapped(Feature sysmlElement) {
@@ -27,14 +29,14 @@ public class CommunicationHTTPProtocolMapped<T extends TypeKind> extends Communi
 	}
 
 	@Override
-	public List<TwinBaseString<Usage>> getUrl() {
-		return new ArrayList<>(url);
+	public CompartmentContainer<? extends TwinBaseString<Usage>> getUrl() {
+		return url;
 	}
 
 	@Override
 	public void parse(MappingContext context) throws MappingException {
 		super.parse(context);
 
-		url = context.mapAttributes(this, "url", TwinBaseAttributeStringMapped.getRawStringUsageClass(), Role.CONFIG);
+		url = context.mapSlot(this, "url", TwinBaseAttributeStringMapped.getRawStringUsageClass());
 	}
 }

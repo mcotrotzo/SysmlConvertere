@@ -1,11 +1,15 @@
 package org.example.Mapping.NewVersion.Abstract;
 
 import lombok.ToString;
+import org.eclipse.ocl.util.Tuple;
+import org.example.Mapping.AdditionalRoles;
 import org.example.Mapping.Interfaces.Base.Model;
 import org.example.Mapping.Interfaces.Base.TypeKind.Definition;
+import org.example.Mapping.Interfaces.Base.TypeKind.RoleClass;
 import org.example.Mapping.Interfaces.Base.TypeKind.TypeKind;
 import org.example.Mapping.Interfaces.BaseTaxonomy.Taxonomy;
 import org.example.Mapping.Interfaces.Reference;
+import org.example.Mapping.Interfaces.TwinAttribute.BaseTwinAttribute.Role;
 import org.example.Mapping.NewVersion.MappingContext;
 import org.example.Mapping.NewVersion.MappingException;
 import org.example.Mapping.NewVersion.NameSpace.NameSpacePackage.MappedNamespaceElement;
@@ -27,6 +31,7 @@ public abstract class MappedElement<T extends Type, Z extends TypeKind> extends 
 	private final List<MappedReference<? extends MappedElement<?, Definition>>> superTypeOfDefinitions = new ArrayList<>();
 	private MappedReference<? extends MappedElement<?, Definition>> definitionOfUsage;
 	private Optional<Reference<? extends Taxonomy<Definition>>> taxonomyDefinition = Optional.empty();
+
 
 	public MappedElement(T sysmlElement) {
 		super(sysmlElement);
@@ -102,4 +107,72 @@ public abstract class MappedElement<T extends Type, Z extends TypeKind> extends 
 				.anyMatch(root -> root.toString().equals(qn));
 	}
 
+
+	@Override
+	public boolean resolveRole() {
+		boolean changed = super.resolveRole();
+
+		if (getDefinitionOfUsage().isPresent()) {
+			var definition = getDefinitionOfUsage().get().getReferent();
+
+			for (var role : definition.getRoleClasses()) {
+				boolean added = addRole(role);
+
+				if (added) {
+					System.out.println(
+							"  DEFINITION ROLE -> " + getName()
+									+ " gets " + role
+									+ " from " + definition.getName()
+					);
+				}
+
+				changed |= added;
+			}
+		}
+
+		for (var superTypeReference : getSuperTypeOfDefinitions()) {
+			var superType = superTypeReference.getReferent();
+
+			for (var role : superType.getRoleClasses()) {
+				boolean added = addRole(role);
+
+				if (added) {
+					System.out.println(
+							"  SUPERTYPE ROLE -> " + getName()
+									+ " gets " + role
+									+ " from " + superType.getName()
+					);
+				}
+
+				changed |= added;
+			}
+		}
+
+		for (AdditionalRoles additionalRole : addAdditionalRoles()) {
+			for (var model : additionalRole.models()) {
+				for (var role : additionalRole.roles()) {
+
+					boolean added = model.addRole(role);
+
+					if (added) {
+						System.out.println(
+								"  ADDITIONAL ROLE -> " + model.getName()
+										+ " gets " + role
+										+ " from " + getName()
+						);
+					}
+
+					changed |= added;
+				}
+			}
+		}
+
+		return changed;
+	}
+
+	protected List<AdditionalRoles> addAdditionalRoles() {
+		return new ArrayList<>();
+	}
+
 }
+

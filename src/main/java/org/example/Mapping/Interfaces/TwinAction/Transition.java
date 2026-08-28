@@ -1,11 +1,13 @@
 package org.example.Mapping.Interfaces.TwinAction;
 
 
+import org.example.Mapping.Interfaces.Base.Compartment;
 import org.example.Mapping.Interfaces.Base.TypeKind.Usage;
 import org.example.Mapping.Interfaces.Reference;
 import org.example.Mapping.Interfaces.TwinExpression.TwinExpression;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface Transition extends Action<Usage> {
 	Reference<? extends Action<Usage>> getSource();
@@ -24,5 +26,5 @@ public interface Transition extends Action<Usage> {
 	 *
 	 * @return the effect action
 	 */
-	Action<Usage> getEffectAction();
+	Optional<? extends Compartment<? extends Action<Usage>>> getEffectAction();
 }

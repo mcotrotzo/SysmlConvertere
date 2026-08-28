@@ -70,7 +70,7 @@ package Test{
                  state charging:>>states {
 
                                  state test34:>states{
-                                     entry assign charge := temp;
+                                     entry assign charge := p11.temp;
                                      do assign charge := 50;
                                      exit assign charge := 100;
                                  }

@@ -1,6 +1,7 @@
 package org.example.Mapping.Interfaces.TwinPort;
 
 
+import org.example.Mapping.Interfaces.Base.CompartmentContainer;
 import org.example.Mapping.Interfaces.Base.TypeKind.TypeKind;
 import org.example.Mapping.Interfaces.Base.TypeKind.Usage;
 import org.example.Mapping.Interfaces.TwinAttribute.BaseTwinAttribute.TwinBaseString;
@@ -8,7 +9,7 @@ import org.example.Mapping.Interfaces.TwinAttribute.BaseTwinAttribute.TwinBaseSt
 import java.util.List;
 
 public interface MQTTProtocol<T extends TypeKind> extends Protocol<T> {
-	List<TwinBaseString<Usage>> getTopic();
+	CompartmentContainer<? extends TwinBaseString<Usage>> getTopic();
 
-	List<TwinBaseString<Usage>> getBroker();
+	CompartmentContainer<? extends TwinBaseString<Usage>> getBroker();
 }

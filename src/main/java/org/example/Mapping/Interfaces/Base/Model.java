@@ -1,11 +1,15 @@
 package org.example.Mapping.Interfaces.Base;
 
 import org.example.Mapping.Interfaces.Base.TypeKind.Definition;
+import org.example.Mapping.Interfaces.Base.TypeKind.RoleClass;
 import org.example.Mapping.Interfaces.Base.TypeKind.TypeKindNamespace;
 import org.example.Mapping.Interfaces.BaseTaxonomy.NoTaxonomyClass;
 import org.example.Mapping.Interfaces.BaseTaxonomy.Taxonomy;
 import org.example.Mapping.Interfaces.Reference;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 public interface Model<T extends TypeKindNamespace> {
@@ -36,14 +40,48 @@ public interface Model<T extends TypeKindNamespace> {
 	 */
 	String getDeterministicId();
 
+	default boolean resolveRole() {
+		boolean changed = false;
 
-	default Class<? extends Taxonomy> getTaxonomy(){
-		if(getParent().isEmpty()){
-			return NoTaxonomyClass.class;
+		System.out.println(
+				"RESOLVE"
+						+ " path=" + path()
+						+ " name=" + getName()
+						+ " parent_name="
+						+ getParent().map(Model::getName).orElse("null")
+						+ " parent_path="
+						+ getParent().map(Model::path).orElse("null")
+						+ " before=" + getRoleClasses()
+		);
+
+		if (getParent().isPresent()) {
+			for (RoleClass role : getParent().get().getRoleClasses()) {
+
+				boolean added = addRole(role);
+
+				if (added) {
+					System.out.println(
+							"  PARENT ROLE -> "
+									+ "path=" + path()
+									+ " name=" + getName()
+									+ " gets=" + role
+									+ " from_path=" + getParent().get().path()
+									+ " from_name=" + getParent().get().getName()
+					);
+				}
+
+				changed |= added;
+			}
 		}
-		return getParent().get().getTaxonomy();
+
+		return changed;
 	}
 
+	Collection<RoleClass> getRoleClasses();
 
-	boolean isLibraryElement();
+	boolean addRole(RoleClass role);
+
+	String path();
 }
+
+

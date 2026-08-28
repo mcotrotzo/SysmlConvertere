@@ -15,7 +15,6 @@ import org.example.Mapping.Interfaces.TwinPort.Sensors;
 import org.example.Mapping.Interfaces.TwinStateMachine.TwinStateMachine;
 import org.example.Mapping.Interfaces.TwinStrategy.Strategy;
 import org.junit.jupiter.api.Test;
-import org.omg.sysml.lang.sysml.impl.FunctionImpl;
 
 import java.util.Set;
 
@@ -33,32 +32,32 @@ public class TestTopLevel extends AbstarctTest {
 		assertNotNull(battery.getId());
 		assertTrue(battery.getParent().isPresent());
 
-		var physical = battery.getPhysicalTwin().orElseThrow();
-		var shadow = battery.getShadow().orElseThrow();
-		var descriptive = battery.getDescriptiveModel().orElseThrow();
-		var predictive = battery.getPredictiveModel().orElseThrow();
-		var prescriptive = battery.getPrescriptiveModel().orElseThrow();
-		var queryFlows = battery.getQueryFlows();
-		var descriptiveToPredictiveFlows = battery.getDescriptiveToPredictiveFlows();
-		var descriptiveToPrescriptiveFlows = battery.getDescriptiveToPrescriptiveFlows();
-		var predictiveToPrescriptiveFlows = battery.getPredictiveToPrescriptiveFlows();
-		var prescriptiveToPhysicalFlows = battery.getPrescriptiveToPhysicalFlows();
+		var physical = battery.getPhysicalTwin().orElseThrow().getElement();
+		var shadow = battery.getShadow().orElseThrow().getElement();
+		var descriptive = battery.getDescriptiveModel().orElseThrow().getElement();
+		var predictive = battery.getPredictiveModel().orElseThrow().getElement();
+		var prescriptive = battery.getPrescriptiveModel().orElseThrow().getElement();
+		var queryFlows = battery.getQueryFlows().getCompartment();
+		var descriptiveToPredictiveFlows = battery.getDescriptiveToPredictiveFlows().getCompartment();
+		var descriptiveToPrescriptiveFlows = battery.getDescriptiveToPrescriptiveFlows().getCompartment();
+		var predictiveToPrescriptiveFlows = battery.getPredictiveToPrescriptiveFlows().getCompartment();
+		var prescriptiveToPhysicalFlows = battery.getPrescriptiveToPhysicalFlows().getCompartment();
 
-		assertEquals(4, physical.getSensors().size());
+		assertEquals(4, physical.getSensors().getCompartment().size());
 		assertEquals(1, result.get(Sensors.class, Definition.class).size());
-		assertEquals(1, physical.getActuators().size());
-		assertEquals(1, physical.getControlUnits().size());
-		assertEquals(9, physical.getConstPort().get().getAttributes().size());
+		assertEquals(1, physical.getActuators().getCompartment().size());
+		assertEquals(1, physical.getControlUnits().getCompartment().size());
+		assertEquals(9, physical.getConstPort().getCompartment().getFirst().getElement().getAttributes().getCompartment().size());
 
-		assertEquals(3, descriptive.getDerivedAttributes().size());
-		assertEquals(1, descriptive.getDescriptiveStateMachines().size());
-		assertEquals(1, descriptive.getDescriptiveStrategies().size());
+		assertEquals(3, descriptive.getDerivedAttributes().getCompartment().size());
+		assertEquals(1, descriptive.getDescriptiveStateMachines().getCompartment().size());
+		assertEquals(1, descriptive.getDescriptiveStrategies().getCompartment().size());
 
-		assertEquals(1, predictive.getPredictiveStrategies().size());
+		assertEquals(1, predictive.getPredictiveStrategies().getCompartment().size());
 
-		assertEquals(2, prescriptive.getPrescriptiveStrategies().size());
+		assertEquals(2, prescriptive.getPrescriptiveStrategies().getCompartment().size());
 
-		assertEquals(1, shadow.getDatabases().size());
+		assertEquals(1, shadow.getDatabases().getCompartment().size());
 
 		assertEquals(6, queryFlows.size());
 		assertEquals(2, descriptiveToPredictiveFlows.size());

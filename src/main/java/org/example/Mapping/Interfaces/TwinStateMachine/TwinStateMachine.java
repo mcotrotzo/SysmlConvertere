@@ -1,5 +1,7 @@
 package org.example.Mapping.Interfaces.TwinStateMachine;
 
+import org.example.Mapping.Interfaces.Base.Compartment;
+import org.example.Mapping.Interfaces.Base.CompartmentContainer;
 import org.example.Mapping.Interfaces.Base.TypeKind.TypeKind;
 import org.example.Mapping.Interfaces.Base.TypeKind.Usage;
 import org.example.Mapping.Interfaces.TwinAction.Action;
@@ -12,15 +14,14 @@ import java.util.List;
  * Represents a state machine in the system. A state machine is also a state
  */
 public interface TwinStateMachine<T extends TypeKind> extends Block<T> {
-	List<TwinStateMachine<Usage>> getStates();
+
+	CompartmentContainer<? extends TwinStateMachine<Usage>> getStates();
 
 	List<Transition> getTransitions();
 
-	Action<Usage> getEntryAction();
+	Compartment<? extends Action<Usage>> getEntryAction();
 
-	Action<Usage> getExitAction();
+	Compartment<? extends Action<Usage>> getExitAction();
 
-	Action<Usage> getDoAction();
-
-
+	Compartment<? extends Action<Usage>> getDoAction();
 }

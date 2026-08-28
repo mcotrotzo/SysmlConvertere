@@ -1,9 +1,14 @@
 package org.example.Mapping.NewVersion;
 
+import lombok.Getter;
 import org.example.Containers.ContainerManager;
+import org.example.Mapping.Interfaces.Base.TwinDefLibrary;
 import org.example.Mapping.Interfaces.Base.TypeKind.Usage;
+import org.example.Mapping.Interfaces.Base.UserLibrary;
 import org.example.Mapping.Interfaces.TwinAttribute.BaseTwinAttribute.Role;
 import org.example.Mapping.Interfaces.TwinEnumPackage.TwinEnum;
+import org.example.Mapping.NewVersion.Abstract.CompartmentContainerMapped;
+import org.example.Mapping.NewVersion.Abstract.CompartmentMapped;
 import org.example.Mapping.NewVersion.Abstract.MappedElement;
 import org.example.Mapping.NewVersion.Abstract.MappedReference;
 import org.example.Mapping.NewVersion.NameSpace.NameSpacePackage.MappedNamespaceElement;
@@ -20,6 +25,7 @@ import java.util.*;
 
 public final class MappingContext {
 
+	@Getter
 	private final Utils utils;
 	private final ContainerManager containerManager;
 
@@ -36,13 +42,25 @@ public final class MappingContext {
 		Collection<Package> elements = utils.collect(Package.class);
 
 		parseAllPackages(elements);
-
+		resolveParents();
+		resolveRoles();
 		postParse();
 		validateAll();
 
 		return new ArrayList<>(mappedElements.values());
 	}
 
+	private void resolveRoles() throws MappingException {
+		boolean changed;
+
+		do {
+			changed = false;
+
+			for (var mapped : mappedElements.values()) {
+				changed |= mapped.resolveRole();
+			}
+		} while (changed);
+	}
 	private void postParse() {
 		for (MappedNamespaceElement<?, ?> mapped : mappedElements.values()) {
 			mapped.postParse(this);
@@ -78,6 +96,8 @@ public final class MappingContext {
 			assignOwner(existing, owner);
 			return existing;
 		}
+
+
 
 		MappedNamespaceElement<?, ?> created = create(element);
 		created.setOwner(owner);
@@ -116,13 +136,15 @@ public final class MappingContext {
 		}
 	}
 
-	public <T> List<T> mapPrivateSlot(
+	public <T extends MappedElement<?,Usage>> CompartmentContainerMapped<T> mapPrivateSlot(
 			MappedElement<?, ?> mappedParent,
 			String slotName,
 			Class<T> expectedClass
 	) throws MappingException {
 
-		List<T> result = new ArrayList<>();
+		CompartmentContainerMapped<T> result = new CompartmentContainerMapped<>();
+		List<T> inherited = new ArrayList<>();
+		List<T> owned = new ArrayList<>();
 
 		List<Type> typesToSearch = new ArrayList<>();
 
@@ -159,24 +181,68 @@ public final class MappingContext {
 					);
 				}
 
-				result.add(expectedClass.cast(mapped));
+				T typed = expectedClass.cast(mapped);
+
+				if (feature.getOwner() == mappedParent.getSysmlElement()) {
+					owned.add(typed);
+				} else {
+					inherited.add(typed);
+				}
 			}
 		}
+
+		for(T inheritedElement : inherited) {
+			result.addCompartment(new CompartmentMapped<T>(inheritedElement,true));
+		}
+		for(T ownedElement : owned) {
+			result.addCompartment(new CompartmentMapped<T>(ownedElement,false));
+		}
+
 
 		return result;
 	}
 
+	private void resolveParents() {
+		for (MappedNamespaceElement<?, ?> mapped : mappedElements.values()) {
+
+			Element sysmlOwner = mapped.getSysmlElement().getOwner();
+			MappedNamespaceElement<?, ?> mappedOwner = null;
+
+			while (sysmlOwner != null) {
+				mappedOwner = mappedElements.get(sysmlOwner);
+				if (mappedOwner != null) {
+					break;
+				}
+				sysmlOwner = sysmlOwner.getOwner();
+			}
+
+			mapped.setOwner(mappedOwner);
+		}
+	}
 
 
-	public <T> List<T> mapSlot(MappedElement<?, ?> mappedParent, String slotName, Class<T> expectedClass) throws MappingException {
-		boolean parentIsFromDTLibrary = utils.isFromDTLibrary(mappedParent.getSysmlElement());
-		List<T> result = new ArrayList<>();
+	public <T extends MappedElement<?, Usage>>
+	CompartmentContainerMapped<T> mapSlot(
+			MappedElement<?, ?> mappedParent,
+			String slotName,
+			Class<T> expectedClass
+	) throws MappingException {
+
+		boolean parentIsFromDTLibrary =
+				utils.isFromDTLibrary(mappedParent.getSysmlElement());
+
+		List<T> inherited = new ArrayList<>();
+		List<T> owned = new ArrayList<>();
+
+		CompartmentContainerMapped<T> result =
+				new CompartmentContainerMapped<>();
 
 		for (Feature feature : mappedParent.getSysmlElement().getFeature()) {
 
 			if (utils.isFromStandardLibrary(feature)) {
 				continue;
 			}
+
 			if (!parentIsFromDTLibrary && utils.isFromDTLibrary(feature)) {
 				continue;
 			}
@@ -185,19 +251,43 @@ public final class MappingContext {
 				continue;
 			}
 
-			MappedNamespaceElement<?, ?> mapped = map(feature, mappedParent);
+			MappedNamespaceElement<?, ?> mapped = map(feature, null);
 
 			if (!expectedClass.isInstance(mapped)) {
-				throw new MappingException("Slot '%s': Element '%s' was mapped as '%s', expected '%s'.".formatted(slotName, feature.getName(), mapped.getClass().getSimpleName(), expectedClass.getSimpleName()));
+				throw new MappingException(
+						"Slot '%s': Element '%s' was mapped as '%s', expected '%s'."
+								.formatted(
+										slotName,
+										feature.getName(),
+										mapped.getClass().getSimpleName(),
+										expectedClass.getSimpleName()
+								)
+				);
 			}
 
-			result.add(expectedClass.cast(mapped));
+			T typed = expectedClass.cast(mapped);
+
+			if (feature.getOwner() == mappedParent.getSysmlElement()) {
+				owned.add(typed);
+			} else {
+				inherited.add(typed);
+			}
 		}
 
+		for (T element : inherited) {
+			result.addCompartment(
+					new CompartmentMapped<>(element, true)
+			);
+		}
+
+		for (T element : owned) {
+			result.addCompartment(
+					new CompartmentMapped<>(element, false)
+			);
+		}
 
 		return result;
 	}
-
 
 	public <T extends MappedNamespaceElement<?, ?>> T map(Element element, MappedNamespaceElement<?, ?> owner, Class<T> expectedClass) throws MappingException {
 
@@ -284,24 +374,6 @@ public final class MappingContext {
 		throw new MappingException("Unknown value '%s' for enum '%s'".formatted(symbol, enumClass.getSimpleName()));
 	}
 
-	public <T extends TwinAttributeMapped<Usage>> List<T> mapAttributes(MappedElement<?, ?> mappedParent, String slotName, Class<T> expectedClass, Role role) throws MappingException {
-
-		List<T> attributes = mapSlot(mappedParent, slotName, expectedClass);
-
-		for (T attribute : attributes) {
-			attribute.setRole(role);
-		}
-
-		return attributes;
-	}
-
-	public <T extends TwinAttributeMapped<Usage>> T mapAttribute(Element element, MappedNamespaceElement<?, ?> owner, Class<T> expectedClass, Role role) throws MappingException {
-
-		T attribute = map(element, owner, expectedClass);
-		attribute.setRole(role);
-
-		return attribute;
-	}
 
 	public <T extends MappedNamespaceElement<?, ?>>
 	MappedReference<T> tryMapReference(
@@ -322,10 +394,6 @@ public final class MappingContext {
 		return new MappedReference<>(
 				expectedClass.cast(mapped)
 		);
-	}
-
-	public Utils getUtils() {
-		return utils;
 	}
 
 }

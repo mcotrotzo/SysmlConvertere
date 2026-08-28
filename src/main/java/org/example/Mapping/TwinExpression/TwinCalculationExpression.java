@@ -15,8 +15,7 @@ import org.omg.sysml.lang.sysml.CalculationDefinition;
 import org.omg.sysml.lang.sysml.InvocationExpression;
 import org.omg.sysml.lang.sysml.Type;
 
-@MappedMetaclass
-@ToString(callSuper = true)
+
 public class TwinCalculationExpression
 		extends TwinInvocationExpression<InvocationExpression>
 		implements Calculation {

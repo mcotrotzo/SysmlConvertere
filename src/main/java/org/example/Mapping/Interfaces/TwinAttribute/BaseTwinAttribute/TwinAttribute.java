@@ -12,11 +12,6 @@ import java.util.Optional;
 public interface TwinAttribute<T extends TypeKind> extends Type<T> {
 
 	Optional<Direction> getDirection();
-
-	Role getRole();
-
 	Optional<TwinExpression> getExpression();
 
-	default void test(){
-	}
 }

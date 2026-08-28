@@ -74,12 +74,6 @@ public class TwinAttributeMapped<T extends TypeKind> extends MappedElement<Type,
 			Feature feature
 	) throws MappingException {
 
-		System.out.println(
-				"### EXPRESSION SEARCH "
-						+ feature.path()
-						+ " ownedMember="
-						+ feature.getOwnedMember()
-		);
 
 		var expressions = context.mapOwned(
 				this,
@@ -87,12 +81,6 @@ public class TwinAttributeMapped<T extends TypeKind> extends MappedElement<Type,
 				org.example.Mapping.TwinExpression.TwinExpression.class
 		);
 
-		System.out.println(
-				"### EXPRESSIONS FOUND "
-						+ feature.path()
-						+ " -> "
-						+ expressions
-		);
 
 		expression = expressions
 				.stream()
@@ -117,14 +105,6 @@ public class TwinAttributeMapped<T extends TypeKind> extends MappedElement<Type,
 		});
 	}
 
-	@Override
-	public Role getRole() {
-		return role;
-	}
-
-	public void setRole(Role role) {
-		this.role = role;
-	}
 
 	@Override
 	public Optional<TwinExpression> getExpression() {

@@ -1,11 +1,17 @@
 package org.example.Mapping.NewVersion.TwinPort;
 
 import lombok.ToString;
+import org.example.Mapping.AdditionalRoles;
+import org.example.Mapping.Interfaces.Base.TypeKind.RoleClass;
 import org.example.Mapping.Interfaces.Base.TypeKind.TypeKind;
 import org.example.Mapping.Interfaces.Base.TypeKind.Usage;
 import org.example.Mapping.Interfaces.TwinAttribute.BaseTwinAttribute.Role;
 import org.example.Mapping.Interfaces.TwinAttribute.BaseTwinAttribute.TwinAttribute;
+import org.example.Mapping.Interfaces.TwinPort.Actuators;
 import org.example.Mapping.Interfaces.TwinPort.ConstPort;
+import org.example.Mapping.Interfaces.TwinPort.Sensors;
+import org.example.Mapping.NewVersion.Abstract.CompartmentContainerMapped;
+import org.example.Mapping.NewVersion.Abstract.CompartmentMapped;
 import org.example.Mapping.NewVersion.Abstract.MappedElementType;
 import org.example.Mapping.NewVersion.MappingContext;
 import org.example.Mapping.NewVersion.MappingException;
@@ -19,20 +25,34 @@ import java.util.List;
 @MappedElementType(LibraryNameSpaces.CONST_PORT)
 @ToString(callSuper = true)
 public class ConstPortMapped<T extends TypeKind> extends TwinPortMapped<T> implements ConstPort<T> {
-	private List<TwinAttributeMapped<Usage>> attributes = new ArrayList<>();
+	private CompartmentContainerMapped<TwinAttributeMapped<Usage>> attributes;
 
 	public ConstPortMapped(Type sysmlElement) {
 		super(sysmlElement);
 	}
 
 	@Override
-	public List<TwinAttribute<Usage>> getAttributes() {
-		return new ArrayList<>(attributes);
+	public CompartmentContainerMapped<? extends TwinAttribute<Usage>> getAttributes() {
+		return attributes;
 	}
 
 	@Override
 	public void parse(MappingContext context) throws MappingException {
 		super.parse(context);
-		attributes = context.mapAttributes(this, "measurements", TwinAttributeMapped.getRawUsageClass(), Role.CONST);
+		attributes = context.mapSlot(this, "measurements", TwinAttributeMapped.getRawUsageClass());
+	}
+
+
+	@Override
+	protected List<AdditionalRoles> addAdditionalRoles() {
+		return List.of(new AdditionalRoles(
+				attributes.getCompartment().stream().map(CompartmentMapped::getElement).toList(),
+				List.of(
+						new RoleClass(
+								rawClassOf(ConstPort.class),
+								Role.CONST
+						)
+				)
+		));
 	}
 }

@@ -1,5 +1,7 @@
 package org.example.Mapping.Interfaces.FullTwin;
 
+import org.example.Mapping.Interfaces.Base.Compartment;
+import org.example.Mapping.Interfaces.Base.CompartmentContainer;
 import org.example.Mapping.Interfaces.Base.TypeKind.TypeKind;
 import org.example.Mapping.Interfaces.Base.TypeKind.Usage;
 import org.example.Mapping.Interfaces.BaseTaxonomy.*;
@@ -11,25 +13,25 @@ import java.util.Optional;
 
 public interface Twin<T extends TypeKind> extends CloudTwinTaxonomy<T> {
 
-	Optional<PhysicalTwin<Usage>> getPhysicalTwin();
+	Optional<? extends Compartment<? extends PhysicalTwin<Usage>>> getPhysicalTwin();
 
-	Optional<Shadow<Usage>> getShadow();
+	Optional<? extends Compartment<? extends Shadow<Usage>>> getShadow();
 
-	Optional<DescriptiveModel<Usage>> getDescriptiveModel();
+	Optional<? extends Compartment<? extends DescriptiveModel<Usage>>> getDescriptiveModel();
 
-	Optional<PredictiveModel<Usage>> getPredictiveModel();
+	Optional<? extends Compartment<? extends PredictiveModel<Usage>>> getPredictiveModel();
 
-	Optional<PrescriptiveModel<Usage>> getPrescriptiveModel();
+	Optional<? extends Compartment<? extends PrescriptiveModel<Usage>>> getPrescriptiveModel();
 
-	List<QueryFlow<Usage>> getQueryFlows();
+	CompartmentContainer<? extends QueryFlow<Usage>> getQueryFlows();
 
-	List<Flow<Usage>> getDescriptiveToPredictiveFlows();
+	CompartmentContainer<? extends Flow<Usage>> getDescriptiveToPredictiveFlows();
 
-	List<Flow<Usage>> getDescriptiveToPrescriptiveFlows();
+	CompartmentContainer<? extends Flow<Usage>> getDescriptiveToPrescriptiveFlows();
 
-	List<Flow<Usage>> getPredictiveToPrescriptiveFlows();
+	CompartmentContainer<? extends Flow<Usage>> getPredictiveToPrescriptiveFlows();
 
-	List<Flow<Usage>> getPrescriptiveToPhysicalFlows();
+	CompartmentContainer<? extends Flow<Usage>> getPrescriptiveToPhysicalFlows();
 }
 
 

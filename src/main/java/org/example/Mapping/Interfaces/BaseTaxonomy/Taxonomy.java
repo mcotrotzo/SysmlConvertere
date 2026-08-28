@@ -9,8 +9,4 @@ import java.util.Optional;
 
 public interface Taxonomy<T extends TypeKind> extends Type<T> {
 
-	@Override
-	default Class<? extends Taxonomy> getTaxonomy() {
-		return this.getClass();
-	}
 }

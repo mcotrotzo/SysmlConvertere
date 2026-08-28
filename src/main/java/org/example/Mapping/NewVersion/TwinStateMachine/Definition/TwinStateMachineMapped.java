@@ -3,9 +3,10 @@ package org.example.Mapping.NewVersion.TwinStateMachine.Definition;
 import lombok.ToString;
 import org.example.Mapping.Interfaces.Base.TypeKind.TypeKind;
 import org.example.Mapping.Interfaces.Base.TypeKind.Usage;
-import org.example.Mapping.Interfaces.TwinAction.Action;
 import org.example.Mapping.Interfaces.TwinAction.Transition;
 import org.example.Mapping.Interfaces.TwinStateMachine.TwinStateMachine;
+import org.example.Mapping.NewVersion.Abstract.CompartmentContainerMapped;
+import org.example.Mapping.NewVersion.Abstract.CompartmentMapped;
 import org.example.Mapping.NewVersion.Abstract.MappedElementType;
 import org.example.Mapping.NewVersion.MappingContext;
 import org.example.Mapping.NewVersion.MappingException;
@@ -22,13 +23,18 @@ import java.util.List;
 
 @MappedElementType(LibraryNameSpaces.STATE)
 @ToString(callSuper = true)
-public class TwinStateMachineMapped<T extends TypeKind> extends TwinActionBlockMapped<Type, T> implements TwinStateMachine<T> {
+public class TwinStateMachineMapped<T extends TypeKind>
+		extends TwinActionBlockMapped<Type, T>
+		implements TwinStateMachine<T> {
 
-	private List<TwinStateMachineMapped<Usage>> states = new ArrayList<>();
+	private CompartmentContainerMapped<TwinStateMachineMapped<Usage>> states =
+			new CompartmentContainerMapped<>();
+
 	private List<Transition> transitions = new ArrayList<>();
-	private TwinActionMapped<?, Usage> entryAction;
-	private TwinActionMapped<?, Usage> exitAction;
-	private TwinActionMapped<?, Usage> doAction;
+
+	private CompartmentMapped<TwinActionMapped<?, Usage>> entryAction;
+	private CompartmentMapped<TwinActionMapped<?, Usage>> exitAction;
+	private CompartmentMapped<TwinActionMapped<?, Usage>> doAction;
 
 	public TwinStateMachineMapped(StateUsage sysmlElement) {
 		super(sysmlElement);
@@ -62,47 +68,98 @@ public class TwinStateMachineMapped<T extends TypeKind> extends TwinActionBlockM
 			doActionUsage = sd.getDoAction();
 			actionsToScan = sd.getOwnedAction();
 		} else {
-			throw new MappingException("TwinStateMachineMapped: sysmlElement is neither StateUsage nor StateDefinition.");
+			throw new MappingException(
+					"TwinStateMachineMapped: sysmlElement is neither StateUsage nor StateDefinition."
+			);
 		}
 
-		if (entry != null) entryAction = context.map(entry, this, TwinActionMapped.getActionMappedUsageClass());
-		if (exit != null) exitAction = context.map(exit, this, TwinActionMapped.getActionMappedUsageClass());
-		if (doActionUsage != null)
-			doAction = context.map(doActionUsage, this, TwinActionMapped.getActionMappedUsageClass());
+		if (entry != null) {
+			TwinActionMapped<?, Usage> mapped =
+					context.map(
+							entry,
+							this,
+							TwinActionMapped.getActionMappedUsageClass()
+					);
+
+			entryAction = new CompartmentMapped<>(mapped, false);
+		}
+
+		if (exit != null) {
+			TwinActionMapped<?, Usage> mapped =
+					context.map(
+							exit,
+							this,
+							TwinActionMapped.getActionMappedUsageClass()
+					);
+
+			exitAction = new CompartmentMapped<>(mapped, false);
+		}
+
+		if (doActionUsage != null) {
+			TwinActionMapped<?, Usage> mapped =
+					context.map(
+							doActionUsage,
+							this,
+							TwinActionMapped.getActionMappedUsageClass()
+					);
+
+			doAction = new CompartmentMapped<>(mapped, false);
+		}
 
 		List<TwinActionMapped<ActionUsage, Usage>> s = new ArrayList<>();
+
 		for (ActionUsage action : actionsToScan) {
-			if (action.equals(entry) || action.equals(exit) || action.equals(doActionUsage)) continue;
-			s.add(context.map(action, this, rawClassOf(TwinActionMapped.class)));
+			if (action.equals(entry)
+					|| action.equals(exit)
+					|| action.equals(doActionUsage)) {
+				continue;
+			}
+
+			s.add(
+					context.map(
+							action,
+							this,
+							rawClassOf(TwinActionMapped.class)
+					)
+			);
 		}
 
 		twinActionBlockUsages = s;
-		transitions = twinActionBlockUsages.stream().filter(Transition.class::isInstance).map(Transition.class::cast).toList();
-		states = context.mapSlot(this, "states", getRawUsageClass());
+
+		transitions = twinActionBlockUsages.stream()
+				.filter(Transition.class::isInstance)
+				.map(Transition.class::cast)
+				.toList();
+
+		states = context.mapSlot(
+				this,
+				"states",
+				getRawUsageClass()
+		);
 	}
 
 	@Override
-	public List<TwinStateMachine<Usage>> getStates() {
-		return new ArrayList<>(states);
+	public CompartmentContainerMapped<TwinStateMachineMapped<Usage>> getStates() {
+		return states;
 	}
 
 	@Override
 	public List<Transition> getTransitions() {
-		return new ArrayList<>(transitions);
+		return transitions;
 	}
 
 	@Override
-	public Action<Usage> getEntryAction() {
+	public CompartmentMapped<TwinActionMapped<?, Usage>> getEntryAction() {
 		return entryAction;
 	}
 
 	@Override
-	public Action<Usage> getExitAction() {
+	public CompartmentMapped<TwinActionMapped<?, Usage>> getExitAction() {
 		return exitAction;
 	}
 
 	@Override
-	public Action<Usage> getDoAction() {
+	public CompartmentMapped<TwinActionMapped<?, Usage>> getDoAction() {
 		return doAction;
 	}
 }

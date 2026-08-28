@@ -4,7 +4,7 @@ import lombok.ToString;
 import org.example.Mapping.Interfaces.Base.TypeKind.TypeKind;
 import org.example.Mapping.Interfaces.Base.TypeKind.Usage;
 import org.example.Mapping.Interfaces.BaseTaxonomy.Shadow;
-import org.example.Mapping.Interfaces.DataBase.Database;
+import org.example.Mapping.NewVersion.Abstract.CompartmentContainerMapped;
 import org.example.Mapping.NewVersion.Abstract.MappedElementType;
 import org.example.Mapping.NewVersion.Database.DatabaseMapped;
 import org.example.Mapping.NewVersion.MappingContext;
@@ -13,28 +13,31 @@ import org.example.Mapping.NewVersion.TaxonomyMapped.Taxonomy.ShadowTaxonomyMapp
 import org.example.Util.LibraryNameSpaces;
 import org.omg.sysml.lang.sysml.Type;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @MappedElementType(LibraryNameSpaces.SHADOW)
 @ToString(callSuper = true)
-public class ShadowMapped<T extends TypeKind> extends ShadowTaxonomyMapped<T> implements Shadow<T> {
-	List<DatabaseMapped<Usage>> databases = new ArrayList<>();
+public class ShadowMapped<T extends TypeKind>
+		extends ShadowTaxonomyMapped<T>
+		implements Shadow<T> {
+
+	private CompartmentContainerMapped<DatabaseMapped<Usage>> databases;
 
 	public ShadowMapped(Type sysmlElement) {
 		super(sysmlElement);
 	}
 
-
 	@Override
 	public void parse(MappingContext context) throws MappingException {
 		super.parse(context);
-		databases = context.mapSlot(this, "databases", DatabaseMapped.getRawUsageClass());
+
+		databases = context.mapSlot(
+				this,
+				"databases",
+				DatabaseMapped.getRawUsageClass()
+		);
 	}
 
-
 	@Override
-	public List<Database<Usage>> getDatabases() {
-		return new ArrayList<>(databases);
+	public CompartmentContainerMapped<DatabaseMapped<Usage>> getDatabases() {
+		return databases;
 	}
 }

@@ -25,4 +25,6 @@ public interface Type<T extends TypeKind> extends NameSpace<T> {
 				.anyMatch(superType -> superType.isSubtypeOf(expected));
 	}
 
+
+
 }

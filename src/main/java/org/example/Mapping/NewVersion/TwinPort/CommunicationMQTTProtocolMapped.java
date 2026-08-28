@@ -2,11 +2,13 @@ package org.example.Mapping.NewVersion.TwinPort;
 
 
 import lombok.ToString;
+import org.example.Mapping.Interfaces.Base.CompartmentContainer;
 import org.example.Mapping.Interfaces.Base.TypeKind.TypeKind;
 import org.example.Mapping.Interfaces.Base.TypeKind.Usage;
 import org.example.Mapping.Interfaces.TwinAttribute.BaseTwinAttribute.Role;
 import org.example.Mapping.Interfaces.TwinAttribute.BaseTwinAttribute.TwinBaseString;
 import org.example.Mapping.Interfaces.TwinPort.MQTTProtocol;
+import org.example.Mapping.NewVersion.Abstract.CompartmentContainerMapped;
 import org.example.Mapping.NewVersion.Abstract.MappedElementType;
 import org.example.Mapping.NewVersion.MappingContext;
 import org.example.Mapping.NewVersion.MappingException;
@@ -20,8 +22,8 @@ import java.util.List;
 @MappedElementType(LibraryNameSpaces.MQTT_PROTOCOL)
 @ToString(callSuper = true)
 public class CommunicationMQTTProtocolMapped<T extends TypeKind> extends CommunicationProtocolMapped<T> implements MQTTProtocol<T> {
-	private List<TwinBaseAttributeStringMapped<Usage>> topic = new ArrayList<>();
-	private List<TwinBaseAttributeStringMapped<Usage>> broker = new ArrayList<>();
+	private CompartmentContainerMapped<TwinBaseAttributeStringMapped<Usage>> topic;
+	private CompartmentContainerMapped<TwinBaseAttributeStringMapped<Usage>> broker;
 
 	public CommunicationMQTTProtocolMapped(Feature sysmlElement) {
 		super(sysmlElement);
@@ -30,18 +32,18 @@ public class CommunicationMQTTProtocolMapped<T extends TypeKind> extends Communi
 	@Override
 	public void parse(MappingContext context) throws MappingException {
 		super.parse(context);
-		topic = context.mapAttributes(this, "topic", TwinBaseAttributeStringMapped.getRawStringUsageClass(), Role.CONFIG);
+		topic = context.mapSlot(this, "topic", TwinBaseAttributeStringMapped.getRawStringUsageClass());
 
-		broker = context.mapAttributes(this, "broker", TwinBaseAttributeStringMapped.getRawStringUsageClass(), Role.CONFIG);
+		broker = context.mapSlot(this, "broker", TwinBaseAttributeStringMapped.getRawStringUsageClass());
 	}
 
 	@Override
-	public List<TwinBaseString<Usage>> getTopic() {
-		return new ArrayList<>(topic);
+	public CompartmentContainer<? extends TwinBaseString<Usage>>  getTopic() {
+		return topic;
 	}
 
 	@Override
-	public List<TwinBaseString<Usage>> getBroker() {
-		return new ArrayList<>(broker);
+	public CompartmentContainer<? extends TwinBaseString<Usage>> getBroker() {
+		return broker;
 	}
 }

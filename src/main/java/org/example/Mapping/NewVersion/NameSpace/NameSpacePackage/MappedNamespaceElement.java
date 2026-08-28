@@ -6,6 +6,7 @@ import lombok.ToString;
 import org.example.Mapping.Interfaces.Base.Model;
 import org.example.Mapping.Interfaces.Base.NameSpace;
 import org.example.Mapping.Interfaces.Base.TypeKind.Definition;
+import org.example.Mapping.Interfaces.Base.TypeKind.RoleClass;
 import org.example.Mapping.Interfaces.Base.TypeKind.TypeKindNamespace;
 import org.example.Mapping.Interfaces.BaseTaxonomy.Taxonomy;
 import org.example.Mapping.Interfaces.Reference;
@@ -15,9 +16,7 @@ import org.example.Util.Utils;
 import org.omg.sysml.lang.sysml.Element;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @ToString(of = {"name", "id"})
 public abstract class MappedNamespaceElement<T extends Element, Z extends TypeKindNamespace> implements NameSpace<Z> {
@@ -41,6 +40,10 @@ public abstract class MappedNamespaceElement<T extends Element, Z extends TypeKi
 
 	@Getter
 	boolean isLibraryElement;
+
+
+	protected final Map<Class<? extends Model<?>>, RoleClass> roleClasses =
+			new HashMap<>();
 
 
 	public MappedNamespaceElement(T sysmlElement) {
@@ -101,5 +104,25 @@ public abstract class MappedNamespaceElement<T extends Element, Z extends TypeKi
 
 
 	public void postParse(MappingContext mappingContext) {
+	}
+	public boolean addRole(RoleClass incoming) {
+		RoleClass existing = roleClasses.get(incoming.modelClass());
+
+		if (existing == null) {
+			roleClasses.put(incoming.modelClass(), incoming);
+			return true;
+		}
+
+		return existing.additionalRole().addAll(incoming.additionalRole());
+	}
+
+	@Override
+	public Collection<RoleClass> getRoleClasses() {
+		return roleClasses.values();
+	}
+
+	@Override
+	public String path() {
+		return this.sysmlElement.path();
 	}
 }

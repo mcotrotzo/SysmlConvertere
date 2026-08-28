@@ -1,6 +1,8 @@
 package org.example.Mapping.NewVersion.NameSpace.NameSpacePackage;
 
 import org.example.Mapping.Interfaces.Base.TwinDefLibrary;
+import org.example.Mapping.Interfaces.Base.TypeKind.Definition;
+import org.example.Mapping.Interfaces.Base.TypeKind.Usage;
 import org.example.Mapping.Interfaces.FullTwin.Twin;
 import org.example.Mapping.NewVersion.FullTwinMapped.TwinMapped;
 import org.example.Mapping.NewVersion.MappingContext;
@@ -15,7 +17,7 @@ import java.util.List;
 @PackageTypeMeta(value = LibraryPackageNames.TWIN_DEF_LIBRARY)
 public class TwinDefLibraryMapped extends PackageElementType implements TwinDefLibrary {
 
-	List<TwinMapped> twins = new ArrayList<>();
+	List<TwinMapped<Definition>> twins = new ArrayList<>();
 
 	public TwinDefLibraryMapped(Package sysmlElement) {
 		super(sysmlElement);
@@ -24,7 +26,7 @@ public class TwinDefLibraryMapped extends PackageElementType implements TwinDefL
 	@Override
 	public void parse(MappingContext context) throws MappingException {
 		super.parse(context);
-		twins = context.mapOwnedNamespace(this, Element.class, TwinMapped.class);
+		twins = context.mapOwnedNamespace(this, Element.class, rawClassOf(TwinMapped.class));
 	}
 
 	@Override
@@ -34,7 +36,7 @@ public class TwinDefLibraryMapped extends PackageElementType implements TwinDefL
 
 
 	@Override
-	public List<Twin> getTwins() {
-		return List.of();
+	public List<Twin<Definition>> getTwins() {
+		return new ArrayList<>(twins);
 	}
 }

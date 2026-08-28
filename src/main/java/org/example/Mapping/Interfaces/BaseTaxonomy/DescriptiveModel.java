@@ -1,5 +1,7 @@
 package org.example.Mapping.Interfaces.BaseTaxonomy;
 
+import org.example.Mapping.Interfaces.Base.Compartment;
+import org.example.Mapping.Interfaces.Base.CompartmentContainer;
 import org.example.Mapping.Interfaces.Base.TypeKind.TypeKind;
 import org.example.Mapping.Interfaces.Base.TypeKind.Usage;
 import org.example.Mapping.Interfaces.TwinAction.Action;
@@ -11,12 +13,12 @@ import java.util.List;
 
 public interface DescriptiveModel<T extends TypeKind> extends DescriptiveTaxonomy<T> {
 
-	List<Action<Usage>> getDerivedAttributes();
+	CompartmentContainer<? extends Action<Usage>> getDerivedAttributes();
 
-	List<TwinStateMachine<Usage>> getDescriptiveStateMachines();
+	CompartmentContainer<? extends TwinStateMachine<Usage>> getDescriptiveStateMachines();
 
-	List<Strategy<Usage>> getDescriptiveStrategies();
+	CompartmentContainer<? extends Strategy<Usage>> getDescriptiveStrategies();
 
-	List<Flow<Usage>> getDescriptiveFlows();
+	CompartmentContainer<? extends Flow<Usage>> getDescriptiveFlows();
 
 }

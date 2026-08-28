@@ -1,9 +1,11 @@
 package org.example.Mapping.TwinAction;
 
 import lombok.ToString;
+import org.example.Mapping.Interfaces.Base.Compartment;
 import org.example.Mapping.Interfaces.Base.TypeKind.Usage;
 import org.example.Mapping.Interfaces.TwinAction.Action;
 import org.example.Mapping.Interfaces.TwinAction.Transition;
+import org.example.Mapping.NewVersion.Abstract.CompartmentMapped;
 import org.example.Mapping.NewVersion.Abstract.MappedReference;
 import org.example.Mapping.NewVersion.MappingContext;
 import org.example.Mapping.NewVersion.MappingException;
@@ -15,6 +17,7 @@ import org.omg.sysml.lang.sysml.Type;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @MappedMetaclass
 @ToString(callSuper = true)
@@ -22,7 +25,7 @@ public class TwinTransitionUsageMapped extends TwinActionMapped<TransitionUsage,
 	private MappedReference<TwinActionMapped<ActionUsage,Usage>> source;
 	private MappedReference<TwinActionMapped<ActionUsage,Usage>> target;
 	private List<TwinExpression<?>> guard = new ArrayList<>();
-	private TwinActionMapped<ActionUsage,Usage> effectAction;
+	private Optional<CompartmentMapped<TwinActionMapped<ActionUsage,Usage>>> effectAction = Optional.empty();
 
 	public TwinTransitionUsageMapped(TransitionUsage sysmlElement) {
 		super(sysmlElement);
@@ -45,7 +48,7 @@ public class TwinTransitionUsageMapped extends TwinActionMapped<TransitionUsage,
 	}
 
 	@Override
-	public Action<Usage> getEffectAction() {
+	public Optional<? extends Compartment<? extends Action<Usage>>> getEffectAction() {
 		return effectAction;
 	}
 
@@ -63,14 +66,26 @@ public class TwinTransitionUsageMapped extends TwinActionMapped<TransitionUsage,
 			}
 		}).collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
 
-		Class<TwinActionMapped<ActionUsage,Usage>> twinActionMappedClass = rawClassOf(TwinActionMapped.class);
-		effectAction = this.getSysmlElement().getEffectAction().stream().map(x -> {
-			try {
-				return context.map(x, this, twinActionMappedClass);
-			} catch (MappingException ex) {
-				throw new RuntimeException(ex);
-			}
-		}).findFirst().orElse(null);
+		Class<TwinActionMapped<ActionUsage, Usage>> twinActionMappedClass =
+				rawClassOf(TwinActionMapped.class);
+
+		effectAction = getSysmlElement()
+				.getEffectAction()
+				.stream()
+				.map(x -> {
+					try {
+						TwinActionMapped<ActionUsage, Usage> mapped =
+								context.map(x, this, twinActionMappedClass);
+
+						return new CompartmentMapped<>(
+								mapped,
+								mapped.getOwner() != this
+						);
+					} catch (MappingException ex) {
+						throw new RuntimeException(ex);
+					}
+				})
+				.findFirst();
 	}
 
 }

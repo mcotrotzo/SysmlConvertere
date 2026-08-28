@@ -28,6 +28,6 @@ public class TestActuators extends AbstarctTest {
 		assertEquals("p12", p12.getName());
 		assertNotNull(p12.getId());
 
-		assertEquals(1, p12.getAttributes().size());
+		assertEquals(1, p12.getAttributes().getCompartment().size());
 	}
 }

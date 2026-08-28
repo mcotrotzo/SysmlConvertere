@@ -1,6 +1,7 @@
 package org.example.Mapping.NewVersion.TaxonomyMapped;
 
 import lombok.ToString;
+import org.example.Mapping.Interfaces.Base.CompartmentContainer;
 import org.example.Mapping.Interfaces.Base.TypeKind.TypeKind;
 import org.example.Mapping.Interfaces.Base.TypeKind.Usage;
 import org.example.Mapping.Interfaces.BaseTaxonomy.DescriptiveModel;
@@ -8,6 +9,7 @@ import org.example.Mapping.Interfaces.TwinAction.Action;
 import org.example.Mapping.Interfaces.TwinFlow.Flow;
 import org.example.Mapping.Interfaces.TwinStateMachine.TwinStateMachine;
 import org.example.Mapping.Interfaces.TwinStrategy.Strategy;
+import org.example.Mapping.NewVersion.Abstract.CompartmentContainerMapped;
 import org.example.Mapping.NewVersion.Abstract.MappedElementType;
 import org.example.Mapping.NewVersion.MappingContext;
 import org.example.Mapping.NewVersion.MappingException;
@@ -26,10 +28,10 @@ import java.util.List;
 @ToString(callSuper = true)
 public class DescriptiveModelMapped<T extends TypeKind> extends DescriptiveTaxonomyMapped<T> implements DescriptiveModel<T> {
 
-	private List<TwinActionMapped<?, Usage>> derivedAttributes = new ArrayList<>();
-	private List<TwinStateMachineMapped<Usage>> descriptiveStateMachines = new ArrayList<>();
-	private List<TwinStrategyMapped<Usage>> descriptiveStrategies = new ArrayList<>();
-	private List<DescriptiveFlowMapped<Usage>> descriptiveFlows = new ArrayList<>();
+	private CompartmentContainerMapped<TwinActionMapped<?, Usage>> derivedAttributes;
+	private CompartmentContainerMapped<TwinStateMachineMapped<Usage>> descriptiveStateMachines;
+	private CompartmentContainerMapped<TwinStrategyMapped<Usage>> descriptiveStrategies;
+	private CompartmentContainerMapped<DescriptiveFlowMapped<Usage>> descriptiveFlows;
 
 	public DescriptiveModelMapped(Type sysmlElement) {
 		super(sysmlElement);
@@ -45,22 +47,22 @@ public class DescriptiveModelMapped<T extends TypeKind> extends DescriptiveTaxon
 	}
 
 	@Override
-	public List<Action<Usage>> getDerivedAttributes() {
-		return new ArrayList<>(derivedAttributes);
+	public CompartmentContainer<? extends Action<Usage>> getDerivedAttributes() {
+		return derivedAttributes;
 	}
 
 	@Override
-	public List<TwinStateMachine<Usage>> getDescriptiveStateMachines() {
-		return new ArrayList<>(descriptiveStateMachines);
+	public CompartmentContainer<? extends TwinStateMachine<Usage>> getDescriptiveStateMachines() {
+		return descriptiveStateMachines;
 	}
 
 	@Override
-	public List<Strategy<Usage>> getDescriptiveStrategies() {
-		return new ArrayList<>(descriptiveStrategies);
+	public CompartmentContainer<? extends Strategy<Usage>> getDescriptiveStrategies() {
+		return descriptiveStrategies;
 	}
 
 	@Override
-	public List<Flow<Usage>> getDescriptiveFlows() {
-		return new ArrayList<>(descriptiveFlows);
+	public CompartmentContainer<? extends Flow<Usage>> getDescriptiveFlows() {
+		return descriptiveFlows;
 	}
 }
