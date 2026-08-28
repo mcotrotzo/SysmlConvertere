@@ -1,6 +1,12 @@
+package Test2{
+
+     private import TwinLibrary::*;
+
+}
 package PositionThings{
     private import UserLibrary::*;
     private import BatteryControlUnitLibrary::*;
+    private import Test2::*;
 
      attribute def Position:>TwinCustomType{
         attribute x[1]:TwinInteger:>fields;
@@ -8,13 +14,18 @@ package PositionThings{
         attribute z[1]:TwinInteger:>fields;
     }
 
-    calc def AddPosition:>CustomCalculationAction{
-        in attribute pos_a[1]:>>inputs:Position;
-        return pos_c[1]:>>outputs:Position;
-        in attribute pos_b[1]:>>inputs:Position;
-        assign pos_c := new Position(x = PLUS_int(pos_a.y, pos_b.y), y = PLUS_int(pos_a.z, pos_b.z), z = PLUS_int(pos_a.z, pos_b.z));
+    attribute def Position2:>TwinCustomType{
+            attribute x[1]:Position:>fields;
+        }
 
-    }
+        calc def AddPosition:>CustomCalculationAction{
+            in attribute pos_a[1]:>>inputs:Position;
+            in attribute pos_b[1]:>>inputs:Position2;
+            return pos_c[1]:>>outputs:Position;
+            assign pos_c := new Position(x = PLUS_int(pos_a.x, pos_b.x.x), y = PLUS_int(pos_a.y, pos_b.x.y), z = PLUS_int(pos_a.z, pos_b.x.z));
+
+        }
+
 
 
 

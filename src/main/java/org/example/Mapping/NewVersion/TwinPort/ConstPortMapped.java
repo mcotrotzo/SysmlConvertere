@@ -2,7 +2,6 @@ package org.example.Mapping.NewVersion.TwinPort;
 
 import lombok.ToString;
 import org.example.Mapping.AdditionalRoles;
-import org.example.Mapping.Interfaces.Base.TypeKind.RoleClass;
 import org.example.Mapping.Interfaces.Base.TypeKind.TypeKind;
 import org.example.Mapping.Interfaces.Base.TypeKind.Usage;
 import org.example.Mapping.Interfaces.TwinAttribute.BaseTwinAttribute.Role;
@@ -43,16 +42,10 @@ public class ConstPortMapped<T extends TypeKind> extends TwinPortMapped<T> imple
 	}
 
 
-	@Override
 	protected List<AdditionalRoles> addAdditionalRoles() {
 		return List.of(new AdditionalRoles(
-				attributes.getCompartment().stream().map(CompartmentMapped::getElement).toList(),
-				List.of(
-						new RoleClass(
-								rawClassOf(ConstPort.class),
-								Role.CONST
-						)
-				)
+				attributes,
+				List.of(Role.CONST)
 		));
 	}
 }

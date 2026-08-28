@@ -1,8 +1,10 @@
 package org.example.Mapping.TwinExpression;
 
 import lombok.ToString;
+import org.example.Mapping.Interfaces.Base.Compartment;
 import org.example.Mapping.Interfaces.Base.Type;
 import org.example.Mapping.Interfaces.Base.TypeKind.Usage;
+import org.example.Mapping.Interfaces.Reference;
 import org.example.Mapping.Interfaces.TwinAttribute.BaseTwinAttribute.TwinAttribute;
 import org.example.Mapping.Interfaces.TwinExpression.FeatureReference;
 import org.example.Mapping.NewVersion.Abstract.MappedElement;
@@ -23,6 +25,7 @@ import java.util.List;
 public class TwinFeatureReferenceExpression extends TwinExpression<FeatureReferenceExpression> implements FeatureReference {
 	private MappedReference<? extends MappedElement<?, Usage>> target;
 
+	private  Reference<? extends Compartment<? extends Type<Usage>>> targetAs;
 	public TwinFeatureReferenceExpression(FeatureReferenceExpression sysmlElement) {
 		super(sysmlElement);
 	}
@@ -32,7 +35,6 @@ public class TwinFeatureReferenceExpression extends TwinExpression<FeatureRefere
 	public void parse(MappingContext context) throws MappingException {
 		var referent = getSysmlElement().getReferent();
 		if (referent instanceof Feature feature) {
-			feature.getType().forEach(type -> System.out.println("  " + type.path() + " [" + type.getClass().getSimpleName() + "]"));
 			TypeUtil.getSupertypesOf(feature, true).forEach(type -> System.out.println("  " + type.path() + " [" + type.getClass().getSimpleName() + "]"));
 		}
 		target = context.mapReference(getSysmlElement().getReferent(), rawClassOf(MappedElement.class));
@@ -40,7 +42,22 @@ public class TwinFeatureReferenceExpression extends TwinExpression<FeatureRefere
 	}
 
 	@Override
-	public List<MappedReference<? extends Type<Usage>>> getChain() {
+	public void postParse(MappingContext mappingContext) {
+		super.postParse(mappingContext);
+		targetAs = new MappedReference<>(
+				mappingContext.getOwnCompartment(
+						target.getReferent()
+				)
+		);
+	}
+
+	@Override
+	public List<? extends Reference<? extends Type<Usage>>> getChain() {
 		return List.of(target);
+	}
+
+	@Override
+	public Reference<? extends Compartment<? extends Type<Usage>>> getAsCompartment() {
+		return targetAs;
 	}
 }

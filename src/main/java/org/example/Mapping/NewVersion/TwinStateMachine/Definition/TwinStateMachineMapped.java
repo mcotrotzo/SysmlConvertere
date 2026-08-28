@@ -81,7 +81,7 @@ public class TwinStateMachineMapped<T extends TypeKind>
 							TwinActionMapped.getActionMappedUsageClass()
 					);
 
-			entryAction = new CompartmentMapped<>(mapped, false);
+			entryAction = context.mapCompartment(this, mapped,mapped.getOwner()!=this,"entryAction");
 		}
 
 		if (exit != null) {
@@ -92,7 +92,7 @@ public class TwinStateMachineMapped<T extends TypeKind>
 							TwinActionMapped.getActionMappedUsageClass()
 					);
 
-			exitAction = new CompartmentMapped<>(mapped, false);
+			exitAction = context.mapCompartment(this, mapped,mapped.getOwner()!=this,"exitAction");
 		}
 
 		if (doActionUsage != null) {
@@ -103,7 +103,7 @@ public class TwinStateMachineMapped<T extends TypeKind>
 							TwinActionMapped.getActionMappedUsageClass()
 					);
 
-			doAction = new CompartmentMapped<>(mapped, false);
+			doAction = context.mapCompartment(this, mapped,mapped.getOwner()!=this,"doAction");
 		}
 
 		List<TwinActionMapped<ActionUsage, Usage>> s = new ArrayList<>();

@@ -204,5 +204,7 @@ public class TestExpressions extends AbstarctTest {
 		assertNotNull(
 				chain.getChain().getLast().getReferent().getParent()
 		);
+
+
 	}
 }

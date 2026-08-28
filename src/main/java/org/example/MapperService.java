@@ -32,7 +32,7 @@ public class MapperService {
 		try {
 			preRules();
 			var s = mappingContext.parseAll();
-			TwinDataBase db = new TwinDataBase(s);
+			TwinDataBase db = new TwinDataBase(s, mappingContext.getMappedCompartments());
 			postRules(db);
 			return db;
 

@@ -17,6 +17,7 @@ public class TwinLiteralIntegerExpression extends TwinLiteralExpression<Integer,
 
 	@Override
 	public void parse(MappingContext context) throws MappingException {
+		super.parse(context);
 		this.setValue(this.getSysmlElement().getValue());
 	}
 }

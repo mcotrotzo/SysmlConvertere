@@ -204,7 +204,6 @@ public final class ContainerManager {
 
 		Objects.requireNonNull(sysmlElement, "sysmlElement");
 
-		// 1. Library zuerst
 		Constructor<? extends MappedNamespaceElement<?, ?>> libraryConstructor =
 				findLibraryConstructor(sysmlElement);
 
@@ -212,7 +211,6 @@ public final class ContainerManager {
 			return libraryConstructor;
 		}
 
-		// 2. Keine Library-Zuordnung -> Metaclass
 		Constructor<? extends MappedElement<?, ?>> metaclassConstructor =
 				findTypeMetaclassConstructor(sysmlElement);
 
@@ -220,7 +218,6 @@ public final class ContainerManager {
 			return metaclassConstructor;
 		}
 
-		// 3. DT-Library-Element ohne Library-Mapper
 		if (utils.isFromDTLibrary(sysmlElement)) {
 			throw new MappingException(
 					"No library mapper found for DT library element '%s' (%s)"
@@ -240,11 +237,6 @@ public final class ContainerManager {
 		);
 	}
 
-	/*
-	 * ============================================================
-	 * TYPE @MappedMetaclass
-	 * ============================================================
-	 */
 
 	private Constructor<? extends MappedElement<?, ?>> findTypeMetaclassConstructor(Type sysmlElement) throws MappingException {
 		Map<Constructor<?>, Class<?>> candidates = new LinkedHashMap<>();
@@ -297,11 +289,6 @@ public final class ContainerManager {
 	}
 
 
-	/*
-	 * ============================================================
-	 * LIBRARY TYPE MATCHING
-	 * ============================================================
-	 */
 
 	private boolean isLibraryTypeCompatible(Type sysmlElement, Class<? extends MappedNamespaceElement<?, ?>> mappedClass) {
 		Type mappedLibraryType = getMappedLibraryType(mappedClass);

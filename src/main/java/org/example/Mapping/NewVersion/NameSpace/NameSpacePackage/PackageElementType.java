@@ -19,17 +19,40 @@ public abstract class PackageElementType extends MappedNamespaceElement<org.omg.
 
 	@Override
 	public void parse(MappingContext context) throws MappingException {
+		System.out.println("Parsing PackageElementType: " + getSysmlElement().getName());
+		System.out.println(this.sysmlElement.getOwnedImport());
+		elementTypeList =
+				context.mapOwnedNamespace(
+						this,
+						Import.class,
+						ImportMapped.class
+				);
 
-		elementTypeList = context.mapOwnedNamespace(this, Import.class, ImportMapped.class);
+		System.out.println(
+				"Imports of "
+						+ getSysmlElement().getName()
+						+ ": "
+						+ elementTypeList.size()
+		);
 
-		for (var s : elementTypeList) {
-			for (var t : this.getCanImport()) {
-				if (!s.getClass().isInstance(t)) {
-					throw new MappingException("Package " + this.getSysmlElement().getName() + " can not import " + s.getSysmlElement().getName() + " of type " + s.getClass().getSimpleName());
-				}
+		for (ImportMapped importMapped : elementTypeList) {
+			PackageElementType importedPackage =
+					importMapped.getImportPackages().getReferent();
+
+			boolean allowed = getCanImport().stream()
+					.anyMatch(type -> type.isInstance(importedPackage));
+
+			if (!allowed) {
+				throw new MappingException(
+						"Package "
+								+ getSysmlElement().getName()
+								+ " can not import "
+								+ importedPackage.getSysmlElement().getName()
+								+ " of type "
+								+ importedPackage.getClass().getSimpleName()
+				);
 			}
 		}
 	}
-
 	protected abstract List<Class<? extends PackageElementType>> getCanImport();
 }

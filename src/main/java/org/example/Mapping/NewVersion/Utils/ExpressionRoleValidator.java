@@ -11,10 +11,9 @@ import org.example.Mapping.Interfaces.TwinFunction.Definition.BaseFunction;
 import org.example.Mapping.Interfaces.TwinFunction.Definition.BaseFunctionKind;
 import org.example.Mapping.NewVersion.MappingException;
 import org.example.Mapping.TwinExpression.TwinInvocationExpression;
-import org.example.Mapping.TwinExpression.TwinOperatorExpression;
 
-import java.util.Arrays;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
 
@@ -28,7 +27,7 @@ public final class ExpressionRoleValidator {
 
 		if (expression == null) return;
 
-		if (hasRole(attribute, Role.CONST)) {
+		if (attribute.getRoles().contains(Role.CONST)) {
 			validateExpression(
 					expression,
 					roles -> roles.contains(Role.CONST),
@@ -38,7 +37,7 @@ public final class ExpressionRoleValidator {
 			return;
 		}
 
-		if (isConfig(attribute)) {
+		if (attribute.getRoles().isEmpty()) {
 			validateExpression(
 					expression,
 					roles -> false,
@@ -48,7 +47,7 @@ public final class ExpressionRoleValidator {
 			return;
 		}
 
-		if (isLocalRole(attribute)) {
+		if (attribute.getRoles().contains(Role.LOCAL)) {
 			validateExpression(
 					expression,
 					ExpressionRoleValidator::isLocalReferenceAllowed,
@@ -62,7 +61,7 @@ public final class ExpressionRoleValidator {
 				"Attribute '%s' with roles '%s' must not have an expression."
 						.formatted(
 								attribute.getName(),
-								attribute.getRoleClasses()
+								attribute.getRoles()
 						)
 		);
 	}
@@ -84,13 +83,13 @@ public final class ExpressionRoleValidator {
 	private static void validateAssignmentTarget(
 			TwinAttribute<?> target) throws MappingException {
 
-		if (!isAssignmentRole(target)) {
+		if (!isAssignmentRole(target.getRoles())) {
 			throw new MappingException(
 					("Assignment target '%s' has roles '%s'. " +
 							"Assignment targets must be LOCAL, ACTION or FOR_LOOP_VARIABLE.")
 							.formatted(
 									target.getName(),
-									target.getRoleClasses()
+									target.getRoles()
 							)
 			);
 		}
@@ -102,44 +101,18 @@ public final class ExpressionRoleValidator {
 				|| roles.contains(Role.FOR_LOOP_VARIABLE);
 	}
 
-	private static boolean isLocalRole(Type<?> attribute) {
-		return hasRole(attribute, Role.LOCAL);
+	private static boolean isAssignmentRole(Set<Role> roles) {
+		return roles.contains(Role.LOCAL)
+				|| roles.contains(Role.ACTION)
+				|| roles.contains(Role.FOR_LOOP_VARIABLE);
 	}
 
-	private static boolean isAssignmentRole(Type<?> attribute) {
-		return hasAnyRole(
-				attribute,
-				Role.LOCAL,
-				Role.ACTION,
-				Role.FOR_LOOP_VARIABLE
-		);
-	}
 
-	private static boolean hasRole(
-			Type<?> attribute,
-			Role role) {
-
-		return attribute.getRoleClasses().stream()
-				.anyMatch(roleClass ->
-						roleClass.additionalRole().contains(role));
-	}
-
-	private static boolean hasAnyRole(
-			Type<?> attribute,
-			Role... roles) {
-
-		return attribute.getRoleClasses().stream()
-				.flatMap(roleClass ->
-						roleClass.additionalRole().stream())
-				.anyMatch(actual ->
-						Arrays.asList(roles).contains(actual));
-	}
-
-	private static boolean isConfig(Type<?> attribute) {
-
-		return attribute.getRoleClasses().stream()
-				.allMatch(roleClass ->
-						roleClass.additionalRole().isEmpty());
+	private static Set<Role> rolesOf(Type<?> target) {
+		if (target instanceof TwinAttribute<?> attribute) {
+			return attribute.getRoles();
+		}
+		return Set.of();
 	}
 
 	private static void validateExpression(
@@ -152,8 +125,8 @@ public final class ExpressionRoleValidator {
 
 
 		if (expression instanceof FeatureReference reference) {
-			validateFeatureReference(
-					reference,
+			validateChain(
+					reference.getChain(),
 					rule,
 					message,
 					owner
@@ -161,53 +134,6 @@ public final class ExpressionRoleValidator {
 			return;
 		}
 
-
-		if (expression instanceof TwinOperatorExpression operator) {
-
-			Reference<? extends BaseFunction> function =
-					operator.getCalledFunction();
-
-			if (function != null
-					&& function.getReferent() != null
-					&& function.getReferent()
-					.getFunctionKind()
-					.equals(BaseFunctionKind.CHAIN)) {
-
-				Set<Role> chainRoles = EnumSet.noneOf(Role.class);
-
-				for (var argument : operator.getArguments()) {
-					System.out.println(
-							"CHAIN ARG: class=" + argument.getClass().getName()
-					);
-
-					if (argument instanceof FeatureReference reference) {
-						for (var ref : reference.getChain()) {
-							System.out.println(
-									"  ref=" + ref.getReferent().getName()
-											+ " roles=" + ref.getReferent().getRoleClasses()
-							);
-						}
-					}
-				}
-
-				for (var argument : operator.getArguments()) {
-					collectChainRoles(argument, chainRoles);
-				}
-
-				if (!rule.test(chainRoles)) {
-					throw new MappingException(
-							"%s %s, chainRoles='%s'."
-									.formatted(
-											message,
-											owner,
-											chainRoles
-									)
-					);
-				}
-
-				return;
-			}
-		}
 
 
 		if (expression instanceof TwinInvocationExpression<?> invocation) {
@@ -232,63 +158,20 @@ public final class ExpressionRoleValidator {
 
 
 		if (expression instanceof FeatureReference reference) {
-
-			for (var chainReference : reference.getChain()) {
-
-				var target = chainReference.getReferent();
-
-				target.getRoleClasses()
-						.forEach(roleClass ->
-								roles.addAll(
-										roleClass.additionalRole()
-								)
-						);
-			}
-
+			roles.addAll(effectiveRoles(reference.getChain()));
 			return;
 		}
 
-		if (expression instanceof TwinOperatorExpression operator) {
-
-			Reference<? extends BaseFunction> function =
-					operator.getCalledFunction();
-
-			if (function != null
-					&& function.getReferent() != null
-					&& function.getReferent()
-					.getFunctionKind()
-					.equals(BaseFunctionKind.CHAIN)) {
-
-				for (var argument : operator.getArguments()) {
-					collectChainRoles(
-							argument,
-							roles
-					);
-				}
-			}
-		}
 	}
 
 
-	private static void validateFeatureReference(
-			FeatureReference reference,
+	private static void validateChain(
+			List<? extends Reference<? extends Type<Usage>>> chain,
 			Predicate<Set<Role>> rule,
 			String message,
 			String owner) throws MappingException {
 
-		Set<Role> roles = EnumSet.noneOf(Role.class);
-
-		for (var chainReference : reference.getChain()) {
-
-			var target = chainReference.getReferent();
-
-			target.getRoleClasses()
-					.forEach(roleClass ->
-							roles.addAll(
-									roleClass.additionalRole()
-							)
-					);
-		}
+		Set<Role> roles = effectiveRoles(chain);
 
 		if (!rule.test(roles)) {
 			throw new MappingException(
@@ -300,5 +183,17 @@ public final class ExpressionRoleValidator {
 							)
 			);
 		}
+	}
+
+	private static Set<Role> effectiveRoles(
+			List<? extends Reference<? extends Type<Usage>>> chain) {
+
+		Set<Role> roles = EnumSet.noneOf(Role.class);
+
+		for (var chainReference : chain) {
+			roles.addAll(rolesOf(chainReference.getReferent()));
+		}
+
+		return roles;
 	}
 }

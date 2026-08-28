@@ -2,7 +2,6 @@ package org.example.Mapping.TwinAttributeMapped.CustomTypeMapped;
 
 import lombok.ToString;
 import org.example.Mapping.AdditionalRoles;
-import org.example.Mapping.Interfaces.Base.TypeKind.RoleClass;
 import org.example.Mapping.Interfaces.Base.TypeKind.TypeKind;
 import org.example.Mapping.Interfaces.Base.TypeKind.Usage;
 import org.example.Mapping.Interfaces.TwinAttribute.BaseTwinAttribute.Role;
@@ -46,21 +45,11 @@ public class CustomAttributeMapped<T extends TypeKind>
 		);
 	}
 
-	@Override
+
 	protected List<AdditionalRoles> addAdditionalRoles() {
-		return List.of(
-				new AdditionalRoles(
-						fields.getCompartment()
-								.stream()
-								.map(compartment -> compartment.getElement())
-								.toList(),
-						List.of(
-								new RoleClass(
-										rawClassOf(CustomType.class),
-										Role.CUSTOM_TYPE_MEMBER
-								)
-						)
-				)
-		);
+		return List.of(new AdditionalRoles(
+				fields,
+				List.of(Role.CUSTOM_TYPE_MEMBER)
+		));
 	}
 }

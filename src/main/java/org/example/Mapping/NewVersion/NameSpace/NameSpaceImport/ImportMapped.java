@@ -31,4 +31,8 @@ public class ImportMapped extends MappedNamespaceElement<Import, NamespaceKind> 
 			throw new MappingException("ImportMapped: importPackages is null for " + getSysmlElement().getName() + "Each file needs to import TwinDefLibrary or UserLibrary");
 		}
 	}
+
+	public MappedReference<PackageElementType> getImportPackages() {
+		return importPackages;
+	}
 }

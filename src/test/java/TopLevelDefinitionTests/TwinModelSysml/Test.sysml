@@ -38,7 +38,7 @@ package Test{
                 out attribute baseFunctionTest : TwinReal    :>> measurements = DIV_real(y=2, x=10);
                 out attribute constructorTest : TwinBoolean    :>> measurements = new TwinBoolean(true);
                 out attribute constructorTestBoolean    : TwinBoolean :>> measurements = new TwinBoolean(false);
-                out attribute customCalculationTest     : Position    :>> measurements = AddPosition(pos_a=new Position(x=10, y=20, z=30), pos_b=new Position(x=0, y=0, z=0));
+                out attribute customCalculationTest     : Position    :>> measurements = AddPosition(pos_a=new Position(x=10, y=20, z=30), pos_b=new Position2(x=new Position(x=1, y=2, z=3)));
                 out attribute maxCharge        : TwinReal :>> measurements = INDEX_seq(nominalVoltage, 1) * 10;
                 out attribute nominalVoltage   : TwinReal :>> measurements = 48;
                 out attribute defaultNetDemand : TwinReal :>> measurements = 0;
@@ -70,7 +70,7 @@ package Test{
                  state charging:>>states {
 
                                  state test34:>states{
-                                     entry assign charge := p11.temp;
+                                     entry assign charge := temp;
                                      do assign charge := 50;
                                      exit assign charge := 100;
                                  }
@@ -96,7 +96,7 @@ package Test{
                  if NOT_bool(plug)
                  then idle;
              }
-             flow :>physicalFlows from p11.temp to cm1.temp;
+             flow :>physicalFlows from p13.temp to cm1.temp;
              flow :>physicalFlows from p11.plug to cm1.plug;
              flow :>physicalFlows from constPort.maxCharge to cm1.maxCharge;
          }

@@ -1,16 +1,11 @@
 package org.example.Mapping.Interfaces.Base;
 
-import org.example.Mapping.Interfaces.Base.TypeKind.Definition;
-import org.example.Mapping.Interfaces.Base.TypeKind.RoleClass;
 import org.example.Mapping.Interfaces.Base.TypeKind.TypeKindNamespace;
-import org.example.Mapping.Interfaces.BaseTaxonomy.NoTaxonomyClass;
+import org.example.Mapping.Interfaces.Base.TypeKind.Usage;
 import org.example.Mapping.Interfaces.BaseTaxonomy.Taxonomy;
-import org.example.Mapping.Interfaces.Reference;
+import org.example.Mapping.NewVersion.NameSpace.NameSpacePackage.MappedNamespaceElement;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public interface Model<T extends TypeKindNamespace> {
 	/**
@@ -40,48 +35,25 @@ public interface Model<T extends TypeKindNamespace> {
 	 */
 	String getDeterministicId();
 
-	default boolean resolveRole() {
-		boolean changed = false;
 
-		System.out.println(
-				"RESOLVE"
-						+ " path=" + path()
-						+ " name=" + getName()
-						+ " parent_name="
-						+ getParent().map(Model::getName).orElse("null")
-						+ " parent_path="
-						+ getParent().map(Model::path).orElse("null")
-						+ " before=" + getRoleClasses()
-		);
-
-		if (getParent().isPresent()) {
-			for (RoleClass role : getParent().get().getRoleClasses()) {
-
-				boolean added = addRole(role);
-
-				if (added) {
-					System.out.println(
-							"  PARENT ROLE -> "
-									+ "path=" + path()
-									+ " name=" + getName()
-									+ " gets=" + role
-									+ " from_path=" + getParent().get().path()
-									+ " from_name=" + getParent().get().getName()
-					);
-				}
-
-				changed |= added;
-			}
-		}
-
-		return changed;
-	}
-
-	Collection<RoleClass> getRoleClasses();
-
-	boolean addRole(RoleClass role);
 
 	String path();
+
+	default Optional<Taxonomy<?>> getTaxonomy() {
+		Optional<? extends Model<?>> current = getParent();
+
+		while (current.isPresent()) {
+			if (current.get() instanceof Taxonomy<?> taxonomy) {
+				return Optional.of(taxonomy);
+			}
+
+			current = current.get().getParent();
+		}
+
+		return Optional.empty();
+	}
+
+	boolean isLibraryElement();
 }
 
 

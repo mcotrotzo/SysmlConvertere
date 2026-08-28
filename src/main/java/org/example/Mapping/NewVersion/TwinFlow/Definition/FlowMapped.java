@@ -2,7 +2,6 @@ package org.example.Mapping.NewVersion.TwinFlow.Definition;
 
 import lombok.ToString;
 import org.example.Mapping.Interfaces.Base.Model;
-import org.example.Mapping.Interfaces.Base.TypeKind.RoleClass;
 import org.example.Mapping.Interfaces.Base.TypeKind.TypeKind;
 import org.example.Mapping.Interfaces.Base.TypeKind.Usage;
 import org.example.Mapping.Interfaces.BaseTaxonomy.Taxonomy;
@@ -257,36 +256,32 @@ public class FlowMapped<T extends TypeKind>
 
 	private void validateTaxonomy(
 			TwinAttributeMapped<Usage> attribute,
-			Model<?> expectedContext,
+			Taxonomy<Usage> expectedContext,
 			String endpoint
 	) throws MappingException {
 
-		Collection<RoleClass> actualRoles =
-				attribute.getRoleClasses();
-
-		Collection<RoleClass> expectedRoles =
-				expectedContext.getRoleClasses();
-
-		boolean matches = expectedRoles
-				.stream()
-				.allMatch(expected ->
-						actualRoles
-								.stream()
-								.anyMatch(actual ->
-										expected.modelClass()
-												.isAssignableFrom(
-														actual.modelClass()
-												)
-								)
+		var actualTaxonomy = attribute
+				.getTaxonomy()
+				.orElseThrow(() ->
+						new MappingException(
+								"Flow '%s' %s '%s' has no taxonomy."
+										.formatted(
+												getSysmlElement().path(),
+												endpoint,
+												attribute.getName()
+										)
+						)
 				);
 
-		if (!matches) {
+		if (!expectedContext.getClass().isAssignableFrom(actualTaxonomy.getClass())) {
 			throw new MappingException(
-					"Flow '%s' %s '%s' does not match the required context."
+					"Flow '%s' %s '%s' belongs to taxonomy '%s', expected '%s'."
 							.formatted(
 									getSysmlElement().path(),
 									endpoint,
-									attribute.getName()
+									attribute.getName(),
+									actualTaxonomy.getTaxonomy().get().getClass().getName(),
+									expectedContext.getTaxonomy().get().getClass().getName()
 							)
 			);
 		}

@@ -2,6 +2,7 @@ package org.example.Mapping.NewVersion;
 
 import lombok.Getter;
 import org.example.Containers.ContainerManager;
+import org.example.Mapping.Interfaces.Base.Model;
 import org.example.Mapping.Interfaces.Base.TwinDefLibrary;
 import org.example.Mapping.Interfaces.Base.TypeKind.Usage;
 import org.example.Mapping.Interfaces.Base.UserLibrary;
@@ -21,6 +22,7 @@ import org.omg.sysml.util.TypeUtil;
 
 import java.lang.Class;
 import java.lang.reflect.Constructor;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public final class MappingContext {
@@ -30,6 +32,28 @@ public final class MappingContext {
 	private final ContainerManager containerManager;
 
 	private final Map<Element, MappedNamespaceElement<?, ?>> mappedElements = new IdentityHashMap<>();
+
+	private final Map<String, CompartmentMapped<?>> mappedCompartments
+			= new HashMap<>();
+
+	private void registerCompartment(CompartmentMapped<?> compartment) {
+		CompartmentMapped<?> previous =
+				mappedCompartments.putIfAbsent(
+						compartment.getId(),
+						compartment
+				);
+
+		if (previous != null && previous != compartment) {
+			throw new IllegalStateException(
+					"Duplicate compartment id: " + compartment.getId()
+			);
+		}
+	}
+
+	public Collection<CompartmentMapped<?>> getMappedCompartments() {
+		return List.copyOf(mappedCompartments.values());
+	}
+
 
 	public MappingContext(Utils utils, ContainerManager containerManager) {
 		this.utils = utils;
@@ -51,15 +75,9 @@ public final class MappingContext {
 	}
 
 	private void resolveRoles() throws MappingException {
-		boolean changed;
-
-		do {
-			changed = false;
-
-			for (var mapped : mappedElements.values()) {
-				changed |= mapped.resolveRole();
-			}
-		} while (changed);
+		for (var mapped : mappedElements.values()) {
+			mapped.resolveRoles(this);
+		}
 	}
 	private void postParse() {
 		for (MappedNamespaceElement<?, ?> mapped : mappedElements.values()) {
@@ -136,6 +154,56 @@ public final class MappingContext {
 		}
 	}
 
+	public <T extends MappedElement<?, Usage>>
+	CompartmentMapped<T> mapCompartment(
+			Model<?> parent,
+			T element,
+			boolean inherited,
+			String slotName
+	) {
+		CompartmentMapped<T> compartment =
+				new CompartmentMapped<>(
+						parent,
+						element,
+						inherited
+				);
+
+		registerCompartment(compartment);
+
+		return compartment;
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T extends MappedElement<?, Usage>>
+	CompartmentMapped<T> getCompartment(
+			Model<?> parent,
+			T element
+	) {
+		String path =
+				parent.path()
+						+ ":compartment:"
+						+ element.path();
+
+		String id = UUID.nameUUIDFromBytes(
+				path.getBytes(StandardCharsets.UTF_8)
+		).toString();
+
+		CompartmentMapped<?> compartment =
+				mappedCompartments.get(id);
+
+		if (compartment == null) {
+			throw new IllegalStateException(
+					"No compartment for parent '%s' and element '%s'"
+							.formatted(
+									parent.path(),
+									element.path()
+							)
+			);
+		}
+
+		return (CompartmentMapped<T>) compartment;
+	}
+
 	public <T extends MappedElement<?,Usage>> CompartmentContainerMapped<T> mapPrivateSlot(
 			MappedElement<?, ?> mappedParent,
 			String slotName,
@@ -191,11 +259,29 @@ public final class MappingContext {
 			}
 		}
 
-		for(T inheritedElement : inherited) {
-			result.addCompartment(new CompartmentMapped<T>(inheritedElement,true));
+		for (T inheritedElement : inherited) {
+			CompartmentMapped<T> compartment =
+					new CompartmentMapped<>(
+							mappedParent,
+							inheritedElement,
+							true
+					);
+
+			registerCompartment(compartment);
+			result.addCompartment(compartment);
 		}
-		for(T ownedElement : owned) {
-			result.addCompartment(new CompartmentMapped<T>(ownedElement,false));
+
+		for (T ownedElement : owned) {
+			CompartmentMapped<T> compartment =
+					new CompartmentMapped<>(
+							mappedParent,
+							ownedElement,
+							false
+
+					);
+
+			registerCompartment(compartment);
+			result.addCompartment(compartment);
 		}
 
 
@@ -238,7 +324,6 @@ public final class MappingContext {
 				new CompartmentContainerMapped<>();
 
 		for (Feature feature : mappedParent.getSysmlElement().getFeature()) {
-
 			if (utils.isFromStandardLibrary(feature)) {
 				continue;
 			}
@@ -274,18 +359,29 @@ public final class MappingContext {
 			}
 		}
 
-		for (T element : inherited) {
-			result.addCompartment(
-					new CompartmentMapped<>(element, true)
-			);
+		for (T inheritedElement : inherited) {
+			CompartmentMapped<T> compartment =
+					new CompartmentMapped<>(
+							mappedParent,
+							inheritedElement,
+							true
+					);
+
+			registerCompartment(compartment);
+			result.addCompartment(compartment);
 		}
 
-		for (T element : owned) {
-			result.addCompartment(
-					new CompartmentMapped<>(element, false)
-			);
-		}
+		for (T ownedElement : owned) {
+			CompartmentMapped<T> compartment =
+					new CompartmentMapped<>(
+							mappedParent,
+							ownedElement,
+							false
+					);
 
+			registerCompartment(compartment);
+			result.addCompartment(compartment);
+		}
 		return result;
 	}
 
@@ -345,7 +441,25 @@ public final class MappingContext {
 
 		return result;
 	}
+	@SuppressWarnings("unchecked")
+	public <T extends MappedElement<?, Usage>>
+	CompartmentMapped<T> getOwnCompartment(T element) {
 
+		List<CompartmentMapped<?>> matches =
+				mappedCompartments.values().stream()
+						.filter(c -> c.getElement() == element)
+						.filter(c -> !c.isInherited())
+						.toList();
+
+		if (matches.size() != 1) {
+			throw new IllegalStateException(
+					"Expected exactly one non-inherited compartment for '%s', found %d"
+							.formatted(element.path(), matches.size())
+			);
+		}
+
+		return (CompartmentMapped<T>) matches.getFirst();
+	}
 
 	public <T extends MappedNamespaceElement<?, ?>> MappedReference<T> mapReference(Element referent, Class<T> expectedClass) throws MappingException {
 
@@ -394,6 +508,30 @@ public final class MappingContext {
 		return new MappedReference<>(
 				expectedClass.cast(mapped)
 		);
+	}
+
+
+
+	public CompartmentMapped<? extends MappedElement<?, Usage>>
+	resolveCompartmentChain(
+			List<? extends MappedElement<?, Usage>> chain
+	) {
+		if (chain.size() < 2) {
+			throw new IllegalStateException(
+					"Feature chain must contain at least two elements"
+			);
+		}
+
+		CompartmentMapped<? extends MappedElement<?, Usage>> current = null;
+
+		for (int i = 1; i < chain.size(); i++) {
+			MappedElement<?, Usage> parent = chain.get(i - 1);
+			MappedElement<?, Usage> element = chain.get(i);
+
+			current = getCompartment(parent, element);
+		}
+
+		return current;
 	}
 
 }

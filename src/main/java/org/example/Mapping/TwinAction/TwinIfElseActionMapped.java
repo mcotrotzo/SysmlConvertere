@@ -61,10 +61,7 @@ public class TwinIfElseActionMapped
 				TwinActionMapped.getActionMappedUsageClass()
 		);
 
-		thenAction = new CompartmentMapped<>(
-				mappedThenAction,
-				mappedThenAction.getOwner() != this
-		);
+		thenAction = context.mapCompartment(this,mappedThenAction,this!=mappedThenAction.getOwner(),"thenAction");
 
 		if (getSysmlElement().getElseAction() != null) {
 
@@ -74,9 +71,11 @@ public class TwinIfElseActionMapped
 					TwinActionMapped.getActionMappedUsageClass()
 			);
 
-			elseAction = Optional.of(new CompartmentMapped<>(
-					mappedElseAction,
-					mappedElseAction.getOwner() != this
+			if (mappedElseAction == null) {
+				elseAction = Optional.empty();
+			}
+
+			elseAction = Optional.of(context.mapCompartment(this,mappedElseAction,this.equals(mappedElseAction.getOwner()),"elseAction"
 			));
 		}
 	}

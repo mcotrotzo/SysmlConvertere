@@ -4,7 +4,7 @@ package org.example.Mapping.NewVersion.TwinPort;
 import lombok.ToString;
 import org.example.Mapping.AdditionalRoles;
 import org.example.Mapping.Interfaces.Base.CompartmentContainer;
-import org.example.Mapping.Interfaces.Base.TypeKind.RoleClass;
+
 import org.example.Mapping.Interfaces.Base.TypeKind.TypeKind;
 import org.example.Mapping.Interfaces.Base.TypeKind.Usage;
 import org.example.Mapping.Interfaces.TwinAttribute.BaseTwinAttribute.Role;
@@ -44,16 +44,10 @@ public class SensorMapped<T extends TypeKind> extends TwinPortMapped<T> implemen
 	}
 
 
-	@Override
 	protected List<AdditionalRoles> addAdditionalRoles() {
 		return List.of(new AdditionalRoles(
-				attributes.getCompartment().stream().map(CompartmentMapped::getElement).toList(),
-				List.of(
-						new RoleClass(
-								rawClassOf(Sensors.class),
-								Role.SENSOR
-						)
-				)
+				attributes,
+				List.of(Role.SENSOR)
 		));
 	}
 }

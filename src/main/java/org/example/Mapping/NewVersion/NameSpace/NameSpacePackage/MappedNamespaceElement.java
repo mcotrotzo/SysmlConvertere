@@ -5,14 +5,9 @@ import lombok.Setter;
 import lombok.ToString;
 import org.example.Mapping.Interfaces.Base.Model;
 import org.example.Mapping.Interfaces.Base.NameSpace;
-import org.example.Mapping.Interfaces.Base.TypeKind.Definition;
-import org.example.Mapping.Interfaces.Base.TypeKind.RoleClass;
 import org.example.Mapping.Interfaces.Base.TypeKind.TypeKindNamespace;
-import org.example.Mapping.Interfaces.BaseTaxonomy.Taxonomy;
-import org.example.Mapping.Interfaces.Reference;
 import org.example.Mapping.NewVersion.MappingContext;
 import org.example.Mapping.NewVersion.MappingException;
-import org.example.Util.Utils;
 import org.omg.sysml.lang.sysml.Element;
 
 import java.nio.charset.StandardCharsets;
@@ -41,11 +36,6 @@ public abstract class MappedNamespaceElement<T extends Element, Z extends TypeKi
 	@Getter
 	boolean isLibraryElement;
 
-
-	protected final Map<Class<? extends Model<?>>, RoleClass> roleClasses =
-			new HashMap<>();
-
-
 	public MappedNamespaceElement(T sysmlElement) {
 		bindSysmlElement(sysmlElement);
 	}
@@ -66,8 +56,11 @@ public abstract class MappedNamespaceElement<T extends Element, Z extends TypeKi
 	}
 
 
+
+
 	public void parse(MappingContext context) throws MappingException{
-		context.getUtils().isFromDTLibrary(this.getSysmlElement());
+		isLibraryElement =
+				context.getUtils().isFromStandardOrDTLibrary(getSysmlElement());
 	}
 
 	;
@@ -105,24 +98,15 @@ public abstract class MappedNamespaceElement<T extends Element, Z extends TypeKi
 
 	public void postParse(MappingContext mappingContext) {
 	}
-	public boolean addRole(RoleClass incoming) {
-		RoleClass existing = roleClasses.get(incoming.modelClass());
-
-		if (existing == null) {
-			roleClasses.put(incoming.modelClass(), incoming);
-			return true;
-		}
-
-		return existing.additionalRole().addAll(incoming.additionalRole());
-	}
-
-	@Override
-	public Collection<RoleClass> getRoleClasses() {
-		return roleClasses.values();
-	}
 
 	@Override
 	public String path() {
 		return this.sysmlElement.path();
 	}
+
+	public void resolveRoles(MappingContext context) throws MappingException {
+
+	}
+
+
 }

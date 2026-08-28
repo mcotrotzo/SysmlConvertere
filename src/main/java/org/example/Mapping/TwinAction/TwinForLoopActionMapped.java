@@ -2,10 +2,11 @@ package org.example.Mapping.TwinAction;
 
 import lombok.ToString;
 import org.example.Mapping.AdditionalRoles;
-import org.example.Mapping.Interfaces.Base.TypeKind.RoleClass;
+
 import org.example.Mapping.Interfaces.Base.TypeKind.Usage;
 import org.example.Mapping.Interfaces.TwinAction.ForLoop;
 import org.example.Mapping.Interfaces.TwinAttribute.BaseTwinAttribute.Role;
+import org.example.Mapping.NewVersion.Abstract.CompartmentContainerMapped;
 import org.example.Mapping.NewVersion.Abstract.CompartmentMapped;
 import org.example.Mapping.NewVersion.MappingContext;
 import org.example.Mapping.NewVersion.MappingException;
@@ -54,10 +55,7 @@ public class TwinForLoopActionMapped
 				TwinAttributeMapped.getRawUsageClass()
 		);
 
-		loopVariable = new CompartmentMapped<>(
-				mappedLoopVariable,
-				mappedLoopVariable.getOwner() != this
-		);
+		loopVariable = context.mapCompartment(this,mappedLoopVariable,mappedLoopVariable.getOwner() != this,"loopVariable");
 
 		expr = context.map(
 				getSysmlElement().getSeqArgument(),
@@ -71,24 +69,13 @@ public class TwinForLoopActionMapped
 				TwinActionMapped.getActionMappedUsageClass()
 		);
 
-		body = new CompartmentMapped<>(
-				mappedBody,
-				mappedBody.getOwner() != this
-		);
+		body = context.mapCompartment(this,mappedBody,mappedBody.getOwner() != this,"body");
 	}
 
-	@Override
 	protected List<AdditionalRoles> addAdditionalRoles() {
-		return List.of(
-				new AdditionalRoles(
-						List.of(loopVariable.getElement()),
-						List.of(
-								new RoleClass(
-										TwinForLoopActionMapped.class,
-										Role.FOR_LOOP_VARIABLE
-								)
-						)
-				)
-		);
+		return List.of(new AdditionalRoles(
+				new CompartmentContainerMapped<>(List.of(loopVariable)),
+				List.of(Role.FOR_LOOP_VARIABLE)
+		));
 	}
 }

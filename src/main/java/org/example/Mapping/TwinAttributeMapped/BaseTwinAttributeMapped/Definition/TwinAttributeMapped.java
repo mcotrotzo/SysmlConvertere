@@ -1,6 +1,8 @@
 package org.example.Mapping.TwinAttributeMapped.BaseTwinAttributeMapped.Definition;
 
+import lombok.Getter;
 import lombok.ToString;
+import org.example.Mapping.AdditionalRoles;
 import org.example.Mapping.Interfaces.Base.TypeKind.Definition;
 import org.example.Mapping.Interfaces.Base.TypeKind.TypeKind;
 import org.example.Mapping.Interfaces.Base.TypeKind.Usage;
@@ -23,16 +25,15 @@ import org.omg.sysml.lang.sysml.Expression;
 import org.omg.sysml.lang.sysml.Feature;
 import org.omg.sysml.lang.sysml.Type;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Predicate;
 
 @MappedElementType(LibraryNameSpaces.TWIN_ATTRIBUTE)
 @ToString(callSuper = true)
 public class TwinAttributeMapped<T extends TypeKind> extends MappedElement<Type, T> implements TwinAttribute<T> {
 
-	private Role role;
+	@Getter
+	private Set<Role> roles = new HashSet<>();
 	private org.example.Mapping.TwinExpression.TwinExpression<?> expression;
 
 	public TwinAttributeMapped(Type sysmlElement) {
@@ -47,24 +48,11 @@ public class TwinAttributeMapped<T extends TypeKind> extends MappedElement<Type,
 		return (Class<TwinAttributeMapped<Usage>>) (Class<?>) TwinAttributeMapped.class;
 	}
 
+
 	@Override
 	public void parse(MappingContext context) throws MappingException {
-		System.out.println(
-				"### ATTRIBUTE PARSE ENTER "
-						+ getClass().getName()
-						+ " sysml="
-						+ getSysmlElement().path()
-		);
-
 		super.parse(context);
 		if (getSysmlElement() instanceof Feature feature){
-			System.out.println(
-					"### PARSE USAGE "
-							+ getClass().getName()
-							+ " sysml="
-							+ getSysmlElement().path()
-			);
-
 			parseUsage(context, feature);
 		}
 	}
@@ -117,6 +105,4 @@ public class TwinAttributeMapped<T extends TypeKind> extends MappedElement<Type,
 		ExpressionRoleValidator.validateAttributeExpression(this,expression);
 
 	}
-
-
 }

@@ -5,7 +5,6 @@ import org.eclipse.ocl.util.Tuple;
 import org.example.Mapping.AdditionalRoles;
 import org.example.Mapping.Interfaces.Base.Model;
 import org.example.Mapping.Interfaces.Base.TypeKind.Definition;
-import org.example.Mapping.Interfaces.Base.TypeKind.RoleClass;
 import org.example.Mapping.Interfaces.Base.TypeKind.TypeKind;
 import org.example.Mapping.Interfaces.BaseTaxonomy.Taxonomy;
 import org.example.Mapping.Interfaces.Reference;
@@ -33,6 +32,8 @@ public abstract class MappedElement<T extends Type, Z extends TypeKind> extends 
 	private Optional<Reference<? extends Taxonomy<Definition>>> taxonomyDefinition = Optional.empty();
 
 
+
+
 	public MappedElement(T sysmlElement) {
 		super(sysmlElement);
 	}
@@ -45,7 +46,7 @@ public abstract class MappedElement<T extends Type, Z extends TypeKind> extends 
 
 	protected final void parseTypeRelations(MappingContext context) throws MappingException {
 		if (getSysmlElement() instanceof Feature feature) {
-			List<Classifier> definitions = feature.getType().stream().peek(x -> System.out.println(" Type of: " + feature.getQualifiedName() + x.getQualifiedName())).filter(Classifier.class::isInstance).map(Classifier.class::cast).filter(x -> !context.getUtils().isFromStandardLibrary(x)).toList();
+			List<Classifier> definitions = feature.getType().stream().filter(Classifier.class::isInstance).map(Classifier.class::cast).filter(x -> !context.getUtils().isFromStandardLibrary(x)).toList();
 
 			if (!definitions.isEmpty()) {
 				Classifier definition = mostSpecificDefinition(definitions);
@@ -59,7 +60,6 @@ public abstract class MappedElement<T extends Type, Z extends TypeKind> extends 
 		if (getSysmlElement() instanceof Classifier classifier) {
 			for (var subclassification : classifier.getOwnedSubclassification()) {
 				var superClassifier = subclassification.getSuperclassifier();
-				System.out.println(" Subclassification of " + classifier.getQualifiedName() + " -> " + (superClassifier != null ? superClassifier.getQualifiedName() : "null"));
 				if (!(superClassifier instanceof Classifier definition)) continue;
 
 
@@ -99,7 +99,6 @@ public abstract class MappedElement<T extends Type, Z extends TypeKind> extends 
 	}
 
 
-
 	public boolean isTwinLibraryRoot(Type type) {
 		String qn = type.getQualifiedName();
 
@@ -107,72 +106,27 @@ public abstract class MappedElement<T extends Type, Z extends TypeKind> extends 
 				.anyMatch(root -> root.toString().equals(qn));
 	}
 
-
 	@Override
-	public boolean resolveRole() {
-		boolean changed = super.resolveRole();
+	public void resolveRoles(MappingContext context) throws MappingException {
+		super.resolveRoles(context);
 
-		if (getDefinitionOfUsage().isPresent()) {
-			var definition = getDefinitionOfUsage().get().getReferent();
+		for (AdditionalRoles additionalRoles : addAdditionalRoles()) {
+			for (var comp : additionalRoles.models().getCompartment()) {
 
-			for (var role : definition.getRoleClasses()) {
-				boolean added = addRole(role);
-
-				if (added) {
-					System.out.println(
-							"  DEFINITION ROLE -> " + getName()
-									+ " gets " + role
-									+ " from " + definition.getName()
-					);
+				if (comp.isInherited()) {
+					continue;
 				}
 
-				changed |= added;
+				comp.getElement().getRoles().addAll(additionalRoles.roles());
 			}
 		}
-
-		for (var superTypeReference : getSuperTypeOfDefinitions()) {
-			var superType = superTypeReference.getReferent();
-
-			for (var role : superType.getRoleClasses()) {
-				boolean added = addRole(role);
-
-				if (added) {
-					System.out.println(
-							"  SUPERTYPE ROLE -> " + getName()
-									+ " gets " + role
-									+ " from " + superType.getName()
-					);
-				}
-
-				changed |= added;
-			}
-		}
-
-		for (AdditionalRoles additionalRole : addAdditionalRoles()) {
-			for (var model : additionalRole.models()) {
-				for (var role : additionalRole.roles()) {
-
-					boolean added = model.addRole(role);
-
-					if (added) {
-						System.out.println(
-								"  ADDITIONAL ROLE -> " + model.getName()
-										+ " gets " + role
-										+ " from " + getName()
-						);
-					}
-
-					changed |= added;
-				}
-			}
-		}
-
-		return changed;
 	}
 
-	protected List<AdditionalRoles> addAdditionalRoles() {
+	protected List<AdditionalRoles> addAdditionalRoles(){
 		return new ArrayList<>();
 	}
+
+
 
 }
 

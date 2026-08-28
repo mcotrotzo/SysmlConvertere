@@ -17,8 +17,4 @@ public class TwinBooleanExpression extends TwinExpression<BooleanExpression> {
 		super(sysmlElement);
 	}
 
-	@Override
-	public void parse(MappingContext context) throws MappingException {
-
-	}
 }

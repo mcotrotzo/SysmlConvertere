@@ -1,15 +1,11 @@
 package org.example.Mapping.TwinAction;
 
 import org.example.Mapping.AdditionalRoles;
-import org.example.Mapping.Interfaces.Base.TypeKind.RoleClass;
 import org.example.Mapping.Interfaces.Base.TypeKind.TypeKind;
 import org.example.Mapping.Interfaces.Base.TypeKind.Usage;
-import org.example.Mapping.Interfaces.TwinAction.Action;
 import org.example.Mapping.Interfaces.TwinAction.Block;
-import org.example.Mapping.Interfaces.TwinAction.Succession;
 import org.example.Mapping.Interfaces.TwinAttribute.BaseTwinAttribute.Role;
 import org.example.Mapping.NewVersion.Abstract.CompartmentContainerMapped;
-import org.example.Mapping.NewVersion.Abstract.CompartmentMapped;
 import org.example.Mapping.NewVersion.Abstract.MappedElementType;
 import org.example.Mapping.NewVersion.MappingContext;
 import org.example.Mapping.NewVersion.MappingException;
@@ -114,45 +110,10 @@ public class TwinActionBlockMapped<T extends Type, Z extends TypeKind>
 	}
 
 
-	@Override
 	protected List<AdditionalRoles> addAdditionalRoles() {
 		return List.of(
-				new AdditionalRoles(
-						inputs.getCompartment()
-								.stream()
-								.map(compartment -> compartment.getElement())
-								.toList(),
-						List.of(
-								new RoleClass(
-										rawClassOf(Action.class),
-										Role.ACTION
-								)
-						)
-				),
-				new AdditionalRoles(
-						outputs.getCompartment()
-								.stream()
-								.map(compartment -> compartment.getElement())
-								.toList(),
-						List.of(
-								new RoleClass(
-										rawClassOf(Action.class),
-										Role.ACTION
-								)
-						)
-				),
-				new AdditionalRoles(
-						localAttributes.getCompartment()
-								.stream()
-								.map(CompartmentMapped::getElement)
-								.toList(),
-						List.of(
-								new RoleClass(
-										rawClassOf(Action.class),
-										Role.LOCAL
-								)
-						)
-				)
-		);
+				new AdditionalRoles(inputs, List.of(Role.ACTION)),
+				new AdditionalRoles(outputs, List.of(Role.ACTION)),
+				new AdditionalRoles(localAttributes, List.of(Role.LOCAL)));
 	}
 }

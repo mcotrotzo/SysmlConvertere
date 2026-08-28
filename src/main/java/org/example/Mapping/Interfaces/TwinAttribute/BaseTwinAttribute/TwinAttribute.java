@@ -8,10 +8,13 @@ import org.example.Mapping.Interfaces.TwinExpression.TwinExpression;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public interface TwinAttribute<T extends TypeKind> extends Type<T> {
 
 	Optional<Direction> getDirection();
 	Optional<TwinExpression> getExpression();
+
+	Set<Role> getRoles();
 
 }

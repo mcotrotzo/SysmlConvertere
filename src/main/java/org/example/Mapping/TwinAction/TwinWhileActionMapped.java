@@ -56,12 +56,10 @@ public class TwinWhileActionMapped
 					TwinActionMapped.getActionMappedUsageClass()
 			);
 
-			body = Optional.of(
-					new CompartmentMapped<>(
-							mappedBody,
-							bodyAction.getOwner() != getSysmlElement()
-					)
-			);
+			if(mappedBody != null) {
+				body = Optional.empty();
+			}
+			body = Optional.of(context.mapCompartment(this,mappedBody,mappedBody.getOwner() != this,"body"));
 		}
 	}
 

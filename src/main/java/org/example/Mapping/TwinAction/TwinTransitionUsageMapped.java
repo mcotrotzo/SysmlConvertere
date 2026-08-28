@@ -77,10 +77,7 @@ public class TwinTransitionUsageMapped extends TwinActionMapped<TransitionUsage,
 						TwinActionMapped<ActionUsage, Usage> mapped =
 								context.map(x, this, twinActionMappedClass);
 
-						return new CompartmentMapped<>(
-								mapped,
-								mapped.getOwner() != this
-						);
+						return context.mapCompartment(this, mapped, mapped.getOwner()!=this, "effectAction");
 					} catch (MappingException ex) {
 						throw new RuntimeException(ex);
 					}
