@@ -1,12 +1,6 @@
-package Test2{
-
-     private import TwinLibrary::*;
-
-}
 package PositionThings{
     private import UserLibrary::*;
     private import BatteryControlUnitLibrary::*;
-    private import Test2::*;
 
      attribute def Position:>TwinCustomType{
         attribute x[1]:TwinInteger:>fields;

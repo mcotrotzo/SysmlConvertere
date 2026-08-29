@@ -12,8 +12,11 @@ import org.example.Mapping.NewVersion.Abstract.CompartmentContainerMapped;
 import org.example.Mapping.NewVersion.Abstract.CompartmentMapped;
 import org.example.Mapping.NewVersion.Abstract.MappedElement;
 import org.example.Mapping.NewVersion.Abstract.MappedReference;
+import org.example.Mapping.NewVersion.NameSpace.NameSpaceImport.ImportMapped;
 import org.example.Mapping.NewVersion.NameSpace.NameSpacePackage.MappedNamespaceElement;
+import org.example.Mapping.NewVersion.NameSpace.NameSpacePackage.PackageElementType;
 import org.example.Mapping.TwinAttributeMapped.BaseTwinAttributeMapped.Definition.TwinAttributeMapped;
+import org.example.Util.LibraryNameSpaces;
 import org.example.Util.Utils;
 import org.omg.sysml.lang.sysml.*;
 import org.omg.sysml.lang.sysml.Package;
@@ -419,7 +422,23 @@ public final class MappingContext {
 		return result;
 	}
 
+	public List<ImportMapped> mapOwnedImports(PackageElementType parent)
+			throws MappingException {
+
+		List<ImportMapped> result = new ArrayList<>();
+
+		for (Import sysmlImport : parent.getSysmlElement().getOwnedImport()) {
+			result.add(
+					map(sysmlImport, parent, ImportMapped.class)
+			);
+		}
+
+		return result;
+	}
+
 	public <S extends Element, T> List<T> mapOwnedNamespace(MappedNamespaceElement<?, ?> mappedOwner, Class<S> sysmlMetaclass, Class<T> expectedClass) throws MappingException {
+
+
 
 		List<T> result = new ArrayList<>();
 
@@ -428,6 +447,7 @@ public final class MappingContext {
 			if (!sysmlMetaclass.isInstance(member)) {
 				continue;
 			}
+
 
 
 			S typedMember = sysmlMetaclass.cast(member);

@@ -1,11 +1,10 @@
 library package TwinActionLibrary{
 
     private import TwinTypeSystem::*;
-    private import TwinLibraryPackage::*;
     private import TwinTaxonomyLibrary::*;
     private import TwinEnumLibrary::*;
 
-    action def TwinAction:>TwinLibraryElementActionDef{
+    action def TwinAction{
         in attribute inputs[0..*] : TwinAttribute;
         out attribute outputs[0..*]:TwinAttribute;
         attribute local_Attributes[0..*] : TwinAttribute;

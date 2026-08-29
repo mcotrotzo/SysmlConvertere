@@ -2,6 +2,7 @@ package org.example.Util;
 
 public enum TwinLibraryNamespace {
 
+
 	TwinLibraryElement("TwinLibraryPackage::TwinLibraryElement"),
 
 	TwinLibraryConnection("TwinLibraryPackage::TwinLibraryElementConnection"),

@@ -14,7 +14,7 @@ import org.omg.sysml.lang.sysml.Package;
 import java.util.ArrayList;
 import java.util.List;
 
-@PackageTypeMeta(value = LibraryPackageNames.TWIN_DEF_LIBRARY)
+@PackageTypeMeta
 public class TwinDefLibraryMapped extends PackageElementType implements TwinDefLibrary {
 
 	List<TwinMapped<Definition>> twins = new ArrayList<>();
@@ -32,6 +32,10 @@ public class TwinDefLibraryMapped extends PackageElementType implements TwinDefL
 	@Override
 	protected List<Class<? extends PackageElementType>> getCanImport() {
 		return List.of(UserLibraryMapped.class);
+	}
+
+	protected LibraryPackageNames getLibraryPackageName() {
+		return LibraryPackageNames.TWIN_DEF_LIBRARY;
 	}
 
 

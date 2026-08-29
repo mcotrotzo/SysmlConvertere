@@ -1,10 +1,10 @@
 library package PhysicalTwinLibrary {
     private import TwinTypeSystem::*;
     private import TwinStateMachineLibrary::*;
-    private import TwinLibraryPackage::*;
 
 
-    abstract attribute def CommunicationProtocol:>TwinLibraryElementAttributeDef {
+
+    abstract attribute def CommunicationProtocol {
         
     }
 
@@ -20,7 +20,7 @@ library package PhysicalTwinLibrary {
 
 
 
-    abstract port def TwinPort:>TwinLibraryElementPortDef{
+    abstract port def TwinPort{
         abstract attribute communicationProtocol : CommunicationProtocol;
     }
 

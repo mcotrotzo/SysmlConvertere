@@ -1,7 +1,5 @@
 library package TwinTaxonomyLibrary {
-    private import TwinLibraryPackage::*;    
-   
-    part def TwinTaxonomy:>TwinLibraryElement;
+    part def TwinTaxonomy;
 
     
     part def PhysicalTaxonomy:>TwinTaxonomy;

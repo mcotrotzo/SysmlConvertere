@@ -1,11 +1,7 @@
 package Test{
 
      private import TwinLibrary::*;
-
      private import BatteryControlUnitLibrary::*;
-     private import TwinTypeSystem::TwinReal;
-     private import TwinTypeSystem::*;
-     private import UserLibrary::*;
      private import BatteryControlUnitLibrary::*;
      private import PositionThings::*;
 

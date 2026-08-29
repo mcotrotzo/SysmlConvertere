@@ -1,13 +1,12 @@
 library package ShadowLibrary {
     private import PhysicalTwinLibrary::*;
     private import TwinTypeSystem::*;
-    private import TwinLibraryPackage::*;
-    part def Database:>TwinLibraryElement {
+    part def Database {
         
         attribute durationInDays : TwinInteger default -1;
     }
 
-    part def Shadow:>TwinLibraryElement {
+    part def Shadow {
         part databases : Database[0..*];
     }
 

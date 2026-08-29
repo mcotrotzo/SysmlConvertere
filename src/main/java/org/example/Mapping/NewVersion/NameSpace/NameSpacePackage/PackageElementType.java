@@ -5,6 +5,7 @@ import org.example.Mapping.Interfaces.Base.TypeKind.NamespaceKind;
 import org.example.Mapping.NewVersion.MappingContext;
 import org.example.Mapping.NewVersion.MappingException;
 import org.example.Mapping.NewVersion.NameSpace.NameSpaceImport.ImportMapped;
+import org.example.Util.LibraryPackageNames;
 import org.omg.sysml.lang.sysml.Import;
 
 import java.util.List;
@@ -19,29 +20,21 @@ public abstract class PackageElementType extends MappedNamespaceElement<org.omg.
 
 	@Override
 	public void parse(MappingContext context) throws MappingException {
-		System.out.println("Parsing PackageElementType: " + getSysmlElement().getName());
-		System.out.println(this.sysmlElement.getOwnedImport());
-		elementTypeList =
-				context.mapOwnedNamespace(
-						this,
-						Import.class,
-						ImportMapped.class
-				);
-
-		System.out.println(
-				"Imports of "
-						+ getSysmlElement().getName()
-						+ ": "
-						+ elementTypeList.size()
-		);
+		elementTypeList = context.mapOwnedImports(this);
 
 		for (ImportMapped importMapped : elementTypeList) {
+			if (importMapped.getImportPackages() == null) {
+				continue;
+			}
+
 			PackageElementType importedPackage =
 					importMapped.getImportPackages().getReferent();
 
 			boolean allowed = getCanImport().stream()
 					.anyMatch(type -> type.isInstance(importedPackage));
-
+			System.out.println(importedPackage.getSysmlElement().getQualifiedName());
+			System.out.println(getLibraryPackageName().toString());
+			allowed |= importedPackage.getSysmlElement().getQualifiedName().equals(getLibraryPackageName().toString());
 			if (!allowed) {
 				throw new MappingException(
 						"Package "
@@ -54,5 +47,7 @@ public abstract class PackageElementType extends MappedNamespaceElement<org.omg.
 			}
 		}
 	}
+	protected abstract LibraryPackageNames getLibraryPackageName();
+
 	protected abstract List<Class<? extends PackageElementType>> getCanImport();
 }

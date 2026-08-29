@@ -6,7 +6,6 @@ library package TwinDefLibrary {
     private import ShadowPublicElements::*;
     private import PhysicalElementsLibrary::*;
     private import TwinTypeSystem::*;
-    private import TwinLibraryPackage::*;
     private import TwinActionLibrary::*;
     private import TwinStrategyLibrary::*;
     private import TwinTaxonomyLibrary::*;

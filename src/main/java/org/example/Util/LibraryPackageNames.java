@@ -1,7 +1,9 @@
 package org.example.Util;
 
 public enum LibraryPackageNames {
-	TWIN_DEF_LIBRARY("TwinDefLibrary"), USER_LIBRARY("UserLibrary");
+	TWIN_DEF_LIBRARY("TwinLibrary"),
+	USER_LIBRARY("UserLibrary"),
+	DT_LIBRARY("DTLibrary");
 
 	private final String namespace;
 

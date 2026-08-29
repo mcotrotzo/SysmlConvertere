@@ -11,8 +11,6 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 public @interface PackageTypeMeta {
 
-	LibraryPackageNames value();
-
 	LibraryPackageNames[] canImportFromPackages() default {};
 
 }

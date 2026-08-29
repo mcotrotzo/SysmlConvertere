@@ -6,18 +6,17 @@ import io.github.classgraph.ScanResult;
 import org.example.Mapping.NewVersion.Abstract.MappedElement;
 import org.example.Mapping.NewVersion.Abstract.MappedElementType;
 import org.example.Mapping.NewVersion.MappingException;
-import org.example.Mapping.NewVersion.NameSpace.NameSpacePackage.MappedNamespaceElement;
-import org.example.Mapping.NewVersion.NameSpace.NameSpacePackage.PackageElementType;
-import org.example.Mapping.NewVersion.NameSpace.NameSpacePackage.PackageTypeMeta;
+import org.example.Mapping.NewVersion.NameSpace.NameSpacePackage.*;
 import org.example.Mapping.NewVersion.NoMappedElementException;
 import org.example.Mapping.TwinAction.Annotation.MappedMetaclass;
 import org.example.Util.LibraryPackageNames;
+import org.example.Util.TwinLibraryNamespace;
 import org.example.Util.Utils;
-import org.omg.sysml.lang.sysml.Element;
-import org.omg.sysml.lang.sysml.InvocationExpression;
-import org.omg.sysml.lang.sysml.Type;
+import org.omg.sysml.lang.sysml.*;
+import org.omg.sysml.lang.sysml.Package;
 import org.omg.sysml.util.TypeUtil;
 
+import java.lang.Class;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
@@ -155,86 +154,102 @@ public final class ContainerManager {
 	}
 
 
-	private Constructor<? extends MappedNamespaceElement<?, ?>> findPackageConstructor(org.omg.sysml.lang.sysml.Package sysmlPackage) throws MappingException {
+	private Constructor<? extends MappedNamespaceElement<?, ?>> findPackageConstructor(
+			org.omg.sysml.lang.sysml.Package sysmlPackage
+	) throws MappingException {
 
-		LibraryPackageNames wantedPackageType;
-
-		if (utils.idFromUserLibrary(sysmlPackage)) {
-			wantedPackageType = LibraryPackageNames.USER_LIBRARY;
-		} else if (utils.isFromTwinLibrary(sysmlPackage)) {
-			wantedPackageType = LibraryPackageNames.TWIN_DEF_LIBRARY;
-		} else {
+		Class<? extends PackageElementType> mappedClass;
+		if (utils.isFromStandardLibrary(sysmlPackage)){
 			return null;
 		}
 
-		Constructor<?> found = null;
-
-		for (Class<? extends PackageElementType> mappedClass : getPackageMappedClasses()) {
-
-			PackageTypeMeta meta = mappedClass.getAnnotation(PackageTypeMeta.class);
-
-			if (meta == null) {
-				continue;
-			}
-
-			if (meta.value() != wantedPackageType) {
-				continue;
-			}
-
-			Constructor<?> constructor = findCompatibleConstructor(castMappedNamespaceClass(mappedClass), sysmlPackage);
-
-			if (constructor == null) {
-				continue;
-			}
-
-			if (found != null) {
-				throw new MappingException("Multiple package mappers found for package '%s' and package type '%s'.".formatted(safeName(sysmlPackage), wantedPackageType));
-			}
-
-			found = constructor;
+		if(imports(sysmlPackage, LibraryPackageNames.TWIN_DEF_LIBRARY)){
+			mappedClass = TwinDefLibraryMapped.class;
 		}
 
-		return castNamespaceConstructor(found);
+		else if(imports(sysmlPackage, LibraryPackageNames.USER_LIBRARY)){
+			mappedClass = UserLibraryMapped.class;
+		}
+		else {
+			mappedClass = LibraryPackagesMapped.class;
+		}
+
+
+
+		Constructor<?> constructor =
+				findCompatibleConstructor(
+						castMappedNamespaceClass(mappedClass),
+						sysmlPackage
+				);
+
+		if (constructor == null) {
+			throw new MappingException(
+					"No compatible package constructor found for '%s' (%s) using %s."
+							.formatted(
+									safeName(sysmlPackage),
+									sysmlPackage.getClass().getSimpleName(),
+									mappedClass.getSimpleName()
+							)
+			);
+		}
+
+		return castNamespaceConstructor(constructor);
+	}
+
+	private boolean hasName(LibraryPackageNames name,Element sysmlElement) {
+
+		if (sysmlElement.getName() == null) {
+			return false;
+		}
+
+		return sysmlElement.getQualifiedName().equals(name.toString());
+	}
+
+	private boolean imports(
+			org.omg.sysml.lang.sysml.Package sysmlPackage,
+			LibraryPackageNames libraryPackageName
+	) throws MappingException {
+
+		List<Package> importedPackages = new ArrayList<>();
+
+		for (Import importElement : sysmlPackage.getOwnedImport()) {
+			if (importElement instanceof NamespaceImport namespaceImport
+					&& namespaceImport.getImportedNamespace() instanceof Package packageType) {
+				importedPackages.add(packageType);
+			} else if (importElement instanceof MembershipImport membershipImport
+					&& membershipImport.getImportedMembership() != null
+					&& membershipImport.getImportedMembership().getMemberElement() instanceof Package packageType) {
+				importedPackages.add(packageType);
+			}
+		}
+
+
+		return importedPackages.stream()
+				.anyMatch(x -> hasName(libraryPackageName, x));
 	}
 
 
-	public Constructor<? extends MappedNamespaceElement<?, ?>> getMappedConstructor(
-			Type sysmlElement
-	) throws MappingException {
+	public Constructor<? extends MappedNamespaceElement<?, ?>> getMappedConstructor(Type sysmlElement) throws MappingException {
 
 		Objects.requireNonNull(sysmlElement, "sysmlElement");
 
-		Constructor<? extends MappedNamespaceElement<?, ?>> libraryConstructor =
-				findLibraryConstructor(sysmlElement);
+		Constructor<? extends MappedNamespaceElement<?, ?>> libraryConstructor = findLibraryConstructor(sysmlElement);
 
 		if (libraryConstructor != null) {
 			return libraryConstructor;
 		}
 
-		Constructor<? extends MappedElement<?, ?>> metaclassConstructor =
-				findTypeMetaclassConstructor(sysmlElement);
+		Constructor<? extends MappedElement<?, ?>> metaclassConstructor = findTypeMetaclassConstructor(sysmlElement);
 
 		if (metaclassConstructor != null) {
 			return metaclassConstructor;
 		}
 
 		if (utils.isFromDTLibrary(sysmlElement)) {
-			throw new MappingException(
-					"No library mapper found for DT library element '%s' (%s)"
-							.formatted(
-									sysmlElement.getQualifiedName(),
-									sysmlElement.getClass().getSimpleName()
-							)
-			);
+			throw new MappingException("No library mapper found for DT library element '%s' (%s)".formatted(sysmlElement.getQualifiedName(), sysmlElement.getClass().getSimpleName()));
 		}
 
-		throw new NoMappedElementException(
-				"No mapped constructor found for '%s' (%s)."
-						.formatted(
-								safeName(sysmlElement),
-								sysmlElement.getClass().getSimpleName()
-						)
-		);
+		throw new NoMappedElementException("No mapped constructor found for '%s' (%s).".formatted(safeName(sysmlElement), sysmlElement.getClass().getSimpleName()));
 	}
 
 
@@ -287,7 +302,6 @@ public final class ContainerManager {
 
 		return castNamespaceConstructor(best);
 	}
-
 
 
 	private boolean isLibraryTypeCompatible(Type sysmlElement, Class<? extends MappedNamespaceElement<?, ?>> mappedClass) {

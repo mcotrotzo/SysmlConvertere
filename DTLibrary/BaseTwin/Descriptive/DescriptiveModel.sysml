@@ -3,7 +3,6 @@ library package DescriptiveModelLibrary {
     private import PhysicalTwinLibrary::*;
     private import TwinTypeSystem::*;
     private import TwinStateMachineLibrary::*; 
-    private import TwinLibraryPackage::*;
     private import TwinImp::*;
     private import TwinEnumLibrary::*;
    
