@@ -1,31 +1,24 @@
 # SysML Twin Mapper
 
-`sysml-twin-mapper` maps SysML v2 Digital Twin models to a Java object model.
+`sysml-twin-mapper` maps supported SysML v2 Digital Twin models to a
+Java object model.
 
-The library parses a Twin model together with a user-defined SysML library and exposes the mapped model through Java
-interfaces and `TwinDataBase`.
+The mapper loads the Twin model, the user library, the bundled Digital
+Twin library, and the SysML standard libraries. The public result is a
+`TwinDataBase` containing mapped model elements and contextual
+`Compartment` objects.
 
-For the supported SysML modeling conventions, see [`MODELING.md`](MODELING.md).
+For modeling rules and SysML examples, see `MODELING.md`.
 
----
+## Requirements
 
-# Requirements
+* Java 21
+* Maven
+* Access to the GitHub Packages repository
 
-- Java 21
-- Maven
-- Access to the GitHub Packages repository
+## Maven
 
----
-
-# Maven
-
-## 1. GitHub Packages authentication
-
-Add the following server configuration to:
-
-```text
-~/.m2/settings.xml
-```
+Configure GitHub Packages in `~/.m2/settings.xml`:
 
 ```xml
 <settings>
@@ -39,21 +32,10 @@ Add the following server configuration to:
 </settings>
 ```
 
-The GitHub token requires permission to read the package.
+A classic Personal Access Token normally needs `read:packages`. The
+account must also have access to the package if it is private.
 
-For a classic Personal Access Token this is normally:
-
-```text
-read:packages
-```
-
-The GitHub account must also have access to the repository/package when it is private.
-
----
-
-## 2. Repository
-
-Add the GitHub Packages repository to your project's `pom.xml`:
+Add the repository:
 
 ```xml
 <repositories>
@@ -64,17 +46,7 @@ Add the GitHub Packages repository to your project's `pom.xml`:
 </repositories>
 ```
 
-The repository ID must match the ID used in `settings.xml`:
-
-```text
-github
-```
-
----
-
-## 3. Dependency
-
-Add the mapper:
+Add the dependency:
 
 ```xml
 <dependency>
@@ -84,23 +56,10 @@ Add the mapper:
 </dependency>
 ```
 
-After that the project can be built normally:
+The bundled Digital Twin and SysML libraries do not have to be
+downloaded separately.
 
-```bash
-mvn clean compile
-```
-
-The SysML standard library and the Digital Twin library required internally by the mapper are bundled with the mapper
-library. Users do not have to download them manually.
-
----
-
-# Usage
-
-Create a `MapperService` with:
-
-1. the directory containing the Twin model;
-2. the directory containing the user's custom SysML library.
+## Usage
 
 ```java
 MapperService mapperService = new MapperService(
@@ -111,648 +70,433 @@ MapperService mapperService = new MapperService(
 TwinDataBase twinDataBase = mapperService.map();
 ```
 
-The returned `TwinDataBase` contains the mapped Java representation of the model.
-
----
-
-# MapperService
-
-`MapperService` is the main entry point into the library.
-
-```java
-MapperService mapperService = new MapperService(
-        twinModelPath,
-        userLibraryPath
-);
-
-TwinDataBase database = mapperService.map();
-```
-
-The mapper loads the required libraries, parses the supplied SysML model and maps supported SysML elements to the public
-Java model interfaces.
-
-Application code should normally work with these interfaces rather than the internal mapper implementation classes.
-
----
+Application code should normally use the interfaces under
+`org.example.Mapping.Interfaces`.
 
 # TwinDataBase
 
-`TwinDataBase` provides access to all mapped model elements.
-
-## Get all elements of a type
+## Get mapped objects
 
 ```java
-Set<Sensors> sensors = twinDataBase.get(Sensors.class);
+Set<Sensors<Usage>> sensors =
+        twinDataBase.get(Sensors.class, Usage.class);
 ```
 
-The method:
+The current API is:
 
 ```java
-<T extends Model> Set<T> get(Class<T> type)
+<T extends Model<Z>, Z extends TypeKindNamespace>
+Set<T> get(Class<? super T> type, Class<Z> typeKind)
 ```
 
-returns all mapped objects implementing the requested interface.
-
-Examples:
+`getAll()` returns every registered object, including `Compartment`
+objects and library elements:
 
 ```java
-Set<Twin> twins =
-        twinDataBase.get(Twin.class);
-
-Set<Sensors> sensors =
-        twinDataBase.get(Sensors.class);
-
-Set<Actuators> actuators =
-        twinDataBase.get(Actuators.class);
+Set<Model<?>> all = twinDataBase.getAll();
 ```
 
----
-
-## Get an element by ID
+Every `Model` exposes `isLibraryElement()`. Therefore application code
+can filter library objects explicitly:
 
 ```java
-Model element = twinDataBase.get(id);
+Set<Model<?>> modelOnly = twinDataBase.getAll().stream()
+        .filter(element -> !element.isLibraryElement())
+        .collect(java.util.stream.Collectors.toSet());
 ```
 
-or with the expected type:
+The same property can be used after a typed `get(...)` call.
+
+## Lookup and references
 
 ```java
-Twin twin = twinDataBase.get(id);
+Model<?> model = twinDataBase.get(id);
 ```
-
----
-
-## Resolve a Reference
-
-References can be resolved through the database:
 
 ```java
-TwinAttribute attribute =
-        twinDataBase.getByReference(
-                reference,
-                TwinAttribute.class
-        );
+TwinAttribute<?> attribute =
+        twinDataBase.getByReference(reference, TwinAttribute.class);
 ```
 
-References themselves also retain their referenced model relationship, so consumers can work directly with the reference
-API when appropriate instead of manually reconstructing references from names.
+`Reference<T>` exposes both `getReferent()` and `getTargetId()`.
 
----
-
-## Get mapped types
+## Available mapped classes
 
 ```java
-Set<Class<Model>> types =
-        twinDataBase.getAllTypes();
+Set<Class<Model<?>>> types = twinDataBase.getAllTypes();
 ```
-
-This can be used when a consumer wants to inspect which Java model types occur in the mapped model.
-
----
 
 ## Specialization children
 
 ```java
-List<Model> children =
+List<Model<Usage>> children =
         twinDataBase.getSpecializationChildren(element);
 ```
 
-This returns the direct specialization children of a mapped usage.
-
-Consider:
-
-```sysml
-port p11[30] :> sensors;
-port p13[23] :> p11;
-port p14[2]  :> p13, p11;
-port p15[1]  :> p14;
-```
-
-The direct relationships are:
-
-```text
-p11
-├── p13
-└── p14
-
-p13
-└── p14
-
-p14
-└── p15
-
-p15
-└── []
-```
-
-`p15` is therefore not returned directly for `p11`, because another specialization lies between them.
-
----
+The method returns mapped usage elements whose SysML type specializes
+the supplied usage.
 
 ## Multiplicity
 
 ```java
-ElemWithMult multiplicity =
-        twinDataBase.getMultiplicity(element);
+ElemWithMult multiplicity = twinDataBase.getMultiplicity(element);
 ```
 
-For:
+This exposes the multiplicity range of a mapped usage.
 
-```sysml
-port p11[30] :> sensors;
+## Compartments
+
+A mapped `Type<Usage>` represents the SysML usage itself. A
+`Compartment<T>` represents that usage in one concrete mapped
+parent/context.
+
+For example, a feature `x` may be the same mapped attribute definition
+while occurring under a particular `Position` usage. The compartment
+preserves that contextual occurrence.
+
+```java
+Compartment<TwinAttribute<Usage>> compartment =
+        twinDataBase.getCompartment(parent, attribute);
 ```
 
-the multiplicity contains:
+A compartment exposes:
 
-```text
-lowerBound = 30
-upperBound = 30
+```java
+compartment.getElement();
+compartment.getParent();
+compartment.isInherited();
 ```
 
-Multiplicity is important when interpreting feature-chain expressions such as:
+Its identity is based on the pair `(parent, element)`. This matters for
+nested feature chains where the final attribute alone is not enough to
+identify the concrete occurrence.
 
-```sysml
-p11.temp
-```
+# Core interfaces
 
-because the multiplicity of the base feature contributes to the semantic multiplicity represented by that expression.
+## Model
 
----
-
-# Core Model Interface
-
-Mapped model objects implement `Model`.
-
-`Model` provides the common information shared by mapped elements, including their identity, name, kind and parent
-relationship.
-
-Typical access looks like:
+All mapped public objects derive from `Model`.
 
 ```java
 model.getId();
-model.
-
-getName();
-model.
-
-getKind();
-model.
-
-getParent();
+model.getDeterministicId();
+model.getName();
+model.getKind();
+model.getParent();
+model.path();
+model.getTaxonomy();
+model.isLibraryElement();
 ```
 
-The parent describes structural containment in the mapped model.
+`getId()` is the runtime identity. `getDeterministicId()` is derived
+from the SysML path and is stable for the same model structure.
 
----
+## Type
 
-# Twin
+`Type<T>` extends `Model<T>` and represents mapped SysML types/usages.
+It provides type relationships such as specialization and the definition
+of a usage.
 
-`Twin` represents a mapped Digital Twin definition.
+## Package and libraries
 
-A Twin exposes the different Digital Twin components belonging to it, including sensors, actuators, attributes, state
-machines, strategies, queries and databases.
+The namespace API contains `Package`, `UserLibrary`, `TwinDefLibrary`,
+`DTLibrary`, `NameSpace`, and `Import`.
 
-Typical access includes:
+`UserLibrary` exposes mapped user definitions, including custom
+calculations, base Twin attribute definitions, custom types, and
+query-flow definitions.
+
+# Twin structure and taxonomies
+
+`Twin` exposes the top-level taxonomy compartments:
 
 ```java
-twin.getSensors();
-twin.
-
-getActuators();
-
-twin.
-
-getConstAttributes();
-twin.
-
-getDerivedAttributes();
-
-twin.
-
-getControlUnits();
-
-twin.
-
-getQueriesHistory();
-twin.
-
-getGroupQueriesHistory();
-
-twin.
-
-getDescriptiveStateMachines();
-
-twin.
-
-getDescriptiveStrategies();
-twin.
-
-getPredictiveStrategies();
-twin.
-
-getPrescriptiveStrategies();
-
-twin.
-
-getDatabases();
+twin.getPhysicalTwin();
+twin.getShadow();
+twin.getDescriptiveModel();
+twin.getPredictiveModel();
+twin.getPrescriptiveModel();
 ```
 
-These relationships correspond to the Digital Twin library features specialized by the SysML model.
-
----
-
-# Sensors
-
-`Sensors` represents a mapped sensor port.
-
-For example:
-
-```sysml
-port p11 :> sensors {
-    attribute temp    : TwinReal    :> measurements;
-    attribute voltage : TwinReal    :> measurements;
-    attribute plug    : TwinBoolean :> measurements;
-}
-```
-
-The mapped sensor exposes its measurement attributes.
+It also exposes the cross-taxonomy flows:
 
 ```java
-Sensors sensor = ...;
-
-sensor.getMeasurements();
+twin.getQueryFlows();
+twin.getDescriptiveToPredictiveFlows();
+twin.getDescriptiveToPrescriptiveFlows();
+twin.getPredictiveToPrescriptiveFlows();
+twin.getPrescriptiveToPhysicalFlows();
 ```
 
-Each measurement is represented as a mapped Twin attribute.
+The taxonomy interfaces are `Taxonomy`, `PhysicalTaxonomy`,
+`CloudTwinTaxonomy`, `DescriptiveTaxonomy`, `PredictiveTaxonomy`,
+`PrescriptiveTaxonomy`, and `ShadowTaxonomy`.
 
----
-
-# Actuators
-
-`Actuators` represents an actuator port.
-
-```sysml
-port p12 :> actuators {
-    attribute charge : TwinReal :> commands;
-}
-```
-
-The actuator exposes its command attributes:
+## PhysicalTwin
 
 ```java
-actuator.getCommands();
+physicalTwin.getSensors();
+physicalTwin.getActuators();
+physicalTwin.getControlUnits();
+physicalTwin.getPhysicalFlows();
+physicalTwin.getConstPort();
 ```
 
----
+## Shadow
 
-# Twin Attributes
+```java
+shadow.getDatabases();
+```
 
-Twin attributes represent values in the Digital Twin model.
+## DescriptiveModel
 
-The mapper supports scalar Twin types such as:
+```java
+descriptiveModel.getDerivedAttributes();
+descriptiveModel.getDescriptiveStateMachines();
+descriptiveModel.getDescriptiveStrategies();
+descriptiveModel.getDescriptiveFlows();
+```
+
+`derivedAttributes` are actions in the current model, not standalone
+Twin attributes.
+
+## PredictiveModel
+
+```java
+predictiveModel.getPredictiveStrategies();
+predictiveModel.getPredictiveFlows();
+```
+
+## PrescriptiveModel
+
+```java
+prescriptiveModel.getPrescriptiveStrategies();
+prescriptiveModel.getPrescriptiveFlows();
+```
+
+# Ports and attributes
+
+`TwinPort` exposes:
+
+```java
+port.getProtocol();
+port.getAttributes();
+```
+
+`Sensors`, `Actuators`, and `ConstPort` specialize `TwinPort`.
+
+Protocols currently include `HTTPProtocol` and `MQTTProtocol`. HTTP
+exposes URL compartments; MQTT exposes topic and broker compartments.
+
+`TwinAttribute` exposes:
+
+```java
+attribute.getDirection();
+attribute.getExpression();
+attribute.getRoles();
+```
+
+Directions are represented by `Direction`. Current roles are:
 
 ```text
-TwinReal
-TwinInteger
-TwinString
-TwinBoolean
+SENSOR
+ACTUATOR
+CONST
+LOCAL
+ACTION
+CUSTOM_TYPE_MEMBER
+FOR_LOOP_VARIABLE
 ```
 
-as well as user-defined custom Twin types.
-
-Attributes can occur as:
-
-- sensor measurements;
-- actuator commands;
-- constant attributes;
-- derived attributes;
-- state-machine-local attributes;
-- strategy inputs and outputs;
-- calculation inputs and outputs;
-- query values.
-
-An attribute can also contain a mapped value expression.
-
----
-
-# Custom Types
-
-Structured user-defined values can be modeled through custom Twin types.
-
-For example:
-
-```sysml
-attribute def Position :> TwinCustomType {
-    attribute x : TwinInteger :> fields;
-    attribute y : TwinInteger :> fields;
-    attribute z : TwinInteger :> fields;
-}
-```
-
-The mapped custom type exposes its fields rather than reducing the value to a string representation.
-
-This allows downstream applications to inspect the structure of custom values.
-
----
-
-# Expressions
-
-Expressions are represented as mapped objects.
-
-The mapper distinguishes between different expression forms instead of storing arbitrary SysML expressions as
-source-code strings.
-
-Supported mapped expression categories include:
-
-- literals;
-- collections;
-- references;
-- feature chains;
-- constructor calls;
-- calculation calls.
-
-For example:
-
-```sysml
-attribute maxCharge : TwinReal
-    :> constAttributes = 100;
-```
-
-contains a literal expression.
-
-```sysml
-attribute position : Position
-    :> constAttributes =
-        new Position(x = 10, y = 20, z = 30);
-```
-
-contains a constructor expression.
-
-```sysml
-attribute soc : TwinReal
-    :> derivedAttributes =
-        MULT_real(
-            DIV_real(p11.voltage, nominalVoltage),
-            100
-        );
-```
-
-contains calculation expressions.
-
----
-
-# References
-
-References preserve relationships between mapped model elements.
-
-For example:
-
-```sysml
-maxCharge
-```
-
-is a direct reference.
-
-A feature-chain expression such as:
-
-```sysml
-p11.temp
-```
-
-represents traversal from `p11` to its `temp` feature.
-
-The mapper does not flatten this relationship into the string `"p11.temp"`.
-
-This means downstream applications can follow the actual mapped model relationships.
-
-References can either be inspected through the reference API itself or resolved through `TwinDataBase`.
-
----
-
-# Calculations
-
-Calculation invocations retain:
-
-- a reference to the called calculation;
-- their mapped argument expressions.
-
-For example:
-
-```sysml
-DIV_real(p11.voltage, nominalVoltage)
-```
-
-is represented structurally.
-
-The called calculation is therefore represented as a model reference rather than merely storing its textual name.
-
-Arguments are mapped expressions and can themselves contain references, feature chains, constructors or nested
-calculations.
-
----
-
-# Queries
-
-The mapper supports two different history-query structures.
-
-## QueryHistory
-
-A normal history query returns one flat history collection.
-
-Example:
-
-```sysml
-part temp30 :> queryHistory {
-    :>>twinAttribute default p11.temp;
-    :>>since default 30;
-    :>>result : TwinReal[0..*];
-}
-```
-
-The type of the result corresponds to the type of the queried Twin attribute.
-
-If the queried expression crosses a usage with multiplicity, the resulting histories are represented as one flat result
-collection.
-
-For example:
-
-```sysml
-port p11[30] :> sensors {
-    attribute temp : TwinReal :> measurements;
-}
-```
-
-then:
-
-```sysml
-p11.temp
-```
-
-represents `temp` across the instances represented by `p11`.
-
-A normal `QueryHistory` returns those historical values as one flat result:
-
-```text
-p11 instance 1 ─┐
-p11 instance 2 ─┤
-p11 instance 3 ─┤
-...              ├──> TwinReal[0..*]
-p11 instance 30 ─┘
-```
-
----
-
-## GroupedHistoryQuery
-
-`GroupedHistoryQuery` preserves the separation caused by the multiplicity of the referenced base feature.
-
-For:
-
-```sysml
-port p11[30] :> sensors {
-    attribute pos : Position :> measurements;
-}
-```
-
-the expression:
-
-```sysml
-p11.pos
-```
-
-addresses `pos` across the represented `p11` instances.
-
-A grouped history query returns `QueryResult` objects so those histories remain separated.
-
-A query result type can for example be defined as:
-
-```sysml
-attribute def PositionQueryResult :> QueryResult {
-    :>>result : Position[0..*];
-}
-```
-
-and a grouped query as:
-
-```sysml
-part def PositionHistory :> GroupedHistoryQuery;
-```
-
-Usage:
-
-```sysml
-part positionHistory : PositionHistory :> groupedQueryHistory {
-    :>>twinAttribute default p11.pos;
-    :>>since default 30;
-    :>>result : PositionQueryResult[0..*];
-}
-```
-
-Conceptually:
-
-```text
-p11 instance 1
-└── QueryResult
-    └── Position[0..*]
-
-p11 instance 2
-└── QueryResult
-    └── Position[0..*]
-
-...
-
-p11 instance 30
-└── QueryResult
-    └── Position[0..*]
-```
-
-The distinction is therefore:
-
-```text
-QueryHistory
-    T[0..*]
-
-GroupedHistoryQuery
-    QueryResult[0..*]
-        └── T[0..*]
-```
-
-See `MODELING.md` for the SysML modeling rules.
-
----
-
-# State Machines
-
-The mapper exposes control units and descriptive state machines.
-
-Mapped states may contain:
-
-- nested states;
-- entry actions;
-- do actions;
-- exit actions;
-- transitions;
-- other mapped behavior.
-
-Transitions retain references to their source and target states as well as their mapped guard expression.
-
----
+Sensor attributes receive `SENSOR`, actuator attributes receive
+`ACTUATOR`, const-port attributes receive `CONST`, action inputs and
+outputs receive `ACTION`, action-local attributes receive `LOCAL`,
+custom-type fields receive `CUSTOM_TYPE_MEMBER`, and for-loop variables
+receive `FOR_LOOP_VARIABLE`.
+
+Scalar interfaces are `TwinBaseBoolean`, `TwinBaseInteger`,
+`TwinBaseReal`, and `TwinBaseString`. `CustomType` exposes its field
+compartments.
 
 # Actions
 
-Mapped behavior includes actions such as:
+`Action<T>` is the base action interface. `Block<T>` adds:
 
-```sysml
-assign p12.charge := 50;
+```java
+block.getInputs();
+block.getOutputs();
+block.localAttributes();
+block.getActions();
+block.getSuccessions();
 ```
 
-We allow:
+Action inputs and outputs are therefore part of the action itself. Local
+attributes are also scoped to the action.
 
-+ assignment actions;
-+ for loops;
-+ while loops;
-+ if else
-+ successions
+Supported action interfaces are:
 
----
+* `Assignment`: target reference and value expression.
+* `IfElse`: condition, then-action compartment, optional else-action
+  compartment.
+* `ForLoop`: loop-variable compartment, collection expression, body
+  compartment.
+* `WhileLoop`: condition, until expression, optional body compartment.
+* `Succession`: ordered/referenced action list.
+* `Transition`: source, target, guard expressions, optional effect
+  action.
+* `Block`: nested actions, successions, inputs, outputs, and local
+  attributes.
+
+State machines expose nested states, transitions, and entry/do/exit
+action compartments.
+
+# Expressions
+
+The public expression API represents expressions structurally rather
+than as source strings.
+
+Supported public forms include literals, calculation invocations,
+constructor calls, and feature references.
+
+`Calculation` exposes the called `Function` and its argument
+expressions. `ConstructorCall` exposes the constructed custom attribute
+definition and constructor arguments.
+
+## FeatureReference and feature chains
+
+`FeatureReference` exposes two related views:
+
+```java
+reference.getChain();
+reference.getAsCompartment();
+```
+
+`getChain()` preserves the semantic chain as references to mapped usage
+elements. For:
+
+```sysml
+pos_b.x.y
+```
+
+the chain retains the traversed elements rather than flattening the
+expression to a string.
+
+`getAsCompartment()` resolves the reference to the contextual final
+occurrence. This is important because the same mapped element can occur
+under different parents.
+
+For a chain, the mapper resolves compartments pairwise. Conceptually:
+
+```text
+(parent A, feature B) -> compartment B
+(feature B, feature C) -> compartment C
+```
+
+The final compartment therefore identifies the last feature in the
+context established by the chain.
+
+A direct feature reference also resolves to its own compartment.
+
+# ExpressionRoleValidator rules
+
+The mapper validates attribute expressions and assignment expressions
+using attribute roles.
+
+For an attribute expression:
+
+* A `CONST` attribute may reference only attributes whose effective
+  referenced roles include `CONST`.
+* An attribute with no role is treated as configuration data for this
+  validation and may not contain feature references.
+* A `LOCAL` attribute may reference only `LOCAL`, `ACTION`, or
+  `FOR_LOOP_VARIABLE` attributes.
+* Attributes with other role combinations must not have an expression.
+
+For assignments:
+
+* The assignment target must have `LOCAL`, `ACTION`, or
+  `FOR_LOOP_VARIABLE`.
+* The assignment value may reference only `LOCAL`, `ACTION`, or
+  `FOR_LOOP_VARIABLE` attributes.
+
+For a feature chain, the validator collects roles from every referenced
+element in `FeatureReference.getChain()`. The rule is applied to that
+combined role set. Invocation arguments are validated recursively, so
+references inside nested calculation/invocation arguments are checked as
+well.
+
+# Flows
+
+`Flow<T>` exposes:
+
+```java
+flow.sourceContexts();
+flow.targetContexts();
+flow.getSource();
+flow.getTarget();
+```
+
+A flow connects an output-capable source attribute to an input-capable
+target attribute.
+
+The mapper validates:
+
+* the source direction is `OUT` or `INOUT`;
+* the target direction is `IN` or `INOUT`;
+* source and target belong to the taxonomies required by the flow
+  type;
+* the source endpoint type is compatible with the target endpoint
+  type.
+
+The supported flow types are:
+
+* `PhysicalFlow`: Physical -> Physical
+* `DescriptiveFlow`: Descriptive -> Descriptive
+* `PredictiveFlow`: Predictive -> Predictive
+* `PrescriptiveFlow`: Prescriptive -> Prescriptive
+* `QueryFlow`: Physical -> Cloud
+* `DescriptiveToPredictiveFlow`: Descriptive -> Predictive
+* `DescriptiveToPrescriptiveFlow`: Descriptive -> Prescriptive
+* `PredictiveToPrescriptiveFlow`: Predictive -> Prescriptive
+* `PrescriptiveToPhysicalFlow`: Prescriptive -> Physical
+
+`QueryFlow` additionally exposes optional `since`, `sinceUnit`,
+`orderBy`, and `limit` compartments. Each of these slots may occur at
+most once.
 
 # Strategies
 
-The mapper supports:
+`Strategy<T>` extends `Block<T>`, so strategies use the same action
+input/output/local-attribute model.
 
-- descriptive strategies;
-- predictive strategies;
-- prescriptive strategies.
+`CustomStrategy` adds no public fields beyond `Strategy`.
 
-Strategies expose their mapped inputs, outputs and Lambda path.
+`ExternalStrategy` exposes:
 
-Depending on the strategy type they may additionally expose conditions and trigger configurations.
+```java
+strategy.getContentPath();
+strategy.getStrategyType();
+```
 
----
-
-# Trigger Configurations
-
-Trigger configurations describe when strategy or state-machine behavior should execute.
-
-Supported configurations include time-based and event-based configurations.
-
-A time-based configuration contains values such as interval and time unit.
-
-An event-based configuration can reference triggering attributes and its change behavior.
-
----
+There is no trigger-configuration API in the current public interfaces.
 
 # Databases
 
-Database configuration belonging to the Twin is exposed through the database interfaces.
+`Database` exposes:
 
-The converter currently maps relational and key-value database configurations.
-
-For example:
-
-```sysml
-:>>databases : RelationalDatabase {
-    :>>durationInDays default 30;
-}
+```java
+database.getDurationInDays();
 ```
 
+Current database interfaces are `RelationalDatabase` and
+`KeyValueDatabase`.
+
+# Enums and functions
+
+`TwinEnum` exposes its string representation. `EnumAttribute<T>` exposes
+an optional enum value. Public enum attribute types include
+`EnumOrderBy`, `EnumTimeUnit`, and `CustomStrategyType`.
+
+Functions are represented by `Function`. `BaseFunction` additionally
+exposes `BaseFunctionKind`. `CustomCalculation` represents user-defined
+calculations.
