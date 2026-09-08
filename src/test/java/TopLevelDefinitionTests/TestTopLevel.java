@@ -136,8 +136,6 @@ public class TestTopLevel extends AbstarctTest {
 		Set<Strategy<Definition>> strategies = result.get(Strategy.class, Definition.class);
 		Set<Strategy<Usage>> usages = result.get(Strategy.class, Usage.class);
 
-		strategies.forEach(x -> System.out.println("Strategy: " + x.getName() + " id: " + x.getId()));
-		usages.forEach(x -> System.out.println("Strategy usage: " + x.getName() + " id: " + x.getId()));
 		assertAmount(Strategy.class, Definition.class, 3);
 		assertAmount(Strategy.class,Usage.class, 7);
 

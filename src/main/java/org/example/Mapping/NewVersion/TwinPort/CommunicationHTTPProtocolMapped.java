@@ -1,6 +1,7 @@
 package org.example.Mapping.NewVersion.TwinPort;
 
 import lombok.ToString;
+import org.example.Mapping.Interfaces.Base.Compartment;
 import org.example.Mapping.Interfaces.Base.CompartmentContainer;
 import org.example.Mapping.Interfaces.Base.TypeKind.TypeKind;
 import org.example.Mapping.Interfaces.Base.TypeKind.Usage;
@@ -8,6 +9,7 @@ import org.example.Mapping.Interfaces.TwinAttribute.BaseTwinAttribute.Role;
 import org.example.Mapping.Interfaces.TwinAttribute.BaseTwinAttribute.TwinBaseString;
 import org.example.Mapping.Interfaces.TwinPort.HTTPProtocol;
 import org.example.Mapping.NewVersion.Abstract.CompartmentContainerMapped;
+import org.example.Mapping.NewVersion.Abstract.CompartmentMapped;
 import org.example.Mapping.NewVersion.Abstract.MappedElementType;
 import org.example.Mapping.NewVersion.MappingContext;
 import org.example.Mapping.NewVersion.MappingException;
@@ -21,7 +23,7 @@ import java.util.List;
 @MappedElementType(LibraryNameSpaces.HTTP_PROTOCOL)
 @ToString(callSuper = true)
 public class CommunicationHTTPProtocolMapped<T extends TypeKind> extends CommunicationProtocolMapped<T> implements HTTPProtocol<T> {
-	private CompartmentContainerMapped<TwinBaseAttributeStringMapped<Usage>> url;
+	private CompartmentMapped<TwinBaseAttributeStringMapped<Usage>> url;
 
 
 	public CommunicationHTTPProtocolMapped(Feature sysmlElement) {
@@ -29,7 +31,7 @@ public class CommunicationHTTPProtocolMapped<T extends TypeKind> extends Communi
 	}
 
 	@Override
-	public CompartmentContainer<? extends TwinBaseString<Usage>> getUrl() {
+	public Compartment<? extends TwinBaseString<Usage>> getUrl() {
 		return url;
 	}
 
@@ -37,6 +39,6 @@ public class CommunicationHTTPProtocolMapped<T extends TypeKind> extends Communi
 	public void parse(MappingContext context) throws MappingException {
 		super.parse(context);
 
-		url = context.mapSlot(this, "url", TwinBaseAttributeStringMapped.getRawStringUsageClass());
+		url = context.mapSlot(this, "url", TwinBaseAttributeStringMapped.getRawStringUsageClass()).getCompartment().stream().findFirst().orElseThrow(() -> new MappingException("HTTPProtocol '%s': slot 'url' is required but not found.".formatted(getName())));
 	}
 }

@@ -32,8 +32,7 @@ public abstract class PackageElementType extends MappedNamespaceElement<org.omg.
 
 			boolean allowed = getCanImport().stream()
 					.anyMatch(type -> type.isInstance(importedPackage));
-			System.out.println(importedPackage.getSysmlElement().getQualifiedName());
-			System.out.println(getLibraryPackageName().toString());
+
 			allowed |= importedPackage.getSysmlElement().getQualifiedName().equals(getLibraryPackageName().toString());
 			if (!allowed) {
 				throw new MappingException(

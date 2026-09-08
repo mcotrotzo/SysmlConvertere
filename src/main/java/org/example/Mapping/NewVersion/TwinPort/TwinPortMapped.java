@@ -1,9 +1,12 @@
 package org.example.Mapping.NewVersion.TwinPort;
 
 import lombok.ToString;
+import org.example.Mapping.Interfaces.Base.Compartment;
+import org.example.Mapping.Interfaces.Base.CompartmentContainer;
 import org.example.Mapping.Interfaces.Base.TypeKind.TypeKind;
 import org.example.Mapping.Interfaces.Base.TypeKind.Usage;
 import org.example.Mapping.Interfaces.TwinAttribute.BaseTwinAttribute.TwinAttribute;
+import org.example.Mapping.Interfaces.TwinAttribute.BaseTwinAttribute.TwinBaseString;
 import org.example.Mapping.Interfaces.TwinPort.TwinPort;
 import org.example.Mapping.NewVersion.Abstract.CompartmentContainerMapped;
 import org.example.Mapping.NewVersion.Abstract.CompartmentMapped;
@@ -12,6 +15,7 @@ import org.example.Mapping.NewVersion.Abstract.MappedElementType;
 import org.example.Mapping.NewVersion.MappingContext;
 import org.example.Mapping.NewVersion.MappingException;
 import org.example.Mapping.TwinAttributeMapped.BaseTwinAttributeMapped.Definition.TwinAttributeMapped;
+import org.example.Mapping.TwinAttributeMapped.BaseTwinAttributeMapped.Definition.TwinBaseAttributeStringMapped;
 import org.example.Util.LibraryNameSpaces;
 import org.omg.sysml.lang.sysml.Type;
 
@@ -22,7 +26,7 @@ import java.util.Optional;
 public class TwinPortMapped<Z extends TypeKind>
 		extends MappedElement<Type, Z>
 		implements TwinPort<Z> {
-
+	private CompartmentMapped<TwinBaseAttributeStringMapped<Usage>> deviceKeyId;
 	private Optional<CompartmentMapped<CommunicationProtocolMapped<Usage>>> protocol = Optional.empty();
 
 	public TwinPortMapped(Type sysmlElement) {
@@ -40,6 +44,7 @@ public class TwinPortMapped<Z extends TypeKind>
 		}
 
 		protocol = protocols.getCompartment().stream().findFirst();
+		deviceKeyId = context.mapSlot(this, "deviceKey", TwinBaseAttributeStringMapped.getRawStringUsageClass()).getCompartment().stream().findFirst().orElseThrow(() -> new MappingException("TwinPort '%s': slot 'deviceKey' is required but not found.".formatted(getName())));
 	}
 
 	@Override
@@ -50,6 +55,11 @@ public class TwinPortMapped<Z extends TypeKind>
 	@Override
 	public CompartmentContainerMapped<? extends TwinAttribute<Usage>> getAttributes() {
 		return new CompartmentContainerMapped<>();
+	}
+
+	@Override
+	public Compartment<? extends TwinBaseString<Usage>> getDeviceKeyId() {
+		return deviceKeyId;
 	}
 
 }

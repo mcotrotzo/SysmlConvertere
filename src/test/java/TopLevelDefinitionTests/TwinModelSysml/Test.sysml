@@ -15,7 +15,7 @@ package Test{
                        attribute :>>topic = "battery/measurements";
                    }
                   out attribute temp[2]    : TwinReal    :>> measurements;
-                  out attribute temp2[2] :>temp;
+                  out attribute temp2[2..2] :>temp;
 
                   out attribute voltage : TwinReal    :>> measurements;
                   out attribute current : TwinReal    :>> measurements;
@@ -23,6 +23,8 @@ package Test{
                   out attribute pos     : Position    :>> measurements;
                   out attribute pos2     : Position    :>> measurements;
                   out attribute pos3     : Position    :>> measurements;
+
+                  attribute :>>deviceKey = "battery_sensor";
              }
 
             out port constPort:>>constPort{
@@ -39,7 +41,7 @@ package Test{
                 out attribute nominalVoltage   : TwinReal :>> measurements = 48;
                 out attribute defaultNetDemand : TwinReal :>> measurements = 0;
                 out attribute defaultNetSupply : TwinReal :>> measurements = DIV_real(y=defaultNetDemand, x=defaultNetDemand);
-
+                attribute :>>deviceKey = "constKey";
             }
 
              port p12 :> actuators {
@@ -48,6 +50,7 @@ package Test{
                                     attribute :>>topic = "battery/measurements";
                                 }
                  in attribute charge : TwinReal :>> commands;
+                 attribute :>>deviceKey = "actuatorKey";
              }
 
              port p13[23]:>p11;

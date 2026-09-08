@@ -19,6 +19,7 @@ import org.example.Mapping.Interfaces.TwinPort.Sensors;
 import org.example.Mapping.Interfaces.TwinStateMachine.TwinStateMachine;
 import org.example.Mapping.Interfaces.TwinStrategy.ExternalStrategy;
 import org.example.Mapping.Interfaces.TwinStrategy.Strategy;
+import org.example.Mapping.TwinExpression.TwinLiteralExpressionElements.TwinLiteralStringExpression;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -60,6 +61,7 @@ public class TestFullModelPresence extends AbstarctTest {
 		assertParent(p11, PhysicalTwin.class, Usage.class, "physicalBattery");
 
 		assertTrue(p11.getProtocol().isPresent());
+		assertTrue(((TwinLiteralStringExpression) (p11.getDeviceKeyId().getElement().getExpression().get())).getLiteralValue().equals("battery_sensor"));
 
 		List<String> attributeNames = p11.getAttributes().getCompartment().stream()
 				.map(c -> c.getElement().getName())
@@ -83,6 +85,7 @@ public class TestFullModelPresence extends AbstarctTest {
 
 	@Test
 	public void testSensorInheritanceChainIsPresent() {
+		Sensors<Usage> p11 = named(Sensors.class, Usage.class, "p11");
 		Sensors<Usage> p13 = named(Sensors.class, Usage.class, "p13");
 		Sensors<Usage> p14 = named(Sensors.class, Usage.class, "p14");
 		Sensors<Usage> p15 = named(Sensors.class, Usage.class, "p15");
@@ -94,7 +97,12 @@ public class TestFullModelPresence extends AbstarctTest {
 		assertEquals(8, p13.getAttributes().getCompartment().size());
 		assertEquals(8, p14.getAttributes().getCompartment().size());
 		assertEquals(8, p15.getAttributes().getCompartment().size());
-	}
+		assertEquals(
+				p11.getProtocol().get().getElement().getId(),
+				p13.getProtocol().get().getElement().getId()
+		);	}
+
+
 
 	@Test
 	public void testConstPortAndItsAttributesArePresent() {

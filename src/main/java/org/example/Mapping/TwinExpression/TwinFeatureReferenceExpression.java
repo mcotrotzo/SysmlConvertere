@@ -33,10 +33,7 @@ public class TwinFeatureReferenceExpression extends TwinExpression<FeatureRefere
 
 	@Override
 	public void parse(MappingContext context) throws MappingException {
-		var referent = getSysmlElement().getReferent();
-		if (referent instanceof Feature feature) {
-			TypeUtil.getSupertypesOf(feature, true).forEach(type -> System.out.println("  " + type.path() + " [" + type.getClass().getSimpleName() + "]"));
-		}
+
 		target = context.mapReference(getSysmlElement().getReferent(), rawClassOf(MappedElement.class));
 
 	}

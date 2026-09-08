@@ -47,7 +47,6 @@ public class TwinAttributeHasToSpecialiced extends GenerelRules {
 		boolean hasRedefinition = !attribute.getOwnedRedefinition().isEmpty();
 
 		if (!hasExplicitType && !hasSubsetting && !hasRedefinition) {
-			System.out.println(attribute);
 			throw new MappingException("Attribute '%s' is freestanding and cannot be mapped.".formatted(attribute.getQualifiedName()));
 		}
 	}
