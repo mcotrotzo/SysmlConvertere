@@ -25,7 +25,7 @@ public class TestTopLevel extends AbstarctTest {
 	@Test
 	public void testBatteryTwinInterface() {
 
-		assertAmount(Twin.class, Definition.class, 2);
+		assertAmount(Twin.class, Definition.class, 3);
 		Twin<Definition> battery = named(Twin.class, Definition.class, "Battery");
 
 		assertEquals("Battery", battery.getName());

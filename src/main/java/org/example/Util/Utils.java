@@ -5,9 +5,13 @@ import lombok.Setter;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.example.Containers.ContainerManager;
 import org.example.ElemWithMult;
 import org.example.LoadedResources;
 import org.example.Mapping.Interfaces.TwinFunction.Definition.BaseFunctionKind;
+import org.example.Mapping.NewVersion.MappingContext;
+import org.example.Mapping.NewVersion.MappingException;
+import org.example.Mapping.TwinExpression.TwinFeatureChainExpression;
 import org.example.UtilClasses.RedefinitionGraph;
 import org.example.UtilClasses.SpecialicationGraph;
 import org.omg.sysml.lang.sysml.*;
@@ -38,6 +42,9 @@ public class Utils {
 		this.rootElement = loadedResources.rootElement();
 		initLibraryElements();
 		collectAllUserElements();
+		for (Element element : cachedElements) {
+			System.out.println("Path: " +element.path()+ "Class: " + element.getClass().getSimpleName());
+		}
 	}
 
 	public static ElemWithMult getMultiplicityRange(Type type) {

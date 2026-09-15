@@ -64,6 +64,7 @@ public final class MappingContext {
 		Collection<Package> elements = utils.collect(Package.class);
 
 		parseAllPackages(elements);
+
 		resolveParents();
 		resolveRoles();
 		postParse();
@@ -98,6 +99,13 @@ public final class MappingContext {
 			MappedNamespaceElement<?, ?> mapped = map(element, null);
 
 			roots.add(mapped);
+		}
+
+		for(Classifier classifier : utils.collect(Classifier.class)) {
+
+			MappedNamespaceElement<?, ?> mapped = map(classifier, null);
+			roots.add(mapped);
+
 		}
 		return roots;
 	}

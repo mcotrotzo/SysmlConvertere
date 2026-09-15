@@ -34,7 +34,7 @@ public class TestFullModelPresence extends AbstarctTest {
 
 	@Test
 	public void testBatteryTwinIsPresent() {
-		assertAmount(Twin.class, Definition.class, 2);
+		assertAmount(Twin.class, Definition.class, 3);
 
 		Twin<Definition> battery = named(Twin.class, Definition.class, "Battery");
 		assertNotNull(battery.getId());
@@ -531,7 +531,7 @@ public class TestFullModelPresence extends AbstarctTest {
 		assertNotNull(descriptiveBattery.getId());
 
 		assertEquals(
-				3,
+				4,
 				descriptiveBattery.getDerivedAttributes()
 						.getCompartment()
 						.size()

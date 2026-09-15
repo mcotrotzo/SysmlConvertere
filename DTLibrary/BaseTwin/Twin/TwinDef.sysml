@@ -60,7 +60,7 @@ library package TwinDefLibrary {
     }
 
     part def FederatedTwin{
-       action federatedLinks : FederatedLinkFlow[0..*];
+       flow federatedLinks : FederatedLinkFlow[0..*];
     }
 
     
