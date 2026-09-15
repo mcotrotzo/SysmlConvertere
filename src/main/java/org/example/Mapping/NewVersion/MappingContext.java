@@ -3,10 +3,7 @@ package org.example.Mapping.NewVersion;
 import lombok.Getter;
 import org.example.Containers.ContainerManager;
 import org.example.Mapping.Interfaces.Base.Model;
-import org.example.Mapping.Interfaces.Base.TwinDefLibrary;
 import org.example.Mapping.Interfaces.Base.TypeKind.Usage;
-import org.example.Mapping.Interfaces.Base.UserLibrary;
-import org.example.Mapping.Interfaces.TwinAttribute.BaseTwinAttribute.Role;
 import org.example.Mapping.Interfaces.TwinEnumPackage.TwinEnum;
 import org.example.Mapping.NewVersion.Abstract.CompartmentContainerMapped;
 import org.example.Mapping.NewVersion.Abstract.CompartmentMapped;
@@ -16,11 +13,9 @@ import org.example.Mapping.NewVersion.NameSpace.NameSpaceImport.ImportMapped;
 import org.example.Mapping.NewVersion.NameSpace.NameSpacePackage.MappedNamespaceElement;
 import org.example.Mapping.NewVersion.NameSpace.NameSpacePackage.PackageElementType;
 import org.example.Mapping.TwinAttributeMapped.BaseTwinAttributeMapped.Definition.TwinAttributeMapped;
-import org.example.Util.LibraryNameSpaces;
 import org.example.Util.Utils;
 import org.omg.sysml.lang.sysml.*;
 import org.omg.sysml.lang.sysml.Package;
-import org.omg.sysml.util.FeatureUtil;
 import org.omg.sysml.util.TypeUtil;
 
 import java.lang.Class;
@@ -110,7 +105,6 @@ public final class MappingContext {
 	public MappedNamespaceElement<?, ?> map(Element element, MappedNamespaceElement<?, ?> owner) throws MappingException {
 
 		Objects.requireNonNull(element, "element");
-
 
 		MappedNamespaceElement<?, ?> existing = mappedElements.get(element);
 		if (existing != null) {

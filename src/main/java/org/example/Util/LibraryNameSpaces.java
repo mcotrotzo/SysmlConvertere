@@ -7,6 +7,9 @@ public enum LibraryNameSpaces {
 	// ========================================================================
 
 	TWIN("TwinDefLibrary::Twin"),
+	FEDERATION_TWIN("TwinDefLibrary::FederatedTwin"),
+	FEDERATION_LINK_FLOW("TwinActionLibrary::FederatedLinkFlow"),
+	FEDERATION_LINK_TYPE("TwinEnumLibrary::FederatedLinkType"),
 
 	PHYSICAL_TWIN("TwinDefLibrary::PhysicalTwin"), DESCRIPTIVE_MODEL("TwinDefLibrary::DescriptiveModel"), PREDICTIVE_MODEL("TwinDefLibrary::PredictiveModel"), PRESCRIPTIVE_MODEL("TwinDefLibrary::PrescriptiveModel"), SHADOW("TwinDefLibrary::Shadow"),
 	TWIN_FLOW("TwinActionLibrary::TwinFlow"),
@@ -93,7 +96,7 @@ public enum LibraryNameSpaces {
 	// User Types
 	// ========================================================================
 
-	TWIN_CUSTOM_TYPE("UserLibrary::TwinCustomType"),
+	TWIN_CUSTOM_TYPE("TwinActionLibrary::TwinCustomType"),
 
 
 	// ========================================================================

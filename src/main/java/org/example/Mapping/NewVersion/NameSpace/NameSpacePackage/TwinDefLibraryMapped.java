@@ -8,7 +8,9 @@ import org.example.Mapping.NewVersion.FullTwinMapped.TwinMapped;
 import org.example.Mapping.NewVersion.MappingContext;
 import org.example.Mapping.NewVersion.MappingException;
 import org.example.Util.LibraryPackageNames;
+import org.omg.sysml.lang.sysml.Classifier;
 import org.omg.sysml.lang.sysml.Element;
+import org.omg.sysml.lang.sysml.Feature;
 import org.omg.sysml.lang.sysml.Package;
 
 import java.util.ArrayList;
@@ -17,7 +19,7 @@ import java.util.List;
 @PackageTypeMeta
 public class TwinDefLibraryMapped extends PackageElementType implements TwinDefLibrary {
 
-	List<TwinMapped<Definition>> twins = new ArrayList<>();
+	List<TwinMapped<Usage>> twins = new ArrayList<>();
 
 	public TwinDefLibraryMapped(Package sysmlElement) {
 		super(sysmlElement);
@@ -26,12 +28,12 @@ public class TwinDefLibraryMapped extends PackageElementType implements TwinDefL
 	@Override
 	public void parse(MappingContext context) throws MappingException {
 		super.parse(context);
-		twins = context.mapOwnedNamespace(this, Element.class, rawClassOf(TwinMapped.class));
+		twins = context.mapOwnedNamespace(this, Feature.class, rawClassOf(TwinMapped.class));
 	}
 
 	@Override
 	protected List<Class<? extends PackageElementType>> getCanImport() {
-		return List.of(UserLibraryMapped.class);
+		return List.of(TwinDefLibraryMapped.class);
 	}
 
 	protected LibraryPackageNames getLibraryPackageName() {
@@ -40,7 +42,7 @@ public class TwinDefLibraryMapped extends PackageElementType implements TwinDefL
 
 
 	@Override
-	public List<Twin<Definition>> getTwins() {
+	public List<Twin<Usage>> getTwins() {
 		return new ArrayList<>(twins);
 	}
 }

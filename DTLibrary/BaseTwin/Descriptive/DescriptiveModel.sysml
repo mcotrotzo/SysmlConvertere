@@ -6,7 +6,7 @@ library package DescriptiveModelLibrary {
     private import TwinImp::*;
     private import TwinEnumLibrary::*;
    
-    private import UserLibrary::*;
+    private import TwinActionLibrary::*;
     private import PhysicalTwinLibrary::*;
     private import TwinActionLibrary::*;
     

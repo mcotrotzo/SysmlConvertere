@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 public class LowerBoundLibraryFeaturesFromUserLibraryNotThrows extends AbstarctTest {
 
 	@Override
-	public Optional<String> getTestModel() {
+	public Optional<String> getContent() {
 		return Optional.of("""
 				package Test {
 				    private import TwinLibrary::*;
@@ -24,12 +24,6 @@ public class LowerBoundLibraryFeaturesFromUserLibraryNotThrows extends AbstarctT
 				    }
 				    }
 				}
-				""");
-	}
-
-	@Override
-	public Optional<String> getUserLibrary() {
-		return Optional.of("""
 				package PositionThings {
 				    private import UserLibrary::*;
 				

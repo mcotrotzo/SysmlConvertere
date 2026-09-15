@@ -17,60 +17,37 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public abstract class AbstarctTest {
 
-	private static final String DEFAULT_TEST_MODEL_DIRECTORY = "src/test/java/TopLevelDefinitionTests/TwinModelSysml/";
-
-	private static final String DEFAULT_USER_LIBRARY_DIRECTORY = "src/test/java/TopLevelDefinitionTests/UserDefinedLibrary/";
+	private static final String DEFAULT_CONTENT_DIRECTORY = "src/test/java/TopLevelDefinitionTests/";
 
 	protected TwinDataBase result;
 
 
 	@BeforeEach
 	public void testTopLevelDefinition() throws IOException, MappingException {
-		String testModelDirectory = createModelDirectoryOrGetPath(getTestModel());
-
-		String userLibraryDirectory = createUserLibraryDirectoryOrGetPath(getUserLibrary());
-		MapperService mapperService = new MapperService(testModelDirectory, userLibraryDirectory);
+		String contentDirectory = createContentDirectoryOrGetPath(getContent());
+		MapperService mapperService = new MapperService(contentDirectory);
 
 		result = mapperService.map();
 	}
 
-	public Optional<String> getTestModel() {
-		return Optional.of(DEFAULT_TEST_MODEL_DIRECTORY);
+	public Optional<String> getContent() {
+		return Optional.of(DEFAULT_CONTENT_DIRECTORY);
 	}
 
-
-	public Optional<String> getUserLibrary() {
-		return Optional.of(DEFAULT_USER_LIBRARY_DIRECTORY);
-	}
-
-	public String createModelDirectoryOrGetPath(Optional<String> value) throws IOException {
-
-		return createDirectoryOrGetPath(value, DEFAULT_TEST_MODEL_DIRECTORY, "test-model-", "TestModel.sysml");
-	}
-
-	public String createUserLibraryDirectoryOrGetPath(Optional<String> value) throws IOException {
-
-		return createDirectoryOrGetPath(value, DEFAULT_USER_LIBRARY_DIRECTORY, "user-library-", "UserLibrary.sysml");
-	}
-
-	private String createDirectoryOrGetPath(Optional<String> value, String defaultDirectory, String tempDirectoryPrefix, String fileName) throws IOException {
-
+	private String createContentDirectoryOrGetPath(Optional<String> value) throws IOException {
 		if (value.isEmpty()) {
-			return defaultDirectory;
+			return DEFAULT_CONTENT_DIRECTORY;
 		}
 
 		String supplied = value.get();
 
 		Path existingPath = tryExistingDirectory(supplied);
-
 		if (existingPath != null) {
 			return existingPath.toString();
 		}
 
-		Path tempDirectory = Files.createTempDirectory(tempDirectoryPrefix);
-
-		Path sysmlFile = tempDirectory.resolve(fileName);
-
+		Path tempDirectory = Files.createTempDirectory("twin-content-");
+		Path sysmlFile = tempDirectory.resolve("Content.sysml");
 		Files.writeString(sysmlFile, supplied);
 
 		sysmlFile.toFile().deleteOnExit();

@@ -5,9 +5,11 @@ library package TwinActionLibrary{
     private import TwinEnumLibrary::*;
 
     action def TwinAction{
-        in attribute inputs[0..*] : TwinAttribute;
-        out attribute outputs[0..*]:TwinAttribute;
         attribute local_Attributes[0..*] : TwinAttribute;
+    }
+
+    public attribute def TwinCustomType:>TwinAttribute{
+        attribute fields[0..*] : TwinAttribute;
     }
 
     private abstract flow def TwinFlow {
@@ -63,6 +65,13 @@ library package TwinActionLibrary{
     abstract flow def PrescriptiveToPhysicalFlow:>TwinFlow {
         private part :>>tax1:PrescriptiveTaxonomy;
         private part :>>tax2:PhysicalTaxonomy;
+    }
+
+    abstract flow def FederatedLinkFlow:>TwinFlow {
+        private part :>>tax1:CloudTwinTaxonomy;
+        private part :>>tax2:CloudTwinTaxonomy;
+
+        attribute linkType[1] : FederatedLinkType;
     }
 
 

@@ -5,7 +5,7 @@ import org.omg.sysml.lang.sysml.Element;
 
 import java.util.Set;
 
-public record LoadedResources(Set<Resource> standardLibrary, Resource dtLibrary, Resource userLibrary, Resource model,
+public record LoadedResources(Set<Resource> standardLibrary, Resource dtLibrary, Resource userContent,
 							  Element rootElement) {
 	public LoadedResources {
 		standardLibrary = Set.copyOf(standardLibrary);

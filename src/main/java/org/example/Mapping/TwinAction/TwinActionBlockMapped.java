@@ -6,6 +6,7 @@ import org.example.Mapping.Interfaces.Base.TypeKind.Usage;
 import org.example.Mapping.Interfaces.TwinAction.Block;
 import org.example.Mapping.Interfaces.TwinAttribute.BaseTwinAttribute.Role;
 import org.example.Mapping.NewVersion.Abstract.CompartmentContainerMapped;
+import org.example.Mapping.NewVersion.Abstract.CompartmentMapped;
 import org.example.Mapping.NewVersion.Abstract.MappedElementType;
 import org.example.Mapping.NewVersion.MappingContext;
 import org.example.Mapping.NewVersion.MappingException;
@@ -52,17 +53,18 @@ public class TwinActionBlockMapped<T extends Type, Z extends TypeKind>
 	public void parse(MappingContext context) throws MappingException {
 		super.parse(context);
 
-		inputs = context.mapSlot(
-				this,
-				"inputs",
-				TwinAttributeMapped.getRawUsageClass()
-		);
+		for(Feature s : this.getSysmlElement().getInput()){
+			if (context.getUtils().isFromStandardLibrary(s)) continue;
+			var mapped = context.map(s, this, TwinAttributeMapped.getRawUsageClass());
+			inputs.addCompartment(context.mapCompartment(this, mapped, mapped.getOwner() != this, s.getName()));
+		}
+		for (var s : this.getSysmlElement().getOutput()){
+			if (context.getUtils().isFromStandardLibrary(s)) continue;
+			var mapped = context.map(s, this, TwinAttributeMapped.getRawUsageClass());
+			outputs.addCompartment(context.mapCompartment(this, mapped, mapped.getOwner() != this, s.getName()));
 
-		outputs = context.mapSlot(
-				this,
-				"outputs",
-				TwinAttributeMapped.getRawUsageClass()
-		);
+		}
+
 
 		localAttributes = context.mapSlot(
 				this,

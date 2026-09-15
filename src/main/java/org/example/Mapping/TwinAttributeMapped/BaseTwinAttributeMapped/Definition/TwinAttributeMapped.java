@@ -85,7 +85,7 @@ public class TwinAttributeMapped<T extends TypeKind> extends MappedElement<Type,
 	@Override
 	public Optional<Direction> getDirection() {
 		if (!(getSysmlElement() instanceof Feature feature)) return Optional.empty();
-
+		if(feature.getDirection() == null) return Optional.empty();
 		return Optional.of(switch (feature.getDirection()) {
 			case IN -> Direction.IN;
 			case OUT -> Direction.OUT;

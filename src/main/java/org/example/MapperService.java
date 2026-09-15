@@ -19,8 +19,8 @@ public class MapperService {
 	private final ContainerManager containerManager;
 	private final MappingContext mappingContext;
 
-	public MapperService(String userTwinModelPath, String userLibraryPath) {
-		ReadManager readManager = new ReadManager(userTwinModelPath, userLibraryPath);
+	public MapperService(String userContent) {
+		ReadManager readManager = new ReadManager(userContent);
 		Utils utils = new Utils(readManager.getLoadedResources());
 		this.utilsManager = utils;
 		this.containerManager = new ContainerManager(utilsManager);

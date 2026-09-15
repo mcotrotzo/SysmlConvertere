@@ -7,5 +7,6 @@ import org.example.Mapping.Interfaces.FullTwin.Twin;
 import java.util.List;
 
 public interface TwinDefLibrary extends Package {
-	List<Twin<Definition>> getTwins();
+	List<Twin<Usage>> getTwins();
+
 }

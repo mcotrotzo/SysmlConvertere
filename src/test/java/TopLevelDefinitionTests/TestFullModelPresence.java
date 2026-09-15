@@ -5,11 +5,14 @@ import org.example.Mapping.Interfaces.Base.TypeKind.Usage;
 import org.example.Mapping.Interfaces.BaseTaxonomy.*;
 import org.example.Mapping.Interfaces.DataBase.Database;
 import org.example.Mapping.Interfaces.DataBase.RelationalDatabase;
+import org.example.Mapping.Interfaces.FederationTwin.FederationTwin;
 import org.example.Mapping.Interfaces.FullTwin.Twin;
 import org.example.Mapping.Interfaces.TwinAction.Action;
 import org.example.Mapping.Interfaces.TwinAttribute.BaseTwinAttribute.TwinAttribute;
 import org.example.Mapping.Interfaces.TwinAttribute.CustomType.CustomType;
 import org.example.Mapping.Interfaces.TwinEnumPackage.CustomStrategyType;
+import org.example.Mapping.Interfaces.TwinEnumPackage.EnumFederationLink;
+import org.example.Mapping.Interfaces.TwinFlow.FederationFlow;
 import org.example.Mapping.Interfaces.TwinFlow.Flow;
 import org.example.Mapping.Interfaces.TwinFlow.QueryFlow;
 import org.example.Mapping.Interfaces.TwinFunction.Definition.CustomCalculation;
@@ -81,6 +84,177 @@ public class TestFullModelPresence extends AbstarctTest {
 
 		CustomType<Usage> pos = named(CustomType.class, Usage.class, "pos");
 		assertEquals(3, pos.getFields().getCompartment().size());
+	}
+	@Test
+	public void testDescriptiveFlowReferencesPointToCorrectCompartments() {
+		DescriptiveModel<Usage> descriptiveBattery =
+				named(
+						DescriptiveModel.class,
+						Usage.class,
+						"descriptiveBattery"
+				);
+
+		List<? extends Flow<Usage>> flows =
+				descriptiveBattery.getDescriptiveFlows()
+						.getCompartment()
+						.stream()
+						.map(c -> c.getElement())
+						.toList();
+
+		assertEquals(3, flows.size());
+
+		assertTrue(
+				flows.stream().allMatch(flow -> {
+					var source = flow.getSource().getReferent();
+					var target = flow.getTarget().getReferent();
+
+					String sourceName = source.getElement().getName();
+					String sourceParent =
+							source.getParent().orElseThrow().getName();
+
+					String targetName = target.getElement().getName();
+					String targetParent =
+							target.getParent().orElseThrow().getName();
+
+					if (sourceName.equals("res")) {
+						return sourceParent.equals("temp30")
+								&& targetName.equals("temps")
+								&& targetParent.equals("avgTemp");
+					}
+
+					if (sourceName.equals("avgTemp")) {
+						return sourceParent.equals("avgTemp")
+								&& targetName.equals("avgTemperature")
+								&& targetParent.equals("LLM_Request");
+					}
+
+					if (sourceName.equals("soc")) {
+						return sourceParent.equals("soc")
+								&& targetName.equals("soc")
+								&& targetParent.equals("LLM_Request");
+					}
+
+					return false;
+				})
+		);
+	}
+
+	@Test
+	public void testPhysicalFlowReferencesPointToCorrectCompartments() {
+		PhysicalTwin<Usage> physicalBattery =
+				named(PhysicalTwin.class, Usage.class, "physicalBattery");
+
+		List<? extends Flow<Usage>> flows =
+				physicalBattery.getPhysicalFlows()
+						.getCompartment()
+						.stream()
+						.map(c -> c.getElement())
+						.toList();
+
+		assertEquals(3, flows.size());
+
+		assertTrue(
+				flows.stream().allMatch(flow -> {
+					var source = flow.getSource().getReferent();
+					var target = flow.getTarget().getReferent();
+
+					String sourceName = source.getElement().getName();
+					String sourceParent =
+							source.getParent().orElseThrow().getName();
+
+					String targetName = target.getElement().getName();
+					String targetParent =
+							target.getParent().orElseThrow().getName();
+
+					if (sourceName.equals("temp")) {
+						return sourceParent.equals("p13")
+								&& targetName.equals("temp")
+								&& targetParent.equals("cm1")
+								&& source.isInherited();
+					}
+
+					if (sourceName.equals("plug")) {
+						return sourceParent.equals("p11")
+								&& targetName.equals("plug")
+								&& targetParent.equals("cm1");
+					}
+
+					if (sourceName.equals("maxCharge")) {
+						return sourceParent.equals("constPort")
+								&& targetName.equals("maxCharge")
+								&& targetParent.equals("cm1");
+					}
+
+					return false;
+				})
+		);
+	}
+
+	@Test
+	public void testQueryFlowReferencesPointToCorrectCompartments() {
+		Twin<Definition> battery =
+				named(Twin.class, Definition.class, "Battery");
+
+		List<? extends QueryFlow<Usage>> flows =
+				battery.getQueryFlows()
+						.getCompartment()
+						.stream()
+						.map(c -> c.getElement())
+						.toList();
+
+		assertEquals(6, flows.size());
+
+		assertTrue(
+				flows.stream().allMatch(flow -> {
+					var source = flow.getSource().getReferent();
+					var target = flow.getTarget().getReferent();
+
+					String sourceName = source.getElement().getName();
+					String sourceParent =
+							source.getParent().orElseThrow().getName();
+
+					String targetName = target.getElement().getName();
+					String targetParent =
+							target.getParent().orElseThrow().getName();
+
+					if ("testflow".equals(flow.getName())) {
+						return sourceName.equals("voltage")
+								&& sourceParent.equals("p11")
+								&& targetName.equals("voltage")
+								&& targetParent.equals("soc2")
+								&& target.isInherited();
+					}
+
+					if (sourceName.equals("nominalVoltage")) {
+						return sourceParent.equals("constPort")
+								&& targetName.equals("nominalVoltage")
+								&& targetParent.equals("soc");
+					}
+
+					if (sourceName.equals("current")) {
+						return sourceParent.equals("p11")
+								&& targetName.equals("current")
+								&& targetParent.equals("LLM_Request");
+					}
+
+					if (sourceName.equals("temp")) {
+						return sourceParent.equals("p11")
+								&& targetName.equals("temps")
+								&& targetParent.equals("temp30");
+					}
+
+					if (sourceName.equals("maxCharge")) {
+						return sourceParent.equals("constPort")
+								&& targetName.equals("maxCharge")
+								&& (
+								targetParent.equals("chargeStrategyExternal")
+										|| targetParent.equals("chargeStrategyInternal")
+						);
+					}
+
+					return false;
+				})
+		);
 	}
 
 	@Test
@@ -936,6 +1110,80 @@ public class TestFullModelPresence extends AbstarctTest {
 
 		assertTrue(inputNames.contains("x"));
 		assertTrue(inputNames.contains("y"));
+
+		assertFalse(
+				inheritedOf(avg2, "x"),
+				"'x' should not be inherited"
+		);
+		assertFalse(
+				inheritedOf(avg2, "y"),
+				"'y' should not be inherited"
+		);
+
+		assertTrue(
+				avg2.localAttributes().getCompartment().stream()
+						.anyMatch(c -> "test2".equals(c.getElement().getName())),
+				"'test2' local attribute should be present"
+		);
+		assertTrue(
+				localInheritedOf(avg2, "test2"),
+				"'test2' local attribute should be inherited"
+		);
+
+		assertTrue(
+				avg2.getOutputs().getCompartment().stream()
+						.anyMatch(c -> "avg".equals(c.getElement().getName())),
+				"return 'avg' should be in outputs"
+		);
+	}
+	@Test
+	public void testFederatedBatteryIsPresent() {
+		FederationTwin<Definition> federatedBattery =
+				named(FederationTwin.class, Definition.class, "FederatedBattery");
+
+		assertNotNull(federatedBattery.getId());
+
+		List<? extends FederationFlow<Usage>> federationFlows =
+				federatedBattery.getFederationFlows().getCompartment().stream()
+						.map(c -> c.getElement())
+						.toList();
+
+		assertEquals(1, federationFlows.size());
+
+		FederationFlow<Usage> flow = federationFlows.getFirst();
+
+
+		assertEquals("test", flow.getSource().getReferent().getName());
+		assertEquals("soc", flow.getTarget().getReferent().getName());
+
+
+		assertTrue(flow.linkType().isPresent(), "federation flow should have a linkType");
+		assertEquals(
+				EnumFederationLink.PUSH,
+				flow.linkType().get().getElement().getTwinEnum().orElseThrow(() ->
+						new AssertionError("linkType has no enum value"))
+		);
+
+
+	}
+
+	private boolean inheritedOf(CustomCalculation calc, String inputName) {
+		return calc.getInputs().getCompartment().stream()
+				.filter(c -> inputName.equals(c.getElement().getName()))
+				.findFirst()
+				.orElseThrow(() ->
+						new AssertionError("Input '" + inputName + "' not found")
+				)
+				.isInherited();
+	}
+
+	private boolean localInheritedOf(CustomCalculation calc, String name) {
+		return calc.localAttributes().getCompartment().stream()
+				.filter(c -> name.equals(c.getElement().getName()))
+				.findFirst()
+				.orElseThrow(() ->
+						new AssertionError("Local attribute '" + name + "' not found"))
+				.isInherited();
 	}
 
 	@Test

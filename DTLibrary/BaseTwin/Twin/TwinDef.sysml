@@ -9,6 +9,8 @@ library package TwinDefLibrary {
     private import TwinActionLibrary::*;
     private import TwinStrategyLibrary::*;
     private import TwinTaxonomyLibrary::*;
+    private import TwinEnumLibrary::FederatedLinkType;
+    private import TwinActionLibrary::FederatedLinkFlow;
 
 
     part def PhysicalTwin:>PhysicalTaxonomy{
@@ -39,6 +41,8 @@ library package TwinDefLibrary {
         abstract flow predictiveFlows:PredictiveFlow[0..*];
     }
 
+    
+
 
     part def Twin:>CloudTwinTaxonomy{
         part physicalTwin : PhysicalTwin[0..1];
@@ -54,5 +58,11 @@ library package TwinDefLibrary {
 
        
     }
+
+    part def FederatedTwin{
+       action federatedLinks : FederatedLinkFlow[0..*];
+    }
+
+    
     
 }

@@ -12,39 +12,33 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 public class LowerBoundOnNoneLibraryFeatures extends AbstarctTest {
 
 	@Override
-	public Optional<String> getTestModel() {
-		return Optional.of("""
-					package Test {
-					    private import TwinLibrary::*;
-					    private import PositionThings::*;
-				
-					    part def Battery :> Twin {
-					part physicalBattery :>> physicalTwin {
-					        port p11 :> sensors {
-					         c1 :>>communicationProtocol:MQTT_Protocol{
-					                                attribute :>>broker = "localhost";
-					                                attribute :>>topic = "battery/measurements";
-					                            }
-					        attribute pos[3] : Position :> measurements;
-					        }
-				}
-					    }
-					}
-				""");
-	}
-
-	@Override
-	public Optional<String> getUserLibrary() {
+	public Optional<String> getContent() {
 		return Optional.of("""
 				package PositionThings {
 				    private import UserLibrary::*;
-				
+
 				    attribute def Position :> TwinCustomType {
 				        attribute x[1] : TwinInteger :> fields;
 				        attribute y[1] : TwinInteger :> fields;
 				        attribute z[1] : TwinInteger :> fields;
 				    }
-				
+				}
+
+				package Test {
+				    private import TwinLibrary::*;
+				    private import PositionThings::*;
+
+				    part def Battery :> Twin {
+				        part physicalBattery :>> physicalTwin {
+				            port p11 :> sensors {
+				                c1 :>>communicationProtocol:MQTT_Protocol{
+				                    attribute :>>broker = "localhost";
+				                    attribute :>>topic = "battery/measurements";
+				                }
+				                attribute pos[3] : Position :> measurements;
+				            }
+				        }
+				    }
 				}
 				""");
 	}

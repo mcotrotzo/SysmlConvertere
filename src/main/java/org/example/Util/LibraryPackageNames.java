@@ -3,7 +3,8 @@ package org.example.Util;
 public enum LibraryPackageNames {
 	TWIN_DEF_LIBRARY("TwinLibrary"),
 	USER_LIBRARY("UserLibrary"),
-	DT_LIBRARY("DTLibrary");
+	DT_LIBRARY("DTLibrary"),
+	FEDERATION_LIBRARY("FederationDefLibrary");
 
 	private final String namespace;
 

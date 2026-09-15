@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class LowerBoundLibraryFeaturesFromUserLibrary extends AbstarctTest {
 
 	@Override
-	public Optional<String> getTestModel() {
+	public Optional<String> getContent() {
 		return Optional.of("""
 				package Test {
 				    private import TwinLibrary::*;
@@ -31,12 +31,6 @@ public class LowerBoundLibraryFeaturesFromUserLibrary extends AbstarctTest {
 				
 				    }
 				}
-				""");
-	}
-
-	@Override
-	public Optional<String> getUserLibrary() {
-		return Optional.of("""
 				package PositionThings {
 				    private import UserLibrary::*;
 				
@@ -50,8 +44,10 @@ public class LowerBoundLibraryFeaturesFromUserLibrary extends AbstarctTest {
 				    }
 				
 				}
+				
 				""");
 	}
+
 
 	@Override
 	public void testTopLevelDefinition() throws IOException, MappingException {

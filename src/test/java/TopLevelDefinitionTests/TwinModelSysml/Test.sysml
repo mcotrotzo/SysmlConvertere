@@ -60,10 +60,10 @@ package Test{
 
              state cm1 :> controlUnit {
 
-                 in attribute temp:TwinReal :>> inputs;
-                 out attribute charge:TwinReal :>> outputs;
-                 in attribute plug:TwinBoolean :>> inputs;
-                 in attribute maxCharge:TwinReal :>>inputs;
+                 in attribute temp:TwinReal;
+                 out attribute charge:TwinReal;
+                 in attribute plug:TwinBoolean;
+                 in attribute maxCharge:TwinReal;
 
                  state idle:>>states;
                  state charging:>>states {
@@ -108,7 +108,7 @@ package Test{
              }
          }
 
-        flow :>queryFlows from physicalBattery.p11.voltage to descriptiveBattery.soc.voltage{
+        flow testflow:>queryFlows from physicalBattery.p11.voltage to descriptiveBattery.soc2.voltage{
             :>>limit = 1;
         }
         flow :>queryFlows from physicalBattery.constPort.nominalVoltage to descriptiveBattery.soc.nominalVoltage{
@@ -134,16 +134,19 @@ package Test{
         part descriptiveBattery :>> descriptiveModel {
 
              action soc :> derivedAttributes{
-                in attribute voltage:TwinReal:>>inputs;
-                out attribute soc:TwinReal:>>outputs;
-                in attribute nominalVoltage:TwinReal:>>inputs;
+                in attribute voltage:TwinReal;
+                out attribute soc:TwinReal;
+                in attribute nominalVoltage:TwinReal;
 
                 assign soc := MULT_real(DIV_real(voltage, nominalVoltage), 100);
              }
+             action soc2 :> soc{
+
+             }
 
              action temp30:>derivedAttributes{
-                in attribute temps:TwinReal[30]:>>inputs;
-                out attribute res:TwinReal[0..29]:>>outputs;
+                in attribute temps:TwinReal[30];
+                out attribute res:TwinReal[0..29];
                 assign res := temps;
              }
 
@@ -156,15 +159,15 @@ package Test{
              action LLM_Request:ExternalStrategy:> descriptiveStrategies {
                  attribute :> contentPath = "battery/LLM_Request";
                  attribute :> strategyType = CustomStrategyType::CONTAINER;
-                 in attribute avgTemperature :TwinReal:>> inputs;
-                 out attribute llmCurrent:TwinReal[1]:>> outputs;
-                 in attribute current:TwinReal:>>inputs;
-                 in attribute soc:TwinReal:>>inputs;
+                 in attribute avgTemperature :TwinReal;
+                 out attribute llmCurrent:TwinReal[1];
+                 in attribute current:TwinReal;
+                 in attribute soc:TwinReal;
              }
 
              action avgTemp :> derivedAttributes{
-                in attribute temps:TwinReal[0..*]:>>inputs;
-                out attribute avgTemp:TwinReal:>>outputs;
+                in attribute temps:TwinReal[0..*];
+                out attribute avgTemp:TwinReal;
                 assign avgTemp := Avg(temps);
              }
 
@@ -181,9 +184,9 @@ package Test{
             action consForecast:ExternalStrategy :> predictiveStrategies {
                  attribute :>strategyType = CustomStrategyType::LAMBDA;
                  attribute :>> contentPath = "battery/consForecast";
-                 in attribute avgTemperature:TwinReal:>> inputs;
-                 out attribute predicted : TwinReal :>> outputs;
-                 in attribute current:TwinReal :>>inputs;
+                 in attribute avgTemperature:TwinReal;
+                 out attribute predicted : TwinReal;
+                 in attribute current:TwinReal;
 
              }
          }
@@ -199,16 +202,16 @@ package Test{
                 attribute :> strategyType = CustomStrategyType::CONTAINER;
                 attribute :> contentPath = "battery/chargeStrategy";
 
-                in attribute predictedCurrent : TwinReal :>> inputs;
-                out attribute chargeCmd : TwinReal :>> outputs;
-                in attribute maxCharge : TwinReal :>> inputs;
+                in attribute predictedCurrent : TwinReal;
+                out attribute chargeCmd : TwinReal;
+                in attribute maxCharge : TwinReal;
             }
 
             action chargeStrategyInternal : CustomStrategy :> prescriptiveStrategies {
-                in attribute predictedCurrent : TwinReal :>> inputs;
-                out attribute chargeCmd : TwinReal :>> outputs;
-                in attribute maxCharge : TwinReal :>> inputs;
-                in attribute posTest12:Position:>>inputs;
+                in attribute predictedCurrent : TwinReal;
+                out attribute chargeCmd : TwinReal;
+                in attribute maxCharge : TwinReal;
+                in attribute posTest12:Position;
 
                 attribute test12:TwinReal:>local_Attributes = Avg(posTest12.x);
                 if LT_real(predictedCurrent, maxCharge) {
@@ -219,4 +222,19 @@ package Test{
 
          }
      }
+
+     part def PV :> Twin {
+
+
+          part pv_desc:>descriptiveModel{
+             action test:>derivedAttributes{
+                 in attribute:TwinReal;
+                 out attribute test: TwinReal;
+             }
+          }
+
+      }
+
+    part battery : Battery;
+    part pv : PV;
 }

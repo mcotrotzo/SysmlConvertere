@@ -5,8 +5,7 @@ library package TwinImp{
 
     
     calc def CustomCalculationAction :> TwinAction {
-        in attribute inputs[0..*] : TwinAttribute :>>inputs;
-        return out attribute outputs[0..*]:TwinAttribute :>>outputs;        
+               
     }
 
 }

@@ -1,5 +1,5 @@
 package PositionThings{
-    private import UserLibrary::*;
+    private import TwinLibrary::*;
     private import BatteryControlUnitLibrary::*;
 
      attribute def Position:>TwinCustomType{
@@ -13,9 +13,9 @@ package PositionThings{
         }
 
         calc def AddPosition:>CustomCalculationAction{
-            in attribute pos_a[1]:>>inputs:Position;
-            in attribute pos_b[1]:>>inputs:Position2;
-            return pos_c[1]:>>outputs:Position;
+            in attribute pos_a[1]:Position;
+            in attribute pos_b[1]:Position2;
+            return pos_c[1]:Position;
             assign pos_c := new Position(x = PLUS_int(pos_a.x, pos_b.x.x), y = PLUS_int(pos_a.y, pos_b.x.y), z = PLUS_int(pos_a.z, pos_b.x.z));
 
         }
@@ -23,14 +23,18 @@ package PositionThings{
 
 
 
-
     calc def Avg2 :> Avg {
-        in attribute x[1] :>> reals;
-        in attribute y[1] :>> reals;
+        in attribute reals[0..*]:>>reals:TwinReal;
+        in attribute x[1]:TwinInteger;
+        in attribute y[1]:TwinInteger;
+        
+        return attribute avg:TwinReal;
+       
     }
     calc def Avg:>CustomCalculationAction{
-        in attribute reals[0..*]:TwinReal:>>inputs;
-        return out attribute avg:TwinReal:>>outputs;
+        in attribute reals[0..*]:TwinReal;
+        return out attribute avg:TwinReal;
+        attribute test2 :>local_Attributes:TwinBoolean;
 
         action test{
             for value:TwinReal in reals{
@@ -41,7 +45,7 @@ package PositionThings{
             else{
                 while EQ_real(SIZE_seq(reals), 0){
                     assign avg := 0;
-                    action test:TwinAction;
+                    action test;
                 }
                 assign avg := 0;
 

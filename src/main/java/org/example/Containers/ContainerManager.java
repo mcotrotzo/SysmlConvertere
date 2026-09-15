@@ -167,14 +167,9 @@ public final class ContainerManager {
 			mappedClass = TwinDefLibraryMapped.class;
 		}
 
-		else if(imports(sysmlPackage, LibraryPackageNames.USER_LIBRARY)){
-			mappedClass = UserLibraryMapped.class;
-		}
 		else {
 			mappedClass = LibraryPackagesMapped.class;
 		}
-
-
 
 		Constructor<?> constructor =
 				findCompatibleConstructor(
@@ -184,7 +179,7 @@ public final class ContainerManager {
 
 		if (constructor == null) {
 			throw new MappingException(
-					"No compatible package constructor found for '%s' (%s) using %s."
+					"No compatible package constructor found for '%s' (%s) using %s. "
 							.formatted(
 									safeName(sysmlPackage),
 									sysmlPackage.getClass().getSimpleName(),
@@ -249,7 +244,7 @@ public final class ContainerManager {
 			throw new MappingException("No library mapper found for DT library element '%s' (%s)".formatted(sysmlElement.getQualifiedName(), sysmlElement.getClass().getSimpleName()));
 		}
 
-		throw new NoMappedElementException("No mapped constructor found for '%s' (%s).".formatted(safeName(sysmlElement), sysmlElement.getClass().getSimpleName()));
+		throw new NoMappedElementException("No mapped constructor found for '%s' (%s) with path %s.".formatted(safeName(sysmlElement), sysmlElement.getClass().getSimpleName(),sysmlElement.path()));
 	}
 
 

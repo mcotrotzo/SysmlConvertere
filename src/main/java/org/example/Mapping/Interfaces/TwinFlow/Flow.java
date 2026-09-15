@@ -14,7 +14,6 @@ public interface Flow<T extends TypeKind> extends Type<T> {
 
 	Compartment<? extends Taxonomy<Usage>> targetContexts();
 
-	Reference<? extends TwinAttribute<Usage>> getSource();
-
-	Reference<? extends TwinAttribute<Usage>> getTarget();
+	Reference<? extends Compartment<? extends TwinAttribute<Usage>>> getSource();
+	Reference<? extends Compartment<? extends TwinAttribute<Usage>>> getTarget();
 }

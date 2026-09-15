@@ -21,4 +21,13 @@ library package TwinEnumLibrary{
         LAMBDA;
     }
 
+    public enum def FederatedLinkType{
+        PUSH;
+        PULL;
+        SHARED_MEMORY;
+        PUBSUB;
+        NEGOTIATION;
+
+    }
+
 }
