@@ -49,7 +49,7 @@ public class TestTopLevel extends AbstarctTest {
 		assertEquals(1, physical.getControlUnits().getCompartment().size());
 		assertEquals(9, physical.getConstPort().getCompartment().getFirst().getElement().getAttributes().getCompartment().size());
 
-		assertEquals(3, descriptive.getDerivedAttributes().getCompartment().size());
+		assertEquals(4, descriptive.getDerivedAttributes().getCompartment().size());
 		assertEquals(1, descriptive.getDescriptiveStateMachines().getCompartment().size());
 		assertEquals(1, descriptive.getDescriptiveStrategies().getCompartment().size());
 
@@ -131,7 +131,7 @@ public class TestTopLevel extends AbstarctTest {
 
 
 		assertAmount(QueryFlow.class, Definition.class, 1);
-		assertAmount(Flow.class, Definition.class, 10);
+		assertAmount(Flow.class, Definition.class, 11);
 
 		Set<Strategy<Definition>> strategies = result.get(Strategy.class, Definition.class);
 		Set<Strategy<Usage>> usages = result.get(Strategy.class, Usage.class);

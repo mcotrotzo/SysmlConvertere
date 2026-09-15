@@ -42,9 +42,6 @@ public class Utils {
 		this.rootElement = loadedResources.rootElement();
 		initLibraryElements();
 		collectAllUserElements();
-		for (Element element : cachedElements) {
-			System.out.println("Path: " +element.path()+ "Class: " + element.getClass().getSimpleName());
-		}
 	}
 
 	public static ElemWithMult getMultiplicityRange(Type type) {

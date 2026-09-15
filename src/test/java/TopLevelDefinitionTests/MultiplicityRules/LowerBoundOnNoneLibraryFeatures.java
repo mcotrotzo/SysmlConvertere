@@ -15,7 +15,7 @@ public class LowerBoundOnNoneLibraryFeatures extends AbstarctTest {
 	public Optional<String> getContent() {
 		return Optional.of("""
 				package PositionThings {
-				    private import UserLibrary::*;
+				    private import TwinLibrary::*;
 
 				    attribute def Position :> TwinCustomType {
 				        attribute x[1] : TwinInteger :> fields;
@@ -35,6 +35,7 @@ public class LowerBoundOnNoneLibraryFeatures extends AbstarctTest {
 				                    attribute :>>broker = "localhost";
 				                    attribute :>>topic = "battery/measurements";
 				                }
+				                attribute :>>deviceKey = "actuatorKey";
 				                attribute pos[3] : Position :> measurements;
 				            }
 				        }

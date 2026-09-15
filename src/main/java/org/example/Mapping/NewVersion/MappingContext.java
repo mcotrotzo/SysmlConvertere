@@ -16,6 +16,7 @@ import org.example.Mapping.TwinAttributeMapped.BaseTwinAttributeMapped.Definitio
 import org.example.Util.Utils;
 import org.omg.sysml.lang.sysml.*;
 import org.omg.sysml.lang.sysml.Package;
+import org.omg.sysml.util.FeatureUtil;
 import org.omg.sysml.util.TypeUtil;
 
 import java.lang.Class;
@@ -439,7 +440,6 @@ public final class MappingContext {
 	}
 
 	public <S extends Element, T> List<T> mapOwnedNamespace(MappedNamespaceElement<?, ?> mappedOwner, Class<S> sysmlMetaclass, Class<T> expectedClass) throws MappingException {
-
 
 
 		List<T> result = new ArrayList<>();

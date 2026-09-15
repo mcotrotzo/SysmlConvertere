@@ -32,7 +32,7 @@ public class LowerBoundLibraryFeaturesFromUserLibrary extends AbstarctTest {
 				    }
 				}
 				package PositionThings {
-				    private import UserLibrary::*;
+				    private import TwinLibrary::*;
 				
 					port def P11:>Sensor{
 					:>> communicationProtocol:MQTT_Protocol;

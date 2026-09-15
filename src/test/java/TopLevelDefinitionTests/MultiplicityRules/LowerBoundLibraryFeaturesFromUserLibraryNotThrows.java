@@ -25,13 +25,14 @@ public class LowerBoundLibraryFeaturesFromUserLibraryNotThrows extends AbstarctT
 				    }
 				}
 				package PositionThings {
-				    private import UserLibrary::*;
+				    private import TwinLibrary::*;
 				
 					port def P11:>Sensor{
 					:>> communicationProtocol:MQTT_Protocol{
 						:>>broker;
 						:>>topic;
 					}
+					attribute :>>deviceKey = "actuatorKey";
 					}
 				    attribute def Position :> TwinCustomType {
 				        attribute x[1] : TwinInteger :> fields;

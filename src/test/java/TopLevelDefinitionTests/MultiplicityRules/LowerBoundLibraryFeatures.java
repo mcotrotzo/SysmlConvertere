@@ -32,7 +32,7 @@ public class LowerBoundLibraryFeatures extends AbstarctTest {
 				}
 				
 				package PositionThings {
-				    private import UserLibrary::*;
+				    private import TwinLibrary::*;
 				
 				    attribute def Position :> TwinCustomType {
 				        attribute x[1] : TwinInteger :> fields;
