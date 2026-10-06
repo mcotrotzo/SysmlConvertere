@@ -5,8 +5,7 @@ Java object model.
 
 The mapper loads the Twin model, the user library, the bundled Digital
 Twin library, and the SysML standard libraries. The public result is a
-`TwinDataBase` containing mapped model elements and contextual
-`Compartment` objects.
+`TwinDataBase` containing the mapped model elements.
 
 For modeling rules and SysML examples, see `MODELING.md`.
 
@@ -62,153 +61,100 @@ downloaded separately.
 ## Usage
 
 ```java
-MapperService mapperService = new MapperService(
-        "PathToYourTwinDirectory",
-        "PathToYourCustomLibraryDirectory"
-);
+MapperService mapperService = new MapperService("PathToYourModelDirectory");
 
 TwinDataBase twinDataBase = mapperService.map();
 ```
 
-Application code should normally use the interfaces under
-`org.example.Mapping.Interfaces`.
+The directory contains the Twin model and the user library files. All
+mapped classes live under `org.example.Mapping.NewVersion2.Abstract`.
+
+Errors:
+
+* SysML issues (errors and warnings) stop loading with an
+  `IllegalStateException`.
+* A violated modeling rule (multiplicity, roles, flows) makes `map()`
+  throw an `IllegalArgumentException`; semantic rule violations start
+  with `Semantic exception:`.
 
 # TwinDataBase
 
-## Get mapped objects
-
 ```java
-Set<Sensors<Usage>> sensors =
-        twinDataBase.get(Sensors.class, Usage.class);
+List<AbstractModel<?>> all = twinDataBase.getAll();
+Optional<AbstractModel<?>> element = twinDataBase.getById(id);
+Optional<SensorUsage> sensor = twinDataBase.getById(id, SensorUsage.class);
+List<SensorUsage> sensors = twinDataBase.getByType(SensorUsage.class);
 ```
 
-The current API is:
+`getByType` includes subclasses: `getByType(TwinFlowUsage.class)`
+returns every flow, `getByType(TwinAttributeUsage.class)` every
+attribute.
+
+The result also contains library elements and inherited copies. Filter
+them explicitly when only the elements written in the model are needed:
 
 ```java
-<T extends Model<Z>, Z extends TypeKindNamespace>
-Set<T> get(Class<? super T> type, Class<Z> typeKind)
+List<SensorUsage> own = twinDataBase.getByType(SensorUsage.class).stream()
+        .filter(sensor -> !sensor.isInherited() && !sensor.isLibrary())
+        .toList();
 ```
 
-`getAll()` returns every registered object, including `Compartment`
-objects and library elements:
+# Mapped elements
+
+## AbstractModel
+
+Every mapped element extends `AbstractModel`:
 
 ```java
-Set<Model<?>> all = twinDataBase.getAll();
+element.getId();          // deterministic UUID
+element.getName();
+element.getParent();      // Optional, empty for top-level elements
+element.isInherited();
+element.isLibrary();
+element.getSysmlElement();
 ```
 
-Every `Model` exposes `isLibraryElement()`. Therefore application code
-can filter library objects explicitly:
+## Identity, copies and inheritance
+
+An element is mapped once per owner. The id is derived from the SysML
+path of the element and, below an owner, from the owner's id
+(`owner.id | path`). The same element therefore gives
+
+* the same instance below the same owner, and
+* a separate instance (a copy) below another owner.
+
+Example: `port p13 :> p11` inherits `temp` from `p11`. `p11.getMeasurements()`
+holds the original `temp`, `p13.getMeasurements()` its own copy with
+`getParent() == p13`. Likewise `part battery : Battery` holds copies of
+everything defined in `Battery`.
+
+`isInherited()` is `true` for a copy: the element does not lie inside
+its owner in the model, or its owner is a copy itself.
+
+Definitions are mapped without owner and exist once. Top-level elements
+have no parent; packages are not mapped.
+
+Library definitions are mapped, but they do not fill their slots.
+Library usages (e.g. the `sensors` feature of `PhysicalTwin`) are not
+mapped.
+
+## Usage and Definition
 
 ```java
-Set<Model<?>> modelOnly = twinDataBase.getAll().stream()
-        .filter(abstractModel -> !abstractModel.isLibraryElement())
-        .collect(java.util.stream.Collectors.toSet());
+usage.getDefinition();       // typed, e.g. SensorDefinition for a SensorUsage
+usage.getDirection();        // Optional<Direction>
+usage.getMultiplicity();     // ElemWithMult
+usage.getSpecializations();  // usages this usage subsets, e.g. p13 -> [p11]
+
+definition.getSuperDefinitions(); // direct super definitions
 ```
 
-The same property can be used after a typed `get(...)` call.
-
-## Lookup and references
-
-```java
-Model<?> model = twinDataBase.get(id);
-```
-
-```java
-TwinAttribute<?> attribute =
-        twinDataBase.getByReference(reference, TwinAttribute.class);
-```
-
-`Reference<T>` exposes both `getReferent()` and `getTargetId()`.
-
-## Available mapped classes
-
-```java
-Set<Class<Model<?>>> types = twinDataBase.getAllTypes();
-```
-
-## Specialization children
-
-```java
-List<Model<Usage>> children =
-        twinDataBase.getSpecializationChildren(abstractModel);
-```
-
-The method returns mapped usage elements whose SysML type specializes
-the supplied usage.
-
-## Multiplicity
-
-```java
-ElemWithMult multiplicity = twinDataBase.getMultiplicity(abstractModel);
-```
-
-This exposes the multiplicity range of a mapped usage.
-
-## Compartments
-
-A mapped `Type<Usage>` represents the SysML usage itself. A
-`Compartment<T>` represents that usage in one concrete mapped
-parent/context.
-
-For example, a feature `x` may be the same mapped attribute definition
-while occurring under a particular `Position` usage. The compartment
-preserves that contextual occurrence.
-
-```java
-Compartment<TwinAttribute<Usage>> compartment =
-        twinDataBase.getCompartment(parent, attribute);
-```
-
-A compartment exposes:
-
-```java
-compartment.getElement();
-compartment.getParent();
-compartment.isInherited();
-```
-
-Its identity is based on the pair `(parent, abstractModel)`. This matters for
-nested feature chains where the final attribute alone is not enough to
-identify the concrete occurrence.
-
-# Core interfaces
-
-## Model
-
-All mapped public objects derive from `Model`.
-
-```java
-model.getId();
-model.getDeterministicId();
-model.getName();
-model.getKind();
-model.getParent();
-model.path();
-model.getTaxonomy();
-model.isLibraryElement();
-```
-
-`getId()` is the runtime identity. `getDeterministicId()` is derived
-from the SysML path and is stable for the same model structure.
-
-## Type
-
-`Type<T>` extends `Model<T>` and represents mapped SysML types/usages.
-It provides type relationships such as specialization and the definition
-of a usage.
-
-## Package and libraries
-
-The namespace API contains `Package`, `UserLibrary`, `TwinDefLibrary`,
-`DTLibrary`, `NameSpace`, and `Import`.
-
-`UserLibrary` exposes mapped user definitions, including custom
-calculations, base Twin attribute definitions, custom types, and
-query-flow definitions.
+Standard-library types (e.g. `ScalarValues::Real`) are not set as the
+definition of a usage.
 
 # Twin structure and taxonomies
 
-`Twin` exposes the top-level taxonomy compartments:
+`TwinDefinition` / `TwinUsage`:
 
 ```java
 twin.getPhysicalTwin();
@@ -216,11 +162,7 @@ twin.getShadow();
 twin.getDescriptiveModel();
 twin.getPredictiveModel();
 twin.getPrescriptiveModel();
-```
 
-It also exposes the cross-taxonomy flows:
-
-```java
 twin.getQueryFlows();
 twin.getDescriptiveToPredictiveFlows();
 twin.getDescriptiveToPrescriptiveFlows();
@@ -228,9 +170,7 @@ twin.getPredictiveToPrescriptiveFlows();
 twin.getPrescriptiveToPhysicalFlows();
 ```
 
-The taxonomy interfaces are `Taxonomy`, `PhysicalTaxonomy`,
-`CloudTwinTaxonomy`, `DescriptiveTaxonomy`, `PredictiveTaxonomy`,
-`PrescriptiveTaxonomy`, and `ShadowTaxonomy`.
+`FederationTwinDefinition` exposes `getFederationFlows()`.
 
 ## PhysicalTwin
 
@@ -238,8 +178,8 @@ The taxonomy interfaces are `Taxonomy`, `PhysicalTaxonomy`,
 physicalTwin.getSensors();
 physicalTwin.getActuators();
 physicalTwin.getControlUnits();
+physicalTwin.getConstPorts();
 physicalTwin.getPhysicalFlows();
-physicalTwin.getConstPort();
 ```
 
 ## Shadow
@@ -257,246 +197,159 @@ descriptiveModel.getDescriptiveStrategies();
 descriptiveModel.getDescriptiveFlows();
 ```
 
-`derivedAttributes` are actions in the current model, not standalone
-Twin attributes.
-
-## PredictiveModel
+## PredictiveModel / PrescriptiveModel
 
 ```java
 predictiveModel.getPredictiveStrategies();
 predictiveModel.getPredictiveFlows();
-```
 
-## PrescriptiveModel
-
-```java
 prescriptiveModel.getPrescriptiveStrategies();
 prescriptiveModel.getPrescriptiveFlows();
 ```
 
-# Ports and attributes
+# Ports and protocols
 
-`TwinPort` exposes:
-
-```java
-port.getProtocol();
-port.getAttributes();
-```
-
-`Sensors`, `Actuators`, and `ConstPort` specialize `TwinPort`.
-
-Protocols currently include `HTTPProtocol` and `MQTTProtocol`. HTTP
-exposes URL compartments; MQTT exposes topic and broker compartments.
-
-`TwinAttribute` exposes:
+All ports (`SensorUsage`, `ActuatorUsage`, `ConstPortUsage`):
 
 ```java
-attribute.getDirection();
-attribute.getExpression();
-attribute.getRoles();
+port.getProtocol();   // Optional
+port.getDeviceKey();
 ```
 
-Directions are represented by `Direction`. Current roles are:
-
-```text
-SENSOR
-ACTUATOR
-CONST
-LOCAL
-ACTION
-CUSTOM_TYPE_MEMBER
-FOR_LOOP_VARIABLE
+```java
+sensor.getMeasurements();
+actuator.getCommands();
+constPort.getMeasurements();
 ```
 
-Sensor attributes receive `SENSOR`, actuator attributes receive
-`ACTUATOR`, const-port attributes receive `CONST`, action inputs and
-outputs receive `ACTION`, action-local attributes receive `LOCAL`,
-custom-type fields receive `CUSTOM_TYPE_MEMBER`, and for-loop variables
-receive `FOR_LOOP_VARIABLE`.
+Protocols: `MqttProtocolUsage` (`getBroker()`, `getTopic()`) and
+`HttpProtocolUsage` (`getUrl()`).
 
-Scalar interfaces are `TwinBaseBoolean`, `TwinBaseInteger`,
-`TwinBaseReal`, and `TwinBaseString`. `CustomType` exposes its field
-compartments.
+# Attributes
+
+Scalar attributes: `TwinAttributeRealUsage`, `TwinAttributeIntegerUsage`,
+`TwinAttributeBooleanUsage`, `TwinAttributeStringUsage`, with their
+definitions `TwinAttributeRealDefinition` etc. `TwinBoolean` is an alias
+of `ScalarValues::Boolean`, so `new TwinBoolean(true)` constructs a
+`TwinAttributeBooleanDefinition`.
+
+Custom types: `CustomTypeUsage` / `CustomTypeDefinition` with
+`getFields()`.
+
+Every `TwinAttributeUsage` exposes:
+
+```java
+attribute.getExpression();  // Optional
+attribute.getRoles();       // Set<Role>
+attribute.getTaxonomy();    // closest taxonomy above the attribute
+```
+
+Roles (`org.example.Mapping.Role`) are set by the slot the attribute
+is in:
+
+| Slot | Role |
+|---|---|
+| sensor `measurements` | `SENSOR` |
+| actuator `commands` | `ACTUATOR` |
+| const port `measurements` | `CONST` |
+| action `inputs` / `outputs` | `ACTION` |
+| action `local_Attributes` | `LOCAL` |
+| custom type `fields` | `CUSTOM_TYPE_MEMBER` |
+| for-loop variable | `FOR_LOOP_VARIABLE` |
+
+Attributes in no such slot have no role (configuration). The rules
+built on the roles are described in `MODELING.md`.
 
 # Actions
 
-`Action<T>` is the base action interface. `Block<T>` adds:
+Blocks (`TwinActionBlockUsage`, strategies, state machines, calculation
+definitions):
 
 ```java
 block.getInputs();
 block.getOutputs();
-block.localAttributes();
+block.getLocalAttributes();
 block.getActions();
 block.getSuccessions();
 ```
 
-Action inputs and outputs are therefore part of the action itself. Local
-attributes are also scoped to the action.
+| Class | Getters |
+|---|---|
+| `TwinAssignmentUsage` | `getReferent()`, `getValue()` |
+| `TwinIfElseUsage` | `getCondition()`, `getThenAction()`, `getElseAction()` |
+| `TwinForLoopUsage` | `getLoopVariable()`, `getCollection()`, `getBody()` |
+| `TwinWhileUsage` | `getCondition()`, `getUntil()`, `getBody()` |
+| `TwinSuccessionUsage` | `getTargets()` |
+| `TwinTransitionUsage` | `getSource()`, `getTarget()`, `getGuard()`, `getEffectAction()` |
 
-Supported action interfaces are:
-
-* `Assignment`: target reference and value expression.
-* `IfElse`: condition, then-action compartment, optional else-action
-  compartment.
-* `ForLoop`: loop-variable compartment, collection expression, body
-  compartment.
-* `WhileLoop`: condition, until expression, optional body compartment.
-* `Succession`: ordered/referenced action list.
-* `Transition`: source, target, guard expressions, optional effect
-  action.
-* `Block`: nested actions, successions, inputs, outputs, and local
-  attributes.
-
-State machines expose nested states, transitions, and entry/do/exit
-action compartments.
+`TwinStateMachineUsage` / `TwinStateMachineDefinition` additionally
+expose `getStates()`, `getTransitions()`, `getEntryAction()`,
+`getDoAction()` and `getExitAction()`.
 
 # Expressions
 
-The public expression API represents expressions structurally rather
-than as source strings.
+All expressions extend `TwinExpressionUsage`.
 
-Supported public forms include literals, calculation invocations,
-constructor calls, and feature references.
+| Class | Getters |
+|---|---|
+| `TwinLiteralRealUsage`, `...IntegerUsage`, `...BooleanUsage`, `...StringUsage` | `getValue()` |
+| `TwinCalculationUsage` | `getInvokeType()`, `getArguments()` |
+| `TwinConstructorUsage` | `getConstructorType()`, `getArguments()` |
+| `TwinFeatureReferenceUsage`, `TwinFeatureChainUsage` | `getTarget()` |
 
-`Calculation` exposes the called `Function` and its argument
-expressions. `ConstructorCall` exposes the constructed custom attribute
-definition and constructor arguments.
+`getInvokeType()` is a `BaseFunctionDefinition` for standard functions
+(`getCore().getFunctionKind()` gives the `BaseFunctionKind`) or a
+`CustomCalculationDefinition` for user calculations.
 
-## FeatureReference and feature chains
+## References
 
-`FeatureReference` exposes two related views:
+A reference resolves to exactly one mapped instance, not just to the
+referenced SysML feature. `getTarget()` of `pos_b.x.y` is the `y` held
+by the `x` copy held by `pos_b`, i.e. the same id as the `y` in
+`getFields()` of that `x`.
 
-```java
-reference.getChain();
-reference.getAsCompartment();
-```
-
-`getChain()` preserves the semantic chain as references to mapped usage
-elements. For:
-
-```sysml
-pos_b.x.y
-```
-
-the chain retains the traversed elements rather than flattening the
-expression to a string.
-
-`getAsCompartment()` resolves the reference to the contextual final
-occurrence. This is important because the same mapped abstractModel can occur
-under different parents.
-
-For a chain, the mapper resolves compartments pairwise. Conceptually:
-
-```text
-(parent A, feature B) -> compartment B
-(feature B, feature C) -> compartment C
-```
-
-The final compartment therefore identifies the last feature in the
-context established by the chain.
-
-A direct feature reference also resolves to its own compartment.
-
-# ExpressionRoleValidator rules
-
-The mapper validates attribute expressions and assignment expressions
-using attribute roles.
-
-For an attribute expression:
-
-* A `CONST` attribute may reference only attributes whose effective
-  referenced roles include `CONST`.
-* An attribute with no role is treated as configuration data for this
-  validation and may not contain feature references.
-* A `LOCAL` attribute may reference only `LOCAL`, `ACTION`, or
-  `FOR_LOOP_VARIABLE` attributes.
-* Attributes with other role combinations must not have an expression.
-
-For assignments:
-
-* The assignment target must have `LOCAL`, `ACTION`, or
-  `FOR_LOOP_VARIABLE`.
-* The assignment value may reference only `LOCAL`, `ACTION`, or
-  `FOR_LOOP_VARIABLE` attributes.
-
-For a feature chain, the validator collects roles from every referenced
-abstractModel in `FeatureReference.getChain()`. The rule is applied to that
-combined role set. Invocation arguments are validated recursively, so
-references inside nested calculation/invocation arguments are checked as
-well.
+A reference inside a copy points to the copy (`maxCharge` below
+`battery.physicalBattery.constPort` references the copied
+`nominalVoltage`), and a reference to an inherited feature points to the
+copy below the inheriting element (`voltage` in `soc2 :> soc`).
 
 # Flows
 
-`Flow<T>` exposes:
+All flows extend `TwinFlowUsage`:
 
 ```java
-flow.sourceContexts();
-flow.targetContexts();
-flow.getSource();
+flow.getSource();            // TwinAttributeUsage, resolved like a reference
 flow.getTarget();
+flow.getSourceTaxonomy();    // taxonomy class the source has to lie in
+flow.getTargetTaxonomy();
 ```
 
-A flow connects an output-capable source attribute to an input-capable
-target attribute.
+Kinds: `PhysicalFlowUsage`, `DescriptiveFlowUsage`,
+`PredictiveFlowUsage`, `PrescriptiveFlowUsage`, `QueryFlowUsage`,
+`DescriptiveToPredictiveFlowUsage`, `DescriptiveToPrescriptiveFlowUsage`,
+`PredictiveToPrescriptiveFlowUsage`, `PrescriptiveToPhysicalFlowUsage`,
+`FederationFlowUsage`.
 
-The mapper validates:
+`QueryFlowUsage` exposes `getSince()`, `getSinceUnit()`, `getOrderBy()`
+and `getLimit()` (each `Optional`). `FederationFlowUsage` exposes
+`getLinkType()`.
 
-* the source direction is `OUT` or `INOUT`;
-* the target direction is `IN` or `INOUT`;
-* source and target belong to the taxonomies required by the flow
-  type;
-* the source endpoint type is compatible with the target endpoint
-  type.
-
-The supported flow types are:
-
-* `PhysicalFlow`: Physical -> Physical
-* `DescriptiveFlow`: Descriptive -> Descriptive
-* `PredictiveFlow`: Predictive -> Predictive
-* `PrescriptiveFlow`: Prescriptive -> Prescriptive
-* `QueryFlow`: Physical -> Cloud
-* `DescriptiveToPredictiveFlow`: Descriptive -> Predictive
-* `DescriptiveToPrescriptiveFlow`: Descriptive -> Prescriptive
-* `PredictiveToPrescriptiveFlow`: Predictive -> Prescriptive
-* `PrescriptiveToPhysicalFlow`: Prescriptive -> Physical
-
-`QueryFlow` additionally exposes optional `since`, `sinceUnit`,
-`orderBy`, and `limit` compartments. Each of these slots may occur at
-most once.
+All flow definitions are mapped as `TwinFlowDefinition`.
 
 # Strategies
 
-`Strategy<T>` extends `Block<T>`, so strategies use the same action
-input/output/local-attribute model.
-
-`CustomStrategy` adds no public fields beyond `Strategy`.
-
-`ExternalStrategy` exposes:
-
-```java
-strategy.getContentPath();
-strategy.getStrategyType();
-```
-
-There is no trigger-configuration API in the current public interfaces.
+`TwinStrategyUsage` is a block. `CustomStrategyUsage` adds nothing,
+`ExternalStrategyUsage` exposes `getContentPath()` and
+`getStrategyType()`.
 
 # Databases
 
-`Database` exposes:
+`RelationalDatabaseUsage` and `KeyValueDatabaseUsage` expose
+`getDurationInDays()`.
 
-```java
-database.getDurationInDays();
-```
+# Enums
 
-Current database interfaces are `RelationalDatabase` and
-`KeyValueDatabase`.
-
-# Enums and functions
-
-`TwinEnum` exposes its string representation. `EnumAttribute<T>` exposes
-an optional enum value. Public enum attribute types include
-`EnumOrderBy`, `EnumTimeUnit`, and `CustomStrategyType`.
-
-Functions are represented by `Function`. `BaseFunction` additionally
-exposes `BaseFunctionKind`. `CustomCalculation` represents user-defined
-calculations.
+Enum attributes (`EnumCustomStrategyTypeUsage`, `EnumFederationLinkUsage`,
+`EnumOrderByUsage`, `EnumTimeUnitUsage`) expose `getValue()` as an
+`Optional` of the enum in `org.example.Mapping.TwinEnumPackage`. All enum
+definitions are mapped as `EnumDefinition`.

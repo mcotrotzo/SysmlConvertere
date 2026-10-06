@@ -1,6 +1,6 @@
 ## General use rules
 
-There are two user-facing zones. Which one a file belongs to is detected structurally via the import graph — no tags or
+There are two user-facing zones. Which one a file belongs to is detected structurally via the import graph: no tags or
 annotations.
 
 ### 1. TwinModel
@@ -10,8 +10,8 @@ annotations.
 3. A model of a twin starts always by exactly one subclassifing `Twin` (e.g. `part def Battery :> Twin { … }`).
 4. We allow no definitions in the model file except the entry point of point 3.
 
-The `Twin` a model subclassifies is a composite of up to five optional (`0..1`) layers — `physicalTwin`, `shadow`,
-`descriptiveModel`, `predictiveModel`, `prescriptiveModel` — connected by explicit `flow` elements. A model does not
+The `Twin` a model subclassifies is a composite of up to five optional (`0..1`) layers (`physicalTwin`, `shadow`,
+`descriptiveModel`, `predictiveModel`, `prescriptiveModel`) connected by explicit `flow` elements. A model does not
 have to use all five layers.
 
 ```sysml
@@ -67,24 +67,24 @@ part def Battery :> Twin {
 ```
 
 A port declared without redefining `sensors`/`actuators`/`constPort` (e.g. `port p12 { attribute charge; }`) is
-ignored by the mapper — only redefinitions of the library ports are considered.
+ignored by the mapper: only redefinitions of the library ports are considered.
 
 ### 2. UserLibrary
 
-1. Only definitions are allowed here — this is where users extend library elements.
+1. Only definitions are allowed here: this is where users extend library elements.
 2. A package is a UserLibrary when it imports `UserLibrary` (directly, or transitively only other UserLibraries).
-3. A UserLibrary may only import `UserLibrary` itself or other UserLibraries — never anything from the base library
+3. A UserLibrary may only import `UserLibrary` itself or other UserLibraries: never anything from the base library
    directly.
 4. Definitions are only allowed at package level, never nested inside another def.
-5. Inside def bodies only `:>>`, `:>`, and `:Type` are permitted — no nested defs.
-6. Feature-chain referencing between definitions is not allowed. A model may only import UserLibraries — nothing
+5. Inside def bodies only `:>>`, `:>`, and `:Type` are permitted: no nested defs.
+6. Feature-chain referencing between definitions is not allowed. A model may only import UserLibraries: nothing
    else.
 7. A calculation/action parameter (any feature with a direction, i.e. `in`/`out`/`inout`) may only specialize
-   another calculation/action parameter through **redefinition** (`:>>`) — plain subsetting (`:>`) on a parameter is
+   another calculation/action parameter through **redefinition** (`:>>`): plain subsetting (`:>`) on a parameter is
    rejected. This applies to every `action def`/`action usage` (custom calculations, control units, strategies,
    derived attributes, ...), not only to queries.
 8. An attribute that is only typed through the generic `TwinAttribute` (i.e. never specialized to a scalar Twin
-   type, a custom type, or a more specific library feature) cannot be mapped and is rejected — `TwinAttribute` must
+   type, a custom type, or a more specific library feature) cannot be mapped and is rejected: `TwinAttribute` must
    always be specialized.
 9. An attribute with neither an explicit type, a subsetting, nor a redefinition ("freestanding") cannot be mapped.
 
@@ -118,17 +118,17 @@ package PositionThings {
 ## Model elements
 
 The Digital Twin model is organized into five taxonomy layers, each an optional part of `Twin`:
-`PhysicalTwin`, `Shadow`, `DescriptiveModel`, `PredictiveModel`, `PrescriptiveModel`. Every abstractModel that can hold
-behavior — a control unit, a descriptive state machine, a strategy, a derived attribute, a custom calculation —
+`PhysicalTwin`, `Shadow`, `DescriptiveModel`, `PredictiveModel`, `PrescriptiveModel`. Every element that can hold
+behavior (a control unit, a descriptive state machine, a strategy, a derived attribute, a custom calculation)
 specializes the same base, `TwinAction`, which declares `inputs`, `outputs`, and `local_Attributes`.
 
 Access between layers is no longer expressed by letting one layer's actions reference another layer's attributes by
 feature chain. It is expressed by two, independently enforced mechanisms:
 
-- **`Role`-based expression validation** — governs what an attribute's own default expression, or an `assign`
+- **`Role`-based expression validation**: governs what an attribute's own default expression, or an `assign`
   action, is allowed to reference *within the same action/attribute's owning layer*. See
   [Expression role rules](#expression-role-rules) below.
-- **`Flow`s** — govern how a value crosses from one attribute to another, including across layers. A `Flow` has an
+- **`Flow`s**: govern how a value crosses from one attribute to another, including across layers. A `Flow` has an
   explicit `source` and `target` attribute reference and is declared at the point in the model where the two
   layers meet (inside a layer for intra-layer flows, at the `Twin` level for cross-layer flows).
 
@@ -169,7 +169,7 @@ flow :>physicalFlows from constPort.maxCharge to cm1.maxCharge;
 ```
 
 Inside the control unit's own actions (`assign charge := temp;`), both `charge` (role `ACTION`, an output) and
-`temp` (role `ACTION`, an input) are the control unit's *own* attributes — not the sensor/actuator directly. This is
+`temp` (role `ACTION`, an input) are the control unit's *own* attributes: not the sensor/actuator directly. This is
 what the expression validator enforces (see below): an `assign` target and value may only reference `LOCAL`,
 `ACTION`, or `FOR_LOOP_VARIABLE` attributes, never `SENSOR`, `ACTUATOR`, or `CONST` attributes directly.
 
@@ -198,7 +198,7 @@ part shadowBattery :>> shadow {
 
 | Element                                  | Description                                                                                                                                             |
 |--------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `derivedAttributes : TwinAction[0..*]`      | Computed values belonging to the descriptive model. Each is an *action* with its own `inputs`/`outputs` — not a plain bound attribute anymore.          |
+| `derivedAttributes : TwinAction[0..*]`      | Computed values belonging to the descriptive model. Each is an *action* with its own `inputs`/`outputs`, not a plain bound attribute anymore.          |
 | `descriptiveStateMachine_ : DescriptiveStateMachine[0..*]` | State machine running **in the cloud**, over shadow data reaching it through flows. It is a `TwinAction`/`Block` like a control unit. |
 | `descriptiveStrategies : Strategy[0..*]`    | Descriptive strategy, `CustomStrategy` or `ExternalStrategy`.                                                                                            |
 | `descriptiveFlows : DescriptiveFlow[0..*]`  | Wires the output of one descriptive-model action (derived attribute, strategy, ...) to the input of another, within the descriptive layer.              |
@@ -226,7 +226,7 @@ flow :>descriptiveFlows from temp30.res to avgTemp.temps;
 ```
 
 A descriptive state machine's `entry`/`do`/`exit`/transition actions may only assign to its own `LOCAL`/`ACTION`
-attributes, exactly like a control unit — it publishes a result on one of its own `outputs`, which downstream flows
+attributes, exactly like a control unit: it publishes a result on one of its own `outputs`, which downstream flows
 can then pick up.
 
 ---
@@ -252,7 +252,7 @@ action consForecast : ExternalStrategy :> predictiveStrategies {
 ```
 
 `strategyType` (`CustomStrategyType::CONTAINER` or `CustomStrategyType::LAMBDA`) and `contentPath` are plain,
-role-less configuration attributes and therefore must be literals — they cannot reference another attribute.
+role-less configuration attributes and therefore must be literals: they cannot reference another attribute.
 
 Predictive strategy inputs are fed by `descriptiveToPredictiveFlows` (declared at the `Twin` level) or by
 `queryFlows` directly from the physical layer; outputs reach the prescriptive layer through
@@ -289,7 +289,7 @@ a `prescriptiveToPhysicalFlow`, declared at the `Twin` level, connects it to the
 flow :>prescriptiveToPhysicalFlows from prescriptiveBattery.chargeStrategyInternal.chargeCmd to physicalBattery.p12.charge;
 ```
 
-An output that is not wired forward by any flow is simply not consumed anywhere — there is no separate
+An output that is not wired forward by any flow is simply not consumed anywhere: there is no separate
 "bound vs. unbound output" distinction anymore; whether an output is used is entirely a function of whether a
 `Flow` targets it.
 
@@ -297,8 +297,8 @@ An output that is not wired forward by any flow is simply not consumed anywhere 
 
 ## Cross-layer wiring: Flows
 
-All data movement between layers — what used to be either a feature-chain reference resolved "through the shadow"
-or a separate query-part usage — is now an explicit `Flow`, declared at the point where the two layers meet:
+All data movement between layers (what used to be either a feature-chain reference resolved "through the shadow"
+or a separate query-part usage) is now an explicit `Flow`, declared at the point where the two layers meet:
 
 | Flow                              | Declared in           | Connects                                          |
 |-------------------------------------|------------------------|----------------------------------------------------|
@@ -312,7 +312,7 @@ or a separate query-part usage — is now an explicit `Flow`, declared at the po
 | `predictiveToPrescriptiveFlows`     | `Twin`                 | predictive action output → prescriptive action input |
 | `prescriptiveToPhysicalFlows`       | `Twin`                 | prescriptive action output → actuator command      |
 
-`queryFlows` additionally carries history-query parameters — `since`, `sinceUnit`, `orderBy`, `limit` — all plain,
+`queryFlows` additionally carries history-query parameters (`since`, `sinceUnit`, `orderBy`, `limit`), all plain,
 role-less configuration attributes (literals only):
 
 ```sysml
@@ -322,10 +322,37 @@ flow :>queryFlows from physicalBattery.p11.temp to descriptiveBattery.temp30.tem
 ```
 
 This replaces the previous `QueryHistory`/`GroupedHistoryQuery` part usages entirely. There is no separate
-"grouped" query type anymore — the shape of the historical result follows from the multiplicity of the target
+"grouped" query type anymore: the shape of the historical result follows from the multiplicity of the target
 input attribute.
 
-`TriggerConfiguration` (time-based / event-based trigger configuration) no longer exists as a modeling abstractModel.
+`TriggerConfiguration` (time-based / event-based trigger configuration) no longer exists as a modeling element.
+
+Flow ends must use dot notation (`from p11.temp to cm1.temp`). A flow between two plain names in the same scope
+(`from res to inp`) produces the SysML warning "Flow ends should use dot notation", and every SysML issue
+(warnings included) rejects the model.
+
+Every flow is checked after mapping (`FlowRules`):
+
+- the source attribute lies in the taxonomy the flow kind expects for its source, the target attribute in the one
+  it expects for its target (the closest taxonomy above the attribute counts, e.g. `physicalBattery` for
+  `physicalBattery.p11.temp`):
+
+  | Flow kind                        | Source taxonomy | Target taxonomy |
+    |-----------------------------------|-----------------|-----------------|
+  | `physicalFlows`                   | Physical        | Physical        |
+  | `descriptiveFlows`                | Descriptive     | Descriptive     |
+  | `predictiveFlows`                 | Predictive      | Predictive      |
+  | `prescriptiveFlows`               | Prescriptive    | Prescriptive    |
+  | `queryFlows`                      | Physical        | Cloud (Descriptive, Predictive or Prescriptive) |
+  | `descriptiveToPredictiveFlows`    | Descriptive     | Predictive      |
+  | `descriptiveToPrescriptiveFlows`  | Descriptive     | Prescriptive    |
+  | `predictiveToPrescriptiveFlows`   | Predictive      | Prescriptive    |
+  | `prescriptiveToPhysicalFlows`     | Prescriptive    | Physical        |
+  | `federatedLinks`                  | any             | any             |
+
+- the source has direction `out` or `inout`, the target `in` or `inout`;
+- if both ends are typed by a user definition, the source type is the target type or specializes it
+  (`Position` cannot flow into `Position2`).
 
 ---
 
@@ -353,18 +380,19 @@ These roles are checked automatically while mapping the model:
 | Attribute's role(s)        | Its expression may reference                                   |
 |-----------------------------|-------------------------------------------------------------------|
 | `CONST`                      | only other `CONST` attributes                                    |
-| *(no role — plain config)*   | nothing — literals / constructors / calculations over literals only |
+| *(no role, plain config)*   | nothing, literals / constructors / calculations over literals only |
 | `LOCAL`                      | only `LOCAL`, `ACTION`, or `FOR_LOOP_VARIABLE` attributes         |
-| `SENSOR` / `ACTUATOR` / `CUSTOM_TYPE_MEMBER` | must not have an expression at all — pure declaration |
+| `SENSOR` / `ACTUATOR` / `CUSTOM_TYPE_MEMBER` | must not have an expression at all, pure declaration |
 
 **An `assign target := value;` action:**
 
 - `target` must have role `LOCAL`, `ACTION`, or `FOR_LOOP_VARIABLE`. You can never assign directly to a `SENSOR`,
-  `ACTUATOR`, or `CONST` attribute — those only ever change through a `Flow`.
-- `value` may only reference `LOCAL`, `ACTION`, or `FOR_LOOP_VARIABLE` attributes — same rule as the `LOCAL` case
+  `ACTUATOR`, or `CONST` attribute: those only ever change through a `Flow`.
+- `value` may only reference `LOCAL`, `ACTION`, or `FOR_LOOP_VARIABLE` attributes: same rule as the `LOCAL` case
   above.
 
-For a feature-chain expression, the check is applied to the **union of roles across the whole chain** — it passes
+For a feature-chain expression, the check is applied to the **union of roles of the referenced attribute and of
+all attributes it lies in**: it passes
 as soon as *any* link in the chain carries an allowed role, not only the last one. For example, inside a `LOCAL`
 attribute's expression, `posTest12.x` is valid: `posTest12` is an action input (`ACTION`), which alone satisfies the
 rule, even though `x` itself is a `CUSTOM_TYPE_MEMBER` (which on its own would not be allowed).
@@ -378,10 +406,10 @@ attribute test12 : TwinReal :> local_Attributes = Avg(posTest12.x);
 
 ## Access Policy Summary
 
-| Model abstractModel                | May reference in its own expression / assign             | May be written by                              |
+| Model element                | May reference in its own expression / assign             | May be written by                              |
 |-------------------------------|-------------------------------------------------------------|---------------------------------------------------|
-| `SENSOR` attribute             | n/a — never has an expression                               | the physical device only (never assigned in-model) |
-| `ACTUATOR` attribute           | n/a — never has an expression                               | a `physicalFlow` or a `prescriptiveToPhysicalFlow` |
+| `SENSOR` attribute             | n/a, never has an expression                               | the physical device only (never assigned in-model) |
+| `ACTUATOR` attribute           | n/a, never has an expression                               | a `physicalFlow` or a `prescriptiveToPhysicalFlow` |
 | `CONST` attribute              | other `CONST` attributes                                    | its own literal default only                      |
 | plain config attribute (no role) | nothing (literals only)                                  | its own literal default only                      |
 | `ACTION`/`LOCAL`/`FOR_LOOP_VARIABLE` attribute (an action's `inputs`/`outputs`/`local_Attributes`/loop variable) | other `ACTION`/`LOCAL`/`FOR_LOOP_VARIABLE` attributes in the same action | an `assign` inside the same action, or an incoming `Flow` (for `inputs`) |
@@ -411,7 +439,7 @@ Actuator
 ```
 
 A predictive action therefore cannot directly command an actuator, and a descriptive action cannot directly command
-an actuator either — reaching the actuator always requires a `prescriptiveToPhysicalFlow` out of the prescriptive
+an actuator either: reaching the actuator always requires a `prescriptiveToPhysicalFlow` out of the prescriptive
 layer. This is now structural (every attribute access is either inside one action's own `inputs`/`outputs`/`local`,
 or crosses a layer through an explicit `Flow`), not just a documented convention.
 
@@ -423,9 +451,14 @@ The following are actively enforced while mapping a model (an invalid model fail
   one `Twin` subclassification per model file, import-graph zone detection, definitions only at package level in a
   `UserLibrary`, no feature-chain referencing between UserLibrary definitions).
 - Calculation/action parameters may only specialize by redefinition (`CalcInputOutputRules`).
-- An attribute must be explicitly typed, subset, or redefined — a "freestanding" attribute, or one typed only
+- An attribute must be explicitly typed, subset, or redefined: a "freestanding" attribute, or one typed only
   through the generic `TwinAttribute`, is rejected (`TwinAttributeHasToSpecialiced`).
 - Multiplicity rules on library-derived features (lower/upper bound checks).
-- The [expression role rules](#expression-role-rules) above (`ExpressionRoleValidator`) — for every attribute
+- The [expression role rules](#expression-role-rules) above (`CheckAssignemntRules`): for every attribute
   expression and every `assign` action.
+- The flow rules under [Cross-layer wiring: Flows](#cross-layer-wiring-flows) (`FlowRules`): taxonomy, direction
+  and type of both ends of every flow.
 
+A model with SysML issues (errors and warnings) fails while loading with an `IllegalStateException`. A violation of
+one of the rules above fails `MapperService.map()` with an `IllegalArgumentException` whose message starts with
+`Semantic exception:` and names the offending attribute or flow.
