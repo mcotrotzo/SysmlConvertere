@@ -5,9 +5,6 @@ package Test{
      private import BatteryControlUnitLibrary::*;
      private import PositionThings::*;
 
-    action def Flow{
-        action g:Flow;
-    }
      part def Battery :> Twin {
 
          part physicalBattery :>> physicalTwin {

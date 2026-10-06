@@ -3,7 +3,7 @@
 `sysml-twin-mapper` maps supported SysML v2 Digital Twin models to a
 Java object model.
 
-The mapper loads the Twin model, the user library, the bundled Digital
+The mapper loads the SysML files of the model, the bundled Digital
 Twin library, and the SysML standard libraries. The public result is a
 `TwinDataBase` containing the mapped model elements.
 
@@ -66,7 +66,7 @@ MapperService mapperService = new MapperService("PathToYourModelDirectory");
 TwinDataBase twinDataBase = mapperService.map();
 ```
 
-The directory contains the Twin model and the user library files. All
+The directory contains the SysML files of the model. All
 mapped classes live under `org.example.Mapping.NewVersion2.Abstract`.
 
 Errors:
@@ -154,7 +154,7 @@ definition of a usage.
 
 # Twin structure and taxonomies
 
-`TwinDefinition` / `TwinUsage`:
+`TwinUsage` and `TwinDefinition` expose the same getters:
 
 ```java
 twin.getPhysicalTwin();

@@ -25,12 +25,12 @@ public abstract class Usage<C extends Core<? super U>, U extends Feature,D exten
 		super(sysmlElement, coreFactory, newMappe);
 		this.definitionClass = definitionClass;
 		multiplicity = newMappe.getNewUtil().getMultiplicityRange(this.getSysmlElement());
-		specializations = mapSpecializations();
 	}
 
 	@Override
 	public void fillSlots() {
 		super.fillSlots();
+		specializations = mapSpecializations();
 		List<Classifier> definitions = sysmlElement.getType().stream()
 				.filter(Classifier.class::isInstance).map(Classifier.class::cast)
 				.filter(x -> !instance.getNewUtil().isFromStandardLibrary(x)).toList();
@@ -41,7 +41,6 @@ public abstract class Usage<C extends Core<? super U>, U extends Feature,D exten
 		if (isTwinLibraryRoot(def)) {
 			return;
 		}
-		// definitions exist once: mapped without owner; a definition of another kind fails with a clear message
 		definition = instance.map(def, null, definitionClass);
 	}
 

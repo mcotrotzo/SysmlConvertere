@@ -1,18 +1,22 @@
 ## General use rules
 
-There are two user-facing zones. Which one a file belongs to is detected structurally via the import graph: no tags or
-annotations.
+Packages only organize names. The mapper does not map packages and knows no separate model or library zones:
+definitions and usages may be placed in any package and any file. Every type found in the user files is mapped;
+types at package level are mapped without owner, everything else below its owner.
 
-### 1. TwinModel
+1. Import `TwinLibrary` (and your own packages) to use their elements.
+2. A twin is described by a definition that specializes `Twin` (e.g. `part def Battery :> Twin { … }`). The
+   definition is only a template.
+3. The twins that are deployed are the **twin usages** (e.g. `part battery : Battery;`). Each usage is one twin
+   instance with its own copy of everything defined in its definition; a model may contain several of them
+   (`part battery1 : Battery; part battery2 : Battery;`). A definition without a usage is not deployed.
+4. References, assignments and flows stay inside one twin. An attribute of another twin can only be reached
+   through a federation flow (`flow :>federatedLinks ...` in a `FederatedTwin`).
+5. Use only the `TwinLibrary`, your own definitions and the standard functions and scalar types of the TwinTypeSystem.sysml
 
-1. A Twin model has to import `TwinLibrary`.
-2. A Twin model can import UserLibraries.
-3. A model of a twin starts always by exactly one subclassifing `Twin` (e.g. `part def Battery :> Twin { … }`).
-4. We allow no definitions in the model file except the entry point of point 3.
-
-The `Twin` a model subclassifies is a composite of up to five optional (`0..1`) layers (`physicalTwin`, `shadow`,
-`descriptiveModel`, `predictiveModel`, `prescriptiveModel`) connected by explicit `flow` elements. A model does not
-have to use all five layers.
+The `Twin` is a composite of up to five optional (`0..1`) layers (`physicalTwin`, `shadow`, `descriptiveModel`,
+`predictiveModel`, `prescriptiveModel`) connected by explicit `flow` elements. A model does not have to use all five
+layers.
 
 ```sysml
 part def Battery :> Twin {
@@ -69,30 +73,27 @@ part def Battery :> Twin {
 A port declared without redefining `sensors`/`actuators`/`constPort` (e.g. `port p12 { attribute charge; }`) is
 ignored by the mapper: only redefinitions of the library ports are considered.
 
-### 2. UserLibrary
+### Rules for definitions and attributes
 
-1. Only definitions are allowed here: this is where users extend library elements.
-2. A package is a UserLibrary when it imports `UserLibrary` (directly, or transitively only other UserLibraries).
-3. A UserLibrary may only import `UserLibrary` itself or other UserLibraries: never anything from the base library
-   directly.
-4. Definitions are only allowed at package level, never nested inside another def.
-5. Inside def bodies only `:>>`, `:>`, and `:Type` are permitted: no nested defs.
-6. Feature-chain referencing between definitions is not allowed. A model may only import UserLibraries: nothing
-   else.
-7. A calculation/action parameter (any feature with a direction, i.e. `in`/`out`/`inout`) may only specialize
+These rules apply everywhere and are checked while mapping:
+
+1. A calculation/action parameter (any feature with a direction, i.e. `in`/`out`/`inout`) may only specialize
    another calculation/action parameter through **redefinition** (`:>>`): plain subsetting (`:>`) on a parameter is
    rejected. This applies to every `action def`/`action usage` (custom calculations, control units, strategies,
    derived attributes, ...), not only to queries.
-8. An attribute that is only typed through the generic `TwinAttribute` (i.e. never specialized to a scalar Twin
+2. An attribute that is only typed through the generic `TwinAttribute` (i.e. never specialized to a scalar Twin
    type, a custom type, or a more specific library feature) cannot be mapped and is rejected: `TwinAttribute` must
    always be specialized.
-9. An attribute with neither an explicit type, a subsetting, nor a redefinition ("freestanding") cannot be mapped.
+3. An attribute with neither an explicit type, a subsetting, nor a redefinition ("freestanding") cannot be mapped.
+4. A type must not have incompatible typings.
+5. Multiplicities of features derived from the library must be fulfilled (lower bound reached, upper bound not
+   exceeded).
 
-Example of a UserLibrary custom calculation:
+Example of a custom type and a custom calculation:
 
 ```sysml
 package PositionThings {
-    private import UserLibrary::*;
+    private import TwinLibrary::*;
 
     attribute def Position :> TwinCustomType {
         attribute x[1] : TwinInteger :> fields;
@@ -139,7 +140,7 @@ feature chain. It is expressed by two, independently enforced mechanisms:
 | `sensors : Sensor`                | Out-ports of the physical asset. Each sensor port declares its `measurements`, which get `Role.SENSOR`.          |
 | `actuators : Actuator`            | In-ports carrying `commands` toward the physical device, which get `Role.ACTUATOR`.                              |
 | `constPort : ConstPort`           | Out-port carrying Twin-level configuration constants (`measurements`, `Role.CONST`).                              |
-| `controlUnit : ControlUnit[0..*]` | State machine running **on the physical device**. It is a `TwinAction`/`Block`: it has its own `inputs`/`outputs` (`Role.ACTION`) and `local_Attributes` (`Role.LOCAL`). States support `entry`, `do`, `exit`, assignment actions, guarded transitions, and calls into `UserLibrary` calculations. |
+| `controlUnit : ControlUnit[0..*]` | State machine running **on the physical device**. It is a `TwinAction`/`Block`: it has its own `inputs`/`outputs` (`Role.ACTION`) and `local_Attributes` (`Role.LOCAL`). States support `entry`, `do`, `exit`, assignment actions, guarded transitions, and calls into custom calculations. |
 | `physicalFlows : PhysicalFlow[0..*]` | Wires a sensor's or the const port's attribute to a control unit's `inputs`, or a control unit's `outputs` to an actuator's `commands`. |
 
 A control unit does not read a sensor or write an actuator directly. It declares its own `inputs`/`outputs`, and a
@@ -447,9 +448,7 @@ or crosses a layer through an explicit `Flow`), not just a documented convention
 
 The following are actively enforced while mapping a model (an invalid model fails to map, not a post-hoc lint):
 
-- The `TwinModel`/`UserLibrary` structural rules described under [General use rules](#general-use-rules) (exactly
-  one `Twin` subclassification per model file, import-graph zone detection, definitions only at package level in a
-  `UserLibrary`, no feature-chain referencing between UserLibrary definitions).
+- Incompatible typings of a type are rejected (`MultiType`).
 - Calculation/action parameters may only specialize by redefinition (`CalcInputOutputRules`).
 - An attribute must be explicitly typed, subset, or redefined: a "freestanding" attribute, or one typed only
   through the generic `TwinAttribute`, is rejected (`TwinAttributeHasToSpecialiced`).
@@ -458,6 +457,15 @@ The following are actively enforced while mapping a model (an invalid model fail
   expression and every `assign` action.
 - The flow rules under [Cross-layer wiring: Flows](#cross-layer-wiring-flows) (`FlowRules`): taxonomy, direction
   and type of both ends of every flow.
+- References, assignments and flows stay inside their twin; only federation flows connect twins
+  (`TwinBoundaryRules`).
+
+Not yet enforced (planned validation rule):
+
+- Use of other libraries than the `TwinLibrary` and the supported standard functions and scalar types
+  (general use rule 5). Such a model is currently not rejected: an action typed by a foreign action definition is
+  mapped as a plain action block, and a call of a foreign calculation is mapped as a base function without a
+  function kind.
 
 A model with SysML issues (errors and warnings) fails while loading with an `IllegalStateException`. A violation of
 one of the rules above fails `MapperService.map()` with an `IllegalArgumentException` whose message starts with
