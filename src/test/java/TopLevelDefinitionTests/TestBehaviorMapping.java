@@ -1,22 +1,25 @@
 package TopLevelDefinitionTests;
 
-import org.example.Mapping.Interfaces.Base.Model;
-import org.example.Mapping.Interfaces.Base.TypeKind.Definition;
-import org.example.Mapping.Interfaces.Base.TypeKind.Usage;
-import org.example.Mapping.Interfaces.BaseTaxonomy.DescriptiveModel;
-import org.example.Mapping.Interfaces.BaseTaxonomy.PhysicalTwin;
-import org.example.Mapping.Interfaces.BaseTaxonomy.PredictiveModel;
-import org.example.Mapping.Interfaces.BaseTaxonomy.PrescriptiveModel;
-import org.example.Mapping.Interfaces.TwinAction.*;
-import org.example.Mapping.Interfaces.TwinAttribute.BaseTwinAttribute.TwinAttribute;
-import org.example.Mapping.Interfaces.TwinExpression.Calculation;
-import org.example.Mapping.Interfaces.TwinExpression.FeatureReference;
-import org.example.Mapping.Interfaces.TwinExpression.TwinExpression;
-import org.example.Mapping.Interfaces.TwinFunction.Definition.CustomCalculation;
-import org.example.Mapping.Interfaces.TwinStateMachine.TwinStateMachine;
-import org.example.Mapping.Interfaces.TwinStrategy.Strategy;
+import org.example.Mapping.Model.AbstractModel;
+import org.example.Mapping.Model.Action.TwinActionBlockUsage;
+import org.example.Mapping.Model.Action.TwinActionUsage;
+import org.example.Mapping.Model.Action.TwinAssignmentUsage;
+import org.example.Mapping.Model.Action.TwinForLoopUsage;
+import org.example.Mapping.Model.Action.TwinIfElseUsage;
+import org.example.Mapping.Model.Action.TwinTransitionUsage;
+import org.example.Mapping.Model.Action.TwinWhileUsage;
+import org.example.Mapping.Model.Attribute.TwinAttributeUsage;
+import org.example.Mapping.Model.Expression.TwinCalculationUsage;
+import org.example.Mapping.Model.Expression.TwinExpressionUsage;
+import org.example.Mapping.Model.Expression.TwinReferenceUsage;
+import org.example.Mapping.Model.Function.CustomCalculationDefinition;
+import org.example.Mapping.Model.StateMachine.TwinStateMachineUsage;
+import org.example.Mapping.Model.Strategy.TwinStrategyUsage;
+import org.example.Mapping.Model.Taxonomy.DescriptiveModel.DescriptiveModelUsage;
+import org.example.Mapping.Model.Taxonomy.PhysicalTwin.PhysicalTwinUsage;
+import org.example.Mapping.Model.Taxonomy.PredictiveModel.PredictiveModelUsage;
+import org.example.Mapping.Model.Taxonomy.PrescriptiveModel.PrescriptiveModelUsage;
 import org.junit.jupiter.api.Test;
-import org.omg.sysml.lang.sysml.Element;
 
 import java.util.List;
 
@@ -27,63 +30,61 @@ public class TestBehaviorMapping extends AbstarctTest {
 	@Test
 	public void testControlUnitComplete() {
 
-		TwinStateMachine<Usage> controlUnit = named(TwinStateMachine.class, Usage.class, "cm1");
+		TwinStateMachineUsage controlUnit = named(TwinStateMachineUsage.class, "cm1");
 
 		assertEquals("cm1", controlUnit.getName());
 		assertNotNull(controlUnit.getId());
 
-		assertParent(controlUnit, PhysicalTwin.class, Usage.class, "physicalBattery");
+		assertParent(controlUnit, PhysicalTwinUsage.class, "physicalBattery");
 
-		assertEquals(0, controlUnit.localAttributes().getCompartment().size());
+		assertEquals(0, controlUnit.getLocalAttributes().size());
 
-		assertEquals(3, controlUnit.getInputs().getCompartment().size());
-		assertEquals(1, controlUnit.getOutputs().getCompartment().size());
+		assertEquals(3, controlUnit.getInputs().size());
+		assertEquals(1, controlUnit.getOutputs().size());
 
-		assertTrue(controlUnit.getInputs().getCompartment().stream().map(c -> c.getElement()).anyMatch(x -> "maxCharge".equals(x.getName())));
+		assertTrue(controlUnit.getInputs().stream().anyMatch(x -> "maxCharge".equals(x.getName())));
 
-		assertEquals(2, controlUnit.getStates().getCompartment().size());
+		assertEquals(2, controlUnit.getStates().size());
 
-		TwinStateMachine<Usage> idle = controlUnit.getStates().getCompartment().stream().map(c -> c.getElement()).filter(x -> "idle".equals(x.getName())).findFirst().orElseThrow();
+		TwinStateMachineUsage idle = controlUnit.getStates().stream().filter(x -> "idle".equals(x.getName())).findFirst().orElseThrow();
 
-		TwinStateMachine<Usage> charging = controlUnit.getStates().getCompartment().stream().map(c -> c.getElement()).filter(x -> "charging".equals(x.getName())).findFirst().orElseThrow();
+		TwinStateMachineUsage charging = controlUnit.getStates().stream().filter(x -> "charging".equals(x.getName())).findFirst().orElseThrow();
 
-		assertEquals(1, charging.getStates().getCompartment().size());
+		assertEquals(1, charging.getStates().size());
 
-		TwinStateMachine<Usage> test34 = charging.getStates().getCompartment().getFirst().getElement();
+		TwinStateMachineUsage test34 = charging.getStates().getFirst();
 
 		assertEquals("test34", test34.getName());
 
-		assertInstanceOf(Assignment.class, charging.getEntryAction().getElement());
+		assertInstanceOf(TwinAssignmentUsage.class, charging.getEntryAction().orElseThrow());
 
-		assertInstanceOf(Assignment.class, charging.getDoAction().getElement());
+		assertInstanceOf(TwinAssignmentUsage.class, charging.getDoAction().orElseThrow());
 
-		assertInstanceOf(Assignment.class, charging.getExitAction().getElement());
+		assertInstanceOf(TwinAssignmentUsage.class, charging.getExitAction().orElseThrow());
 
-		assertAssignmentTo((Assignment) charging.getEntryAction().getElement(), "charge");
+		assertAssignmentTo(assertInstanceOf(TwinAssignmentUsage.class, charging.getEntryAction().orElseThrow()), "charge");
 
-		assertAssignmentTo((Assignment) charging.getDoAction().getElement(), "charge");
+		assertAssignmentTo(assertInstanceOf(TwinAssignmentUsage.class, charging.getDoAction().orElseThrow()), "charge");
 
-		assertAssignmentTo((Assignment) charging.getExitAction().getElement(), "charge");
+		assertAssignmentTo(assertInstanceOf(TwinAssignmentUsage.class, charging.getExitAction().orElseThrow()), "charge");
 
-		assertInstanceOf(Assignment.class, test34.getEntryAction().getElement());
+		assertInstanceOf(TwinAssignmentUsage.class, test34.getEntryAction().orElseThrow());
 
-		assertInstanceOf(Assignment.class, test34.getDoAction().getElement());
+		assertInstanceOf(TwinAssignmentUsage.class, test34.getDoAction().orElseThrow());
 
-		assertInstanceOf(Assignment.class, test34.getExitAction().getElement());
+		assertInstanceOf(TwinAssignmentUsage.class, test34.getExitAction().orElseThrow());
 
-		Assignment test34Entry = (Assignment) test34.getEntryAction().getElement();
+		TwinAssignmentUsage test34Entry = assertInstanceOf(TwinAssignmentUsage.class, test34.getEntryAction().orElseThrow());
 
-		assertEquals("charge", test34Entry.getTarget().getReferent().getName());
+		assertEquals("charge", test34Entry.getReferent().getName());
 
-		assertInstanceOf(FeatureReference.class, test34Entry.getValue());
+		TwinReferenceUsage<?> reference = assertInstanceOf(TwinReferenceUsage.class, test34Entry.getValue());
 
-		FeatureReference reference = (FeatureReference) test34Entry.getValue();
-
-		assertEquals("temp", reference.getChain().getLast().getReferent().getName());
+		assertEquals("temp", reference.getTarget().getName());
 
 		assertEquals(3, controlUnit.getTransitions().size());
 
-		for (Transition transition : controlUnit.getTransitions()) {
+		for (TwinTransitionUsage transition : controlUnit.getTransitions()) {
 
 			assertNotNull(transition.getSource());
 
@@ -96,9 +97,9 @@ public class TestBehaviorMapping extends AbstarctTest {
 	@Test
 	public void testControlUnitTransitions() {
 
-		TwinStateMachine<Usage> controlUnit = named(TwinStateMachine.class, Usage.class, "cm1");
+		TwinStateMachineUsage controlUnit = named(TwinStateMachineUsage.class, "cm1");
 
-		List<Transition> transitions = controlUnit.getTransitions();
+		List<TwinTransitionUsage> transitions = controlUnit.getTransitions();
 
 		assertEquals(3, transitions.size());
 
@@ -106,11 +107,11 @@ public class TestBehaviorMapping extends AbstarctTest {
 		boolean idleToIdle = false;
 		boolean chargingToIdle = false;
 
-		for (Transition transition : transitions) {
+		for (TwinTransitionUsage transition : transitions) {
 
-			Model<?> source = transition.getSource().getReferent();
+			AbstractModel<?> source = transition.getSource();
 
-			Model<?> target = transition.getTarget().getReferent();
+			AbstractModel<?> target = transition.getTarget();
 
 			String sourceName = source.getName();
 
@@ -122,7 +123,7 @@ public class TestBehaviorMapping extends AbstarctTest {
 
 				assertEquals(1, transition.getGuard().size());
 
-				assertInstanceOf(FeatureReference.class, transition.getGuard().getFirst());
+				assertInstanceOf(TwinReferenceUsage.class, transition.getGuard().getFirst());
 			}
 
 			if ("idle".equals(sourceName) && "idle".equals(targetName)) {
@@ -148,27 +149,27 @@ public class TestBehaviorMapping extends AbstarctTest {
 	@Test
 	public void testDescriptiveStateMachineComplete() {
 
-		TwinStateMachine<Usage> machine = named(TwinStateMachine.class, Usage.class, "test12");
+		TwinStateMachineUsage machine = named(TwinStateMachineUsage.class, "test12");
 
-		assertParent(machine, DescriptiveModel.class, Usage.class, "descriptiveBattery");
+		assertParent(machine, DescriptiveModelUsage.class, "descriptiveBattery");
 
-		assertEquals(2, machine.getStates().getCompartment().size());
+		assertEquals(2, machine.getStates().size());
 
-		assertTrue(machine.getStates().getCompartment().stream().map(c -> c.getElement()).anyMatch(x -> "sa".equals(x.getName())));
+		assertTrue(machine.getStates().stream().anyMatch(x -> "sa".equals(x.getName())));
 
-		assertTrue(machine.getStates().getCompartment().stream().map(c -> c.getElement()).anyMatch(x -> "sd".equals(x.getName())));
+		assertTrue(machine.getStates().stream().anyMatch(x -> "sd".equals(x.getName())));
 	}
 
 	@Test
 	public void testDescriptiveStrategyComplete() {
 
-		Strategy<Usage> strategy = named(Strategy.class, Usage.class, "LLM_Request");
+		TwinStrategyUsage<?, ?> strategy = named(TwinStrategyUsage.class, "LLM_Request");
 
-		assertParent(strategy, DescriptiveModel.class, Usage.class, "descriptiveBattery");
+		assertParent(strategy, DescriptiveModelUsage.class, "descriptiveBattery");
 
-		var inputs = strategy.getInputs().getCompartment().stream().map(c -> c.getElement()).toList();
+		List<TwinAttributeUsage<?, ?>> inputs = strategy.getInputs();
 
-		var outputs = strategy.getOutputs().getCompartment().stream().map(c -> c.getElement()).toList();
+		List<TwinAttributeUsage<?, ?>> outputs = strategy.getOutputs();
 
 		assertEquals(3, inputs.size());
 
@@ -178,17 +179,14 @@ public class TestBehaviorMapping extends AbstarctTest {
 
 		assertTrue(inputs.stream().anyMatch(x -> "soc".equals(x.getName())));
 
-		/*
-		 * Diese Attribute werden über Flows gespeist.
-		 * Sie besitzen deshalb selbst keine Expression.
-		 */
-		for (TwinAttribute<Usage> input : inputs) {
+
+		for (TwinAttributeUsage<?, ?> input : inputs) {
 			assertTrue(input.getExpression().isEmpty());
 		}
 
 		assertEquals(1, outputs.size());
 
-		TwinAttribute<Usage> llmCurrent = outputs.getFirst();
+		TwinAttributeUsage<?, ?> llmCurrent = outputs.getFirst();
 
 		assertEquals("llmCurrent", llmCurrent.getName());
 
@@ -198,24 +196,24 @@ public class TestBehaviorMapping extends AbstarctTest {
 	@Test
 	public void testPredictiveStrategyComplete() {
 
-		Strategy<Usage> strategy = named(Strategy.class, Usage.class, "consForecast");
+		TwinStrategyUsage<?, ?> strategy = named(TwinStrategyUsage.class, "consForecast");
 
-		assertParent(strategy, PredictiveModel.class, Usage.class, "predictiveBattery");
+		assertParent(strategy, PredictiveModelUsage.class, "predictiveBattery");
 
-		assertEquals(2, strategy.getInputs().getCompartment().size());
+		assertEquals(2, strategy.getInputs().size());
 
-		assertTrue(strategy.getInputs().getCompartment().stream().map(c -> c.getElement()).anyMatch(x -> "avgTemperature".equals(x.getName())));
+		assertTrue(strategy.getInputs().stream().anyMatch(x -> "avgTemperature".equals(x.getName())));
 
-		assertTrue(strategy.getInputs().getCompartment().stream().map(c -> c.getElement()).anyMatch(x -> "current".equals(x.getName())));
+		assertTrue(strategy.getInputs().stream().anyMatch(x -> "current".equals(x.getName())));
 
-		for (TwinAttribute<Usage> input : strategy.getInputs().getCompartment().stream().map(c -> c.getElement()).toList()) {
+		for (TwinAttributeUsage<?, ?> input : strategy.getInputs()) {
 
 			assertTrue(input.getExpression().isEmpty());
 		}
 
-		assertEquals(1, strategy.getOutputs().getCompartment().size());
+		assertEquals(1, strategy.getOutputs().size());
 
-		TwinAttribute<Usage> predicted = strategy.getOutputs().getCompartment().getFirst().getElement();
+		TwinAttributeUsage<?, ?> predicted = strategy.getOutputs().getFirst();
 
 		assertEquals("predicted", predicted.getName());
 
@@ -225,101 +223,98 @@ public class TestBehaviorMapping extends AbstarctTest {
 	@Test
 	public void testPrescriptiveStrategyInternalComplete() {
 
-		Strategy<Usage> strategy = named(Strategy.class, Usage.class, "chargeStrategyInternal");
+		TwinStrategyUsage<?, ?> strategy = named(TwinStrategyUsage.class, "chargeStrategyInternal");
 
-		assertParent(strategy, PrescriptiveModel.class, Usage.class, "prescriptiveBattery");
+		assertParent(strategy, PrescriptiveModelUsage.class, "prescriptiveBattery");
 
-		assertEquals(3, strategy.getInputs().getCompartment().size());
+		assertEquals(3, strategy.getInputs().size());
 
-		assertTrue(strategy.getInputs().getCompartment().stream().map(c -> c.getElement()).anyMatch(x -> "predictedCurrent".equals(x.getName())));
+		assertTrue(strategy.getInputs().stream().anyMatch(x -> "predictedCurrent".equals(x.getName())));
 
-		assertTrue(strategy.getInputs().getCompartment().stream().map(c -> c.getElement()).anyMatch(x -> "maxCharge".equals(x.getName())));
+		assertTrue(strategy.getInputs().stream().anyMatch(x -> "maxCharge".equals(x.getName())));
 
-		assertTrue(strategy.getInputs().getCompartment().stream().map(c -> c.getElement()).anyMatch(x -> "posTest12".equals(x.getName())));
+		assertTrue(strategy.getInputs().stream().anyMatch(x -> "posTest12".equals(x.getName())));
 
-		assertEquals(1, strategy.getOutputs().getCompartment().size());
+		assertEquals(1, strategy.getOutputs().size());
 
-		TwinAttribute<Usage> chargeCmd = strategy.getOutputs().getCompartment().getFirst().getElement();
+		TwinAttributeUsage<?, ?> chargeCmd = strategy.getOutputs().getFirst();
 
 		assertEquals("chargeCmd", chargeCmd.getName());
 
-		/*
-		 * ACTION-Output:
-		 * Wert wird über assign gesetzt, nicht über
-		 * eine Attribute-Expression.
-		 */
+
 		assertTrue(chargeCmd.getExpression().isEmpty());
+		assertTrue(strategy.getActions().size() ==1);
+
+
+		TwinActionUsage<?, ?, ?> t = strategy.getActions().getFirst();
+		assertInstanceOf(TwinIfElseUsage.class, t);
+		TwinIfElseUsage ifElse = assertInstanceOf(TwinIfElseUsage.class, t);
+
+
 	}
 
 	@Test
 	public void testPrescriptiveStrategyExternalComplete() {
 
-		Strategy<Usage> strategy = named(Strategy.class, Usage.class, "chargeStrategyExternal");
+		TwinStrategyUsage<?, ?> strategy = named(TwinStrategyUsage.class, "chargeStrategyExternal");
 
-		assertParent(strategy, PrescriptiveModel.class, Usage.class, "prescriptiveBattery");
+		assertParent(strategy, PrescriptiveModelUsage.class, "prescriptiveBattery");
 
-		assertEquals(2, strategy.getInputs().getCompartment().size());
+		assertEquals(2, strategy.getInputs().size());
 
-		assertEquals(1, strategy.getOutputs().getCompartment().size());
+		assertEquals(1, strategy.getOutputs().size());
 
-		assertTrue(strategy.getInputs().getCompartment().stream().map(c -> c.getElement()).anyMatch(x -> "predictedCurrent".equals(x.getName())));
+		assertTrue(strategy.getInputs().stream().anyMatch(x -> "predictedCurrent".equals(x.getName())));
 
-		assertTrue(strategy.getInputs().getCompartment().stream().map(c -> c.getElement()).anyMatch(x -> "maxCharge".equals(x.getName())));
+		assertTrue(strategy.getInputs().stream().anyMatch(x -> "maxCharge".equals(x.getName())));
 
-		assertEquals("chargeCmd", strategy.getOutputs().getCompartment().getFirst().getElement().getName());
+		assertEquals("chargeCmd", strategy.getOutputs().getFirst().getName());
 	}
 
 	@Test
 	public void testAvgCustomCalculationActionsComplete() {
 
-		CustomCalculation avg = named(CustomCalculation.class, Definition.class, "Avg");
+		CustomCalculationDefinition avg = named(CustomCalculationDefinition.class, "Avg");
 
-		assertEquals(1, avg.getInputs().getCompartment().size());
+		assertEquals(1, avg.getInputs().size());
 
-		assertEquals("reals", avg.getInputs().getCompartment().getFirst().getElement().getName());
+		assertEquals("reals", avg.getInputs().getFirst().getName());
 
-		assertEquals(1, avg.getOutputs().getCompartment().size());
+		assertEquals(1, avg.getOutputs().size());
 
-		assertEquals("avg", avg.getOutputs().getCompartment().getFirst().getElement().getName());
+		assertEquals("avg", avg.getOutputs().getFirst().getName());
 
-		Action<Usage> testAction = avg.getActions().stream().filter(x -> "test".equals(x.getName())).findFirst().orElseThrow();
+		TwinActionUsage<?, ?, ?> testAction = avg.getActions().stream().filter(x -> "test".equals(x.getName())).findFirst().orElseThrow();
 
-		assertInstanceOf(Block.class, testAction);
+		TwinActionBlockUsage<?, ?> testBlock = assertInstanceOf(TwinActionBlockUsage.class, testAction);
 
+		assertEquals(0, testBlock.getLocalAttributes().size());
 
-		Block<?> testBlock = (Block<?>) testAction;
-		assertEquals(0, testBlock.localAttributes().getCompartment().size());
+		TwinForLoopUsage forLoop = testBlock.getActions().stream().filter(TwinForLoopUsage.class::isInstance).map(TwinForLoopUsage.class::cast).findFirst().orElseThrow();
 
-		ForLoop forLoop = testBlock.getActions().stream().filter(ForLoop.class::isInstance).map(ForLoop.class::cast).findFirst().orElseThrow();
+		assertTrue(forLoop.getLoopVariable().isPresent());
 
-		assertNotNull(forLoop.getLoopVariable());
+		assertEquals("value", forLoop.getLoopVariable().orElseThrow().getName());
 
-		assertEquals("value", forLoop.getLoopVariable().getElement().getName());
+		assertTrue(forLoop.getCollection().isPresent());
 
-		assertNotNull(forLoop.getCollection());
+		TwinActionBlockUsage<?, ?> forBody = assertInstanceOf(TwinActionBlockUsage.class, forLoop.getBody().orElseThrow());
 
-		assertInstanceOf(Block.class, forLoop.getBody().getElement());
+		assertEquals(1, forBody.getLocalAttributes().size());
 
-		Block<?> forBody = (Block<?>) forLoop.getBody().getElement();
-		assertEquals(1, forBody.localAttributes().getCompartment().size());
+		TwinIfElseUsage ifElse = forBody.getActions().stream().filter(TwinIfElseUsage.class::isInstance).map(TwinIfElseUsage.class::cast).findFirst().orElseThrow();
 
-		IfElse ifElse = forBody.getActions().stream().filter(IfElse.class::isInstance).map(IfElse.class::cast).findFirst().orElseThrow();
+		assertTrue(ifElse.getCondition().isPresent());
 
-		assertNotNull(ifElse.getCondition());
+		assertTrue(ifElse.getThenAction().isPresent());
 
-		assertNotNull(ifElse.getThenAction().getElement());
+		TwinActionBlockUsage<?, ?> elseBlock = assertInstanceOf(TwinActionBlockUsage.class, ifElse.getElseAction().orElseThrow());
 
-		assertInstanceOf(Block.class, ifElse.getElseAction().get().getElement());
+		TwinWhileUsage whileLoop = elseBlock.getActions().stream().filter(TwinWhileUsage.class::isInstance).map(TwinWhileUsage.class::cast).findFirst().orElseThrow();
 
-		Block<?> elseBlock = (Block<?>) ifElse.getElseAction().get().getElement();
+		assertTrue(whileLoop.getCondition().isPresent());
 
-		WhileLoop whileLoop = elseBlock.getActions().stream().filter(WhileLoop.class::isInstance).map(WhileLoop.class::cast).findFirst().orElseThrow();
-
-		assertNotNull(whileLoop.getCondition());
-
-		assertInstanceOf(Block.class, whileLoop.getBody().orElseThrow().getElement());
-
-		Block<?> whileBody = (Block<?>) whileLoop.getBody().orElseThrow().getElement();
+		TwinActionBlockUsage<?, ?> whileBody = assertInstanceOf(TwinActionBlockUsage.class, whileLoop.getBody().orElseThrow());
 
 		assertTrue(whileBody.getActions().stream().anyMatch(x -> "test".equals(x.getName())));
 
@@ -327,13 +322,11 @@ public class TestBehaviorMapping extends AbstarctTest {
 		assertEquals(0, whileBody.getSuccessions().size());
 
 
-		assertFalse(result.get(Assignment.class, Usage.class).isEmpty());
+		assertFalse(result.getByType(TwinAssignmentUsage.class).isEmpty());
 
-		for (Assignment assignment : result.get(Assignment.class, Usage.class)) {
+		for (TwinAssignmentUsage assignment : result.getByType(TwinAssignmentUsage.class)) {
 
-			assertNotNull(assignment.getTarget());
-
-			assertNotNull(assignment.getTarget().getReferent());
+			assertNotNull(assignment.getReferent());
 
 			assertNotNull(assignment.getValue());
 		}
@@ -342,76 +335,59 @@ public class TestBehaviorMapping extends AbstarctTest {
 	@Test
 	public void testAvgDerivedAttributeAssignment() {
 
-		TwinAttribute<Usage> avgTemp = named(TwinAttribute.class, Usage.class, "avgTemp");
+		TwinAttributeUsage<?, ?> avgTemp = named(TwinAttributeUsage.class, "avgTemp");
 
 		assertTrue(avgTemp.getExpression().isEmpty());
 
 
-		Assignment assignment = result.get(Assignment.class, Usage.class).stream().filter(x -> x.getTarget() != null && x.getTarget().getReferent() != null && "avgTemp".equals(x.getTarget().getReferent().getName())).findFirst().orElseThrow();
+		TwinAssignmentUsage assignment = originals(TwinAssignmentUsage.class).stream().filter(x -> x.getReferent() != null && "avgTemp".equals(x.getReferent().getName())).findFirst().orElseThrow();
 
-		assertInstanceOf(Calculation.class, assignment.getValue());
-
-		Calculation avgCall = (Calculation) assignment.getValue();
+		TwinCalculationUsage avgCall = assertInstanceOf(TwinCalculationUsage.class, assignment.getValue());
 
 		assertEquals(1, avgCall.getArguments().size());
 
-		TwinExpression argument = avgCall.getArguments().getFirst();
+		TwinExpressionUsage argument = avgCall.getArguments().getFirst();
 
-		assertInstanceOf(FeatureReference.class, argument);
+		TwinReferenceUsage<?> reference = assertInstanceOf(TwinReferenceUsage.class, argument);
 
-		FeatureReference reference = (FeatureReference) argument;
-
-		assertEquals("temps", reference.getChain().getLast().getReferent().getName());
+		assertEquals("temps", reference.getTarget().getName());
 	}
 
 	@Test
 	public void testLocalFeatureChainExpression() {
 
-		/*
-		 * attribute test12:TwinReal:>local_Attributes
-		 *     = Avg(posTest12.x);
-		 *
-		 * LOCAL darf eine Expression besitzen.
-		 */
-		TwinAttribute<Usage> test12 = named(TwinAttribute.class, Usage.class, "test12");
+
+		TwinAttributeUsage<?, ?> test12 = named(TwinAttributeUsage.class, "test12");
 
 		assertTrue(test12.getExpression().isPresent());
 
-		TwinExpression expression = test12.getExpression().orElseThrow();
+		TwinExpressionUsage expression = test12.getExpression().orElseThrow();
 
-		assertInstanceOf(Calculation.class, expression);
-
-		Calculation avgCall = (Calculation) expression;
+		TwinCalculationUsage avgCall = assertInstanceOf(TwinCalculationUsage.class, expression);
 
 		assertEquals(1, avgCall.getArguments().size());
 
-		TwinExpression argument = avgCall.getArguments().getFirst();
+		TwinExpressionUsage argument = avgCall.getArguments().getFirst();
 
-		assertInstanceOf(FeatureReference.class, argument);
+		TwinReferenceUsage<?> reference = assertInstanceOf(TwinReferenceUsage.class, argument);
 
-		FeatureReference reference = (FeatureReference) argument;
-
-		assertEquals("x", reference.getChain().getLast().getReferent().getName());
+		assertEquals("x", reference.getTarget().getName());
 	}
 
-	private void assertAssignmentTo(Assignment assignment, String targetName) {
+	private void assertAssignmentTo(TwinAssignmentUsage assignment, String targetName) {
 
-		assertNotNull(assignment.getTarget());
+		assertNotNull(assignment.getReferent());
 
-		assertNotNull(assignment.getTarget().getReferent());
-
-		assertEquals(targetName, assignment.getTarget().getReferent().getName());
+		assertEquals(targetName, assignment.getReferent().getName());
 
 		assertNotNull(assignment.getValue());
 	}
 
-	private void assertCalculationGuard(List<TwinExpression> guards) {
+	private void assertCalculationGuard(List<TwinExpressionUsage> guards) {
 
 		assertEquals(1, guards.size());
 
-		assertInstanceOf(Calculation.class, guards.getFirst());
-
-		Calculation calculation = (Calculation) guards.getFirst();
+		TwinCalculationUsage calculation = assertInstanceOf(TwinCalculationUsage.class, guards.getFirst());
 
 		assertFalse(calculation.getArguments().isEmpty());
 	}

@@ -1,0 +1,64 @@
+package TopLevelDefinitionTests.ValidationRules;
+
+import TopLevelDefinitionTests.AbstarctTest;
+import org.junit.jupiter.api.Test;
+
+import java.io.IOException;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+public class LowerBoundLibraryFeaturesFromUserLibrary extends AbstarctTest {
+
+	@Override
+	public Optional<String> getContent() {
+		return Optional.of("""
+				package Test {
+				    private import TwinLibrary::*;
+				    private import PositionThings::*;
+				
+				    part def Battery :> Twin {
+					part physicalBattery :>> physicalTwin {	
+				        port p11 :> sensors:P11{
+				        :>>communicationProtocol{
+				        r:>topic[0..1];
+				        t:>r[1];
+				        }
+				        }
+				    }
+				
+				    }
+				}
+				package PositionThings {
+				    private import TwinLibrary::*;
+				
+					port def P11:>Sensor{
+					:>> communicationProtocol:MQTT_Protocol;
+					}
+				    attribute def Position :> TwinCustomType {
+				        attribute x[1] : TwinInteger :> fields;
+				        attribute y[1] : TwinInteger :> fields;
+				        attribute z[1] : TwinInteger :> fields;
+				    }
+				
+				}
+				
+				""");
+	}
+
+
+	@Override
+	public void testTopLevelDefinition() throws IOException, IllegalArgumentException {
+
+	}
+
+	@Test
+	public void lowerBoundNotFullfilled() {
+		IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> super.testTopLevelDefinition());
+		System.out.println(exception.getMessage());
+		assertTrue(exception.getMessage().contains("does not fully concretize required feature "));
+
+	}
+
+}

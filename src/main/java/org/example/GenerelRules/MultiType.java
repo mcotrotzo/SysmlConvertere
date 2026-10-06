@@ -1,6 +1,7 @@
 package org.example.GenerelRules;
 
-import org.example.Mapping.NewVersion.MappingException;
+
+import org.example.Util.NewUtil;
 import org.example.Util.Utils;
 import org.omg.sysml.lang.sysml.Definition;
 import org.omg.sysml.lang.sysml.Feature;
@@ -12,12 +13,12 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class MultiType extends GenerelRules {
-	public MultiType(Utils utils) {
+	public MultiType(NewUtil utils) {
 		super(utils);
 	}
 
 	@Override
-	public boolean isValid() throws MappingException {
+	public boolean isValid() throws IllegalArgumentException {
 		Set<Feature> userTypes = utilsManager.collect(Feature.class);
 
 		for (Feature userType : userTypes) {
@@ -29,7 +30,7 @@ public class MultiType extends GenerelRules {
 		return true;
 	}
 
-	private void validateTypes(Feature element) throws MappingException {
+	private void validateTypes(Feature element) throws IllegalArgumentException {
 		Set<Type> effectiveTypes = new HashSet<>(element.getType());
 		for (Type a : effectiveTypes) {
 			for (Type b : effectiveTypes) {
@@ -43,7 +44,7 @@ public class MultiType extends GenerelRules {
 					continue;
 				}
 				if (!related) {
-					throw new MappingException(("Type '%s' has incompatible typings '%s' and '%s'.").formatted(element.getQualifiedName(), a.getName(), b.getName()));
+					throw new IllegalArgumentException(("Type '%s' has incompatible typings '%s' and '%s'.").formatted(element.getQualifiedName(), a.getName(), b.getName()));
 				}
 			}
 		}

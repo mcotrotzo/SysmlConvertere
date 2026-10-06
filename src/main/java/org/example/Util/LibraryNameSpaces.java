@@ -110,8 +110,6 @@ public enum LibraryNameSpaces {
 	// Twin Type System
 	// ========================================================================
 
-	TWIN_TYPE_SYSTEM("TwinTypeSystem"),
-
 	TWIN_ATTRIBUTE("Base::DataValue"),
 
 	TWIN_REAL("ScalarValues::Real"), TWIN_INTEGER("ScalarValues::Integer"), TWIN_BOOLEAN("ScalarValues::Boolean"), TWIN_STRING("ScalarValues::String"), CONST_PORT("PhysicalTwinLibrary::ConstPort");

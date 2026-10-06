@@ -2,23 +2,18 @@ package org.example.Util;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.example.Containers.ContainerManager;
 import org.example.ElemWithMult;
 import org.example.LoadedResources;
-import org.example.Mapping.Interfaces.TwinFunction.Definition.BaseFunctionKind;
-import org.example.Mapping.NewVersion.MappingContext;
-import org.example.Mapping.NewVersion.MappingException;
-import org.example.Mapping.TwinExpression.TwinFeatureChainExpression;
-import org.example.UtilClasses.RedefinitionGraph;
+import org.example.Mapping.BaseFunctionKind;
 import org.example.UtilClasses.SpecialicationGraph;
 import org.omg.sysml.lang.sysml.*;
 import org.omg.sysml.lang.sysml.util.SysMLLibraryUtil;
 import org.omg.sysml.util.ElementUtil;
 import org.omg.sysml.util.FeatureUtil;
-import org.omg.sysml.util.NamespaceUtil;
 import org.omg.sysml.util.TypeUtil;
 
 import java.lang.Class;
@@ -37,11 +32,20 @@ public class Utils {
 	private final Map<Function, BaseFunctionKind> baseFunctionKinds = new IdentityHashMap<>();
 	private Set<SpecialicationGraph<?, ?, ?>> specializationGraphs = new HashSet<>();
 
+
+
 	public Utils(LoadedResources loadedResources) {
 		this.loadedResources = loadedResources;
 		this.rootElement = loadedResources.rootElement();
 		initLibraryElements();
 		collectAllUserElements();
+
+	}
+
+
+	public static Element getRootElementFromResource(Resource resource) {
+		EList<EObject> contents = resource.getContents();
+		return contents.isEmpty() ? null : (Element)contents.get(0);
 	}
 
 	public static ElemWithMult getMultiplicityRange(Type type) {
@@ -62,6 +66,7 @@ public class Utils {
 	private void initLibraryElements() {
 		for (LibraryNameSpaces libraryNameSpaces : LibraryNameSpaces.values()) {
 			libraryMap.put(libraryNameSpaces, SysMLLibraryUtil.getLibraryType(rootElement, String.valueOf(libraryNameSpaces)));
+
 		}
 	}
 
@@ -93,6 +98,11 @@ public class Utils {
 		for (TreeIterator<EObject> it = resource.getAllContents(); it.hasNext(); ) {
 			EObject content = it.next();
 			if (content instanceof Element element) {
+				if (content instanceof Type eltype){
+
+					System.out.println("Type: " + eltype.getName() + ", Supertypes: " + TypeUtil.getSupertypesOf(eltype).stream().map(Type::getName).toList());
+					System.out.println(TypeUtil.getGeneralTypesOf(eltype).stream().map(Type::getName).toList());
+				}
 				cachedElements.add(element);
 			}
 		}

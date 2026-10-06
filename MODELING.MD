@@ -118,7 +118,7 @@ package PositionThings {
 ## Model elements
 
 The Digital Twin model is organized into five taxonomy layers, each an optional part of `Twin`:
-`PhysicalTwin`, `Shadow`, `DescriptiveModel`, `PredictiveModel`, `PrescriptiveModel`. Every element that can hold
+`PhysicalTwin`, `Shadow`, `DescriptiveModel`, `PredictiveModel`, `PrescriptiveModel`. Every abstractModel that can hold
 behavior — a control unit, a descriptive state machine, a strategy, a derived attribute, a custom calculation —
 specializes the same base, `TwinAction`, which declares `inputs`, `outputs`, and `local_Attributes`.
 
@@ -325,7 +325,7 @@ This replaces the previous `QueryHistory`/`GroupedHistoryQuery` part usages enti
 "grouped" query type anymore — the shape of the historical result follows from the multiplicity of the target
 input attribute.
 
-`TriggerConfiguration` (time-based / event-based trigger configuration) no longer exists as a modeling element.
+`TriggerConfiguration` (time-based / event-based trigger configuration) no longer exists as a modeling abstractModel.
 
 ---
 
@@ -378,7 +378,7 @@ attribute test12 : TwinReal :> local_Attributes = Avg(posTest12.x);
 
 ## Access Policy Summary
 
-| Model element                | May reference in its own expression / assign             | May be written by                              |
+| Model abstractModel                | May reference in its own expression / assign             | May be written by                              |
 |-------------------------------|-------------------------------------------------------------|---------------------------------------------------|
 | `SENSOR` attribute             | n/a — never has an expression                               | the physical device only (never assigned in-model) |
 | `ACTUATOR` attribute           | n/a — never has an expression                               | a `physicalFlow` or a `prescriptiveToPhysicalFlow` |

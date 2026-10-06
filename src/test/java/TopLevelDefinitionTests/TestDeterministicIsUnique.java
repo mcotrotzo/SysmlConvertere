@@ -1,12 +1,8 @@
 package TopLevelDefinitionTests;
 
 
-import org.example.Mapping.Interfaces.Base.Model;
-import org.example.Mapping.Interfaces.Base.TypeKind.Definition;
-import org.example.Mapping.Interfaces.Base.TypeKind.Usage;
-import org.example.Mapping.Interfaces.BaseTaxonomy.PhysicalTwin;
-import org.example.Mapping.Interfaces.FullTwin.Twin;
-import org.example.Mapping.Interfaces.TwinFlow.Flow;
+import org.example.Mapping.Model.Taxonomy.PhysicalTwin.PhysicalTwinDefiniton;
+import org.example.Mapping.Model.Taxonomy.PhysicalTwin.PhysicalTwinUsage;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.fail;
@@ -19,26 +15,25 @@ public class TestDeterministicIsUnique extends AbstarctTest {
 
 		var allModels = result.getAll();
 		for (var model : allModels) {
-			if( model instanceof PhysicalTwin<?> twin){
-				if(model.getKind() instanceof Usage ){
-					System.out.println("Usage model: " + model.getName() + " with deterministic id: " + model.getDeterministicId());
-				}
-				if( model.getKind() instanceof Definition){
-					System.out.println("Definition model: " + model.getName() + " with deterministic id: " + model.getDeterministicId());
-				}
-				if(model.isLibraryElement()){
+			if (model instanceof PhysicalTwinUsage) {
+				System.out.println("Usage model: " + model.getName() + " with deterministic id: " + model.getId());
+			}
+			if (model instanceof PhysicalTwinDefiniton twin) {
+				System.out.println("Definition model: " + model.getName() + " with deterministic id: " + model.getId());
+				if (model.isLibrary()) {
 					System.out.println("Model is library: ");
-					twin.getSensors().getCompartment().forEach(System.out::println);
+					twin.getSensors().forEach(System.out::println);
 				}
 			}
 			for (var model2 : allModels) {
 
-				if (model.getId().equals(model2.getId())) {
+				// the id is the deterministic id now, so only the same object may share it
+				if (model == model2) {
 					continue;
 				}
 
-				if (model.getDeterministicId().equals(model2.getDeterministicId())) {
-					fail("Unique Ids are the same for different models: " + model.getDeterministicId() + " for models " + model.getName() + " and " + model2.getName());
+				if (model.getId().equals(model2.getId())) {
+					fail("Unique Ids are the same for different models: " + model.getId() + " for models " + model.getName() + " and " + model2.getName());
 				}
 
 			}

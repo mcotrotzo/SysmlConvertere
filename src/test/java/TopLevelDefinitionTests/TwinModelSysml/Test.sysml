@@ -5,6 +5,9 @@ package Test{
      private import BatteryControlUnitLibrary::*;
      private import PositionThings::*;
 
+    action def Flow{
+        action g:Flow;
+    }
      part def Battery :> Twin {
 
          part physicalBattery :>> physicalTwin {
@@ -141,9 +144,8 @@ package Test{
                 assign soc := MULT_real(DIV_real(voltage, nominalVoltage), 100);
              }
              action soc2 :> soc{
-
+                 attribute doubled : TwinReal :> local_Attributes = MULT_real(voltage, 2);
              }
-
              action temp30:>derivedAttributes{
                 in attribute temps:TwinReal[30];
                 out attribute res:TwinReal[0..29];

@@ -1,25 +1,26 @@
 package org.example.GenerelRules;
 
 
-import org.example.Mapping.NewVersion.MappingException;
+
+import org.example.Util.NewUtil;
 import org.example.Util.Utils;
 import org.omg.sysml.lang.sysml.*;
 
 public class CalcInputOutputRules extends GenerelRules {
 
-	public CalcInputOutputRules(Utils utils) {
+	public CalcInputOutputRules(NewUtil utils) {
 		super(utils);
 	}
 
 	@Override
-	public boolean isValid() throws MappingException {
+	public boolean isValid() throws IllegalArgumentException {
 
 		checkOnlyRedefinitions();
 
 		return true;
 	}
 
-	private void checkOnlyRedefinitions() throws MappingException {
+	private void checkOnlyRedefinitions() throws IllegalArgumentException {
 
 		for (ActionDefinition calcDef : this.utilsManager.collect(ActionDefinition.class)) {
 
@@ -33,7 +34,7 @@ public class CalcInputOutputRules extends GenerelRules {
 	}
 
 
-	private void checkCalculation(Type calcDef) throws MappingException {
+	private void checkCalculation(Type calcDef) throws IllegalArgumentException {
 
 		for (Feature feature : calcDef.getOwnedFeature()) {
 
@@ -44,7 +45,7 @@ public class CalcInputOutputRules extends GenerelRules {
 			boolean hasPlainSubsetting = feature.getOwnedSubsetting().stream().anyMatch(subsetting -> !(subsetting instanceof Redefinition));
 
 			if (hasPlainSubsetting) {
-				throw new MappingException(("Calculation '%s': parameter '%s' may only specialize " + "another in calculation parameter by redefinition.").formatted(calcDef.getQualifiedName(), feature.getName()));
+				throw new IllegalArgumentException(("Calculation '%s': parameter '%s' may only specialize " + "another in calculation parameter by redefinition.").formatted(calcDef.getQualifiedName(), feature.getName()));
 			}
 		}
 	}

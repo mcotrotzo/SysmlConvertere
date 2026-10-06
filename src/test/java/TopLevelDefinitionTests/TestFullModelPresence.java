@@ -1,32 +1,35 @@
 package TopLevelDefinitionTests;
 
-import org.example.Mapping.Interfaces.Base.TypeKind.Definition;
-import org.example.Mapping.Interfaces.Base.TypeKind.Usage;
-import org.example.Mapping.Interfaces.BaseTaxonomy.*;
-import org.example.Mapping.Interfaces.DataBase.Database;
-import org.example.Mapping.Interfaces.DataBase.RelationalDatabase;
-import org.example.Mapping.Interfaces.FederationTwin.FederationTwin;
-import org.example.Mapping.Interfaces.FullTwin.Twin;
-import org.example.Mapping.Interfaces.TwinAction.Action;
-import org.example.Mapping.Interfaces.TwinAttribute.BaseTwinAttribute.TwinAttribute;
-import org.example.Mapping.Interfaces.TwinAttribute.CustomType.CustomType;
-import org.example.Mapping.Interfaces.TwinEnumPackage.CustomStrategyType;
-import org.example.Mapping.Interfaces.TwinEnumPackage.EnumFederationLink;
-import org.example.Mapping.Interfaces.TwinFlow.FederationFlow;
-import org.example.Mapping.Interfaces.TwinFlow.Flow;
-import org.example.Mapping.Interfaces.TwinFlow.QueryFlow;
-import org.example.Mapping.Interfaces.TwinFunction.Definition.CustomCalculation;
-import org.example.Mapping.Interfaces.TwinPort.Actuators;
-import org.example.Mapping.Interfaces.TwinPort.ConstPort;
-import org.example.Mapping.Interfaces.TwinPort.Sensors;
-import org.example.Mapping.Interfaces.TwinStateMachine.TwinStateMachine;
-import org.example.Mapping.Interfaces.TwinStrategy.ExternalStrategy;
-import org.example.Mapping.Interfaces.TwinStrategy.Strategy;
-import org.example.Mapping.TwinExpression.TwinLiteralExpressionElements.TwinLiteralStringExpression;
+import org.example.Mapping.CustomStrategyType;
+import org.example.Mapping.EnumFederationLink;
+import org.example.Mapping.Model.Action.TwinActionUsage;
+import org.example.Mapping.Model.Attribute.CustomTypeDefinition;
+import org.example.Mapping.Model.Attribute.CustomTypeUsage;
+import org.example.Mapping.Model.Attribute.TwinAttributeUsage;
+import org.example.Mapping.Model.Database.DatabaseUsage;
+import org.example.Mapping.Model.Database.RelationalDatabaseUsage;
+import org.example.Mapping.Model.Expression.TwinLiteralStringUsage;
+import org.example.Mapping.Model.Federation.FederationTwinDefinition;
+import org.example.Mapping.Model.Flow.FederationFlowUsage;
+import org.example.Mapping.Model.Flow.QueryFlowUsage;
+import org.example.Mapping.Model.Flow.TwinFlowUsage;
+import org.example.Mapping.Model.Function.CustomCalculationDefinition;
+import org.example.Mapping.Model.Port.ActuatorUsage;
+import org.example.Mapping.Model.Port.ConstPortUsage;
+import org.example.Mapping.Model.Port.SensorUsage;
+import org.example.Mapping.Model.StateMachine.TwinStateMachineUsage;
+import org.example.Mapping.Model.Strategy.ExternalStrategyUsage;
+import org.example.Mapping.Model.Strategy.TwinStrategyUsage;
+import org.example.Mapping.Model.Taxonomy.DescriptiveModel.DescriptiveModelUsage;
+import org.example.Mapping.Model.Taxonomy.PhysicalTwin.PhysicalTwinUsage;
+import org.example.Mapping.Model.Taxonomy.PredictiveModel.PredictiveModelUsage;
+import org.example.Mapping.Model.Taxonomy.PrescriptiveModel.PrescriptiveModelUsage;
+import org.example.Mapping.Model.Taxonomy.Shadow.ShadowUsage;
+import org.example.Mapping.Model.Twin.TwinDefinition;
+
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -34,9 +37,9 @@ public class TestFullModelPresence extends AbstarctTest {
 
 	@Test
 	public void testBatteryTwinIsPresent() {
-		assertAmount(Twin.class, Definition.class, 3);
+		assertAmount(TwinDefinition.class, 3);
 
-		Twin<Definition> battery = named(Twin.class, Definition.class, "Battery");
+		TwinDefinition battery = named(TwinDefinition.class, "Battery");
 		assertNotNull(battery.getId());
 
 		assertTrue(battery.getPhysicalTwin().isPresent());
@@ -48,26 +51,26 @@ public class TestFullModelPresence extends AbstarctTest {
 
 	@Test
 	public void testPhysicalBatteryPresent() {
-		PhysicalTwin<Usage> physicalBattery = named(PhysicalTwin.class, Usage.class, "physicalBattery");
+		PhysicalTwinUsage physicalBattery = named(PhysicalTwinUsage.class, "physicalBattery");
 		assertNotNull(physicalBattery.getId());
 
-		assertEquals(4, physicalBattery.getSensors().getCompartment().size());
-		assertEquals(1, physicalBattery.getActuators().getCompartment().size());
-		assertEquals(1, physicalBattery.getControlUnits().getCompartment().size());
-		assertEquals(1, physicalBattery.getConstPort().getCompartment().size());
-		assertEquals(3, physicalBattery.getPhysicalFlows().getCompartment().size());
+		assertEquals(4, physicalBattery.getSensors().size());
+		assertEquals(1, physicalBattery.getActuators().size());
+		assertEquals(1, physicalBattery.getControlUnits().size());
+		assertEquals(1, physicalBattery.getConstPorts().size());
+		assertEquals(3, physicalBattery.getPhysicalFlows().size());
 	}
 
 	@Test
 	public void testSensorP11AndItsAttributesArePresent() {
-		Sensors<Usage> p11 = named(Sensors.class, Usage.class, "p11");
-		assertParent(p11, PhysicalTwin.class, Usage.class, "physicalBattery");
+		SensorUsage p11 = named(SensorUsage.class, "p11");
+		assertParent(p11, PhysicalTwinUsage.class, "physicalBattery");
 
 		assertTrue(p11.getProtocol().isPresent());
-		assertTrue(((TwinLiteralStringExpression) (p11.getDeviceKeyId().getElement().getExpression().get())).getLiteralValue().equals("battery_sensor"));
+		assertTrue(assertInstanceOf(TwinLiteralStringUsage.class, p11.getDeviceKey().getExpression().get()).getValue().equals("battery_sensor"));
 
-		List<String> attributeNames = p11.getAttributes().getCompartment().stream()
-				.map(c -> c.getElement().getName())
+		List<String> attributeNames = p11.getMeasurements().stream()
+				.map(c -> c.getName())
 				.toList();
 
 		assertEquals(8, attributeNames.size());
@@ -82,37 +85,34 @@ public class TestFullModelPresence extends AbstarctTest {
 			);
 		}
 
-		CustomType<Usage> pos = named(CustomType.class, Usage.class, "pos");
-		assertEquals(3, pos.getFields().getCompartment().size());
+		CustomTypeUsage pos = named(CustomTypeUsage.class, "pos");
+		assertEquals(3, pos.getFields().size());
 	}
 	@Test
 	public void testDescriptiveFlowReferencesPointToCorrectCompartments() {
-		DescriptiveModel<Usage> descriptiveBattery =
+		DescriptiveModelUsage descriptiveBattery =
 				named(
-						DescriptiveModel.class,
-						Usage.class,
+						DescriptiveModelUsage.class,
 						"descriptiveBattery"
 				);
 
-		List<? extends Flow<Usage>> flows =
+		List<? extends TwinFlowUsage> flows =
 				descriptiveBattery.getDescriptiveFlows()
-						.getCompartment()
 						.stream()
-						.map(c -> c.getElement())
 						.toList();
 
 		assertEquals(3, flows.size());
 
 		assertTrue(
 				flows.stream().allMatch(flow -> {
-					var source = flow.getSource().getReferent();
-					var target = flow.getTarget().getReferent();
+					var source = flow.getSource();
+					var target = flow.getTarget();
 
-					String sourceName = source.getElement().getName();
+					String sourceName = source.getName();
 					String sourceParent =
 							source.getParent().orElseThrow().getName();
 
-					String targetName = target.getElement().getName();
+					String targetName = target.getName();
 					String targetParent =
 							target.getParent().orElseThrow().getName();
 
@@ -141,28 +141,26 @@ public class TestFullModelPresence extends AbstarctTest {
 
 	@Test
 	public void testPhysicalFlowReferencesPointToCorrectCompartments() {
-		PhysicalTwin<Usage> physicalBattery =
-				named(PhysicalTwin.class, Usage.class, "physicalBattery");
+		PhysicalTwinUsage physicalBattery =
+				named(PhysicalTwinUsage.class, "physicalBattery");
 
-		List<? extends Flow<Usage>> flows =
+		List<? extends TwinFlowUsage> flows =
 				physicalBattery.getPhysicalFlows()
-						.getCompartment()
 						.stream()
-						.map(c -> c.getElement())
 						.toList();
 
 		assertEquals(3, flows.size());
 
 		assertTrue(
 				flows.stream().allMatch(flow -> {
-					var source = flow.getSource().getReferent();
-					var target = flow.getTarget().getReferent();
+					var source = flow.getSource();
+					var target = flow.getTarget();
 
-					String sourceName = source.getElement().getName();
+					String sourceName = source.getName();
 					String sourceParent =
 							source.getParent().orElseThrow().getName();
 
-					String targetName = target.getElement().getName();
+					String targetName = target.getName();
 					String targetParent =
 							target.getParent().orElseThrow().getName();
 
@@ -192,28 +190,26 @@ public class TestFullModelPresence extends AbstarctTest {
 
 	@Test
 	public void testQueryFlowReferencesPointToCorrectCompartments() {
-		Twin<Definition> battery =
-				named(Twin.class, Definition.class, "Battery");
+		TwinDefinition battery =
+				named(TwinDefinition.class, "Battery");
 
-		List<? extends QueryFlow<Usage>> flows =
+		List<QueryFlowUsage> flows =
 				battery.getQueryFlows()
-						.getCompartment()
 						.stream()
-						.map(c -> c.getElement())
 						.toList();
 
 		assertEquals(6, flows.size());
 
 		assertTrue(
 				flows.stream().allMatch(flow -> {
-					var source = flow.getSource().getReferent();
-					var target = flow.getTarget().getReferent();
+					var source = flow.getSource();
+					var target = flow.getTarget();
 
-					String sourceName = source.getElement().getName();
+					String sourceName = source.getName();
 					String sourceParent =
 							source.getParent().orElseThrow().getName();
 
-					String targetName = target.getElement().getName();
+					String targetName = target.getName();
 					String targetParent =
 							target.getParent().orElseThrow().getName();
 
@@ -259,33 +255,33 @@ public class TestFullModelPresence extends AbstarctTest {
 
 	@Test
 	public void testSensorInheritanceChainIsPresent() {
-		Sensors<Usage> p11 = named(Sensors.class, Usage.class, "p11");
-		Sensors<Usage> p13 = named(Sensors.class, Usage.class, "p13");
-		Sensors<Usage> p14 = named(Sensors.class, Usage.class, "p14");
-		Sensors<Usage> p15 = named(Sensors.class, Usage.class, "p15");
+		SensorUsage p11 = named(SensorUsage.class, "p11");
+		SensorUsage p13 = named(SensorUsage.class, "p13");
+		SensorUsage p14 = named(SensorUsage.class, "p14");
+		SensorUsage p15 = named(SensorUsage.class, "p15");
 
-		assertParent(p13, PhysicalTwin.class, Usage.class, "physicalBattery");
-		assertParent(p14, PhysicalTwin.class, Usage.class, "physicalBattery");
-		assertParent(p15, PhysicalTwin.class, Usage.class, "physicalBattery");
+		assertParent(p13, PhysicalTwinUsage.class, "physicalBattery");
+		assertParent(p14, PhysicalTwinUsage.class, "physicalBattery");
+		assertParent(p15, PhysicalTwinUsage.class, "physicalBattery");
 
-		assertEquals(8, p13.getAttributes().getCompartment().size());
-		assertEquals(8, p14.getAttributes().getCompartment().size());
-		assertEquals(8, p15.getAttributes().getCompartment().size());
+		assertEquals(8, p13.getMeasurements().size());
+		assertEquals(8, p14.getMeasurements().size());
+		assertEquals(8, p15.getMeasurements().size());
 		assertEquals(
-				p11.getProtocol().get().getElement().getId(),
-				p13.getProtocol().get().getElement().getId()
+				p11.getProtocol().get().getSysmlElement(),
+				p13.getProtocol().get().getSysmlElement()
 		);	}
 
 
 
 	@Test
 	public void testConstPortAndItsAttributesArePresent() {
-		Set<ConstPort<Usage>> constPorts =
-				result.get(ConstPort.class, Usage.class);
+		List<ConstPortUsage> constPorts =
+				originals(ConstPortUsage.class);
 
 		assertFalse(constPorts.isEmpty());
 
-		ConstPort<Usage> constPort = constPorts.stream()
+		ConstPortUsage constPort = constPorts.stream()
 				.filter(x ->
 						x.getParent().isPresent()
 								&& "physicalBattery".equals(
@@ -301,16 +297,15 @@ public class TestFullModelPresence extends AbstarctTest {
 
 		assertParent(
 				constPort,
-				PhysicalTwin.class,
-				Usage.class,
+				PhysicalTwinUsage.class,
 				"physicalBattery"
 		);
 
 		assertTrue(constPort.getProtocol().isPresent());
 
 		List<String> attributeNames =
-				constPort.getAttributes().getCompartment().stream()
-						.map(c -> c.getElement().getName())
+				constPort.getMeasurements().stream()
+						.map(c -> c.getName())
 						.toList();
 
 		assertEquals(9, attributeNames.size());
@@ -332,28 +327,26 @@ public class TestFullModelPresence extends AbstarctTest {
 			);
 		}
 
-		CustomType<Usage> customCalculationTest =
+		CustomTypeUsage customCalculationTest =
 				named(
-						CustomType.class,
-						Usage.class,
+						CustomTypeUsage.class,
 						"customCalculationTest"
 				);
 
 		assertEquals(
 				3,
-				customCalculationTest.getFields().getCompartment().size()
+				customCalculationTest.getFields().size()
 		);
 	}
 
 	@Test
 	public void testActuatorP12AndItsAttributesArePresent() {
-		Actuators<Usage> p12 =
-				named(Actuators.class, Usage.class, "p12");
+		ActuatorUsage p12 =
+				named(ActuatorUsage.class, "p12");
 
 		assertParent(
 				p12,
-				PhysicalTwin.class,
-				Usage.class,
+				PhysicalTwinUsage.class,
 				"physicalBattery"
 		);
 
@@ -361,39 +354,35 @@ public class TestFullModelPresence extends AbstarctTest {
 
 		assertEquals(
 				1,
-				p12.getAttributes().getCompartment().size()
+				p12.getCommands().size()
 		);
 
 		assertEquals(
 				"charge",
-				p12.getAttributes()
-						.getCompartment()
+				p12.getCommands()
 						.getFirst()
-						.getElement()
 						.getName()
 		);
 	}
 
 	@Test
 	public void testControlUnitCm1StructureIsPresent() {
-		TwinStateMachine<Usage> cm1 =
-				named(TwinStateMachine.class, Usage.class, "cm1");
+		TwinStateMachineUsage cm1 =
+				named(TwinStateMachineUsage.class, "cm1");
 
 		assertParent(
 				cm1,
-				PhysicalTwin.class,
-				Usage.class,
+				PhysicalTwinUsage.class,
 				"physicalBattery"
 		);
 
-		assertEquals(3, cm1.getInputs().getCompartment().size());
-		assertEquals(1, cm1.getOutputs().getCompartment().size());
-		assertEquals(2, cm1.getStates().getCompartment().size());
+		assertEquals(3, cm1.getInputs().size());
+		assertEquals(1, cm1.getOutputs().size());
+		assertEquals(2, cm1.getStates().size());
 		assertEquals(3, cm1.getTransitions().size());
 
-		TwinStateMachine<Usage> charging =
-				cm1.getStates().getCompartment().stream()
-						.map(c -> c.getElement())
+		TwinStateMachineUsage charging =
+				cm1.getStates().stream()
 						.filter(s -> "charging".equals(s.getName()))
 						.findFirst()
 						.orElseThrow(() ->
@@ -404,43 +393,39 @@ public class TestFullModelPresence extends AbstarctTest {
 
 		assertEquals(
 				1,
-				charging.getStates().getCompartment().size()
+				charging.getStates().size()
 		);
 
 		assertEquals(
 				"test34",
 				charging.getStates()
-						.getCompartment()
 						.getFirst()
-						.getElement()
 						.getName()
 		);
 
 		assertTrue(
-				cm1.getStates().getCompartment().stream()
+				cm1.getStates().stream()
 						.anyMatch(c ->
-								"idle".equals(c.getElement().getName())
+								"idle".equals(c.getName())
 						)
 		);
 	}
 
 	@Test
 	public void testPhysicalFlowsArePresent() {
-		PhysicalTwin<Usage> physicalBattery =
+		PhysicalTwinUsage physicalBattery =
 				named(
-						PhysicalTwin.class,
-						Usage.class,
+						PhysicalTwinUsage.class,
 						"physicalBattery"
 				);
 
 		List<String> targets =
 				physicalBattery.getPhysicalFlows()
-						.getCompartment()
+						
 						.stream()
 						.map(c ->
-								c.getElement()
+								c
 										.getTarget()
-										.getReferent()
 										.getName()
 						)
 						.toList();
@@ -457,45 +442,42 @@ public class TestFullModelPresence extends AbstarctTest {
 
 	@Test
 	public void testShadowBatteryAndDatabaseArePresent() {
-		Shadow<Usage> shadowBattery =
-				named(Shadow.class, Usage.class, "shadowBattery");
+		ShadowUsage shadowBattery =
+				named(ShadowUsage.class, "shadowBattery");
 
 		assertNotNull(shadowBattery.getId());
 
 		assertEquals(
 				1,
-				shadowBattery.getDatabases().getCompartment().size()
+				shadowBattery.getDatabases().size()
 		);
 
-		Database<Usage> database =
+		DatabaseUsage<?, ?> database =
 				shadowBattery.getDatabases()
-						.getCompartment()
-						.getFirst()
-						.getElement();
+						.getFirst();
 
-		assertInstanceOf(RelationalDatabase.class, database);
+		assertInstanceOf(RelationalDatabaseUsage.class, database);
 
 		assertEquals(
 				1,
-				result.get(RelationalDatabase.class, Usage.class).size()
+				originals(RelationalDatabaseUsage.class).size()
 		);
 	}
 
 	@Test
 	public void testAllQueryFlowsArePresent() {
-		Twin<Definition> battery =
-				named(Twin.class, Definition.class, "Battery");
+		TwinDefinition battery =
+				named(TwinDefinition.class, "Battery");
 
-		List<? extends QueryFlow<Usage>> queryFlows =
-				battery.getQueryFlows().getCompartment().stream()
-						.map(c -> c.getElement())
+		List<QueryFlowUsage> queryFlows =
+				battery.getQueryFlows().stream()
 						.toList();
 
 		assertEquals(6, queryFlows.size());
 
 		List<String> targetNames =
 				queryFlows.stream()
-						.map(f -> f.getTarget().getReferent().getName())
+						.map(f -> f.getTarget().getName())
 						.toList();
 
 		for (String expected : List.of(
@@ -521,10 +503,9 @@ public class TestFullModelPresence extends AbstarctTest {
 
 	@Test
 	public void testDescriptiveBatteryStructureIsPresent() {
-		DescriptiveModel<Usage> descriptiveBattery =
+		DescriptiveModelUsage descriptiveBattery =
 				named(
-						DescriptiveModel.class,
-						Usage.class,
+						DescriptiveModelUsage.class,
 						"descriptiveBattery"
 				);
 
@@ -533,95 +514,90 @@ public class TestFullModelPresence extends AbstarctTest {
 		assertEquals(
 				4,
 				descriptiveBattery.getDerivedAttributes()
-						.getCompartment()
+						
 						.size()
 		);
 
 		assertEquals(
 				1,
 				descriptiveBattery.getDescriptiveStateMachines()
-						.getCompartment()
+						
 						.size()
 		);
 
 		assertEquals(
 				1,
 				descriptiveBattery.getDescriptiveStrategies()
-						.getCompartment()
+						
 						.size()
 		);
 
 		assertEquals(
 				3,
 				descriptiveBattery.getDescriptiveFlows()
-						.getCompartment()
+						
 						.size()
 		);
 	}
 
 	@Test
 	public void testSocActionIsPresent() {
-		Action<Usage> soc =
-				named(Action.class, Usage.class, "soc");
+		TwinActionUsage<?, ?, ?> soc =
+				named(TwinActionUsage.class, "soc");
 
 		assertParent(
 				soc,
-				DescriptiveModel.class,
-				Usage.class,
+				DescriptiveModelUsage.class,
 				"descriptiveBattery"
 		);
 	}
 
 	@Test
 	public void testTemp30ActionIsPresent() {
-		Action<Usage> temp30 =
-				named(Action.class, Usage.class, "temp30");
+		TwinActionUsage<?, ?, ?> temp30 =
+				named(TwinActionUsage.class, "temp30");
 
 		assertParent(
 				temp30,
-				DescriptiveModel.class,
-				Usage.class,
+				DescriptiveModelUsage.class,
 				"descriptiveBattery"
 		);
 	}
 
 	@Test
 	public void testAvgTempActionIsPresent() {
-		Action<Usage> avgTemp =
-				named(Action.class, Usage.class, "avgTemp");
+		TwinActionUsage<?, ?, ?> avgTemp =
+				named(TwinActionUsage.class, "avgTemp");
 
 		assertParent(
 				avgTemp,
-				DescriptiveModel.class,
-				Usage.class,
+				DescriptiveModelUsage.class,
 				"descriptiveBattery"
 		);
 	}
 
 	@Test
 	public void testDescriptiveStateMachineTest12IsPresent() {
-		TwinStateMachine<Usage> test12 =
+		TwinStateMachineUsage test12 =
 				named(
-						TwinStateMachine.class,
-						Usage.class,
+						TwinStateMachineUsage.class,
 						"test12"
 				);
 
 		assertParent(
 				test12,
-				DescriptiveModel.class,
-				Usage.class,
+				DescriptiveModelUsage.class,
 				"descriptiveBattery"
 		);
 
 		assertEquals(
 				2,
-				test12.getStates().getCompartment().size()
+				test12.getStates().size()
 		);
 
 		List<String> stateNames =
-				test12.getStates().getCompartment().stream()
-						.map(c -> c.getElement().getName())
+				test12.getStates().stream()
+						.map(c -> c.getName())
 						.toList();
 
 		assertTrue(stateNames.contains("sa"));
@@ -630,24 +606,19 @@ public class TestFullModelPresence extends AbstarctTest {
 
 	@Test
 	public void testLlmRequestStrategyIsPresent() {
-		Strategy<Usage> llmRequest =
+		TwinStrategyUsage<?, ?> llmRequest =
 				named(
-						Strategy.class,
-						Usage.class,
+						TwinStrategyUsage.class,
 						"LLM_Request"
 				);
 
 		assertParent(
 				llmRequest,
-				DescriptiveModel.class,
-				Usage.class,
+				DescriptiveModelUsage.class,
 				"descriptiveBattery"
 		);
 
-		assertInstanceOf(ExternalStrategy.class, llmRequest);
-
-		ExternalStrategy<Usage> external =
-				(ExternalStrategy<Usage>) llmRequest;
+		ExternalStrategyUsage external = assertInstanceOf(ExternalStrategyUsage.class, llmRequest);
 
 		assertEquals(
 				"battery/LLM_Request",
@@ -661,32 +632,30 @@ public class TestFullModelPresence extends AbstarctTest {
 
 		assertEquals(
 				3,
-				llmRequest.getInputs().getCompartment().size()
+				llmRequest.getInputs().size()
 		);
 
 		assertEquals(
 				1,
-				llmRequest.getOutputs().getCompartment().size()
+				llmRequest.getOutputs().size()
 		);
 	}
 
 	@Test
 	public void testDescriptiveFlowsArePresent() {
-		DescriptiveModel<Usage> descriptiveBattery =
+		DescriptiveModelUsage descriptiveBattery =
 				named(
-						DescriptiveModel.class,
-						Usage.class,
+						DescriptiveModelUsage.class,
 						"descriptiveBattery"
 				);
 
 		List<String> targets =
 				descriptiveBattery.getDescriptiveFlows()
-						.getCompartment()
+						
 						.stream()
 						.map(c ->
-								c.getElement()
+								c
 										.getTarget()
-										.getReferent()
 										.getName()
 						)
 						.toList();
@@ -699,14 +668,12 @@ public class TestFullModelPresence extends AbstarctTest {
 
 	@Test
 	public void testDescriptiveToPredictiveFlowsArePresent() {
-		Twin<Definition> battery =
-				named(Twin.class, Definition.class, "Battery");
+		TwinDefinition battery =
+				named(TwinDefinition.class, "Battery");
 
-		List<? extends Flow<Usage>> flows =
+		List<? extends TwinFlowUsage> flows =
 				battery.getDescriptiveToPredictiveFlows()
-						.getCompartment()
 						.stream()
-						.map(c -> c.getElement())
 						.toList();
 
 		assertEquals(2, flows.size());
@@ -714,7 +681,7 @@ public class TestFullModelPresence extends AbstarctTest {
 		List<String> targets =
 				flows.stream()
 						.map(f ->
-								f.getTarget().getReferent().getName()
+								f.getTarget().getName()
 						)
 						.toList();
 
@@ -724,10 +691,9 @@ public class TestFullModelPresence extends AbstarctTest {
 
 	@Test
 	public void testPredictiveBatteryStructureIsPresent() {
-		PredictiveModel<Usage> predictiveBattery =
+		PredictiveModelUsage predictiveBattery =
 				named(
-						PredictiveModel.class,
-						Usage.class,
+						PredictiveModelUsage.class,
 						"predictiveBattery"
 				);
 
@@ -736,31 +702,26 @@ public class TestFullModelPresence extends AbstarctTest {
 		assertEquals(
 				1,
 				predictiveBattery.getPredictiveStrategies()
-						.getCompartment()
+						
 						.size()
 		);
 	}
 
 	@Test
 	public void testConsForecastStrategyIsPresent() {
-		Strategy<Usage> consForecast =
+		TwinStrategyUsage<?, ?> consForecast =
 				named(
-						Strategy.class,
-						Usage.class,
+						TwinStrategyUsage.class,
 						"consForecast"
 				);
 
 		assertParent(
 				consForecast,
-				PredictiveModel.class,
-				Usage.class,
+				PredictiveModelUsage.class,
 				"predictiveBattery"
 		);
 
-		assertInstanceOf(ExternalStrategy.class, consForecast);
-
-		ExternalStrategy<Usage> external =
-				(ExternalStrategy<Usage>) consForecast;
+		ExternalStrategyUsage external = assertInstanceOf(ExternalStrategyUsage.class, consForecast);
 
 		assertEquals(
 				"battery/consForecast",
@@ -774,25 +735,23 @@ public class TestFullModelPresence extends AbstarctTest {
 
 		assertEquals(
 				2,
-				consForecast.getInputs().getCompartment().size()
+				consForecast.getInputs().size()
 		);
 
 		assertEquals(
 				1,
-				consForecast.getOutputs().getCompartment().size()
+				consForecast.getOutputs().size()
 		);
 	}
 
 	@Test
 	public void testPredictiveToPrescriptiveFlowsArePresent() {
-		Twin<Definition> battery =
-				named(Twin.class, Definition.class, "Battery");
+		TwinDefinition battery =
+				named(TwinDefinition.class, "Battery");
 
-		List<? extends Flow<Usage>> flows =
+		List<? extends TwinFlowUsage> flows =
 				battery.getPredictiveToPrescriptiveFlows()
-						.getCompartment()
 						.stream()
-						.map(c -> c.getElement())
 						.toList();
 
 		assertEquals(2, flows.size());
@@ -800,7 +759,7 @@ public class TestFullModelPresence extends AbstarctTest {
 		assertTrue(
 				flows.stream().allMatch(f ->
 						"predictedCurrent".equals(
-								f.getTarget().getReferent().getName()
+								f.getTarget().getName()
 						)
 				)
 		);
@@ -808,14 +767,12 @@ public class TestFullModelPresence extends AbstarctTest {
 
 	@Test
 	public void testPrescriptiveToPhysicalFlowsArePresent() {
-		Twin<Definition> battery =
-				named(Twin.class, Definition.class, "Battery");
+		TwinDefinition battery =
+				named(TwinDefinition.class, "Battery");
 
-		List<? extends Flow<Usage>> flows =
+		List<? extends TwinFlowUsage> flows =
 				battery.getPrescriptiveToPhysicalFlows()
-						.getCompartment()
 						.stream()
-						.map(c -> c.getElement())
 						.toList();
 
 		assertEquals(2, flows.size());
@@ -823,7 +780,7 @@ public class TestFullModelPresence extends AbstarctTest {
 		assertTrue(
 				flows.stream().allMatch(f ->
 						"charge".equals(
-								f.getTarget().getReferent().getName()
+								f.getTarget().getName()
 						)
 				)
 		);
@@ -831,10 +788,9 @@ public class TestFullModelPresence extends AbstarctTest {
 
 	@Test
 	public void testPrescriptiveBatteryStructureIsPresent() {
-		PrescriptiveModel<Usage> prescriptiveBattery =
+		PrescriptiveModelUsage prescriptiveBattery =
 				named(
-						PrescriptiveModel.class,
-						Usage.class,
+						PrescriptiveModelUsage.class,
 						"prescriptiveBattery"
 				);
 
@@ -843,34 +799,26 @@ public class TestFullModelPresence extends AbstarctTest {
 		assertEquals(
 				2,
 				prescriptiveBattery.getPrescriptiveStrategies()
-						.getCompartment()
+						
 						.size()
 		);
 	}
 
 	@Test
 	public void testChargeStrategyExternalIsPresent() {
-		Strategy<Usage> chargeStrategyExternal =
+		TwinStrategyUsage<?, ?> chargeStrategyExternal =
 				named(
-						Strategy.class,
-						Usage.class,
+						TwinStrategyUsage.class,
 						"chargeStrategyExternal"
 				);
 
 		assertParent(
 				chargeStrategyExternal,
-				PrescriptiveModel.class,
-				Usage.class,
+				PrescriptiveModelUsage.class,
 				"prescriptiveBattery"
 		);
 
-		assertInstanceOf(
-				ExternalStrategy.class,
-				chargeStrategyExternal
-		);
-
-		ExternalStrategy<Usage> external =
-				(ExternalStrategy<Usage>) chargeStrategyExternal;
+		ExternalStrategyUsage external = assertInstanceOf(ExternalStrategyUsage.class, chargeStrategyExternal);
 
 		assertEquals(
 				"battery/chargeStrategy",
@@ -885,95 +833,91 @@ public class TestFullModelPresence extends AbstarctTest {
 		assertEquals(
 				2,
 				chargeStrategyExternal.getInputs()
-						.getCompartment()
+						
 						.size()
 		);
 
 		assertEquals(
 				1,
 				chargeStrategyExternal.getOutputs()
-						.getCompartment()
+						
 						.size()
 		);
+
 	}
 
 	@Test
 	public void testChargeStrategyInternalIsPresent() {
-		Strategy<Usage> chargeStrategyInternal =
+		TwinStrategyUsage<?, ?> chargeStrategyInternal =
 				named(
-						Strategy.class,
-						Usage.class,
+						TwinStrategyUsage.class,
 						"chargeStrategyInternal"
 				);
 
 		assertParent(
 				chargeStrategyInternal,
-				PrescriptiveModel.class,
-				Usage.class,
+				PrescriptiveModelUsage.class,
 				"prescriptiveBattery"
 		);
 
 		assertEquals(
 				3,
 				chargeStrategyInternal.getInputs()
-						.getCompartment()
+						
 						.size()
 		);
 
 		assertEquals(
 				1,
 				chargeStrategyInternal.getOutputs()
-						.getCompartment()
+						
 						.size()
 		);
 
 		List<String> inputNames =
 				chargeStrategyInternal.getInputs()
-						.getCompartment()
+						
 						.stream()
-						.map(c -> c.getElement().getName())
+						.map(c -> c.getName())
 						.toList();
 
 		assertTrue(inputNames.contains("predictedCurrent"));
 		assertTrue(inputNames.contains("maxCharge"));
 		assertTrue(inputNames.contains("posTest12"));
 
-		TwinAttribute<Usage> test12 =
+		TwinAttributeUsage<?, ?> test12 =
 				named(
-						TwinAttribute.class,
-						Usage.class,
+						TwinAttributeUsage.class,
 						"test12"
 				);
 
 		assertTrue(test12.getExpression().isPresent());
 
-		CustomType<Usage> posTest12 =
+		CustomTypeUsage posTest12 =
 				named(
-						CustomType.class,
-						Usage.class,
+						CustomTypeUsage.class,
 						"posTest12"
 				);
 
 		assertEquals(
 				3,
-				posTest12.getFields().getCompartment().size()
+				posTest12.getFields().size()
 		);
 	}
 
 	@Test
 	public void testPositionCustomTypeDefinitionIsPresent() {
-		CustomType<Definition> position =
+		CustomTypeDefinition position =
 				named(
-						CustomType.class,
-						Definition.class,
+						CustomTypeDefinition.class,
 						"Position"
 				);
 
 		assertNotNull(position.getId());
 
 		List<String> fieldNames =
-				position.getFields().getCompartment().stream()
-						.map(c -> c.getElement().getName())
+				position.getFields().stream()
+						.map(c -> c.getName())
 						.toList();
 
 		assertEquals(3, fieldNames.size());
@@ -984,10 +928,9 @@ public class TestFullModelPresence extends AbstarctTest {
 
 	@Test
 	public void testPosition2CustomTypeDefinitionIsPresent() {
-		CustomType<Definition> position2 =
+		CustomTypeDefinition position2 =
 				named(
-						CustomType.class,
-						Definition.class,
+						CustomTypeDefinition.class,
 						"Position2"
 				);
 
@@ -995,25 +938,22 @@ public class TestFullModelPresence extends AbstarctTest {
 
 		assertEquals(
 				1,
-				position2.getFields().getCompartment().size()
+				position2.getFields().size()
 		);
 
 		assertEquals(
 				"x",
 				position2.getFields()
-						.getCompartment()
 						.getFirst()
-						.getElement()
 						.getName()
 		);
 	}
 
 	@Test
 	public void testAddPositionCalculationDefinitionIsPresent() {
-		CustomCalculation addPosition =
+		CustomCalculationDefinition addPosition =
 				named(
-						CustomCalculation.class,
-						Definition.class,
+						CustomCalculationDefinition.class,
 						"AddPosition"
 				);
 
@@ -1021,12 +961,12 @@ public class TestFullModelPresence extends AbstarctTest {
 
 		assertEquals(
 				2,
-				addPosition.getInputs().getCompartment().size()
+				addPosition.getInputs().size()
 		);
 
 		List<String> inputNames =
-				addPosition.getInputs().getCompartment().stream()
-						.map(c -> c.getElement().getName())
+				addPosition.getInputs().stream()
+						.map(c -> c.getName())
 						.toList();
 
 		assertTrue(inputNames.contains("pos_a"));
@@ -1034,25 +974,22 @@ public class TestFullModelPresence extends AbstarctTest {
 
 		assertEquals(
 				1,
-				addPosition.getOutputs().getCompartment().size()
+				addPosition.getOutputs().size()
 		);
 
 		assertEquals(
 				"pos_c",
 				addPosition.getOutputs()
-						.getCompartment()
 						.getFirst()
-						.getElement()
 						.getName()
 		);
 	}
 
 	@Test
 	public void testAvgCalculationDefinitionIsPresent() {
-		CustomCalculation avg =
+		CustomCalculationDefinition avg =
 				named(
-						CustomCalculation.class,
-						Definition.class,
+						CustomCalculationDefinition.class,
 						"Avg"
 				);
 
@@ -1060,29 +997,25 @@ public class TestFullModelPresence extends AbstarctTest {
 
 		assertEquals(
 				1,
-				avg.getInputs().getCompartment().size()
+				avg.getInputs().size()
 		);
 
 		assertEquals(
 				"reals",
 				avg.getInputs()
-						.getCompartment()
 						.getFirst()
-						.getElement()
 						.getName()
 		);
 
 		assertEquals(
 				1,
-				avg.getOutputs().getCompartment().size()
+				avg.getOutputs().size()
 		);
 
 		assertEquals(
 				"avg",
 				avg.getOutputs()
-						.getCompartment()
 						.getFirst()
-						.getElement()
 						.getName()
 		);
 
@@ -1094,18 +1027,17 @@ public class TestFullModelPresence extends AbstarctTest {
 
 	@Test
 	public void testAvg2CalculationDefinitionIsPresent() {
-		CustomCalculation avg2 =
+		CustomCalculationDefinition avg2 =
 				named(
-						CustomCalculation.class,
-						Definition.class,
+						CustomCalculationDefinition.class,
 						"Avg2"
 				);
 
 		assertNotNull(avg2.getId());
 
 		List<String> inputNames =
-				avg2.getInputs().getCompartment().stream()
-						.map(c -> c.getElement().getName())
+				avg2.getInputs().stream()
+						.map(c -> c.getName())
 						.toList();
 
 		assertTrue(inputNames.contains("x"));
@@ -1121,8 +1053,8 @@ public class TestFullModelPresence extends AbstarctTest {
 		);
 
 		assertTrue(
-				avg2.localAttributes().getCompartment().stream()
-						.anyMatch(c -> "test2".equals(c.getElement().getName())),
+				avg2.getLocalAttributes().stream()
+						.anyMatch(c -> "test2".equals(c.getName())),
 				"'test2' local attribute should be present"
 		);
 		assertTrue(
@@ -1131,45 +1063,44 @@ public class TestFullModelPresence extends AbstarctTest {
 		);
 
 		assertTrue(
-				avg2.getOutputs().getCompartment().stream()
-						.anyMatch(c -> "avg".equals(c.getElement().getName())),
+				avg2.getOutputs().stream()
+						.anyMatch(c -> "avg".equals(c.getName())),
 				"return 'avg' should be in outputs"
 		);
 	}
 	@Test
 	public void testFederatedBatteryIsPresent() {
-		FederationTwin<Definition> federatedBattery =
-				named(FederationTwin.class, Definition.class, "FederatedBattery");
+		FederationTwinDefinition federatedBattery =
+				named(FederationTwinDefinition.class, "FederatedBattery");
 
 		assertNotNull(federatedBattery.getId());
 
-		List<? extends FederationFlow<Usage>> federationFlows =
-				federatedBattery.getFederationFlows().getCompartment().stream()
-						.map(c -> c.getElement())
+		List<FederationFlowUsage> federationFlows =
+				federatedBattery.getFederationFlows().stream()
 						.toList();
 
 		assertEquals(1, federationFlows.size());
 
-		FederationFlow<Usage> flow = federationFlows.getFirst();
+		FederationFlowUsage flow = federationFlows.getFirst();
 
 
-		assertEquals("test", flow.getSource().getReferent().getName());
-		assertEquals("soc", flow.getTarget().getReferent().getName());
+		assertEquals("test", flow.getSource().getName());
+		assertEquals("soc", flow.getTarget().getName());
 
 
-		assertTrue(flow.linkType().isPresent(), "federation flow should have a linkType");
+		assertTrue(flow.getLinkType().isPresent(), "federation flow should have a linkType");
 		assertEquals(
 				EnumFederationLink.PUSH,
-				flow.linkType().get().getElement().getTwinEnum().orElseThrow(() ->
+				flow.getLinkType().get().getValue().orElseThrow(() ->
 						new AssertionError("linkType has no enum value"))
 		);
 
 
 	}
 
-	private boolean inheritedOf(CustomCalculation calc, String inputName) {
-		return calc.getInputs().getCompartment().stream()
-				.filter(c -> inputName.equals(c.getElement().getName()))
+	private boolean inheritedOf(CustomCalculationDefinition calc, String inputName) {
+		return calc.getInputs().stream()
+				.filter(c -> inputName.equals(c.getName()))
 				.findFirst()
 				.orElseThrow(() ->
 						new AssertionError("Input '" + inputName + "' not found")
@@ -1177,9 +1108,9 @@ public class TestFullModelPresence extends AbstarctTest {
 				.isInherited();
 	}
 
-	private boolean localInheritedOf(CustomCalculation calc, String name) {
-		return calc.localAttributes().getCompartment().stream()
-				.filter(c -> name.equals(c.getElement().getName()))
+	private boolean localInheritedOf(CustomCalculationDefinition calc, String name) {
+		return calc.getLocalAttributes().stream()
+				.filter(c -> name.equals(c.getName()))
 				.findFirst()
 				.orElseThrow(() ->
 						new AssertionError("Local attribute '" + name + "' not found"))
@@ -1188,10 +1119,9 @@ public class TestFullModelPresence extends AbstarctTest {
 
 	@Test
 	public void testAllCalculationDefinitionIsPresent() {
-		CustomCalculation all =
+		CustomCalculationDefinition all =
 				named(
-						CustomCalculation.class,
-						Definition.class,
+						CustomCalculationDefinition.class,
 						"All"
 				);
 
@@ -1199,74 +1129,60 @@ public class TestFullModelPresence extends AbstarctTest {
 
 		assertEquals(
 				1,
-				all.getInputs().getCompartment().size()
+				all.getInputs().size()
 		);
 
 		assertEquals(
 				"bools",
 				all.getInputs()
-						.getCompartment()
 						.getFirst()
-						.getElement()
 						.getName()
 		);
 
 		assertEquals(
 				1,
-				all.getOutputs().getCompartment().size()
+				all.getOutputs().size()
 		);
 
 		assertEquals(
 				"alltrue",
 				all.getOutputs()
-						.getCompartment()
 						.getFirst()
-						.getElement()
 						.getName()
 		);
 	}
 
 	@Test
 	public void testAllTwinLevelFlowCompartmentsSumUpConsistently() {
-		Twin<Definition> battery =
-				named(Twin.class, Definition.class, "Battery");
+		TwinDefinition battery =
+				named(TwinDefinition.class, "Battery");
 
 		int sum =
-				battery.getQueryFlows().getCompartment().size()
+				battery.getQueryFlows().size()
 						+ battery.getDescriptiveToPredictiveFlows()
-						.getCompartment()
+						
 						.size()
 						+ battery.getDescriptiveToPrescriptiveFlows()
-						.getCompartment()
+						
 						.size()
 						+ battery.getPredictiveToPrescriptiveFlows()
-						.getCompartment()
+						
 						.size()
 						+ battery.getPrescriptiveToPhysicalFlows()
-						.getCompartment()
+						
 						.size();
 
 		assertEquals(12, sum);
 	}
 
 	private String contentPathOf(
-			ExternalStrategy<Usage> strategy
+			ExternalStrategyUsage strategy
 	) {
 		return strategy.getContentPath()
-				.getElement()
 				.getExpression()
-				.filter(
-						org.example.Mapping.Interfaces.TwinExpression
-								.StringLiteral.class::isInstance
-				)
-				.map(
-						org.example.Mapping.Interfaces.TwinExpression
-								.StringLiteral.class::cast
-				)
-				.map(
-						org.example.Mapping.Interfaces.TwinExpression
-								.StringLiteral::getLiteralValue
-				)
+				.filter(TwinLiteralStringUsage.class::isInstance)
+				.map(TwinLiteralStringUsage.class::cast)
+				.map(TwinLiteralStringUsage::getValue)
 				.orElseThrow(() ->
 						new AssertionError(
 								"contentPath has no StringLiteral value"
@@ -1275,11 +1191,10 @@ public class TestFullModelPresence extends AbstarctTest {
 	}
 
 	private CustomStrategyType strategyTypeOf(
-			ExternalStrategy<Usage> strategy
+			ExternalStrategyUsage strategy
 	) {
 		return strategy.getStrategyType()
-				.getElement()
-				.getTwinEnum()
+				.getValue()
 				.orElseThrow(() ->
 						new AssertionError(
 								"strategyType has no enum value"

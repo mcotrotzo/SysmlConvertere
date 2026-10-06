@@ -1,21 +1,18 @@
 package TopLevelDefinitionTests;
 
-import org.example.Mapping.Interfaces.Base.TypeKind.Usage;
-import org.example.Mapping.Interfaces.Reference;
-import org.example.Mapping.Interfaces.TwinAttribute.BaseTwinAttribute.TwinBaseBoolean;
-import org.example.Mapping.Interfaces.TwinAttribute.BaseTwinAttribute.TwinBaseReal;
-import org.example.Mapping.Interfaces.TwinAttribute.CustomType.CustomType;
-import org.example.Mapping.Interfaces.TwinExpression.BooleanLiteral;
-import org.example.Mapping.Interfaces.TwinExpression.Calculation;
-import org.example.Mapping.Interfaces.TwinExpression.FeatureReference;
-import org.example.Mapping.Interfaces.TwinExpression.TwinExpression;
-import org.example.Mapping.Interfaces.TwinFunction.Definition.BaseFunction;
-import org.example.Mapping.Interfaces.TwinFunction.Definition.BaseFunctionKind;
-import org.example.Mapping.TwinExpression.TwinCalculationExpression;
-import org.example.Mapping.TwinExpression.TwinConstructorExpression;
-import org.example.Mapping.TwinExpression.TwinLiteralExpressionElements.TwinLiteralBooleanExpression;
-import org.example.Mapping.TwinExpression.TwinLiteralExpressionElements.TwinLiteralIntegerExpression;
+import org.example.Mapping.BaseFunctionKind;
+import org.example.Mapping.Model.Attribute.*;
+import org.example.Mapping.Model.Expression.TwinCalculationUsage;
+import org.example.Mapping.Model.Expression.TwinConstructorUsage;
+import org.example.Mapping.Model.Expression.TwinExpressionUsage;
+import org.example.Mapping.Model.Expression.TwinLiteralBooleanUsage;
+import org.example.Mapping.Model.Expression.TwinLiteralIntegerUsage;
+import org.example.Mapping.Model.Expression.TwinReferenceUsage;
+import org.example.Mapping.Model.Function.BaseFunctionDefinition;
+import org.example.Mapping.Model.AbstractModel;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -23,186 +20,162 @@ public class TestExpressions extends AbstarctTest {
 
 	@Test
 	public void testCollectionExpressionTest() {
-		TwinBaseReal<Usage> temp = named(TwinBaseReal.class, Usage.class, "collectionTest");
+		TwinAttributeRealUsage temp = named(TwinAttributeRealUsage.class, "collectionTest");
 
-		TwinExpression root = temp.getExpression().get();
+		TwinExpressionUsage root = temp.getExpression().get();
 
-		assertTrue(root instanceof TwinCalculationExpression);
+		TwinCalculationUsage outer = assertInstanceOf(TwinCalculationUsage.class, root);
 
-		TwinCalculationExpression outer = (TwinCalculationExpression) root;
-
-		Reference<?> ref = outer.getCalledFunction();
-
-		assertInstanceOf(BaseFunction.class, ref.getReferent());
-		BaseFunction referentFunction = (BaseFunction) ref.getReferent();
+		BaseFunctionDefinition referentFunction = assertInstanceOf(BaseFunctionDefinition.class, outer.getInvokeType());
 
 		assertNotNull(referentFunction);
-		assertEquals(BaseFunctionKind.COLLECTION, referentFunction.getFunctionKind());
+		assertEquals(BaseFunctionKind.COLLECTION, referentFunction.getCore().getFunctionKind());
 		assertEquals(2, outer.getArguments().size());
 
-		TwinExpression first = outer.getArguments().get(0);
-		TwinExpression second = outer.getArguments().get(1);
+		TwinExpressionUsage first = outer.getArguments().get(0);
+		TwinExpressionUsage second = outer.getArguments().get(1);
 
-		assertInstanceOf(TwinLiteralIntegerExpression.class, first);
-		assertInstanceOf(TwinCalculationExpression.class, second);
+		assertInstanceOf(TwinLiteralIntegerUsage.class, first);
+		assertInstanceOf(TwinCalculationUsage.class, second);
 
-		TwinCalculationExpression inner = (TwinCalculationExpression) second;
+		TwinCalculationUsage inner = assertInstanceOf(TwinCalculationUsage.class, second);
 
-		Reference<?> innerRed = inner.getCalledFunction();
-
-		assertInstanceOf(BaseFunction.class, innerRed.getReferent());
-		BaseFunction referentInnerFunction = (BaseFunction) innerRed.getReferent();
+		BaseFunctionDefinition referentInnerFunction = assertInstanceOf(BaseFunctionDefinition.class, inner.getInvokeType());
 
 		assertNotNull(referentInnerFunction);
-		assertEquals(BaseFunctionKind.COLLECTION, referentInnerFunction.getFunctionKind());
+		assertEquals(BaseFunctionKind.COLLECTION, referentInnerFunction.getCore().getFunctionKind());
 		assertEquals(2, inner.getArguments().size());
 
-		assertTrue(inner.getArguments().get(0) instanceof TwinLiteralIntegerExpression);
-		assertTrue(inner.getArguments().get(1) instanceof TwinLiteralIntegerExpression);
+		assertTrue(inner.getArguments().get(0) instanceof TwinLiteralIntegerUsage);
+		assertTrue(inner.getArguments().get(1) instanceof TwinLiteralIntegerUsage);
 	}
 
 	@Test
 	public void testBaseFunctionExpression() {
-		TwinBaseReal<Usage> voltage = named(TwinBaseReal.class, Usage.class, "baseFunctionTest");
+		TwinAttributeRealUsage voltage = named(TwinAttributeRealUsage.class, "baseFunctionTest");
 
 		assertNotNull(voltage.getExpression().get());
 
-		TwinExpression root = voltage.getExpression().get();
+		TwinExpressionUsage root = voltage.getExpression().get();
 
-		assertTrue(root instanceof TwinCalculationExpression);
+		TwinCalculationUsage calculation = assertInstanceOf(TwinCalculationUsage.class, root);
 
-		TwinCalculationExpression calculation = (TwinCalculationExpression) root;
-
-		assertInstanceOf(BaseFunction.class, calculation.getCalledFunction().getReferent());
-		BaseFunction function = (BaseFunction) calculation.getCalledFunction().getReferent();
+		BaseFunctionDefinition function = assertInstanceOf(BaseFunctionDefinition.class, calculation.getInvokeType());
 
 		assertNotNull(function);
-		assertEquals(BaseFunctionKind.DIVIDE, function.getFunctionKind());
+		assertEquals(BaseFunctionKind.DIVIDE, function.getCore().getFunctionKind());
 
 		assertEquals(2, calculation.getArguments().size());
 
-		TwinExpression firstArgument = calculation.getArguments().get(0);
-		TwinExpression secondArgument = calculation.getArguments().get(1);
+		TwinExpressionUsage firstArgument = calculation.getArguments().get(0);
+		TwinExpressionUsage secondArgument = calculation.getArguments().get(1);
 
-		assertInstanceOf(TwinLiteralIntegerExpression.class, firstArgument);
-		assertInstanceOf(TwinLiteralIntegerExpression.class, secondArgument);
+		TwinLiteralIntegerUsage firstLiteral = assertInstanceOf(TwinLiteralIntegerUsage.class, firstArgument);
+		TwinLiteralIntegerUsage secondLiteral = assertInstanceOf(TwinLiteralIntegerUsage.class, secondArgument);
 
-		TwinLiteralIntegerExpression firstLiteral = (TwinLiteralIntegerExpression) firstArgument;
-		TwinLiteralIntegerExpression secondLiteral = (TwinLiteralIntegerExpression) secondArgument;
-
-		assertEquals(Integer.valueOf(10), firstLiteral.getLiteralValue());
-		assertEquals(Integer.valueOf(2), secondLiteral.getLiteralValue());
+		assertEquals(Integer.valueOf(10), firstLiteral.getValue());
+		assertEquals(Integer.valueOf(2), secondLiteral.getValue());
 	}
 
 	@Test
 	public void testConstructorExpression() {
-		TwinBaseBoolean<Usage> current = named(TwinBaseBoolean.class, Usage.class, "constructorTest");
+		TwinAttributeBooleanUsage current = named(TwinAttributeBooleanUsage.class, "constructorTest");
 
 		assertNotNull(current.getExpression().get());
 
-		TwinExpression root = current.getExpression().get();
+		TwinExpressionUsage root = current.getExpression().get();
 
-		assertInstanceOf(TwinConstructorExpression.class, root);
+		TwinConstructorUsage calculation = assertInstanceOf(TwinConstructorUsage.class, root);
 
-		TwinConstructorExpression calculation = (TwinConstructorExpression) root;
+		TwinAttributeBooleanDefinition referentType = assertInstanceOf(TwinAttributeBooleanDefinition.class, calculation.getConstructorType());
 
-		assertInstanceOf(TwinBaseBoolean.class, calculation.getConstructedType().getReferent());
-		TwinBaseBoolean<?> referentType =
-				(TwinBaseBoolean<?>) calculation.getConstructedType().getReferent();
 
 		assertNotNull(referentType);
 
 		assertEquals(1, calculation.getArguments().size());
 
-		TwinExpression firstArgument = calculation.getArguments().get(0);
+		TwinExpressionUsage firstArgument = calculation.getArguments().get(0);
 
-		assertInstanceOf(BooleanLiteral.class, firstArgument);
-		assertEquals(Boolean.TRUE, ((BooleanLiteral) firstArgument).getLiteralValue());
+		TwinLiteralBooleanUsage literal = assertInstanceOf(TwinLiteralBooleanUsage.class, firstArgument);
+		assertEquals(Boolean.TRUE, literal.getValue());
 	}
 
 	@Test
 	public void testConstructorBooleanExpression() {
-		TwinBaseBoolean<Usage> current =
-				named(TwinBaseBoolean.class, Usage.class, "constructorTestBoolean");
+		TwinAttributeBooleanUsage current =
+				named(TwinAttributeBooleanUsage.class, "constructorTestBoolean");
 
 		assertNotNull(current.getExpression().get());
 
-		TwinExpression root = current.getExpression().get();
+		TwinExpressionUsage root = current.getExpression().get();
 
-		assertInstanceOf(TwinConstructorExpression.class, root);
+		TwinConstructorUsage calculation = assertInstanceOf(TwinConstructorUsage.class, root);
 
-		TwinConstructorExpression calculation = (TwinConstructorExpression) root;
-
-		assertInstanceOf(TwinBaseBoolean.class, calculation.getConstructedType().getReferent());
-		TwinBaseBoolean<?> referentType =
-				(TwinBaseBoolean<?>) calculation.getConstructedType().getReferent();
+		// there is no boolean definition class anymore: TwinBoolean is an alias of ScalarValues::Boolean
+		TwinAttributeDefinition<?> referentType = assertInstanceOf(TwinAttributeDefinition.class, calculation.getConstructorType());
+		assertEquals("Boolean", referentType.getName());
 
 		assertNotNull(referentType);
 
 		assertEquals(1, calculation.getArguments().size());
 
-		TwinExpression firstArgument = calculation.getArguments().get(0);
+		TwinExpressionUsage firstArgument = calculation.getArguments().get(0);
 
-		assertInstanceOf(TwinLiteralBooleanExpression.class, firstArgument);
-		assertEquals(Boolean.valueOf(false),
-				((TwinLiteralBooleanExpression) firstArgument).getLiteralValue());
+		TwinLiteralBooleanUsage literal = assertInstanceOf(TwinLiteralBooleanUsage.class, firstArgument);
+		assertEquals(Boolean.valueOf(false), literal.getValue());
 	}
 
 	@Test
 	public void testFeatureChainExpression() {
-		TwinBaseReal<Usage> current =
-				named(TwinBaseReal.class, Usage.class, "test12");
+		TwinAttributeRealUsage current =
+				named(TwinAttributeRealUsage.class, "test12");
 
-		TwinExpression root = current.getExpression().orElseThrow();
+		TwinExpressionUsage root = current.getExpression().orElseThrow();
 
-		assertInstanceOf(Calculation.class, root);
-
-		Calculation invocation = (Calculation) root;
+		TwinCalculationUsage invocation = assertInstanceOf(TwinCalculationUsage.class, root);
 
 		assertEquals(1, invocation.getArguments().size());
 
-		TwinExpression argument = invocation.getArguments().getFirst();
+		TwinExpressionUsage argument = invocation.getArguments().getFirst();
 
-		assertInstanceOf(FeatureReference.class, argument);
+		TwinReferenceUsage<?> reference = assertInstanceOf(TwinReferenceUsage.class, argument);
 
-		FeatureReference chain = (FeatureReference) argument;
+		List<AbstractModel<?>> chain = attributeChain(reference.getTarget());
 
-		assertFalse(chain.getChain().isEmpty());
-		assertEquals(2, chain.getChain().size());
+		assertFalse(chain.isEmpty());
+		assertEquals(2, chain.size());
 
 		assertEquals(
 				"posTest12",
-				chain.getChain().getFirst().getReferent().getName()
+				chain.getFirst().getName()
 		);
 
 		assertEquals(
 				"x",
-				chain.getChain().getLast().getReferent().getName()
+				chain.getLast().getName()
 		);
 
-		CustomType<Usage> posTest12 =
-				named(CustomType.class, Usage.class, "posTest12");
+		CustomTypeUsage posTest12 =
+				named(CustomTypeUsage.class, "posTest12");
 
-		var x = posTest12.getFields()
-				.getCompartment()
+		TwinAttributeUsage<?, ?> x = posTest12.getFields()
 				.stream()
-				.map(c -> c.getElement())
 				.filter(y -> "x".equals(y.getName()))
 				.findFirst()
 				.orElseThrow();
 
 		assertEquals(
 				posTest12.getId(),
-				chain.getChain().getFirst().getReferent().getId()
+				chain.getFirst().getId()
 		);
 
 		assertEquals(
 				x.getId(),
-				chain.getChain().getLast().getReferent().getId()
+				chain.getLast().getId()
 		);
 
 		assertNotNull(
-				chain.getChain().getLast().getReferent().getParent()
+				chain.getLast().getParent()
 		);
 
 

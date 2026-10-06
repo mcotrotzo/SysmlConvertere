@@ -1,7 +1,8 @@
 package org.example.GenerelRules;
 
 import org.example.ElemWithMult;
-import org.example.Mapping.NewVersion.MappingException;
+
+import org.example.Util.NewUtil;
 import org.example.Util.Utils;
 import org.omg.sysml.lang.sysml.*;
 import org.omg.sysml.util.TypeUtil;
@@ -12,12 +13,12 @@ import java.util.stream.Collectors;
 
 public class MultiplicityRule extends GenerelRules {
 
-	public MultiplicityRule(Utils utils) {
+	public MultiplicityRule(NewUtil utils) {
 		super(utils);
 	}
 
 	@Override
-	public boolean isValid() throws MappingException {
+	public boolean isValid() throws IllegalArgumentException {
 		Set<Type> userTypes = utilsManager.collect(Type.class);
 
 		for (Type userType : userTypes) {
@@ -29,13 +30,13 @@ public class MultiplicityRule extends GenerelRules {
 		return true;
 	}
 
-	private void validateType(Type userType, Set<Type> visited) throws MappingException {
+	private void validateType(Type userType, Set<Type> visited) throws IllegalArgumentException {
 
 		if (!visited.add(userType)) {
 			return;
 		}
 
-		if (utilsManager.isFromStandardLibrary(userType) || utilsManager.isFromDTLibrary(userType)) {
+		if (utilsManager.isFromStandardLibrary(userType) || utilsManager.isfromLibraryRawType(userType)) {
 			return;
 		}
 
@@ -60,12 +61,12 @@ public class MultiplicityRule extends GenerelRules {
 		}
 	}
 
-	private void validateInheritedFeature(Type userType, Feature inheritedFeature) throws MappingException {
+	private void validateInheritedFeature(Type userType, Feature inheritedFeature) throws IllegalArgumentException {
 
 		Set<Feature> specializingFeatures = userType.getFeature().stream().filter(feature -> directlySpecializes(feature, inheritedFeature)).collect(Collectors.toSet());
 		ElemWithMult parentMultiplicity = Utils.getMultiplicityRange(inheritedFeature);
 
-		if (utilsManager.isFromDTLibrary(inheritedFeature)) {
+		if (utilsManager.isfromLibraryRawType(inheritedFeature)) {
 			validateLowerBound(userType, inheritedFeature, parentMultiplicity, specializingFeatures);
 		}
 		validateUpperBound(userType, inheritedFeature, parentMultiplicity, specializingFeatures);
@@ -77,14 +78,14 @@ public class MultiplicityRule extends GenerelRules {
 		return redefines || subsets;
 	}
 
-	private void validateLowerBound(Type context, Feature parent, ElemWithMult parentMultiplicity, Set<Feature> children) throws MappingException {
+	private void validateLowerBound(Type context, Feature parent, ElemWithMult parentMultiplicity, Set<Feature> children) throws IllegalArgumentException {
 		int lowerSum = children.stream().map(Utils::getMultiplicityRange).mapToInt(ElemWithMult::getLowerBound).sum();
 		if (lowerSum < parentMultiplicity.getLowerBound()) {
-			throw new MappingException(("Type '%s' does not fully concretize required feature '%s': " + "combined lower multiplicity is %d, required is %d.").formatted(getTypeName(context), getFeatureName(parent), lowerSum, parentMultiplicity.getLowerBound()));
+			throw new IllegalArgumentException(("Type '%s' does not fully concretize required feature '%s': " + "combined lower multiplicity is %d, required is %d.").formatted(getTypeName(context), getFeatureName(parent), lowerSum, parentMultiplicity.getLowerBound()));
 		}
 	}
 
-	private void validateUpperBound(Type context, Feature parent, ElemWithMult parentMultiplicity, Set<Feature> children) throws MappingException {
+	private void validateUpperBound(Type context, Feature parent, ElemWithMult parentMultiplicity, Set<Feature> children) throws IllegalArgumentException {
 		int parentUpper = parentMultiplicity.getUpperBound();
 		if (parentUpper == -1) {
 			return;
@@ -92,12 +93,12 @@ public class MultiplicityRule extends GenerelRules {
 		for (Feature child : children) {
 			ElemWithMult childMultiplicity = Utils.getMultiplicityRange(child);
 			if (childMultiplicity.getUpperBound() == -1) {
-				throw new MappingException(("Feature '%s' in type '%s' has multiplicity %s, " + "but parent feature '%s' has bounded multiplicity %s.").formatted(getFeatureName(child), getTypeName(context), formatMultiplicity(childMultiplicity), getFeatureName(parent), formatMultiplicity(parentMultiplicity)));
+				throw new IllegalArgumentException(("Feature '%s' in type '%s' has multiplicity %s, " + "but parent feature '%s' has bounded multiplicity %s.").formatted(getFeatureName(child), getTypeName(context), formatMultiplicity(childMultiplicity), getFeatureName(parent), formatMultiplicity(parentMultiplicity)));
 			}
 		}
 		int upperSum = children.stream().map(Utils::getMultiplicityRange).mapToInt(ElemWithMult::getUpperBound).sum();
 		if (upperSum > parentUpper) {
-			throw new MappingException(("Features [%s] in type '%s' exceed the upper multiplicity " + "of feature '%s': %d > %d.").formatted(formatFeatureNames(children), getTypeName(context), getFeatureName(parent), upperSum, parentUpper));
+			throw new IllegalArgumentException(("Features [%s] in type '%s' exceed the upper multiplicity " + "of feature '%s': %d > %d.").formatted(formatFeatureNames(children), getTypeName(context), getFeatureName(parent), upperSum, parentUpper));
 		}
 	}
 

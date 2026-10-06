@@ -101,7 +101,7 @@ can filter library objects explicitly:
 
 ```java
 Set<Model<?>> modelOnly = twinDataBase.getAll().stream()
-        .filter(element -> !element.isLibraryElement())
+        .filter(abstractModel -> !abstractModel.isLibraryElement())
         .collect(java.util.stream.Collectors.toSet());
 ```
 
@@ -130,7 +130,7 @@ Set<Class<Model<?>>> types = twinDataBase.getAllTypes();
 
 ```java
 List<Model<Usage>> children =
-        twinDataBase.getSpecializationChildren(element);
+        twinDataBase.getSpecializationChildren(abstractModel);
 ```
 
 The method returns mapped usage elements whose SysML type specializes
@@ -139,7 +139,7 @@ the supplied usage.
 ## Multiplicity
 
 ```java
-ElemWithMult multiplicity = twinDataBase.getMultiplicity(element);
+ElemWithMult multiplicity = twinDataBase.getMultiplicity(abstractModel);
 ```
 
 This exposes the multiplicity range of a mapped usage.
@@ -167,7 +167,7 @@ compartment.getParent();
 compartment.isInherited();
 ```
 
-Its identity is based on the pair `(parent, element)`. This matters for
+Its identity is based on the pair `(parent, abstractModel)`. This matters for
 nested feature chains where the final attribute alone is not enough to
 identify the concrete occurrence.
 
@@ -382,7 +382,7 @@ the chain retains the traversed elements rather than flattening the
 expression to a string.
 
 `getAsCompartment()` resolves the reference to the contextual final
-occurrence. This is important because the same mapped element can occur
+occurrence. This is important because the same mapped abstractModel can occur
 under different parents.
 
 For a chain, the mapper resolves compartments pairwise. Conceptually:
@@ -420,7 +420,7 @@ For assignments:
   `FOR_LOOP_VARIABLE` attributes.
 
 For a feature chain, the validator collects roles from every referenced
-element in `FeatureReference.getChain()`. The rule is applied to that
+abstractModel in `FeatureReference.getChain()`. The rule is applied to that
 combined role set. Invocation arguments are validated recursively, so
 references inside nested calculation/invocation arguments are checked as
 well.

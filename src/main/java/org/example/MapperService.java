@@ -1,59 +1,57 @@
 package org.example;
 
-
-import org.example.Containers.ContainerManager;
 import org.example.GenerelRules.*;
-import org.example.Mapping.NewVersion.MappingContext;
-import org.example.Mapping.NewVersion.MappingException;
+import org.example.Mapping.Model.Mapper;
 import org.example.SemanticRules.CheckAssignemntRules;
+import org.example.SemanticRules.FlowRules;
 import org.example.SemanticRules.SemanticException;
 import org.example.SemanticRules.SemanticRule;
-import org.example.Util.Utils;
-import org.omg.sysml.lang.sysml.ActionDefinition;
+import org.example.Util.NewUtil;
 
 import java.util.List;
 
 public class MapperService {
 
-	private final Utils utilsManager;
-	private final ContainerManager containerManager;
-	private final MappingContext mappingContext;
+	private final NewUtil utilsManager;
+	private final Mapper mapper;
 
 	public MapperService(String userContent) {
 		ReadManager readManager = new ReadManager(userContent);
-		Utils utils = new Utils(readManager.getLoadedResources());
-		this.utilsManager = utils;
-		this.containerManager = new ContainerManager(utilsManager);
-		this.mappingContext = new MappingContext(utils, containerManager);
+		utilsManager = new NewUtil(readManager.getLoadedResources());
+		mapper = new Mapper(utilsManager);
+
 
 	}
-
-	public TwinDataBase map() throws MappingException {
+	public TwinDataBase map() throws IllegalArgumentException {
 		try {
 			preRules();
-			var s = mappingContext.parseAll();
-			TwinDataBase db = new TwinDataBase(s, mappingContext.getMappedCompartments());
+			mapper.parse();
+			TwinDataBase db = new TwinDataBase(mapper.getMapperMap().values());
 			postRules(db);
 			return db;
 
 		} catch (SemanticException e) {
-			throw new MappingException("Semantic exception: " + e.getClass().getName() + ": " + e.getMessage());
+			throw new IllegalArgumentException("Semantic exception: " + e.getClass().getName() + ": " + e.getMessage());
 		} catch (Exception e) {
 			e.printStackTrace();
 
-			throw new MappingException("Unexpected exception: " + e.getClass().getName() + ": " + e.getMessage());
+			throw new IllegalArgumentException("Unexpected exception: " + e.getClass().getName() + ": " + e.getMessage());
 		}
 	}
 
-	private void preRules() throws MappingException {
-		var genereRules = List.of(new MultiType(utilsManager), new TwinAttributeHasToSpecialiced(utilsManager), new MultiplicityRule(utilsManager), new CalcInputOutputRules(utilsManager));
+	private void preRules() throws IllegalArgumentException {
+		var genereRules = List.of(new MultiType(utilsManager),
+				new TwinAttributeHasToSpecialiced(utilsManager),
+				new MultiplicityRule(utilsManager),
+				new CalcInputOutputRules(utilsManager)
+				);
 		for (GenerelRules rule : genereRules) {
 			rule.isValid();
 		}
 	}
 
 	private void postRules(TwinDataBase database) throws SemanticException {
-		var semanticRules = List.of(new CheckAssignemntRules());
+		var semanticRules = List.of(new CheckAssignemntRules(),new FlowRules());
 		for (SemanticRule rule : semanticRules) {
 			rule.isValid(database);
 		}

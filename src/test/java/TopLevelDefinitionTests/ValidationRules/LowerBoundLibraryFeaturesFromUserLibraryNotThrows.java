@@ -1,0 +1,58 @@
+package TopLevelDefinitionTests.ValidationRules;
+
+import TopLevelDefinitionTests.AbstarctTest;
+import org.junit.jupiter.api.Test;
+
+import java.io.IOException;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertAll;
+
+public class LowerBoundLibraryFeaturesFromUserLibraryNotThrows extends AbstarctTest {
+
+	@Override
+	public Optional<String> getContent() {
+		return Optional.of("""
+				package Test {
+				    private import TwinLibrary::*;
+				    private import PositionThings::*;
+				
+				    part def Battery :> Twin {
+				part physicalBattery :>> physicalTwin {
+				        port p11 :> sensors:P11;
+				    }
+				    }
+				}
+				package PositionThings {
+				    private import TwinLibrary::*;
+				
+					port def P11:>Sensor{
+					:>> communicationProtocol:MQTT_Protocol{
+						:>>broker;
+						:>>topic;
+					}
+					attribute :>>deviceKey = "actuatorKey";
+					}
+				    attribute def Position :> TwinCustomType {
+				        attribute x[1] : TwinInteger :> fields;
+				        attribute y[1] : TwinInteger :> fields;
+				        attribute z[1] : TwinInteger :> fields;
+				    }
+				
+				}
+				""");
+	}
+
+	@Override
+	public void testTopLevelDefinition() throws IOException, IllegalArgumentException {
+
+	}
+
+	@Test
+	public void lowerBoundFullfiled() {
+		assertAll(() -> super.testTopLevelDefinition());
+
+	}
+
+}
+
