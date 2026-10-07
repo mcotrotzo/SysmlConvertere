@@ -5,6 +5,9 @@ library package TwinStateMachineLibrary {
         state states:State[0..*];
     }
 
+    state def TwinStateMachine :> State, TwinTriggeredAction {
+
+    }
 }
 
 

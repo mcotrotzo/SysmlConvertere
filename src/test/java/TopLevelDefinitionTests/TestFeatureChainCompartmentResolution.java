@@ -1,7 +1,7 @@
 package TopLevelDefinitionTests;
 
 import org.example.Mapping.BaseFunctionKind;
-import org.example.Mapping.Model.Action.TwinActionBlockUsage;
+import org.example.Mapping.Model.Action.TwinTriggerActionUsage;
 import org.example.Mapping.Model.Action.TwinAssignmentUsage;
 import org.example.Mapping.Model.Attribute.CustomTypeUsage;
 import org.example.Mapping.Model.Attribute.TwinAttributeUsage;
@@ -122,7 +122,7 @@ public class TestFeatureChainCompartmentResolution extends AbstarctTest {
 
 	@Test
 	public void testFirstElementOfChainResolvesToCorrectCompartment() {
-		TwinActionBlockUsage<?, ?> soc2 = named(TwinActionBlockUsage.class, "soc2");
+		TwinTriggerActionUsage<?, ?> soc2 = named(TwinTriggerActionUsage.class, "soc2");
 		TwinAttributeUsage<?, ?> voltageInSoc2 = soc2.getInputs().stream()
 				.filter(i -> "voltage".equals(i.getName())).findFirst().orElseThrow();
 

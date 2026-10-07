@@ -27,6 +27,9 @@ public enum LibraryNameSpaces {
 	// ========================================================================
 
 	TWIN_ACTION("TwinActionLibrary::TwinAction"),
+	TRIGGER_ACTION("TwinActionLibrary::TwinTriggeredAction"),
+	ABSTRACT_ACTION("TwinActionLibrary::AbstractTwinAction"),
+	TWIN_TRIGGER("TwinActionLibrary::TwinTrigger"),
 
 	PHYSICAL_FLOW("TwinActionLibrary::PhysicalFlow"), DESCRIPTIVE_FLOW("TwinActionLibrary::DescriptiveFlow"), PREDICTIVE_FLOW("TwinActionLibrary::PredictiveFlow"), PRESCRIPTIVE_FLOW("TwinActionLibrary::PrescriptiveFlow"),
 
@@ -41,6 +44,7 @@ public enum LibraryNameSpaces {
 	PRESCRIPTIVE_TO_PHYSICAL_FLOW("TwinActionLibrary::PrescriptiveToPhysicalFlow"),
 
 
+
 	// ========================================================================
 	// Strategies
 	// ========================================================================
@@ -52,6 +56,7 @@ public enum LibraryNameSpaces {
 	// State Machines
 	// ========================================================================
 
+	TWIN_STATE_MACHINE("TwinStateMachineLibrary::TwinStateMachine"),
 	STATE("TwinStateMachineLibrary::State"),
 
 	DESCRIPTIVE_STATE_MACHINE("DescriptiveModelLibrary::DescriptiveStateMachine"),

@@ -5,7 +5,7 @@ library package TwinStrategyLibrary {
     private import TwinEnumLibrary::*;
 
 
-    action def Strategy:> TwinAction {
+    action def Strategy:> TwinTriggeredAction {
       
     }
     action def CustomStrategy :> Strategy {

@@ -9,8 +9,10 @@ import org.example.Mapping.Model.Port.ActuatorDefinition;
 import org.example.Mapping.Model.Port.ConstPortDefinition;
 import org.example.Mapping.Model.Port.SensorDefinition;
 import org.example.Mapping.Model.Port.SensorUsage;
+import org.example.Mapping.Model.StateMachine.TwinStateDefinition;
 import org.example.Mapping.Model.StateMachine.TwinStateMachineDefinition;
 import org.example.Mapping.Model.StateMachine.TwinStateMachineUsage;
+import org.example.Mapping.Model.StateMachine.TwinStateUsage;
 import org.example.Mapping.Model.Strategy.TwinStrategyDefinition;
 import org.example.Mapping.Model.Strategy.TwinStrategyUsage;
 import org.example.Mapping.Model.Taxonomy.DescriptiveModel.DescriptiveModelDefinition;
@@ -130,8 +132,10 @@ public class TestTopLevel extends AbstarctTest {
 		assertAmount(ConstPortDefinition.class, 1);
 
 
-		assertAmount(TwinStateMachineDefinition.class, 5);
-		assertAmount(TwinStateMachineUsage.class, 7);
+		assertAmount(TwinStateMachineDefinition.class, 3);
+		assertAmount(TwinStateDefinition.class, 3);
+		assertAmount(TwinStateMachineUsage.class, 2);
+		assertAmount(TwinStateUsage.class, 5);
 
 
 		assertAmount(DatabaseDefinition.class, 3);

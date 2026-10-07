@@ -14,6 +14,7 @@ import org.example.Mapping.Model.Expression.TwinExpressionUsage;
 import org.example.Mapping.Model.Expression.TwinReferenceUsage;
 import org.example.Mapping.Model.Function.CustomCalculationDefinition;
 import org.example.Mapping.Model.StateMachine.TwinStateMachineUsage;
+import org.example.Mapping.Model.StateMachine.TwinStateUsage;
 import org.example.Mapping.Model.Strategy.TwinStrategyUsage;
 import org.example.Mapping.Model.Taxonomy.DescriptiveModel.DescriptiveModelUsage;
 import org.example.Mapping.Model.Taxonomy.PhysicalTwin.PhysicalTwinUsage;
@@ -46,13 +47,13 @@ public class TestBehaviorMapping extends AbstarctTest {
 
 		assertEquals(2, controlUnit.getStates().size());
 
-		TwinStateMachineUsage idle = controlUnit.getStates().stream().filter(x -> "idle".equals(x.getName())).findFirst().orElseThrow();
+		TwinStateUsage idle = controlUnit.getStates().stream().filter(x -> "idle".equals(x.getName())).findFirst().orElseThrow();
 
-		TwinStateMachineUsage charging = controlUnit.getStates().stream().filter(x -> "charging".equals(x.getName())).findFirst().orElseThrow();
+		TwinStateUsage charging = controlUnit.getStates().stream().filter(x -> "charging".equals(x.getName())).findFirst().orElseThrow();
 
 		assertEquals(1, charging.getStates().size());
 
-		TwinStateMachineUsage test34 = charging.getStates().getFirst();
+		TwinStateUsage test34 = charging.getStates().getFirst();
 
 		assertEquals("test34", test34.getName());
 

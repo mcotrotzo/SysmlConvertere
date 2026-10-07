@@ -121,7 +121,10 @@ package PositionThings {
 The Digital Twin model is organized into five taxonomy layers, each an optional part of `Twin`:
 `PhysicalTwin`, `Shadow`, `DescriptiveModel`, `PredictiveModel`, `PrescriptiveModel`. Every element that can hold
 behavior (a control unit, a descriptive state machine, a strategy, a derived attribute, a custom calculation)
-specializes the same base, `TwinAction`, which declares `inputs`, `outputs`, and `local_Attributes`.
+specializes the same base, `AbstractTwinAction`, which declares `inputs`, `outputs`, and `local_Attributes`.
+`TwinAction` is the plain action. `TwinTriggeredAction` extends it with an optional `trigger` (see
+[Triggers](#triggers)). Control units, descriptive state machines, strategies and derived attributes are triggered
+actions; states and the actions inside a behavior are not.
 
 Access between layers is no longer expressed by letting one layer's actions reference another layer's attributes by
 feature chain. It is expressed by two, independently enforced mechanisms:
@@ -199,7 +202,7 @@ part shadowBattery :>> shadow {
 
 | Element                                  | Description                                                                                                                                             |
 |--------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `derivedAttributes : TwinAction[0..*]`      | Computed values belonging to the descriptive model. Each is an *action* with its own `inputs`/`outputs`, not a plain bound attribute anymore.          |
+| `derivedAttributes : TwinTriggeredAction[0..*]` | Computed values belonging to the descriptive model. Each is an *action* with its own `inputs`/`outputs`, not a plain bound attribute anymore.          |
 | `descriptiveStateMachine_ : DescriptiveStateMachine[0..*]` | State machine running **in the cloud**, over shadow data reaching it through flows. It is a `TwinAction`/`Block` like a control unit. |
 | `descriptiveStrategies : Strategy[0..*]`    | Descriptive strategy, `CustomStrategy` or `ExternalStrategy`.                                                                                            |
 | `descriptiveFlows : DescriptiveFlow[0..*]`  | Wires the output of one descriptive-model action (derived attribute, strategy, ...) to the input of another, within the descriptive layer.              |
@@ -296,6 +299,38 @@ An output that is not wired forward by any flow is simply not consumed anywhere:
 
 ---
 
+## Triggers
+
+By default a behavior runs when one of its inputs receives a new value through a flow (event based). A triggered
+action (control unit, descriptive state machine, strategy, derived attribute) can additionally run on a timer by
+redefining `trigger`:
+
+```sysml
+state cm1 :> controlUnit {
+    :>> trigger {
+        :>> triggerOnly = true;
+        :>> interval = 1;
+        :>> intervalUnit = TimeUnit::SECOND;
+    }
+    ...
+}
+```
+
+| Feature | Meaning |
+|---|---|
+| `interval : TwinInteger[1]` | Number of time units between two runs. |
+| `intervalUnit : TimeUnit[1]` | `MICROSECOND`, `MILLISECOND`, `SECOND`, `MINUTE`, `HOUR`, `DAY` or `YEAR`. |
+| `triggerOnly : TwinBoolean[1]` | `true`: the behavior runs only on the timer, incoming flows no longer start it. `false`: it runs on the timer and on incoming flows. |
+
+Rules:
+
+- `trigger` is optional. Without it the behavior is purely event based.
+- If `trigger` is redefined, all three features are mandatory. A missing one is rejected by the multiplicity rule.
+- Only triggered actions have a `trigger`. States (`State`, `ControlUnitState`, `DescriptiveState`) and the
+  actions inside a behavior are plain `TwinAction`s; a state runs whenever its state machine is in it.
+
+---
+
 ## Cross-layer wiring: Flows
 
 All data movement between layers (what used to be either a feature-chain reference resolved "through the shadow"
@@ -339,7 +374,7 @@ Every flow is checked after mapping (`FlowRules`):
   `physicalBattery.p11.temp`):
 
   | Flow kind                        | Source taxonomy | Target taxonomy |
-    |-----------------------------------|-----------------|-----------------|
+      |-----------------------------------|-----------------|-----------------|
   | `physicalFlows`                   | Physical        | Physical        |
   | `descriptiveFlows`                | Descriptive     | Descriptive     |
   | `predictiveFlows`                 | Predictive      | Predictive      |
@@ -452,7 +487,8 @@ The following are actively enforced while mapping a model (an invalid model fail
 - Calculation/action parameters may only specialize by redefinition (`CalcInputOutputRules`).
 - An attribute must be explicitly typed, subset, or redefined: a "freestanding" attribute, or one typed only
   through the generic `TwinAttribute`, is rejected (`TwinAttributeHasToSpecialiced`).
-- Multiplicity rules on library-derived features (lower/upper bound checks).
+- Multiplicity rules on library-derived features (lower/upper bound checks), including the three features of a
+  redefined `trigger`.
 - The [expression role rules](#expression-role-rules) above (`CheckAssignemntRules`): for every attribute
   expression and every `assign` action.
 - The flow rules under [Cross-layer wiring: Flows](#cross-layer-wiring-flows) (`FlowRules`): taxonomy, direction

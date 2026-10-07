@@ -2,6 +2,7 @@ package org.example.Mapping.Model.Strategy;
 
 import lombok.Getter;
 import org.example.Mapping.Model.AbstractModel;
+import org.example.Mapping.Model.Action.TwinTriggerActionCore;
 import org.example.Mapping.Model.Mapper;
 import org.example.Mapping.Model.Action.ActionBlockCore;
 import org.example.Mapping.Model.Attribute.TwinAttributeStringUsage;
@@ -9,7 +10,7 @@ import org.example.Mapping.Model.EnumAttribute.EnumCustomStrategyTypeUsage;
 import org.example.Mapping.Model.Slots;
 import org.omg.sysml.lang.sysml.Type;
 
-public class ExternalStrategyCore extends ActionBlockCore {
+public class ExternalStrategyCore extends TwinTriggerActionCore {
 	@Getter private TwinAttributeStringUsage contentPath;
 	@Getter private EnumCustomStrategyTypeUsage strategyType;
 

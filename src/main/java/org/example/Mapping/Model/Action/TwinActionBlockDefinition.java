@@ -5,7 +5,7 @@ import org.omg.sysml.lang.sysml.Behavior;
 
 import java.util.function.Supplier;
 
-public class TwinActionBlockDefinition<C extends ActionBlockCore> extends TwinActionDefinition<C> implements ActionBlockCoreApi<C> {
+public class TwinActionBlockDefinition<C extends ActionBlockCore> extends AbstractTwinActionDefinition<C> implements ActionBlockCoreApi<C> {
 	public TwinActionBlockDefinition(Behavior sysmlElement, Supplier<C> coreFactory, Mapper mapper) {
 		super(sysmlElement, coreFactory, mapper);
 	}

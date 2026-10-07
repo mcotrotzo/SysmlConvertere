@@ -41,7 +41,7 @@ library package PhysicalTwinLibrary {
   
 
 
-    state def ControlUnit:>State  {
+    state def ControlUnit:>TwinStateMachine  {
 
         state states:ControlUnitState[0..*]:>>states;
     }

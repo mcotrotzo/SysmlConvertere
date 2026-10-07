@@ -18,6 +18,7 @@ import org.example.Mapping.Model.Port.ActuatorUsage;
 import org.example.Mapping.Model.Port.ConstPortUsage;
 import org.example.Mapping.Model.Port.SensorUsage;
 import org.example.Mapping.Model.StateMachine.TwinStateMachineUsage;
+import org.example.Mapping.Model.StateMachine.TwinStateUsage;
 import org.example.Mapping.Model.Strategy.ExternalStrategyUsage;
 import org.example.Mapping.Model.Strategy.TwinStrategyUsage;
 import org.example.Mapping.Model.Taxonomy.DescriptiveModel.DescriptiveModelUsage;
@@ -381,7 +382,7 @@ public class TestFullModelPresence extends AbstarctTest {
 		assertEquals(2, cm1.getStates().size());
 		assertEquals(3, cm1.getTransitions().size());
 
-		TwinStateMachineUsage charging =
+		TwinStateUsage charging =
 				cm1.getStates().stream()
 						.filter(s -> "charging".equals(s.getName()))
 						.findFirst()

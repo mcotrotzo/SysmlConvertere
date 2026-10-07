@@ -1,5 +1,10 @@
 package org.example.Mapping.Model;
 
+import org.example.Mapping.Model.Action.TwinTriggerActionCore;
+import org.example.Mapping.Model.Action.TwinTriggerActionDefinition;
+import org.example.Mapping.Model.Action.TwinTriggerActionUsage;
+import org.example.Mapping.Model.Action.TwinTriggerDefinition;
+import org.example.Mapping.Model.Action.TwinTriggerUsage;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.example.Mapping.Model.Action.*;
@@ -14,8 +19,10 @@ import org.example.Mapping.Model.Function.BaseFunctionDefinition;
 import org.example.Mapping.Model.Function.CustomCalculationDefinition;
 import org.example.Mapping.Model.Port.*;
 import org.example.Mapping.Model.Protocol.*;
+import org.example.Mapping.Model.StateMachine.TwinStateDefinition;
 import org.example.Mapping.Model.StateMachine.TwinStateMachineDefinition;
 import org.example.Mapping.Model.StateMachine.TwinStateMachineUsage;
+import org.example.Mapping.Model.StateMachine.TwinStateUsage;
 import org.example.Mapping.Model.Strategy.*;
 import org.example.Mapping.Model.Taxonomy.Base.*;
 import org.example.Mapping.Model.Taxonomy.DescriptiveModel.DescriptiveModelDefinition;
@@ -150,13 +157,22 @@ public class LibClassRegistry {
 		both(LibraryNameSpaces.TWIN_ACTION,
 				def(Behavior.class, (b, m) -> new TwinActionBlockDefinition<>(b, () -> new ActionBlockCore(b, m), m)),
 				use(ActionUsage.class, (a, m) -> new TwinActionBlockUsage<>(a, () -> new ActionBlockCore(a, m), m, TwinActionBlockDefinition.class)));
-		for (LibraryNameSpaces state : List.of(LibraryNameSpaces.STATE, LibraryNameSpaces.CONTROL_UNIT, LibraryNameSpaces.CONTROL_UNIT_STATE,
-				LibraryNameSpaces.DESCRIPTIVE_STATE_MACHINE, LibraryNameSpaces.DESCRIPTIVE_STATE)) {
-			both(state, def(Behavior.class, TwinStateMachineDefinition::new), use(ActionUsage.class, TwinStateMachineUsage::new));
+		for (LibraryNameSpaces state : List.of(LibraryNameSpaces.STATE, LibraryNameSpaces.CONTROL_UNIT_STATE, LibraryNameSpaces.DESCRIPTIVE_STATE)) {
+			both(state, def(Behavior.class, TwinStateDefinition::new), use(ActionUsage.class, TwinStateUsage::new));
 		}
+		for (LibraryNameSpaces machine : List.of(LibraryNameSpaces.TWIN_STATE_MACHINE, LibraryNameSpaces.CONTROL_UNIT, LibraryNameSpaces.DESCRIPTIVE_STATE_MACHINE)) {
+			both(machine, def(Behavior.class, TwinStateMachineDefinition::new), use(ActionUsage.class, TwinStateMachineUsage::new));
+		}
+		both(LibraryNameSpaces.ABSTRACT_ACTION,
+				def(Behavior.class, (b, m) -> new TwinActionBlockDefinition<>(b, () -> new ActionBlockCore(b, m), m)),
+				use(ActionUsage.class, (a, m) -> new TwinActionBlockUsage<>(a, () -> new ActionBlockCore(a, m), m, TwinActionBlockDefinition.class)));
+		both(LibraryNameSpaces.TRIGGER_ACTION,
+				def(Behavior.class, (b, m) -> new TwinTriggerActionDefinition<>(b, () -> new TwinTriggerActionCore(b, m), m)),
+				use(ActionUsage.class, (a, m) -> new TwinTriggerActionUsage<>(a, () -> new TwinTriggerActionCore(a, m), m, TwinTriggerActionDefinition.class)));
+		both(LibraryNameSpaces.TWIN_TRIGGER, TwinTriggerDefinition::new, TwinTriggerUsage::new);
 		both(LibraryNameSpaces.STRATEGY,
-				def(Behavior.class, (b, m) -> new TwinStrategyDefinition<>(b, () -> new ActionBlockCore(b, m), m)),
-				use(ActionUsage.class, (a, m) -> new TwinStrategyUsage<>(a, () -> new ActionBlockCore(a, m), m, TwinStrategyDefinition.class)));
+				def(Behavior.class, (b, m) -> new TwinStrategyDefinition<>(b, () -> new TwinTriggerActionCore(b, m), m)),
+				use(ActionUsage.class, (a, m) -> new TwinStrategyUsage<>(a, () -> new TwinTriggerActionCore(a, m), m, TwinStrategyDefinition.class)));
 		both(LibraryNameSpaces.CUSTOM_STRATEGY, def(Behavior.class, CustomStrategyDefinition::new), use(ActionUsage.class, CustomStrategyUsage::new));
 		both(LibraryNameSpaces.EXTERNAL_STRATEGY, def(Behavior.class, ExternalStrategyDefinition::new), use(ActionUsage.class, ExternalStrategyUsage::new));
 		definitionOnly(LibraryNameSpaces.CUSTOM_CALCULATION, def(Behavior.class, CustomCalculationDefinition::new));

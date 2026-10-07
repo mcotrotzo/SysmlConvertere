@@ -22,7 +22,7 @@ library package TwinDefLibrary {
     }
 
     part def DescriptiveModel:>DescriptiveTaxonomy{
-        action derivedAttributes[0..*] : TwinAction;
+        action derivedAttributes[0..*] : TwinTriggeredAction;
         state descriptiveStateMachine_ : DescriptiveStateMachine[0..*];
         action descriptiveStrategies[0..*] : Strategy;
         abstract flow descriptiveFlows:DescriptiveFlow[0..*];

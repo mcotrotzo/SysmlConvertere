@@ -4,13 +4,28 @@ library package TwinActionLibrary{
     private import TwinTaxonomyLibrary::*;
     private import TwinEnumLibrary::*;
 
-    action def TwinAction{
+    action def AbstractTwinAction{
         attribute local_Attributes[0..*] : TwinAttribute;
+    }
+
+    attribute def TwinTrigger {
+            attribute interval[1] : TwinInteger;
+            attribute intervalUnit[1] : TimeUnit;
+            attribute triggerOnly[1] : TwinBoolean;
+        }
+
+    action def TwinAction:>AbstractTwinAction{
+    }
+
+    action def TwinTriggeredAction:>TwinAction{
+        attribute trigger[0..1] : TwinTrigger;
     }
 
     public attribute def TwinCustomType:>TwinAttribute{
         attribute fields[0..*] : TwinAttribute;
     }
+
+
 
     private abstract flow def TwinFlow {
         part tax1:TwinTaxonomy;

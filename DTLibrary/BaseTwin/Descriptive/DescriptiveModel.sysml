@@ -13,7 +13,7 @@ library package DescriptiveModelLibrary {
 
   
 
-    state def DescriptiveStateMachine :> State {
+    state def DescriptiveStateMachine :> TwinStateMachine {
         
         abstract state states:>>states:DescriptiveState[0..*];
     }

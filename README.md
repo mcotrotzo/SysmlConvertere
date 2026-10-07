@@ -95,8 +95,8 @@ them explicitly when only the elements written in the model are needed:
 
 ```java
 List<SensorUsage> own = twinDataBase.getByType(SensorUsage.class).stream()
-        .filter(sensor -> !sensor.isInherited() && !sensor.isLibrary())
-        .toList();
+		.filter(sensor -> !sensor.isInherited() && !sensor.isLibrary())
+		.toList();
 ```
 
 # Mapped elements
@@ -282,9 +282,33 @@ block.getSuccessions();
 | `TwinSuccessionUsage` | `getTargets()` |
 | `TwinTransitionUsage` | `getSource()`, `getTarget()`, `getGuard()`, `getEffectAction()` |
 
-`TwinStateMachineUsage` / `TwinStateMachineDefinition` additionally
-expose `getStates()`, `getTransitions()`, `getEntryAction()`,
-`getDoAction()` and `getExitAction()`.
+Blocks come in two kinds, both below `AbstractTwinActionUsage` /
+`AbstractTwinActionDefinition`:
+
+| Kind | Classes | Library type |
+|---|---|---|
+| plain | `TwinActionBlockUsage`, `TwinStateUsage`, calculation definitions | `TwinAction`, `State` |
+| triggered | `TwinTriggerActionUsage`, `TwinStrategyUsage`, `TwinStateMachineUsage` | `TwinTriggeredAction`, `Strategy`, `TwinStateMachine` |
+
+Triggered blocks additionally expose `getTrigger()`, an `Optional` of
+`TwinTriggerUsage`:
+
+```java
+trigger.getInterval();      // TwinAttributeIntegerUsage
+trigger.getIntervalUnit();  // EnumTimeUnitUsage
+trigger.getTriggerOnly();   // TwinAttributeBooleanUsage
+```
+
+`getTrigger()` is empty when the model does not redefine `trigger`.
+Plain blocks have no `getTrigger()`.
+
+`TwinStateUsage` / `TwinStateDefinition` (library types `State`,
+`ControlUnitState`, `DescriptiveState`) expose `getStates()`,
+`getTransitions()`, `getEntryAction()`, `getDoAction()` and
+`getExitAction()`. `TwinStateMachineUsage` / `TwinStateMachineDefinition`
+(library types `TwinStateMachine`, `ControlUnit`,
+`DescriptiveStateMachine`) expose the same getters plus `getTrigger()`.
+The states of a state machine are `TwinStateUsage`.
 
 # Expressions
 
@@ -338,7 +362,7 @@ All flow definitions are mapped as `TwinFlowDefinition`.
 
 # Strategies
 
-`TwinStrategyUsage` is a block. `CustomStrategyUsage` adds nothing,
+`TwinStrategyUsage` is a triggered block. `CustomStrategyUsage` adds nothing,
 `ExternalStrategyUsage` exposes `getContentPath()` and
 `getStrategyType()`.
 

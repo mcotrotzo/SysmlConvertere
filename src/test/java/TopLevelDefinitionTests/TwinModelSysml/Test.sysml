@@ -65,6 +65,12 @@ package Test{
                  in attribute plug:TwinBoolean;
                  in attribute maxCharge:TwinReal;
 
+                 :>>trigger{
+                        :>>triggerOnly = true;
+                        :>>interval = 1;
+                        :>>intervalUnit = TimeUnit::SECOND;
+                    }
+
                  state idle:>>states;
                  state charging:>>states {
 
@@ -144,6 +150,11 @@ package Test{
                  attribute doubled : TwinReal :> local_Attributes = MULT_real(voltage, 2);
              }
              action temp30:>derivedAttributes{
+             :>>trigger{
+                     :>>triggerOnly = false;
+                     :>>interval = 1;
+                     :>>intervalUnit = TimeUnit::MINUTE;
+                 }
                 in attribute temps:TwinReal[30];
                 out attribute res:TwinReal[0..29];
                 assign res := temps;
