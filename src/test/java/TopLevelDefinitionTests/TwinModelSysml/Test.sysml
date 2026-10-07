@@ -138,12 +138,10 @@ package Test{
         }
 
         part descriptiveBattery :>> descriptiveModel {
-
              action soc :> derivedAttributes{
                 in attribute voltage:TwinReal;
                 out attribute soc:TwinReal;
                 in attribute nominalVoltage:TwinReal;
-
                 assign soc := MULT_real(DIV_real(voltage, nominalVoltage), 100);
              }
              action soc2 :> soc{
@@ -245,6 +243,14 @@ package Test{
 
       }
 
-    part battery : Battery;
-    part pv : PV;
+    part def BatteryWorld :> World {
+        part battery : Battery :> twins;
+        part pv : PV :> twins;
+
+        flow ttt :> federatedLinks from pv.pv_desc.test.test to battery.descriptiveBattery.LLM_Request.soc {
+            :>> linkType = FederatedLinkType::PUSH;
+        }
+    }
+
+    part test : BatteryWorld;
 }

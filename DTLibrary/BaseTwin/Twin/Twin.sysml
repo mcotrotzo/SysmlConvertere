@@ -11,10 +11,10 @@ library package TwinLibrary{
     public import TwinStrategyLibrary::ExternalStrategy;
     public import TwinActionLibrary::TwinCustomType;
     public import TwinActionLibrary::TwinTriggeredAction;
+    public import TwinDefLibrary::World;
 
     public import TwinImp::CustomCalculationAction;
     public import TwinDefLibrary::Twin;
-    public import TwinDefLibrary::FederatedTwin;
     public import TwinEnumLibrary::FederatedLinkType;
 
 

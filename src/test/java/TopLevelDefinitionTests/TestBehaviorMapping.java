@@ -1,13 +1,7 @@
 package TopLevelDefinitionTests;
 
 import org.example.Mapping.Model.AbstractModel;
-import org.example.Mapping.Model.Action.TwinActionBlockUsage;
-import org.example.Mapping.Model.Action.TwinActionUsage;
-import org.example.Mapping.Model.Action.TwinAssignmentUsage;
-import org.example.Mapping.Model.Action.TwinForLoopUsage;
-import org.example.Mapping.Model.Action.TwinIfElseUsage;
-import org.example.Mapping.Model.Action.TwinTransitionUsage;
-import org.example.Mapping.Model.Action.TwinWhileUsage;
+import org.example.Mapping.Model.Action.*;
 import org.example.Mapping.Model.Attribute.TwinAttributeUsage;
 import org.example.Mapping.Model.Expression.TwinCalculationUsage;
 import org.example.Mapping.Model.Expression.TwinExpressionUsage;
@@ -287,7 +281,7 @@ public class TestBehaviorMapping extends AbstarctTest {
 
 		TwinActionUsage<?, ?, ?> testAction = avg.getActions().stream().filter(x -> "test".equals(x.getName())).findFirst().orElseThrow();
 
-		TwinActionBlockUsage<?, ?> testBlock = assertInstanceOf(TwinActionBlockUsage.class, testAction);
+		AbstractTwinActionUsage<?, ?> testBlock = assertInstanceOf(AbstractTwinActionUsage.class, testAction);
 
 		assertEquals(0, testBlock.getLocalAttributes().size());
 

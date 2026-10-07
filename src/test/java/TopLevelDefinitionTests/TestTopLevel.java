@@ -26,7 +26,10 @@ import org.example.Mapping.Model.Taxonomy.PrescriptiveModel.PrescriptiveModelUsa
 import org.example.Mapping.Model.Taxonomy.Shadow.ShadowDefinition;
 import org.example.Mapping.Model.Taxonomy.Shadow.ShadowUsage;
 import org.example.Mapping.Model.Twin.TwinDefinition;
+import org.example.Mapping.Model.Twin.TwinUsage;
 import org.example.Mapping.Model.Type.Usage;
+import org.example.Mapping.Model.World.WorldCoreDefinition;
+import org.example.Mapping.Model.World.WorldCoreUsage;
 import org.example.Util.Utils;
 import org.junit.jupiter.api.Test;
 import org.omg.sysml.util.TypeUtil;
@@ -122,7 +125,26 @@ public class TestTopLevel extends AbstarctTest {
 		System.out.println("p15 children: " + p15Children.stream().map(AbstractModel::getName).toList());
 	}
 
+	@Test
+	public void testWorldAmounts() {
+		assertAmount(WorldCoreDefinition.class, 2);
+		assertAmount(WorldCoreUsage.class, 1);
+		assertAmount(TwinUsage.class, 2);
 
+		WorldCoreDefinition batteryWorld = named(WorldCoreDefinition.class, "BatteryWorld");
+		WorldCoreUsage world = named(WorldCoreUsage.class, "test");
+
+		assertEquals(2, batteryWorld.getTwins().size());
+		assertEquals(1, batteryWorld.getFederationFlows().size());
+
+		assertEquals(2, world.getTwins().size());
+
+		for (TwinUsage twin : world.getTwins()) {
+			assertTrue(twin.isInherited(), twin.getName());
+			assertEquals(world.getId(), twin.getParent().orElseThrow().getId());
+		}
+		assertNotEquals(batteryWorld.getTwins().getFirst().getId(), world.getTwins().getFirst().getId());
+	}
 
 	@Test
 	public void testLibraryDefinitionAmounts() {

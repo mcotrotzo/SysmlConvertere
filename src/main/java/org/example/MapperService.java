@@ -14,6 +14,7 @@ public class MapperService {
 
 	public MapperService(String userContent) {
 		ReadManager readManager = new ReadManager(userContent);
+
 		utilsManager = new NewUtil(readManager.getLoadedResources());
 		mapper = new Mapper(utilsManager);
 
@@ -48,7 +49,7 @@ public class MapperService {
 	}
 
 	private void postRules(TwinDataBase database) throws SemanticException {
-		var semanticRules = List.of(new CheckAssignemntRules(),new FlowRules(),new TwinBoundaryRules());
+		var semanticRules = List.of(new CheckAssignemntRules(utilsManager),new FlowRules(utilsManager),new TwinBoundaryRules(utilsManager),new CheckUnMappedElements(utilsManager));
 		for (SemanticRule rule : semanticRules) {
 			rule.isValid(database);
 		}

@@ -95,8 +95,8 @@ them explicitly when only the elements written in the model are needed:
 
 ```java
 List<SensorUsage> own = twinDataBase.getByType(SensorUsage.class).stream()
-		.filter(sensor -> !sensor.isInherited() && !sensor.isLibrary())
-		.toList();
+        .filter(sensor -> !sensor.isInherited() && !sensor.isLibrary())
+        .toList();
 ```
 
 # Mapped elements
@@ -170,7 +170,15 @@ twin.getPredictiveToPrescriptiveFlows();
 twin.getPrescriptiveToPhysicalFlows();
 ```
 
-`FederationTwinDefinition` exposes `getFederationFlows()`.
+`WorldCoreUsage` and `WorldCoreDefinition` (library type `World`) expose:
+
+```java
+world.getTwins();           // TwinUsage of the world
+world.getFederatedLinks();  // FederationFlowUsage between those twins
+```
+
+Every world usage is one deployment; its twins and flows are copies with
+their own ids.
 
 ## PhysicalTwin
 

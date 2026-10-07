@@ -9,7 +9,6 @@ import org.example.Mapping.Model.Expression.TwinCalculationUsage;
 import org.example.Mapping.Model.Expression.TwinConstructorUsage;
 import org.example.Mapping.Model.Expression.TwinExpressionUsage;
 import org.example.Mapping.Model.Expression.TwinReferenceUsage;
-import org.example.Mapping.Model.Federation.FederationTwinDefinition;
 import org.example.Mapping.Model.Flow.FederationFlowUsage;
 import org.example.Mapping.Model.Function.BaseFunctionDefinition;
 import org.example.Mapping.Model.Function.CustomCalculationDefinition;
@@ -17,6 +16,7 @@ import org.example.Mapping.Model.Port.ConstPortUsage;
 import org.example.Mapping.Model.Strategy.TwinStrategyUsage;
 import org.example.Mapping.Model.Twin.TwinUsage;
 import org.example.Mapping.Model.Type.Usage;
+import org.example.Mapping.Model.World.WorldCoreDefinition;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -108,8 +108,8 @@ public class TestFeatureChainCompartmentResolution extends AbstarctTest {
 
 	@Test
 	public void testFederationFlowTargetResolvesToCopy() {
-		FederationTwinDefinition federatedBattery = named(FederationTwinDefinition.class, "FederatedBattery");
-		FederationFlowUsage flow = federatedBattery.getFederationFlows().getFirst();
+		WorldCoreDefinition batteryWorld = named(WorldCoreDefinition.class, "BatteryWorld");
+		FederationFlowUsage flow = batteryWorld.getFederationFlows().getFirst();
 
 		TwinUsage battery = named(TwinUsage.class, "battery");
 		TwinStrategyUsage<?, ?> llmRequest = battery.getDescriptiveModel().orElseThrow().getDescriptiveStrategies().stream()

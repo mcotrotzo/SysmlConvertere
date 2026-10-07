@@ -5,10 +5,14 @@ import org.example.Mapping.Model.Flow.TwinFlowUsage;
 import org.example.Mapping.Model.Taxonomy.Base.TaxonomyUsage;
 import org.example.Mapping.Model.Type.Definition;
 import org.example.TwinDataBase;
+import org.example.Util.NewUtil;
 import org.omg.sysml.lang.sysml.FeatureDirectionKind;
 
-// flow ends: taxonomy of the flow kind, direction OUT -> IN, source type conforms to target type
-public class FlowRules implements SemanticRule {
+public class FlowRules extends SemanticRule {
+
+	public FlowRules(NewUtil newUtil) {
+		super(newUtil);
+	}
 
 	@Override
 	public boolean isValid(TwinDataBase database) throws SemanticException {

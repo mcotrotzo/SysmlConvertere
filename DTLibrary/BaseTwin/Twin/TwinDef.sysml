@@ -22,7 +22,7 @@ library package TwinDefLibrary {
     }
 
     part def DescriptiveModel:>DescriptiveTaxonomy{
-        action derivedAttributes[0..*] : TwinTriggeredAction;
+        action derivedAttributes[0..*] : DerivedAttribute;
         state descriptiveStateMachine_ : DescriptiveStateMachine[0..*];
         action descriptiveStrategies[0..*] : Strategy;
         abstract flow descriptiveFlows:DescriptiveFlow[0..*];
@@ -41,6 +41,11 @@ library package TwinDefLibrary {
         abstract flow predictiveFlows:PredictiveFlow[0..*];
     }
 
+    part def World{
+        part twins: Twin[0..*];
+        abstract flow federatedLinks : FederatedLinkFlow[0..*];
+    }
+
     
 
 
@@ -57,10 +62,6 @@ library package TwinDefLibrary {
         abstract flow prescriptiveToPhysicalFlows:PrescriptiveToPhysicalFlow[0..*];
 
        
-    }
-
-    part def FederatedTwin{
-       flow federatedLinks : FederatedLinkFlow[0..*];
     }
 
     

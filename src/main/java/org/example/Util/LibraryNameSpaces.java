@@ -1,7 +1,8 @@
 package org.example.Util;
 
 public enum LibraryNameSpaces {
-
+	// World
+	WORLD("TwinDefLibrary::World"),
 	// ========================================================================
 	// Twin
 	// ========================================================================

@@ -9,12 +9,17 @@ import org.example.Mapping.Model.Flow.TwinFlowUsage;
 import org.example.Mapping.Model.Slots;
 import org.example.Mapping.Model.Twin.TwinCoreApi;
 import org.example.TwinDataBase;
+import org.example.Util.NewUtil;
 
 import java.util.Optional;
 
-public class TwinBoundaryRules implements SemanticRule {
+public class TwinBoundaryRules extends SemanticRule {
 
 	private final Class<TwinReferenceUsage<?>> referenceClass = Slots.rawClassOf(TwinReferenceUsage.class);
+
+	public TwinBoundaryRules(NewUtil newUtil) {
+		super(newUtil);
+	}
 
 	@Override
 	public boolean isValid(TwinDataBase database) throws SemanticException {

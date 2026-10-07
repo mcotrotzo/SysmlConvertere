@@ -9,7 +9,6 @@ import org.example.Mapping.Model.Attribute.TwinAttributeUsage;
 import org.example.Mapping.Model.Database.DatabaseUsage;
 import org.example.Mapping.Model.Database.RelationalDatabaseUsage;
 import org.example.Mapping.Model.Expression.TwinLiteralStringUsage;
-import org.example.Mapping.Model.Federation.FederationTwinDefinition;
 import org.example.Mapping.Model.Flow.FederationFlowUsage;
 import org.example.Mapping.Model.Flow.QueryFlowUsage;
 import org.example.Mapping.Model.Flow.TwinFlowUsage;
@@ -28,6 +27,7 @@ import org.example.Mapping.Model.Taxonomy.PrescriptiveModel.PrescriptiveModelUsa
 import org.example.Mapping.Model.Taxonomy.Shadow.ShadowUsage;
 import org.example.Mapping.Model.Twin.TwinDefinition;
 
+import org.example.Mapping.Model.World.WorldCoreDefinition;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -1071,13 +1071,13 @@ public class TestFullModelPresence extends AbstarctTest {
 	}
 	@Test
 	public void testFederatedBatteryIsPresent() {
-		FederationTwinDefinition federatedBattery =
-				named(FederationTwinDefinition.class, "FederatedBattery");
+		WorldCoreDefinition batteryWorld =
+				named(WorldCoreDefinition.class, "BatteryWorld");
 
-		assertNotNull(federatedBattery.getId());
+		assertNotNull(batteryWorld.getId());
 
 		List<FederationFlowUsage> federationFlows =
-				federatedBattery.getFederationFlows().stream()
+				batteryWorld.getFederationFlows().stream()
 						.toList();
 
 		assertEquals(1, federationFlows.size());

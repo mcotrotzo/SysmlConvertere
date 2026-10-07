@@ -12,8 +12,7 @@ import org.example.Mapping.Model.Attribute.*;
 import org.example.Mapping.Model.Database.*;
 import org.example.Mapping.Model.EnumAttribute.*;
 import org.example.Mapping.Model.Expression.*;
-import org.example.Mapping.Model.Federation.FederationTwinDefinition;
-import org.example.Mapping.Model.Federation.FederationTwinUsage;
+
 import org.example.Mapping.Model.Flow.*;
 import org.example.Mapping.Model.Function.BaseFunctionDefinition;
 import org.example.Mapping.Model.Function.CustomCalculationDefinition;
@@ -37,6 +36,9 @@ import org.example.Mapping.Model.Taxonomy.Shadow.ShadowDefinition;
 import org.example.Mapping.Model.Taxonomy.Shadow.ShadowUsage;
 import org.example.Mapping.Model.Twin.TwinDefinition;
 import org.example.Mapping.Model.Twin.TwinUsage;
+import org.example.Mapping.Model.World.WorldCore;
+import org.example.Mapping.Model.World.WorldCoreDefinition;
+import org.example.Mapping.Model.World.WorldCoreUsage;
 import org.example.Util.LibraryNameSpaces;
 import org.omg.sysml.lang.sysml.ActionUsage;
 import org.omg.sysml.lang.sysml.AssignmentActionUsage;
@@ -101,6 +103,10 @@ public class LibClassRegistry {
 	}
 
 	private void registry() {
+
+		both(LibraryNameSpaces.WORLD,
+				def(Classifier.class, (c, m) -> new WorldCoreDefinition(c, () -> new WorldCore(c, m), m)),
+				use(Feature.class, (f, m) -> new WorldCoreUsage(f, () -> new WorldCore(f, m), m)));
 		// ---------------- taxonomy (intermediate classes: core and definition class are given here) ----------------
 		both(LibraryNameSpaces.TWIN_TAXONOMY,
 				def(Classifier.class, (c, m) -> new TaxonomyDefinition<>(c, () -> new TaxonomyCore(c, m), m)),
@@ -126,7 +132,7 @@ public class LibClassRegistry {
 
 		// ---------------- twin and its parts ----------------
 		both(LibraryNameSpaces.TWIN, TwinDefinition::new, TwinUsage::new);
-		both(LibraryNameSpaces.FEDERATION_TWIN, FederationTwinDefinition::new, FederationTwinUsage::new);
+
 		both(LibraryNameSpaces.PHYSICAL_TWIN, PhysicalTwinDefiniton::new, PhysicalTwinUsage::new);
 		both(LibraryNameSpaces.DESCRIPTIVE_MODEL, DescriptiveModelDefinition::new, DescriptiveModelUsage::new);
 		both(LibraryNameSpaces.PREDICTIVE_MODEL, PredictiveModelDefinition::new, PredictiveModelUsage::new);
@@ -206,7 +212,7 @@ public class LibClassRegistry {
 
 		// ---------------- metaclasses (elements without library type) ----------------
 		usageOnlyMeta(SysMLPackage.Literals.ACTION_USAGE,      // plain bodies of if / while / for
-				use(ActionUsage.class, (a, m) -> new TwinActionBlockUsage<>(a, () -> new ActionBlockCore(a, m), m, TwinActionBlockDefinition.class)));
+				use(ActionUsage.class, (a, m) -> new AbstractTwinActionUsage<>(a, () -> new ActionBlockCore(a, m), m, AbstractTwinActionDefinition.class)));
 		usageOnlyMeta(SysMLPackage.Literals.ASSIGNMENT_ACTION_USAGE, use(AssignmentActionUsage.class, TwinAssignmentUsage::new));
 		usageOnlyMeta(SysMLPackage.Literals.FOR_LOOP_ACTION_USAGE, use(ForLoopActionUsage.class, TwinForLoopUsage::new));
 		usageOnlyMeta(SysMLPackage.Literals.IF_ACTION_USAGE, use(IfActionUsage.class, TwinIfElseUsage::new));

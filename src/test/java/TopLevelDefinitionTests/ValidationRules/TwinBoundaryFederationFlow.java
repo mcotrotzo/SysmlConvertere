@@ -54,14 +54,17 @@ public class TwinBoundaryFederationFlow extends AbstarctTest {
 				            }
 				        }
 				    }
-				    part battery : Battery;
-				    part pv : PV;
 
-				    part def FederatedBatteryPV :> FederatedTwin {
-				        flow :>federatedLinks from pv.pvDesc.pvAction.pvOut to battery.descriptiveBattery.soc.voltage {
-				            :>>linkType = FederatedLinkType::PUSH;
+				    part def BatteryPVWorld :> World {
+				        part battery : Battery :> twins;
+				        part pv : PV :> twins;
+
+				        flow :> federatedLinks from pv.pvDesc.pvAction.pvOut to battery.descriptiveBattery.soc.voltage {
+				            :>> linkType = FederatedLinkType::PUSH;
 				        }
 				    }
+
+				    part world : BatteryPVWorld;
 				}
 				""");
 	}

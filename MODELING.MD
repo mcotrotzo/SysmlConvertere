@@ -7,11 +7,13 @@ types at package level are mapped without owner, everything else below its owner
 1. Import `TwinLibrary` (and your own packages) to use their elements.
 2. A twin is described by a definition that specializes `Twin` (e.g. `part def Battery :> Twin { … }`). The
    definition is only a template.
-3. The twins that are deployed are the **twin usages** (e.g. `part battery : Battery;`). Each usage is one twin
-   instance with its own copy of everything defined in its definition; a model may contain several of them
-   (`part battery1 : Battery; part battery2 : Battery;`). A definition without a usage is not deployed.
+3. Twins are deployed as part of a **world** (see [Worlds](#worlds)). A world definition specializes `World` and
+   holds the twin usages (`part battery : Battery :> twins;`) and the federation flows between them. What is
+   deployed is every **world usage** (e.g. `part test : BatteryWorld;`) with its own copy of all twins and flows
+   of its definition; a model may contain several worlds (`part test : BatteryWorld; part prod : BatteryWorld;`).
+   Definitions are templates and are not deployed.
 4. References, assignments and flows stay inside one twin. An attribute of another twin can only be reached
-   through a federation flow (`flow :>federatedLinks ...` in a `FederatedTwin`).
+   through a federation flow (`flow :>federatedLinks ...`) in the world that contains both twins.
 5. Use only the `TwinLibrary`, your own definitions and the standard functions and scalar types of the TwinTypeSystem.sysml
 
 The `Twin` is a composite of up to five optional (`0..1`) layers (`physicalTwin`, `shadow`, `descriptiveModel`,
@@ -299,6 +301,39 @@ An output that is not wired forward by any flow is simply not consumed anywhere:
 
 ---
 
+## Worlds
+
+A world groups the twins that are deployed together and the federation flows that connect them:
+
+```sysml
+part def BatteryWorld :> World {
+    part battery : Battery :> twins;
+    part pv : PV :> twins;
+
+    flow ttt :> federatedLinks from pv.pv_desc.test.test to battery.descriptiveBattery.LLM_Request.soc {
+        :>> linkType = FederatedLinkType::PUSH;
+    }
+}
+
+part test : BatteryWorld;
+part prod : BatteryWorld;
+```
+
+| Feature | Meaning |
+|---|---|
+| `twins : Twin[0..*]` | The twins of the world. |
+| `federatedLinks : FederatedLinkFlow[0..*]` | Flows between twins of the same world, each with a `linkType`. |
+
+Rules:
+
+- Federation flows are declared directly in the world. Only there both twins are accessible as flow ends; a flow
+  nested deeper (for example in a part inside the world) is rejected by SysML ("Must be an accessible feature").
+- Each world usage is one deployment. Its twins and flows are copies with their own ids, so `test.battery` and
+  `prod.battery` are different twins. Deployment identifies twins by id, not by name.
+- A world may specialize another world (`part def ProdWorld :> BatteryWorld`) and add or redefine twins.
+
+---
+
 ## Triggers
 
 By default a behavior runs when one of its inputs receives a new value through a flow (event based). A triggered
@@ -384,7 +419,7 @@ Every flow is checked after mapping (`FlowRules`):
   | `descriptiveToPrescriptiveFlows`  | Descriptive     | Prescriptive    |
   | `predictiveToPrescriptiveFlows`   | Predictive      | Prescriptive    |
   | `prescriptiveToPhysicalFlows`     | Prescriptive    | Physical        |
-  | `federatedLinks`                  | any             | any             |
+  | `federatedLinks` (in a world)     | Cloud           | Cloud           |
 
 - the source has direction `out` or `inout`, the target `in` or `inout`;
 - if both ends are typed by a user definition, the source type is the target type or specializes it
@@ -495,9 +530,12 @@ The following are actively enforced while mapping a model (an invalid model fail
   and type of both ends of every flow.
 - References, assignments and flows stay inside their twin; only federation flows connect twins
   (`TwinBoundaryRules`).
+- Every definition and usage the user writes must be mapped; an element at a place the mapper does not
+  consider (for example an action directly in a physical twin) is rejected (`CheckUnMappedElements`).
 
 Not yet enforced (planned validation rule):
 
+- Twin usages outside a world. They are mapped but not deployed.
 - Use of other libraries than the `TwinLibrary` and the supported standard functions and scalar types
   (general use rule 5). Such a model is currently not rejected: an action typed by a foreign action definition is
   mapped as a plain action block, and a call of a foreign calculation is mapped as a base function without a

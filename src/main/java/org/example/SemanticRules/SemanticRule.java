@@ -2,9 +2,17 @@ package org.example.SemanticRules;
 
 
 import org.example.TwinDataBase;
+import org.example.Util.NewUtil;
 
-public interface SemanticRule {
+public abstract class SemanticRule {
 
 
-	public boolean isValid(TwinDataBase database) throws SemanticException;
+	protected NewUtil newUtil;
+
+	public SemanticRule(NewUtil newUtil){
+		this.newUtil = newUtil;
+	}
+	public abstract boolean isValid(TwinDataBase database) throws SemanticException;
+
+
 }

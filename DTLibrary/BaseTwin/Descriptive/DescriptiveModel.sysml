@@ -11,7 +11,7 @@ library package DescriptiveModelLibrary {
     private import TwinActionLibrary::*;
     
 
-  
+    action def DerivedAttribute :> TwinTriggeredAction { }
 
     state def DescriptiveStateMachine :> TwinStateMachine {
         

@@ -10,17 +10,22 @@ import org.example.Mapping.Model.Expression.TwinReferenceUsage;
 import org.example.Mapping.Model.Mapper;
 import org.example.Mapping.Model.Slots;
 import org.example.TwinDataBase;
+import org.example.Util.NewUtil;
 
 import java.util.EnumSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
 
-public class CheckAssignemntRules implements SemanticRule {
+public class CheckAssignemntRules extends SemanticRule {
 
 	private final Class<TwinAttributeUsage<?, ?>> attributeClass = Slots.rawClassOf(TwinAttributeUsage.class);
 	private final Class<TwinReferenceUsage<?>> referenceClass = Slots.rawClassOf(TwinReferenceUsage.class);
 	private final Class<TwinInvocationUsage<?>> invocationClass = Slots.rawClassOf(TwinInvocationUsage.class);
+
+	public CheckAssignemntRules(NewUtil newUtil) {
+		super(newUtil);
+	}
 
 	@Override
 	public boolean isValid(TwinDataBase database) throws SemanticException {
