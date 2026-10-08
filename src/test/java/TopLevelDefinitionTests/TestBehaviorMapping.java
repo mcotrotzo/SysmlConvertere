@@ -293,7 +293,7 @@ public class TestBehaviorMapping extends AbstarctTest {
 
 		assertTrue(forLoop.getCollection().isPresent());
 
-		TwinActionBlockUsage<?, ?> forBody = assertInstanceOf(TwinActionBlockUsage.class, forLoop.getBody().orElseThrow());
+		AbstractTwinActionUsage<?, ?> forBody = assertInstanceOf(AbstractTwinActionUsage.class, forLoop.getBody().orElseThrow());
 
 		assertEquals(1, forBody.getLocalAttributes().size());
 
@@ -303,13 +303,13 @@ public class TestBehaviorMapping extends AbstarctTest {
 
 		assertTrue(ifElse.getThenAction().isPresent());
 
-		TwinActionBlockUsage<?, ?> elseBlock = assertInstanceOf(TwinActionBlockUsage.class, ifElse.getElseAction().orElseThrow());
+		AbstractTwinActionUsage<?, ?> elseBlock = assertInstanceOf(AbstractTwinActionUsage.class, ifElse.getElseAction().orElseThrow());
 
 		TwinWhileUsage whileLoop = elseBlock.getActions().stream().filter(TwinWhileUsage.class::isInstance).map(TwinWhileUsage.class::cast).findFirst().orElseThrow();
 
 		assertTrue(whileLoop.getCondition().isPresent());
 
-		TwinActionBlockUsage<?, ?> whileBody = assertInstanceOf(TwinActionBlockUsage.class, whileLoop.getBody().orElseThrow());
+		AbstractTwinActionUsage<?, ?> whileBody = assertInstanceOf(AbstractTwinActionUsage.class, whileLoop.getBody().orElseThrow());
 
 		assertTrue(whileBody.getActions().stream().anyMatch(x -> "test".equals(x.getName())));
 
