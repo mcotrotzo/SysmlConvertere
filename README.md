@@ -1,185 +1,397 @@
-# SysmlModelParser
+# SysML Twin Mapper
 
-SysmlModelParser reads SysML v2 models and turns them into Java objects. You decide with annotations which Java class is built for which SysML element. The parser finds these classes on its own by scanning the classpath at startup.
+`sysml-twin-mapper` maps supported SysML v2 Digital Twin models to a
+Java object model.
 
-Principle: only elements that have a class are mapped. Elements without a matching class are left out of the result.
+It is built on SysmlModelParser (`sysml-library-mapper`). The parser
+loads the SysML standard library, this project adds the Digital Twin
+library (`DTLibrary.zip`, packed from `DTLibrary/` during the build) and
+the mapping classes. The public result is a `ResultConverter` containing
+the mapped model elements.
 
-# Installation
+For modeling rules and SysML examples, see `MODELING.md`.
+
+## Requirements
+
+* Java 21
+* Maven
+* Access to the GitHub Packages repository
+
+## Maven
+
+Configure GitHub Packages in `~/.m2/settings.xml`:
+
+```xml
+<settings>
+    <servers>
+        <server>
+            <id>github</id>
+            <username>GITHUB_USERNAME</username>
+            <password>GITHUB_TOKEN</password>
+        </server>
+    </servers>
+</settings>
+```
+
+A classic Personal Access Token normally needs `read:packages`. The
+account must also have access to the package if it is private.
+
+Add the repository:
+
+```xml
+<repositories>
+    <repository>
+        <id>github</id>
+        <url>https://maven.pkg.github.com/mcotrotzo/SysmlConvertere</url>
+    </repository>
+</repositories>
+```
+
+Add the dependency:
 
 ```xml
 <dependency>
     <groupId>org.example</groupId>
-    <artifactId>sysml-library-mapper</artifactId>
-    <version>...</version>
+    <artifactId>sysml-twin-mapper</artifactId>
+    <version>GITHUB-release version</version>
 </dependency>
 ```
 
-The package is hosted on GitHub Packages. Your `settings.xml` needs a server entry with the repository ID (for example `github`) and a token with `read:packages`.
+The Digital Twin library and the SysML standard library are bundled
+and do not have to be downloaded separately. SysmlModelParser comes in
+as a transitive dependency from the same repository.
 
-# Entry point
+## Usage
 
-```java
-SysmlConverterMain main = new SysmlConverterMain("MyLibrary.zip");
-ResultConverter result = main.parse("path/to/model");
-
-List<MyPartUsage> parts = result.getByType(MyPartUsage.class);
-```
-
-When created, `SysmlConverterMain`:
-
-1. Starts SysML Interactive.
-2. Loads the SysML standard library (`sysml_library.zip`, shipped with the parser).
-3. Loads your library. The name passed to the constructor is a zip file on the classpath, for example in `src/main/resources` or packed by the build into `target/classes`.
-4. Validates the library and throws immediately on errors.
-5. Scans the classpath for annotated classes and runs all scan checks (see below).
-
-`parse(String... paths)` removes the input of the previous call, reads all `.sysml` files below the given paths, validates them, runs the rules and maps. One instance can be reused; library and scan are built only once.
-
-Steps inside `parse`:
-
-1. Read and validate the input
-2. General rules (`executeGeneralRules`)
-3. Mapping
-4. Semantic rules (`executeSemanticRules`) on the result
-
-# Mapping classes
-
-Every mapped class extends `Definition` or `Usage` and carries exactly one annotation.
-
-## By library type
+The entry point is `DTLibraryParser`:
 
 ```java
-@MappedLibrary(libraryName = "MyLibrary::Sensor", core = SensorCore.class)
-public class SensorUsage extends Usage<SensorCore, PartUsage, SensorDefinition> {
-    public SensorUsage(PartUsage element, Mapper mapper) { super(element, mapper); }
-}
+DTLibraryParser parser = new DTLibraryParser();
+
+ResultConverter result = parser.parse("PathToYourModelDirectory");
 ```
 
-`libraryName` is the qualified name of a type in your library. If the SysML element is a classifier, the definition class is used; if it is a feature, the usage class is used. So each library type can have one definition class and one usage class.
+The constructor sets up SysML, loads `DTLibrary.zip` and registers the
+Digital Twin rules (`PreRuleExecutorImpl`). Create it once and call
+`parse` for every model; each call replaces the previous model. Every
+path can be a file or a directory, all `.sysml` files below it are
+read.
 
-## By metaclass
+All mapped classes live under `org.example.Mapping.Model`.
+
+Errors:
+
+* SysML issues (errors and warnings) stop loading with an
+  `IllegalStateException`.
+* A violated modeling rule (multiplicity, typings, roles, flows) makes
+  `parse` throw an `IllegalArgumentException`.
+* A violated semantic rule makes `parse` throw a `SemanticException`.
+
+# ResultConverter
 
 ```java
-@MappedMetaClass(value = ActionUsage.class, core = MyActionCore.class)
-public class MyActionUsage extends ActionMapUsage<MyActionCore> { ... }
+List<AbstractType<?, ?>> all = result.getAll();
+Optional<AbstractType<?, ?>> element = result.getById(id);
+Optional<SensorUsage> sensor = result.getById(id, SensorUsage.class);
+List<SensorUsage> sensors = result.getByType(SensorUsage.class);
 ```
 
-`value` is a SysML metaclass (for example `ActionUsage`, `InvocationExpression`).
+`getByType` includes subclasses: `getByType(TwinFlowUsage.class)`
+returns every flow, `getByType(TwinAttributeUsage.class)` every
+attribute.
 
-## Rules for mapping classes
-
-* Exactly one public constructor `(SysML type, Mapper)`. The SysML type decides which elements the class accepts.
-* `core` must be a concrete class and must fit the type parameter `C` of the class. The parser sets the core right after construction.
-* The type parameter `D` of a usage (its definition) must have exactly one bound.
-* Annotations are not inherited. A class without an annotation is invisible to the parser.
-
-## Predefined classes
-
-`Model.Predefined` contains abstract templates without annotations, for example `ActionMapUsage`, `AssignmentMapUsage`, `ForLoopMapUsage`, `FeatureReferenceUsage`, `LiteralIntegerUsage`. They only become active once you write an annotated subclass.
-
-Slots are filled in protected `mapXxx()` methods, and the getters return wildcard types. In your subclass you override both and narrow the type:
+The result also contains library elements and inherited copies. Filter
+them explicitly when only the elements written in the model are needed:
 
 ```java
-@Override
-protected List<? extends Usage<?, ?, ?>> mapTarget() {
-    return mapper.mapSlot("target", this, MyAttributeUsage.class);
-}
-
-@Override
-public MyAttributeUsage getTarget() {
-    return MyAttributeUsage.class.cast(super.getTarget());
-}
+List<SensorUsage> own = result.getByType(SensorUsage.class).stream()
+        .filter(sensor -> !sensor.isInherited() && !sensor.isLibrary())
+        .toList();
 ```
 
-The cast in the getter is safe because `mapTarget` only returns that type.
+# Mapped elements
 
-# Resolution rules
+## AbstractType
 
-For each element the parser looks for a class in this order:
-
-1. **Library type.** The most specific library type the element specializes that has a class. If the constructor of that class does not accept the element, the parser moves on to the next parent library type.
-2. **Metaclass.** If no library type fits, the most specific mapped metaclass the element is an instance of is used.
-3. **Nothing.** The element stays unmapped and does not appear in the result.
-
-## Subclass wins
-
-If two classes share the same key (same metaclass, or same `libraryName` and same kind, definition or usage):
-
-* If one is a subclass of the other, the subclass replaces the parent class. This lets another library extend an existing mapping.
-* If they are unrelated, the scan fails with an error.
-
-## Warning: metaclasses are broad
-
-Many SysML metaclasses inherit from each other. A mapping on a general metaclass also catches every subtype that has no mapping of its own. Examples:
-
-* `ActionUsage` also catches `CalculationUsage`, `PerformActionUsage`, `SendActionUsage`, `AcceptActionUsage`, control nodes, `StateUsage`, `FlowUsage` and case usages.
-* `BooleanExpression` also catches `ConstraintUsage`, `RequirementUsage` and invariants.
-* `Function` also catches `CalculationDefinition`, `ConstraintDefinition`, `RequirementDefinition` and case definitions.
-* `InvocationExpression` also catches `OperatorExpression`, `IndexExpression`, `SelectExpression`, `CollectExpression`.
-
-That is why every fallback to a supertype is logged (see Logging).
-
-# Startup checks
-
-The scan throws if:
-
-* a class has more than one annotation or does not extend `AbstractType`,
-* the constructor `(SysML type, Mapper)` is missing,
-* `core` is abstract or does not fit `C`,
-* the `libraryName` does not exist in the library,
-* two unrelated classes share the same key,
-* the definition `D` of a library usage does not fit the definition class of its library type,
-* the definition `D` of a metaclass usage is not met by any mapped definition class.
-
-At runtime `Usage.fillSlots` checks that the definition given in the model was mapped as `D`, and throws with the element name otherwise.
-
-# Rules (Executor)
-
-Rules run in two stages inside `parse`:
-
-* `GenerelRules` run before mapping, on the SysML model. They throw `IllegalArgumentException`.
-* `SemanticRule` run after mapping, on the `ResultConverter`. They throw `SemanticException`.
-
-Predefined in `DefaultRuleExecutor`:
-
-* **MultiplicityRule:** a specialization must not violate the multiplicity of the inherited feature.
-* **MultiType:** all typings of an element must be compatible with each other (except `Flow`).
-
-## Custom rules
-
-Extend `DefaultRuleExecutor` to keep the predefined rules, and pass the executor to `SysmlConverterMain`:
+Every mapped element extends `AbstractType` from SysmlModelParser:
 
 ```java
-public class MyExecutor extends DefaultRuleExecutor {
-    @Override
-    public List<SemanticRule> getSemanticRules(NewUtil newUtil) {
-        return List.of(new MyRule(newUtil));
-    }
-}
-
-SysmlConverterMain main = new SysmlConverterMain("MyLibrary.zip", new MyExecutor());
+element.getId();          // deterministic UUID
+element.getName();
+element.getParent();      // Optional, empty for top-level elements
+element.isInherited();
+element.isLibrary();
+element.getSysmlElement();
 ```
 
-To add to the predefined general rules, call `super.getGeneralRules(newUtil)` in `getGeneralRules` and append yours. If you extend `Executor` directly, only your rules run.
+## Identity, copies and inheritance
 
-# Custom mapper
+An element is mapped once per owner. The id is derived from the SysML
+path of the element and, below an owner, from the owner's id
+(`owner.id | path`). The same element therefore gives
 
-`Mapper` can be extended, for example to change `idCalculation` or `isOwnedBy`. A new mapper is created for every `parse` through the protected method `getMapper()`:
+* the same instance below the same owner, and
+* a separate instance (a copy) below another owner.
+
+Example: `port p13 :> p11` inherits `temp` from `p11`. `p11.getMeasurements()`
+holds the original `temp`, `p13.getMeasurements()` its own copy with
+`getParent() == p13`. Likewise `part battery : Battery` holds copies of
+everything defined in `Battery`.
+
+`isInherited()` is `true` for a copy: the element does not lie inside
+its owner in the model, or its owner is a copy itself.
+
+Definitions are mapped without owner and exist once. Top-level elements
+have no parent; packages are not mapped.
+
+Library definitions are mapped, but they do not fill their slots.
+Library usages (e.g. the `sensors` feature of `PhysicalTwin`) are not
+mapped.
+
+## Usage and Definition
 
 ```java
-public class MyConverterMain extends SysmlConverterMain {
-    public MyConverterMain() throws IOException { super("MyLibrary.zip", new MyExecutor()); }
+usage.getDefinition();       // typed, e.g. SensorDefinition for a SensorUsage
+usage.getDirection();        // Optional<Direction>
+usage.getMultiplicity();     // ElemWithMult
+usage.getSpecializations();  // usages this usage subsets, e.g. p13 -> [p11]
 
-    @Override
-    protected Mapper getMapper() { return new MyMapper(scanner, newUtil); }
-}
+definition.getSuperDefinitions(); // direct super definitions
 ```
 
-# Logging
+Standard-library types (e.g. `ScalarValues::Real`) are not set as the
+definition of a usage.
 
-The parser logs through SLF4J with Log4j2 and sets the logger `Mapper` to INFO by itself. You do not have to configure anything.
+# Twin structure and taxonomies
 
-* **INFO:** a library type has no matching class, so the class of a parent library type is used.
-* **WARN:** an element has no class of its own and is mapped through a more general metaclass.
+`TwinUsage` and `TwinDefinition` expose the same getters:
 
-Each combination is logged only once. To see more, change the level in your own `log4j2.xml`, for example `DEBUG` to see every mapping found during the scan.
+```java
+twin.getPhysicalTwin();
+twin.getShadow();
+twin.getDescriptiveModel();
+twin.getPredictiveModel();
+twin.getPrescriptiveModel();
+
+twin.getQueryFlows();
+twin.getDescriptiveToPredictiveFlows();
+twin.getDescriptiveToPrescriptiveFlows();
+twin.getPredictiveToPrescriptiveFlows();
+twin.getPrescriptiveToPhysicalFlows();
+```
+
+`WorldCoreUsage` and `WorldCoreDefinition` (library type `World`) expose:
+
+```java
+world.getTwins();           // TwinUsage of the world
+world.getFederatedLinks();  // FederationFlowUsage between those twins
+```
+
+Every world usage is one deployment; its twins and flows are copies with
+their own ids.
+
+## PhysicalTwin
+
+```java
+physicalTwin.getSensors();
+physicalTwin.getActuators();
+physicalTwin.getControlUnits();
+physicalTwin.getConstPorts();
+physicalTwin.getPhysicalFlows();
+```
+
+## Shadow
+
+```java
+shadow.getDatabases();
+```
+
+## DescriptiveModel
+
+```java
+descriptiveModel.getDerivedAttributes();
+descriptiveModel.getDescriptiveStateMachines();
+descriptiveModel.getDescriptiveStrategies();
+descriptiveModel.getDescriptiveFlows();
+```
+
+## PredictiveModel / PrescriptiveModel
+
+```java
+predictiveModel.getPredictiveStrategies();
+predictiveModel.getPredictiveFlows();
+
+prescriptiveModel.getPrescriptiveStrategies();
+prescriptiveModel.getPrescriptiveFlows();
+```
+
+# Ports and protocols
+
+All ports (`SensorUsage`, `ActuatorUsage`, `ConstPortUsage`):
+
+```java
+port.getProtocol();   // Optional
+port.getDeviceKey();
+```
+
+```java
+sensor.getMeasurements();
+actuator.getCommands();
+constPort.getMeasurements();
+```
+
+Protocols: `MqttProtocolUsage` (`getBroker()`, `getTopic()`) and
+`HttpProtocolUsage` (`getUrl()`).
+
+# Attributes
+
+Scalar attributes: `TwinAttributeRealUsage`, `TwinAttributeIntegerUsage`,
+`TwinAttributeBooleanUsage`, `TwinAttributeStringUsage`, with their
+definitions `TwinAttributeRealDefinition` etc. `TwinBoolean` is an alias
+of `ScalarValues::Boolean`, so `new TwinBoolean(true)` constructs a
+`TwinAttributeBooleanDefinition`.
+
+Custom types: `CustomTypeUsage` / `CustomTypeDefinition` with
+`getFields()`.
+
+Every `TwinAttributeUsage` exposes:
+
+```java
+attribute.getExpression();  // Optional
+attribute.getRoles();       // Set<Role>
+attribute.getTaxonomy();    // closest taxonomy above the attribute
+```
+
+Roles (`org.example.Mapping.Role`) are set by the slot the attribute
+is in:
+
+| Slot | Role |
+|---|---|
+| sensor `measurements` | `SENSOR` |
+| actuator `commands` | `ACTUATOR` |
+| const port `measurements` | `CONST` |
+| action `inputs` / `outputs` | `ACTION` |
+| action `local_Attributes` | `LOCAL` |
+| custom type `fields` | `CUSTOM_TYPE_MEMBER` |
+| for-loop variable | `FOR_LOOP_VARIABLE` |
+
+Attributes in no such slot have no role (configuration). The rules
+built on the roles are described in `MODELING.md`.
+
+# Actions
+
+Blocks (`TwinActionBlockUsage`, strategies, state machines, calculation
+definitions):
+
+```java
+block.getInputs();
+block.getOutputs();
+block.getLocalAttributes();
+block.getActions();
+block.getSuccessions();
+```
+
+| Class | Getters |
+|---|---|
+| `TwinAssignmentUsage` | `getReferent()`, `getValue()` |
+| `TwinIfElseUsage` | `getCondition()`, `getThenAction()`, `getElseAction()` |
+| `TwinForLoopUsage` | `getLoopVariable()`, `getCollection()`, `getBody()` |
+| `TwinWhileUsage` | `getCondition()`, `getUntil()`, `getBody()` |
+| `TwinSuccessionUsage` | `getTargets()` |
+| `TwinTransitionUsage` | `getSource()`, `getTarget()`, `getGuard()`, `getEffectAction()` |
+
+Blocks come in two kinds, both below `AbstractTwinActionUsage` /
+`AbstractTwinActionDefinition`:
+
+| Kind | Classes | Library type |
+|---|---|---|
+| plain | `TwinActionBlockUsage`, `TwinStateUsage`, calculation definitions | `TwinAction`, `State` |
+| triggered | `TwinTriggerActionUsage`, `TwinStrategyUsage`, `TwinStateMachineUsage` | `TwinTriggeredAction`, `Strategy`, `TwinStateMachine` |
+
+Triggered blocks additionally expose `getTrigger()`, an `Optional` of
+`TwinTriggerUsage`:
+
+```java
+trigger.getInterval();      // TwinAttributeIntegerUsage
+trigger.getIntervalUnit();  // EnumTimeUnitUsage
+trigger.getTriggerOnly();   // TwinAttributeBooleanUsage
+```
+
+`getTrigger()` is empty when the model does not redefine `trigger`.
+Plain blocks have no `getTrigger()`.
+
+`TwinStateUsage` / `TwinStateDefinition` (library types `State`,
+`ControlUnitState`, `DescriptiveState`) expose `getStates()`,
+`getTransitions()`, `getEntryAction()`, `getDoAction()` and
+`getExitAction()`. `TwinStateMachineUsage` / `TwinStateMachineDefinition`
+(library types `TwinStateMachine`, `ControlUnit`,
+`DescriptiveStateMachine`) expose the same getters plus `getTrigger()`.
+The states of a state machine are `TwinStateUsage`.
+
+# Expressions
+
+All expressions extend `ExpressionUsage` from SysmlModelParser.
+
+| Class | Getters |
+|---|---|
+| `TwinLiteralRealUsage`, `...IntegerUsage`, `...BooleanUsage`, `...StringUsage` | `getValue()` |
+| `TwinCalculationUsage` | `getInvokeType()`, `getArguments()` |
+| `TwinConstructorUsage` | `getConstructorType()`, `getArguments()` |
+| `TwinFeatureReferenceUsage`, `TwinFeatureChainUsage` | `getTarget()` |
+
+`getInvokeType()` is a `BaseFunctionDefinition` for standard functions
+(`getCore().getFunctionKind()` gives the `BaseFunctionKind`) or a
+`CustomCalculationDefinition` for user calculations.
+
+## References
+
+A reference resolves to exactly one mapped instance, not just to the
+referenced SysML feature. `getTarget()` of `pos_b.x.y` is the `y` held
+by the `x` copy held by `pos_b`, i.e. the same id as the `y` in
+`getFields()` of that `x`.
+
+A reference inside a copy points to the copy (`maxCharge` below
+`battery.physicalBattery.constPort` references the copied
+`nominalVoltage`), and a reference to an inherited feature points to the
+copy below the inheriting element (`voltage` in `soc2 :> soc`).
+
+# Flows
+
+All flows extend `TwinFlowUsage`:
+
+```java
+flow.getSource();            // TwinAttributeUsage, resolved like a reference
+flow.getTarget();
+flow.getSourceTaxonomy();    // taxonomy class the source has to lie in
+flow.getTargetTaxonomy();
+```
+
+Kinds: `PhysicalFlowUsage`, `DescriptiveFlowUsage`,
+`PredictiveFlowUsage`, `PrescriptiveFlowUsage`, `QueryFlowUsage`,
+`DescriptiveToPredictiveFlowUsage`, `DescriptiveToPrescriptiveFlowUsage`,
+`PredictiveToPrescriptiveFlowUsage`, `PrescriptiveToPhysicalFlowUsage`,
+`FederationFlowUsage`.
+
+`QueryFlowUsage` exposes `getSince()`, `getSinceUnit()`, `getOrderBy()`
+and `getLimit()` (each `Optional`). `FederationFlowUsage` exposes
+`getLinkType()`.
+
+All flow definitions are mapped as `TwinFlowDefinition`.
+
+# Strategies
+
+`TwinStrategyUsage` is a triggered block. `CustomStrategyUsage` adds nothing,
+`ExternalStrategyUsage` exposes `getContentPath()` and
+`getStrategyType()`.
+
+# Databases
+
+`RelationalDatabaseUsage` and `KeyValueDatabaseUsage` expose
+`getDurationInDays()`.
+
+# Enums
+
+Enum attributes (`EnumCustomStrategyTypeUsage`, `EnumFederationLinkUsage`,
+`EnumOrderByUsage`, `EnumTimeUnitUsage`) expose `getValue()` as an
+`Optional` of the enum in `org.example.Mapping.TwinEnumPackage`. All enum
+definitions are mapped as `EnumDefinition`.
