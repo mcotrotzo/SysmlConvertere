@@ -1,9 +1,12 @@
 package TopLevelDefinitionTests;
 
-import org.example.MapperService;
+
+import org.example.GenerelRules.PreRuleExecutorImpl;
+import Executor.SemanticException;
+import Main.ResultConverter;
+import Main.SysmlConverterMain;
+import Model.AbstractType;
 import org.example.Mapping.Model.Attribute.TwinAttributeUsage;
-import org.example.Mapping.Model.AbstractModel;
-import org.example.TwinDataBase;
 import org.junit.jupiter.api.BeforeEach;
 
 import java.io.IOException;
@@ -20,15 +23,15 @@ public abstract class AbstarctTest {
 
 	private static final String DEFAULT_CONTENT_DIRECTORY = "src/test/java/TopLevelDefinitionTests/";
 
-	protected TwinDataBase result;
+	protected ResultConverter result;
 
 
 	@BeforeEach
-	public void testTopLevelDefinition() throws IOException, IllegalArgumentException {
+	public void testTopLevelDefinition() throws IOException, IllegalArgumentException, SemanticException {
 		String contentDirectory = createContentDirectoryOrGetPath(getContent());
-		MapperService mapperService = new MapperService(contentDirectory);
+		SysmlConverterMain mapperService = new SysmlConverterMain("DTLibrary.zip", new PreRuleExecutorImpl());
 
-		result = mapperService.map();
+		result = mapperService.parse(contentDirectory);
 	}
 
 	public Optional<String> getContent() {
@@ -75,21 +78,21 @@ public abstract class AbstarctTest {
 		}
 	}
 
-	protected <T extends AbstractModel<?>> List<T> originals(Class<T> type) {
+	protected <T extends AbstractType<?, ?>> List<T> originals(Class<T> type) {
 		return result.getByType(type).stream().filter(element -> !element.isInherited()).toList();
 	}
 
-	protected <P extends AbstractModel<?>> void assertParent(AbstractModel<?> child, Class<P> parentType, String parentName) {
+	protected <P extends AbstractType<?, ?>> void assertParent(AbstractType<?, ?> child, Class<P> parentType, String parentName) {
 		P expectedParent = named(parentType, parentName);
-		AbstractModel<?> actualParent = child.getParent().orElseThrow(() -> new AssertionError(child.getName() + " has no parent"));
+		AbstractType<?, ?> actualParent = child.getParent().orElseThrow(() -> new AssertionError(child.getName() + " has no parent"));
 		assertEquals(expectedParent.getId(), actualParent.getId());
 	}
 
-	protected <T extends AbstractModel<?>> void assertAmount(Class<T> type, int expected) {
+	protected <T extends AbstractType<?, ?>> void assertAmount(Class<T> type, int expected) {
 		assertEquals(expected, originals(type).size());
 	}
 
-	protected <T extends AbstractModel<?>> T named(Class<T> type, String name) {
+	protected <T extends AbstractType<?, ?>> T named(Class<T> type, String name) {
 		var matches = originals(type).stream().filter(element -> name.equals(element.getName())).toList();
 
 		if (matches.isEmpty()) {
@@ -103,9 +106,9 @@ public abstract class AbstarctTest {
 		return matches.getFirst();
 	}
 
-	protected List<AbstractModel<?>> attributeChain(AbstractModel<?> target) {
-		List<AbstractModel<?>> chain = new ArrayList<>();
-		AbstractModel<?> current = target;
+	protected List<AbstractType<?, ?>> attributeChain(AbstractType<?, ?> target) {
+		List<AbstractType<?, ?>> chain = new ArrayList<>();
+		AbstractType<?, ?> current = target;
 		while (current instanceof TwinAttributeUsage<?, ?>) {
 			chain.addFirst(current);
 			current = current.getParent().orElse(null);

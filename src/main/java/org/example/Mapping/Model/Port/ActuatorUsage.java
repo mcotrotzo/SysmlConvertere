@@ -1,10 +1,13 @@
 package org.example.Mapping.Model.Port;
 
-import org.example.Mapping.Model.Mapper;
+
+
+import Model.Annotation.MappedLibrary;import Mapper.Mapper;
 import org.omg.sysml.lang.sysml.Feature;
 
+@MappedLibrary(libraryName = "PhysicalTwinLibrary::Actuator", core = ActuatorCore.class)
 public class ActuatorUsage extends TwinPortUsage<ActuatorCore, ActuatorDefinition> implements ActuatorCoreApi {
 	public ActuatorUsage(Feature sysmlElement, Mapper mapper) {
-		super(sysmlElement, () -> new ActuatorCore(sysmlElement, mapper), mapper, ActuatorDefinition.class);
+		super(sysmlElement, mapper);
 	}
 }

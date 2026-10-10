@@ -1,5 +1,7 @@
 package TopLevelDefinitionTests.ValidationRules;
 
+
+import Executor.SemanticException;
 import TopLevelDefinitionTests.AbstarctTest;
 import org.junit.jupiter.api.Test;
 
@@ -60,7 +62,7 @@ public class FlowCheckTargetTaxonomy extends AbstarctTest {
 
 	@Test
 	public void wrongTargetTaxonomyShouldThrow() {
-		IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> super.testTopLevelDefinition());
+		SemanticException exception = assertThrows(SemanticException.class, () -> super.testTopLevelDefinition());
 		assertTrue(exception.getMessage().contains("target 'voltage' belongs to taxonomy 'DescriptiveModelUsage', expected 'PredictiveTaxonomyUsage'"), exception.getMessage());
 	}
 }

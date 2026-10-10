@@ -2,8 +2,9 @@ package org.example.GenerelRules;
 
 
 
-import org.example.Util.NewUtil;
-import org.example.Util.Utils;
+
+import Executor.GenerelRules;
+import Mapper.NewUtil;
 import org.omg.sysml.lang.sysml.*;
 
 public class CalcInputOutputRules extends GenerelRules {

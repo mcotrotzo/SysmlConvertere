@@ -1,5 +1,7 @@
 package TopLevelDefinitionTests.ValidationRules;
 
+
+import Executor.SemanticException;
 import TopLevelDefinitionTests.AbstarctTest;
 import org.junit.jupiter.api.Test;
 
@@ -60,7 +62,7 @@ public class FlowCheckTargetDirection extends AbstarctTest {
 
 	@Test
 	public void outputAsTargetShouldThrow() {
-		IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> super.testTopLevelDefinition());
+		SemanticException exception = assertThrows(SemanticException.class, () -> super.testTopLevelDefinition());
 		assertTrue(exception.getMessage().contains("target 'soc' must have direction in or INOUT, but got 'out'"), exception.getMessage());
 	}
 }

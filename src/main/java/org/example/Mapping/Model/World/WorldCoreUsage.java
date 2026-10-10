@@ -1,14 +1,16 @@
 package org.example.Mapping.Model.World;
 
-import org.example.Mapping.Model.Mapper;
-import org.example.Mapping.Model.Type.Usage;
+
+
+import Model.Annotation.MappedLibrary;import Mapper.Mapper;
+import Model.Usage;
 import org.omg.sysml.lang.sysml.Feature;
 
-import java.util.function.Supplier;
 
+@MappedLibrary(libraryName = "TwinDefLibrary::World", core = WorldCore.class)
 public class WorldCoreUsage extends Usage<WorldCore, Feature, WorldCoreDefinition> implements WorldCoreApi {
 
-	public WorldCoreUsage(Feature sysmlElement, Supplier<WorldCore> coreFactory, Mapper newMappe) {
-		super(sysmlElement, coreFactory, newMappe, WorldCoreDefinition.class);
+	public WorldCoreUsage(Feature sysmlElement, Mapper newMappe) {
+		super(sysmlElement, newMappe);
 	}
 }

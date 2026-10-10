@@ -1,5 +1,7 @@
 package TopLevelDefinitionTests.ValidationRules;
 
+
+import Executor.SemanticException;
 import TopLevelDefinitionTests.AbstarctTest;
 import org.junit.jupiter.api.Test;
 
@@ -54,7 +56,7 @@ public class RoleCheckConfigWithReference extends AbstarctTest {
 
 	@Test
 	public void configWithReferenceShouldThrow() {
-		IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> super.testTopLevelDefinition());
+		SemanticException exception = assertThrows(SemanticException.class, () -> super.testTopLevelDefinition());
 		assertTrue(exception.getMessage().contains("CONFIG expressions must not contain feature references"), exception.getMessage());
 	}
 }

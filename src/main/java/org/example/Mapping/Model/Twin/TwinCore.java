@@ -1,8 +1,10 @@
 package org.example.Mapping.Model.Twin;
 
+
+import Mapper.Mapper;
+import Model.AbstractType;
+import Model.Slots;
 import lombok.Getter;
-import org.example.Mapping.Model.AbstractModel;
-import org.example.Mapping.Model.Mapper;
 import org.example.Mapping.Model.Taxonomy.Base.TaxonomyCore;
 import org.example.Mapping.Model.Taxonomy.PhysicalTwin.PhysicalTwinUsage;
 import org.example.Mapping.Model.Taxonomy.Shadow.ShadowUsage;
@@ -14,8 +16,6 @@ import org.example.Mapping.Model.Flow.DescriptiveToPredictiveFlowUsage;
 import org.example.Mapping.Model.Flow.DescriptiveToPrescriptiveFlowUsage;
 import org.example.Mapping.Model.Flow.PredictiveToPrescriptiveFlowUsage;
 import org.example.Mapping.Model.Flow.PrescriptiveToPhysicalFlowUsage;
-import org.example.Mapping.Model.Slots;
-
 import java.util.List;
 import java.util.Optional;
 import org.omg.sysml.lang.sysml.Type;
@@ -37,7 +37,7 @@ public class TwinCore extends TaxonomyCore {
 	}
 
 	@Override
-	public void fillSlots(AbstractModel owner) {
+	public void fillSlots(AbstractType owner) {
 		physicalTwin = Slots.atMostOne(owner, "physicalTwin", mapper.mapSlot("physicalTwin", owner, PhysicalTwinUsage.class));
 		shadow = Slots.atMostOne(owner, "shadow", mapper.mapSlot("shadow", owner, ShadowUsage.class));
 		descriptiveModel = Slots.atMostOne(owner, "descriptiveModel", mapper.mapSlot("descriptiveModel", owner, DescriptiveModelUsage.class));

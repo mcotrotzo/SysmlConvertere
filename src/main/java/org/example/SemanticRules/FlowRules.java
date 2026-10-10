@@ -1,11 +1,14 @@
 package org.example.SemanticRules;
 
+
+import Executor.SemanticException;
+import Executor.SemanticRule;
+import Main.ResultConverter;
+import Mapper.NewUtil;
+import Model.Definition;
 import org.example.Mapping.Model.Attribute.TwinAttributeUsage;
 import org.example.Mapping.Model.Flow.TwinFlowUsage;
 import org.example.Mapping.Model.Taxonomy.Base.TaxonomyUsage;
-import org.example.Mapping.Model.Type.Definition;
-import org.example.TwinDataBase;
-import org.example.Util.NewUtil;
 import org.omg.sysml.lang.sysml.FeatureDirectionKind;
 
 public class FlowRules extends SemanticRule {
@@ -15,8 +18,8 @@ public class FlowRules extends SemanticRule {
 	}
 
 	@Override
-	public boolean isValid(TwinDataBase database) throws SemanticException {
-		for (TwinFlowUsage flow : database.getByType(TwinFlowUsage.class)) {
+	public boolean isValid(ResultConverter resultConverter) throws SemanticException {
+		for (TwinFlowUsage flow : resultConverter.getByType(TwinFlowUsage.class)) {
 			if (flow.isLibrary()) {
 				continue;
 			}
@@ -43,8 +46,8 @@ public class FlowRules extends SemanticRule {
 	}
 
 	private void checkTypes(TwinFlowUsage flow) throws SemanticException {
-		Definition<?, ?> source = flow.getSource().getDefinition();
-		Definition<?, ?> target = flow.getTarget().getDefinition();
+		Definition<?, ?> source = flow.getSource().getDefinition().orElse(null);
+		Definition<?, ?> target = flow.getTarget().getDefinition().orElse(null);
 		if (source == null || target == null) {
 			return;
 		}

@@ -1,10 +1,13 @@
 package org.example.Mapping.Model.Port;
 
-import org.example.Mapping.Model.Mapper;
+
+
+import Model.Annotation.MappedLibrary;import Mapper.Mapper;
 import org.omg.sysml.lang.sysml.Feature;
 
+@MappedLibrary(libraryName = "PhysicalTwinLibrary::Sensor", core = SensorCore.class)
 public class SensorUsage extends TwinPortUsage<SensorCore, SensorDefinition> implements SensorCoreApi {
 	public SensorUsage(Feature sysmlElement, Mapper mapper) {
-		super(sysmlElement, () -> new SensorCore(sysmlElement, mapper), mapper, SensorDefinition.class);
+		super(sysmlElement, mapper);
 	}
 }

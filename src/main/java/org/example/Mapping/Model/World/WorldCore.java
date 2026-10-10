@@ -1,13 +1,14 @@
 package org.example.Mapping.Model.World;
 
-import lombok.Getter;
-import org.example.Mapping.Model.AbstractModel;
-import org.example.Mapping.Model.Flow.FederationFlowUsage;
-import org.example.Mapping.Model.Mapper;
 
+import Mapper.Mapper;
+import Model.AbstractType;
+import Model.Core.Core;
+import lombok.Getter;
+import org.example.Mapping.Model.Flow.FederationFlowUsage;
 import org.example.Mapping.Model.Twin.TwinUsage;
-import org.example.Mapping.Model.Type.Core;
 import org.omg.sysml.lang.sysml.Type;
+
 
 import java.util.List;
 
@@ -21,7 +22,7 @@ public class WorldCore extends Core<Type> {
 	}
 
 	@Override
-	public void fillSlots(AbstractModel<?> owner) {
+	public void fillSlots(AbstractType<?, ?> owner) {
 		twins = mapper.mapSlot("twins", owner, TwinUsage.class);
 		federatedLinks = mapper.mapSlot("federatedLinks", owner, FederationFlowUsage.class);
 	}

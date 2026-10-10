@@ -1,8 +1,9 @@
 package org.example.Mapping.Model.Taxonomy.PhysicalTwin;
 
+
+import Mapper.Mapper;
+import Model.AbstractType;
 import lombok.Getter;
-import org.example.Mapping.Model.AbstractModel;
-import org.example.Mapping.Model.Mapper;
 import org.example.Mapping.Model.Taxonomy.Base.TaxonomyCore;
 import org.example.Mapping.Model.Port.SensorUsage;
 import org.example.Mapping.Model.Port.ActuatorUsage;
@@ -25,7 +26,7 @@ public class PhysicalTwinCore extends TaxonomyCore {
 	}
 
 	@Override
-	public void fillSlots(AbstractModel owner) {
+	public void fillSlots(AbstractType owner) {
 		sensors = mapper.mapSlot("sensors", owner, SensorUsage.class);
 		actuators = mapper.mapSlot("actuators", owner, ActuatorUsage.class);
 		controlUnits = mapper.mapSlot("controlUnit", owner, TwinStateMachineUsage.class);

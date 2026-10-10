@@ -1,8 +1,9 @@
 package org.example.Mapping.Model.Protocol;
 
-import org.example.Mapping.Model.AbstractModel;
-import org.example.Mapping.Model.Mapper;
-import org.example.Mapping.Model.Type.Core;
+
+import Mapper.Mapper;
+import Model.AbstractType;
+import Model.Core.Core;
 import org.omg.sysml.lang.sysml.Type;
 
 public class ProtocolCore extends Core<Type> {
@@ -12,6 +13,6 @@ public class ProtocolCore extends Core<Type> {
 	}
 
 	@Override
-	public void fillSlots(AbstractModel owner) {
+	public void fillSlots(AbstractType owner) {
 	}
 }

@@ -1,12 +1,14 @@
 package org.example.Mapping.Model.Taxonomy.Base;
 
-import java.util.function.Supplier;
-import org.example.Mapping.Model.Mapper;
+
+
+import Model.Annotation.MappedLibrary;import Mapper.Mapper;
 import org.omg.sysml.lang.sysml.Classifier;
 
 /** Library type PrescriptiveTaxonomy. Intermediate class: the concrete core is passed in by the subclass or the registry. */
+@MappedLibrary(libraryName = "TwinTaxonomyLibrary::PrescriptiveTaxonomy", core = TaxonomyCore.class)
 public class PrescriptiveTaxonomyDefinition<C extends TaxonomyCore> extends CloudTwinTaxonomyDefinition<C> implements TaxonomyCoreApi<C> {
-	public PrescriptiveTaxonomyDefinition(Classifier sysmlElement, Supplier<C> coreFactory, Mapper mapper) {
-		super(sysmlElement, coreFactory, mapper);
+	public PrescriptiveTaxonomyDefinition(Classifier sysmlElement, Mapper mapper) {
+		super(sysmlElement, mapper);
 	}
 }

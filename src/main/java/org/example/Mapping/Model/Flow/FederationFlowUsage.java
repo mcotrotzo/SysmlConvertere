@@ -1,14 +1,18 @@
 package org.example.Mapping.Model.Flow;
 
+
+
+
+import Model.EmptyCore;import Model.Annotation.MappedLibrary;import Mapper.Mapper;
+import Model.Slots;
 import lombok.Getter;
 
-import org.example.Mapping.Model.Mapper;
-import org.example.Mapping.Model.Slots;
 import org.example.Mapping.Model.EnumAttribute.EnumFederationLinkUsage;
 import org.omg.sysml.lang.sysml.FlowUsage;
 
 import java.util.Optional;
 
+@MappedLibrary(libraryName = "TwinActionLibrary::FederatedLinkFlow", core = EmptyCore.class)
 public class FederationFlowUsage extends TwinFlowUsage {
 
 	@Getter private Optional<EnumFederationLinkUsage> linkType = Optional.empty();

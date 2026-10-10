@@ -1,12 +1,14 @@
 package org.example.Mapping.Model.Action;
 
-import org.example.Mapping.Model.Mapper;
+
+import Model.Annotation.MappedLibrary;
+import Mapper.Mapper;
 import org.omg.sysml.lang.sysml.ActionUsage;
 
-import java.util.function.Supplier;
 
+@MappedLibrary(libraryName = "TwinActionLibrary::TwinTriggeredAction", core = TwinTriggerActionCore.class)
 public class TwinTriggerActionUsage<C extends ActionBlockCore & TriggerCore, D extends TwinTriggerActionDefinition<?>> extends AbstractTwinActionUsage<C, D> implements TwinTriggerActionCoreApi<C> {
-	public TwinTriggerActionUsage(ActionUsage sysmlElement, Supplier<C> core, Mapper newMappe, Class<D> definitionClass) {
-		super(sysmlElement, core, newMappe, definitionClass);
+	public TwinTriggerActionUsage(ActionUsage sysmlElement, Mapper newMappe) {
+		super(sysmlElement, newMappe);
 	}
 }

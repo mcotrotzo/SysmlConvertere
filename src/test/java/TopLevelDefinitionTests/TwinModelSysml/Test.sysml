@@ -5,8 +5,9 @@ package Test{
      private import BatteryControlUnitLibrary::*;
      private import PositionThings::*;
 
-     part def Battery :> Twin {
 
+     part def Battery :> Twin {
+           calc tes33t:AddPosition;
          part physicalBattery :>> physicalTwin {
 
              port p11[30] :> sensors {

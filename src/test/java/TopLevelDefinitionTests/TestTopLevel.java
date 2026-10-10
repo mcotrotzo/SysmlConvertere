@@ -1,7 +1,7 @@
 package TopLevelDefinitionTests;
 
-import org.example.ElemWithMult;
-import org.example.Mapping.Model.AbstractModel;
+
+import Model.AbstractType;
 import org.example.Mapping.Model.Database.DatabaseDefinition;
 import org.example.Mapping.Model.Database.RelationalDatabaseDefinition;
 import org.example.Mapping.Model.Flow.TwinFlowDefinition;
@@ -27,10 +27,8 @@ import org.example.Mapping.Model.Taxonomy.Shadow.ShadowDefinition;
 import org.example.Mapping.Model.Taxonomy.Shadow.ShadowUsage;
 import org.example.Mapping.Model.Twin.TwinDefinition;
 import org.example.Mapping.Model.Twin.TwinUsage;
-import org.example.Mapping.Model.Type.Usage;
 import org.example.Mapping.Model.World.WorldCoreDefinition;
 import org.example.Mapping.Model.World.WorldCoreUsage;
-import org.example.Util.Utils;
 import org.junit.jupiter.api.Test;
 import org.omg.sysml.util.TypeUtil;
 
@@ -116,13 +114,13 @@ public class TestTopLevel extends AbstarctTest {
 
 		var p15Children = p15.getSpecializations();
 
-		System.out.println("p11 children: " + p11Children.stream().map(AbstractModel::getName).toList());
+		System.out.println("p11 children: " + p11Children.stream().map(AbstractType::getName).toList());
 
-		System.out.println("p13 children: " + p13Children.stream().map(AbstractModel::getName).toList());
+		System.out.println("p13 children: " + p13Children.stream().map(AbstractType::getName).toList());
 
-		System.out.println("p14 children: " + p14Children.stream().map(AbstractModel::getName).toList());
+		System.out.println("p14 children: " + p14Children.stream().map(AbstractType::getName).toList());
 
-		System.out.println("p15 children: " + p15Children.stream().map(AbstractModel::getName).toList());
+		System.out.println("p15 children: " + p15Children.stream().map(AbstractType::getName).toList());
 	}
 
 	@Test

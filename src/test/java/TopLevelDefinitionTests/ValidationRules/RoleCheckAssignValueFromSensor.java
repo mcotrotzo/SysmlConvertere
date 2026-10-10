@@ -1,5 +1,7 @@
 package TopLevelDefinitionTests.ValidationRules;
 
+
+import Executor.SemanticException;
 import TopLevelDefinitionTests.AbstarctTest;
 import org.junit.jupiter.api.Test;
 
@@ -55,7 +57,7 @@ public class RoleCheckAssignValueFromSensor extends AbstarctTest {
 
 	@Test
 	public void assignmentValueFromSensorShouldThrow() {
-		IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> super.testTopLevelDefinition());
+		SemanticException exception = assertThrows(SemanticException.class, () -> super.testTopLevelDefinition());
 		assertTrue(exception.getMessage().contains("Assignment value expressions may only reference LOCAL, ACTION or FOR_LOOP_VARIABLE attributes"), exception.getMessage());
 	}
 }

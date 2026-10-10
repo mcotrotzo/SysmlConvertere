@@ -1,15 +1,17 @@
 package TopLevelDefinitionTests;
 
-import org.example.Mapping.BaseFunctionKind;
+
+
+import Model.AbstractType;
+import Model.Predefined.MetaClasses.Function.BaseFunctionKind;
 import org.example.Mapping.Model.Attribute.*;
 import org.example.Mapping.Model.Expression.TwinCalculationUsage;
 import org.example.Mapping.Model.Expression.TwinConstructorUsage;
-import org.example.Mapping.Model.Expression.TwinExpressionUsage;
+import Model.Predefined.MetaClasses.Expression.ExpressionUsage;
 import org.example.Mapping.Model.Expression.TwinLiteralBooleanUsage;
 import org.example.Mapping.Model.Expression.TwinLiteralIntegerUsage;
-import org.example.Mapping.Model.Expression.TwinReferenceUsage;
+import Model.Predefined.MetaClasses.Expression.ReferenceUsage;
 import org.example.Mapping.Model.Function.BaseFunctionDefinition;
-import org.example.Mapping.Model.AbstractModel;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -22,7 +24,7 @@ public class TestExpressions extends AbstarctTest {
 	public void testCollectionExpressionTest() {
 		TwinAttributeRealUsage temp = named(TwinAttributeRealUsage.class, "collectionTest");
 
-		TwinExpressionUsage root = temp.getExpression().get();
+		ExpressionUsage root = temp.getExpression().get();
 
 		TwinCalculationUsage outer = assertInstanceOf(TwinCalculationUsage.class, root);
 
@@ -32,8 +34,8 @@ public class TestExpressions extends AbstarctTest {
 		assertEquals(BaseFunctionKind.COLLECTION, referentFunction.getCore().getFunctionKind());
 		assertEquals(2, outer.getArguments().size());
 
-		TwinExpressionUsage first = outer.getArguments().get(0);
-		TwinExpressionUsage second = outer.getArguments().get(1);
+		ExpressionUsage first = outer.getArguments().get(0);
+		ExpressionUsage second = outer.getArguments().get(1);
 
 		assertInstanceOf(TwinLiteralIntegerUsage.class, first);
 		assertInstanceOf(TwinCalculationUsage.class, second);
@@ -56,7 +58,7 @@ public class TestExpressions extends AbstarctTest {
 
 		assertNotNull(voltage.getExpression().get());
 
-		TwinExpressionUsage root = voltage.getExpression().get();
+		ExpressionUsage root = voltage.getExpression().get();
 
 		TwinCalculationUsage calculation = assertInstanceOf(TwinCalculationUsage.class, root);
 
@@ -67,8 +69,8 @@ public class TestExpressions extends AbstarctTest {
 
 		assertEquals(2, calculation.getArguments().size());
 
-		TwinExpressionUsage firstArgument = calculation.getArguments().get(0);
-		TwinExpressionUsage secondArgument = calculation.getArguments().get(1);
+		ExpressionUsage firstArgument = calculation.getArguments().get(0);
+		ExpressionUsage secondArgument = calculation.getArguments().get(1);
 
 		TwinLiteralIntegerUsage firstLiteral = assertInstanceOf(TwinLiteralIntegerUsage.class, firstArgument);
 		TwinLiteralIntegerUsage secondLiteral = assertInstanceOf(TwinLiteralIntegerUsage.class, secondArgument);
@@ -83,7 +85,7 @@ public class TestExpressions extends AbstarctTest {
 
 		assertNotNull(current.getExpression().get());
 
-		TwinExpressionUsage root = current.getExpression().get();
+		ExpressionUsage root = current.getExpression().get();
 
 		TwinConstructorUsage calculation = assertInstanceOf(TwinConstructorUsage.class, root);
 
@@ -94,7 +96,7 @@ public class TestExpressions extends AbstarctTest {
 
 		assertEquals(1, calculation.getArguments().size());
 
-		TwinExpressionUsage firstArgument = calculation.getArguments().get(0);
+		ExpressionUsage firstArgument = calculation.getArguments().get(0);
 
 		TwinLiteralBooleanUsage literal = assertInstanceOf(TwinLiteralBooleanUsage.class, firstArgument);
 		assertEquals(Boolean.TRUE, literal.getValue());
@@ -107,7 +109,7 @@ public class TestExpressions extends AbstarctTest {
 
 		assertNotNull(current.getExpression().get());
 
-		TwinExpressionUsage root = current.getExpression().get();
+		ExpressionUsage root = current.getExpression().get();
 
 		TwinConstructorUsage calculation = assertInstanceOf(TwinConstructorUsage.class, root);
 
@@ -119,7 +121,7 @@ public class TestExpressions extends AbstarctTest {
 
 		assertEquals(1, calculation.getArguments().size());
 
-		TwinExpressionUsage firstArgument = calculation.getArguments().get(0);
+		ExpressionUsage firstArgument = calculation.getArguments().get(0);
 
 		TwinLiteralBooleanUsage literal = assertInstanceOf(TwinLiteralBooleanUsage.class, firstArgument);
 		assertEquals(Boolean.valueOf(false), literal.getValue());
@@ -130,17 +132,17 @@ public class TestExpressions extends AbstarctTest {
 		TwinAttributeRealUsage current =
 				named(TwinAttributeRealUsage.class, "test12");
 
-		TwinExpressionUsage root = current.getExpression().orElseThrow();
+		ExpressionUsage root = current.getExpression().orElseThrow();
 
 		TwinCalculationUsage invocation = assertInstanceOf(TwinCalculationUsage.class, root);
 
 		assertEquals(1, invocation.getArguments().size());
 
-		TwinExpressionUsage argument = invocation.getArguments().getFirst();
+		ExpressionUsage argument = invocation.getArguments().getFirst();
 
-		TwinReferenceUsage<?> reference = assertInstanceOf(TwinReferenceUsage.class, argument);
+		ReferenceUsage<?> reference = assertInstanceOf(ReferenceUsage.class, argument);
 
-		List<AbstractModel<?>> chain = attributeChain(reference.getTarget());
+		List<AbstractType<?, ?>> chain = attributeChain(reference.getTarget());
 
 		assertFalse(chain.isEmpty());
 		assertEquals(2, chain.size());

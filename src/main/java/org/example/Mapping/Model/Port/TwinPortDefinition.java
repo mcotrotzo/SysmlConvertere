@@ -1,12 +1,14 @@
 package org.example.Mapping.Model.Port;
 
-import java.util.function.Supplier;
-import org.example.Mapping.Model.Mapper;
-import org.example.Mapping.Model.Type.Definition;
+
+
+import Model.Annotation.MappedLibrary;import Mapper.Mapper;
+import Model.Definition;
 import org.omg.sysml.lang.sysml.Classifier;
 
+@MappedLibrary(libraryName = "PhysicalTwinLibrary::TwinPort", core = TwinPortCore.class)
 public class TwinPortDefinition<C extends TwinPortCore> extends Definition<C, Classifier> implements TwinPortCoreApi<C> {
-	public TwinPortDefinition(Classifier sysmlElement, Supplier<C> coreFactory, Mapper mapper) {
-		super(sysmlElement, coreFactory, mapper);
+	public TwinPortDefinition(Classifier sysmlElement, Mapper mapper) {
+		super(sysmlElement, mapper);
 	}
 }

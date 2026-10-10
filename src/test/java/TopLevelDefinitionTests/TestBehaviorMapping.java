@@ -1,11 +1,13 @@
 package TopLevelDefinitionTests;
 
-import org.example.Mapping.Model.AbstractModel;
+
+import Model.Predefined.MetaClasses.Action.ActionMapUsage;
+import Model.AbstractType;
 import org.example.Mapping.Model.Action.*;
 import org.example.Mapping.Model.Attribute.TwinAttributeUsage;
 import org.example.Mapping.Model.Expression.TwinCalculationUsage;
-import org.example.Mapping.Model.Expression.TwinExpressionUsage;
-import org.example.Mapping.Model.Expression.TwinReferenceUsage;
+import Model.Predefined.MetaClasses.Expression.ExpressionUsage;
+import Model.Predefined.MetaClasses.Expression.ReferenceUsage;
 import org.example.Mapping.Model.Function.CustomCalculationDefinition;
 import org.example.Mapping.Model.StateMachine.TwinStateMachineUsage;
 import org.example.Mapping.Model.StateMachine.TwinStateUsage;
@@ -73,7 +75,7 @@ public class TestBehaviorMapping extends AbstarctTest {
 
 		assertEquals("charge", test34Entry.getReferent().getName());
 
-		TwinReferenceUsage<?> reference = assertInstanceOf(TwinReferenceUsage.class, test34Entry.getValue());
+		ReferenceUsage<?> reference = assertInstanceOf(ReferenceUsage.class, test34Entry.getValue());
 
 		assertEquals("temp", reference.getTarget().getName());
 
@@ -104,9 +106,9 @@ public class TestBehaviorMapping extends AbstarctTest {
 
 		for (TwinTransitionUsage transition : transitions) {
 
-			AbstractModel<?> source = transition.getSource();
+			AbstractType<?, ?> source = transition.getSource();
 
-			AbstractModel<?> target = transition.getTarget();
+			AbstractType<?, ?> target = transition.getTarget();
 
 			String sourceName = source.getName();
 
@@ -118,7 +120,7 @@ public class TestBehaviorMapping extends AbstarctTest {
 
 				assertEquals(1, transition.getGuard().size());
 
-				assertInstanceOf(TwinReferenceUsage.class, transition.getGuard().getFirst());
+				assertInstanceOf(ReferenceUsage.class, transition.getGuard().getFirst());
 			}
 
 			if ("idle".equals(sourceName) && "idle".equals(targetName)) {
@@ -241,7 +243,7 @@ public class TestBehaviorMapping extends AbstarctTest {
 		assertTrue(strategy.getActions().size() ==1);
 
 
-		TwinActionUsage<?, ?, ?> t = strategy.getActions().getFirst();
+		ActionMapUsage<?, ?, ?> t = strategy.getActions().getFirst();
 		assertInstanceOf(TwinIfElseUsage.class, t);
 		TwinIfElseUsage ifElse = assertInstanceOf(TwinIfElseUsage.class, t);
 
@@ -279,7 +281,7 @@ public class TestBehaviorMapping extends AbstarctTest {
 
 		assertEquals("avg", avg.getOutputs().getFirst().getName());
 
-		TwinActionUsage<?, ?, ?> testAction = avg.getActions().stream().filter(x -> "test".equals(x.getName())).findFirst().orElseThrow();
+		ActionMapUsage<?, ?, ?> testAction = avg.getActions().stream().filter(x -> "test".equals(x.getName())).findFirst().orElseThrow();
 
 		AbstractTwinActionUsage<?, ?> testBlock = assertInstanceOf(AbstractTwinActionUsage.class, testAction);
 
@@ -341,9 +343,9 @@ public class TestBehaviorMapping extends AbstarctTest {
 
 		assertEquals(1, avgCall.getArguments().size());
 
-		TwinExpressionUsage argument = avgCall.getArguments().getFirst();
+		ExpressionUsage argument = avgCall.getArguments().getFirst();
 
-		TwinReferenceUsage<?> reference = assertInstanceOf(TwinReferenceUsage.class, argument);
+		ReferenceUsage<?> reference = assertInstanceOf(ReferenceUsage.class, argument);
 
 		assertEquals("temps", reference.getTarget().getName());
 	}
@@ -356,15 +358,15 @@ public class TestBehaviorMapping extends AbstarctTest {
 
 		assertTrue(test12.getExpression().isPresent());
 
-		TwinExpressionUsage expression = test12.getExpression().orElseThrow();
+		ExpressionUsage expression = test12.getExpression().orElseThrow();
 
 		TwinCalculationUsage avgCall = assertInstanceOf(TwinCalculationUsage.class, expression);
 
 		assertEquals(1, avgCall.getArguments().size());
 
-		TwinExpressionUsage argument = avgCall.getArguments().getFirst();
+		ExpressionUsage argument = avgCall.getArguments().getFirst();
 
-		TwinReferenceUsage<?> reference = assertInstanceOf(TwinReferenceUsage.class, argument);
+		ReferenceUsage<?> reference = assertInstanceOf(ReferenceUsage.class, argument);
 
 		assertEquals("x", reference.getTarget().getName());
 	}
@@ -378,7 +380,7 @@ public class TestBehaviorMapping extends AbstarctTest {
 		assertNotNull(assignment.getValue());
 	}
 
-	private void assertCalculationGuard(List<TwinExpressionUsage> guards) {
+	private void assertCalculationGuard(List<? extends ExpressionUsage<?>> guards) {
 
 		assertEquals(1, guards.size());
 

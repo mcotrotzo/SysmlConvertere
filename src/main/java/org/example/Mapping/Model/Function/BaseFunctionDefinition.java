@@ -1,11 +1,15 @@
 package org.example.Mapping.Model.Function;
 
-import org.example.Mapping.Model.Mapper;
+import Mapper.Mapper;
+import Model.Annotation.MappedMetaClass;
+import Model.Predefined.MetaClasses.Function.FunctionCore;
 import org.omg.sysml.lang.sysml.Behavior;
+import org.omg.sysml.lang.sysml.Function;
 
 /** Function of the standard library (+, DIV_real, ...). */
-public class BaseFunctionDefinition extends FunctionDefinition<FunctionCore> {
+@MappedMetaClass(value = Function.class, core = FunctionCore.class)
+public class BaseFunctionDefinition extends Model.Predefined.MetaClasses.Function.BaseFunctionDefinition {
 	public BaseFunctionDefinition(Behavior sysmlElement, Mapper mapper) {
-		super(sysmlElement, () -> new FunctionCore(sysmlElement, mapper), mapper);
+		super(sysmlElement, mapper);
 	}
 }

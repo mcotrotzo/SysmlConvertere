@@ -1,5 +1,7 @@
 package TopLevelDefinitionTests.ValidationRules;
 
+
+import Executor.SemanticException;
 import TopLevelDefinitionTests.AbstarctTest;
 import org.junit.jupiter.api.Test;
 
@@ -60,7 +62,7 @@ public class FlowCheckIncompatibleTypes extends AbstarctTest {
 
 	@Test
 	public void incompatibleTypesShouldThrow() {
-		IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> super.testTopLevelDefinition());
+		SemanticException exception = assertThrows(SemanticException.class, () -> super.testTopLevelDefinition());
 		assertTrue(exception.getMessage().contains("has incompatible endpoint types: source 'pos' has type 'Position', target 'pos' expects 'Position2'"), exception.getMessage());
 	}
 }

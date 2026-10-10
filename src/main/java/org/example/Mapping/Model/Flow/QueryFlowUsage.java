@@ -1,12 +1,15 @@
 package org.example.Mapping.Model.Flow;
 
-import org.example.Mapping.Model.Mapper;
+
+
+
+import Model.EmptyCore;import Model.Annotation.MappedLibrary;import Mapper.Mapper;
+import Model.Slots;
 import org.example.Mapping.Model.Taxonomy.Base.CloudTwinTaxonomyUsage;
 import org.example.Mapping.Model.Taxonomy.Base.PhysicalTaxonomyUsage;
 
 import lombok.Getter;
 
-import org.example.Mapping.Model.Slots;
 import org.example.Mapping.Model.Attribute.TwinAttributeIntegerUsage;
 import org.example.Mapping.Model.EnumAttribute.EnumOrderByUsage;
 import org.example.Mapping.Model.EnumAttribute.EnumTimeUnitUsage;
@@ -14,6 +17,7 @@ import org.omg.sysml.lang.sysml.FlowUsage;
 
 import java.util.Optional;
 
+@MappedLibrary(libraryName = "TwinActionLibrary::QueryFlow", core = EmptyCore.class)
 public class QueryFlowUsage extends TwinFlowUsage {
 
 	@Getter private Optional<TwinAttributeIntegerUsage> since = Optional.empty();

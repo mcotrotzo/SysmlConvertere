@@ -1,11 +1,14 @@
 package org.example.Mapping.Model.Attribute;
 
 
-import org.example.Mapping.Model.Mapper;
+
+
+import Model.Annotation.MappedLibrary;import Mapper.Mapper;
 import org.omg.sysml.lang.sysml.Classifier;
 
+@MappedLibrary(libraryName = "ScalarValues::Boolean", core = TwinAttributeCore.class)
 public class TwinAttributeBooleanDefinition extends TwinAttributeDefinition<TwinAttributeCore> {
 	public TwinAttributeBooleanDefinition(Classifier sysmlElement, Mapper newMappe) {
-		super(sysmlElement, () -> new TwinAttributeCore(sysmlElement, newMappe), newMappe);
+		super(sysmlElement, newMappe);
 	}
 }

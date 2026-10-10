@@ -1,10 +1,14 @@
 package org.example.Mapping.Model.Expression;
 
-import org.example.Mapping.Model.Mapper;
+import Mapper.Mapper;
+import Model.Annotation.MappedMetaClass;
+import Model.EmptyCore;
+import Model.Predefined.MetaClasses.Expression.LiteralStringUsage;
 import org.omg.sysml.lang.sysml.LiteralString;
 
-public class TwinLiteralStringUsage extends TwinLiteralUsage<String> {
+@MappedMetaClass(value = LiteralString.class, core = EmptyCore.class)
+public class TwinLiteralStringUsage extends LiteralStringUsage {
 	public TwinLiteralStringUsage(LiteralString sysmlElement, Mapper mapper) {
-		super(sysmlElement, mapper, (sysmlElement).getValue());
+		super(sysmlElement, mapper);
 	}
 }

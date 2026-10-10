@@ -1,25 +1,28 @@
 package org.example.Mapping.Model.Flow;
 
+
+
+import Model.Annotation.MappedLibrary;import Mapper.Mapper;
+import Model.EmptyCore;
+import Model.Slots;
 import lombok.Getter;
 import org.example.Mapping.Model.Attribute.TwinAttributeUsage;
-import org.example.Mapping.Model.Mapper;
 import org.example.Mapping.Model.Action.TwinActionUsage;
-import org.example.Mapping.Model.Slots;
 import org.example.Mapping.Model.Taxonomy.Base.TaxonomyUsage;
-import org.example.Mapping.Model.Type.EmptyCore;
 import org.omg.sysml.lang.sysml.Feature;
 import org.omg.sysml.lang.sysml.FlowUsage;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@MappedLibrary(libraryName = "TwinActionLibrary::TwinFlow", core = EmptyCore.class)
 public class TwinFlowUsage extends TwinActionUsage<EmptyCore, FlowUsage, TwinFlowDefinition> {
 
 	@Getter private TwinAttributeUsage<?, ?> source;
 	@Getter private TwinAttributeUsage<?, ?> target;
 
 	public TwinFlowUsage(FlowUsage sysmlElement, Mapper newMappe) {
-		super(sysmlElement, () -> new EmptyCore(sysmlElement, newMappe), newMappe, TwinFlowDefinition.class);
+		super(sysmlElement, newMappe);
 	}
 
 	@Override

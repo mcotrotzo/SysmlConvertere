@@ -1,12 +1,13 @@
 package org.example.Mapping.Model.Action;
 
-import org.example.Mapping.Model.Mapper;
+import Mapper.Mapper;
+import Model.Annotation.MappedLibrary;
+import Model.Predefined.MetaClasses.Action.ActionMapDefinition;
 import org.omg.sysml.lang.sysml.Behavior;
 
-import java.util.function.Supplier;
-
-public class AbstractTwinActionDefinition<C extends ActionBlockCore> extends TwinActionDefinition<C> implements ActionBlockCoreApi<C> {
-	public AbstractTwinActionDefinition(Behavior sysmlElement, Supplier<C> core, Mapper mapper) {
-		super(sysmlElement, core, mapper);
+@MappedLibrary(libraryName = "TwinActionLibrary::AbstractTwinAction", core = ActionBlockCore.class)
+public class AbstractTwinActionDefinition<C extends ActionBlockCore> extends ActionMapDefinition<C> implements ActionBlockCoreApi<C> {
+	public AbstractTwinActionDefinition(Behavior sysmlElement, Mapper mapper) {
+		super(sysmlElement, mapper);
 	}
 }

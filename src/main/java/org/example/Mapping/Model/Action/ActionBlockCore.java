@@ -1,37 +1,55 @@
 package org.example.Mapping.Model.Action;
 
-import org.example.Mapping.Model.AbstractModel;
-import org.example.Mapping.Role;
+import Mapper.Mapper;
+import Model.AbstractType;
+import Model.Predefined.MetaClasses.Action.ActionCore;
+import Model.Slots;
 import lombok.Getter;
-import org.example.Mapping.Model.Mapper;
 import org.example.Mapping.Model.Attribute.TwinAttributeUsage;
-import org.example.Mapping.Model.Slots;
-import org.omg.sysml.lang.sysml.Feature;
+import org.example.Mapping.Role;
+import org.omg.sysml.lang.sysml.Type;
 
 import java.util.List;
 
-import org.omg.sysml.lang.sysml.Type;
+public class ActionBlockCore extends ActionCore {
 
-public class ActionBlockCore extends ActionBodyCore {
-	@Getter private List<TwinAttributeUsage<?, ?>> inputs = List.of();
-	@Getter private List<TwinAttributeUsage<?, ?>> outputs = List.of();
+	private static final Class<TwinAttributeUsage<?, ?>> ATTRIBUTE = Slots.rawClassOf(TwinAttributeUsage.class);
+
 	@Getter private List<TwinAttributeUsage<?, ?>> localAttributes = List.of();
 
-	public ActionBlockCore(Type sysmlElement, Mapper newMappe) {
-		super(sysmlElement, newMappe);
+	public ActionBlockCore(Type sysmlElement, Mapper mapper) {
+		super(sysmlElement, mapper);
 	}
 
 	@Override
-	public void fillSlots(AbstractModel<?> owner) {
+	public void fillSlots(AbstractType<?, ?> owner) {
 		super.fillSlots(owner);
-		Class<TwinAttributeUsage<?, ?>> attributeClass = Slots.rawClassOf(TwinAttributeUsage.class);
-		List<Feature> in = sysmlElement.getInput();
-		List<Feature> out = sysmlElement.getOutput();
-		inputs = Slots.mapAll(mapper, owner, in, attributeClass);
-		outputs = Slots.mapAll(mapper, owner, out, attributeClass);
-		localAttributes = mapper.mapSlot("local_Attributes", owner, attributeClass);
-		inputs.forEach(attribute -> attribute.addRole(Role.ACTION));
-		outputs.forEach(attribute -> attribute.addRole(Role.ACTION));
+		localAttributes = mapper.mapSlot("local_Attributes", owner, ATTRIBUTE);
 		localAttributes.forEach(attribute -> attribute.addRole(Role.LOCAL));
+	}
+
+	@Override
+	protected void mapInputs(AbstractType<?, ?> owner) {
+		List<TwinAttributeUsage<?, ?>> mapped = Slots.mapAll(mapper, owner, sysmlElement.getInput(), ATTRIBUTE);
+		mapped.forEach(attribute -> attribute.addRole(Role.ACTION));
+		inputs = mapped;
+	}
+
+	@Override
+	protected void mapOutputs(AbstractType<?, ?> owner) {
+		List<TwinAttributeUsage<?, ?>> mapped = Slots.mapAll(mapper, owner, sysmlElement.getOutput(), ATTRIBUTE);
+		mapped.forEach(attribute -> attribute.addRole(Role.ACTION));
+		outputs = mapped;
+	}
+
+
+	@Override
+	public List<TwinAttributeUsage<?, ?>> getInputs() {
+		return inputs.stream().<TwinAttributeUsage<?, ?>>map(ATTRIBUTE::cast).toList();
+	}
+
+	@Override
+	public List<TwinAttributeUsage<?, ?>> getOutputs() {
+		return outputs.stream().<TwinAttributeUsage<?, ?>>map(ATTRIBUTE::cast).toList();
 	}
 }

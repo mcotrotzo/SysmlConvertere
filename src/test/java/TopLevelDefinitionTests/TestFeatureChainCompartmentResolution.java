@@ -1,21 +1,22 @@
 package TopLevelDefinitionTests;
 
-import org.example.Mapping.BaseFunctionKind;
+
+import Model.Predefined.MetaClasses.Function.BaseFunctionKind;
+import Model.Usage;
 import org.example.Mapping.Model.Action.TwinTriggerActionUsage;
 import org.example.Mapping.Model.Action.TwinAssignmentUsage;
 import org.example.Mapping.Model.Attribute.CustomTypeUsage;
 import org.example.Mapping.Model.Attribute.TwinAttributeUsage;
 import org.example.Mapping.Model.Expression.TwinCalculationUsage;
 import org.example.Mapping.Model.Expression.TwinConstructorUsage;
-import org.example.Mapping.Model.Expression.TwinExpressionUsage;
-import org.example.Mapping.Model.Expression.TwinReferenceUsage;
+import Model.Predefined.MetaClasses.Expression.ExpressionUsage;
+import Model.Predefined.MetaClasses.Expression.ReferenceUsage;
 import org.example.Mapping.Model.Flow.FederationFlowUsage;
 import org.example.Mapping.Model.Function.BaseFunctionDefinition;
 import org.example.Mapping.Model.Function.CustomCalculationDefinition;
 import org.example.Mapping.Model.Port.ConstPortUsage;
 import org.example.Mapping.Model.Strategy.TwinStrategyUsage;
 import org.example.Mapping.Model.Twin.TwinUsage;
-import org.example.Mapping.Model.Type.Usage;
 import org.example.Mapping.Model.World.WorldCoreDefinition;
 import org.junit.jupiter.api.Test;
 
@@ -33,7 +34,7 @@ public class TestFeatureChainCompartmentResolution extends AbstarctTest {
 		assertEquals("Position", constructor.getConstructorType().getName());
 		assertEquals(3, constructor.getArguments().size());
 
-		for (TwinExpressionUsage argument : constructor.getArguments()) {
+		for (ExpressionUsage argument : constructor.getArguments()) {
 			TwinCalculationUsage calculation = assertInstanceOf(TwinCalculationUsage.class, argument);
 
 			BaseFunctionDefinition function =
@@ -46,28 +47,28 @@ public class TestFeatureChainCompartmentResolution extends AbstarctTest {
 
 	@Test
 	public void testTwoLevelChainPosAxResolvesToCorrectCompartment() {
-		TwinReferenceUsage<?> reference = chainArgumentOf("x", 0);
+		ReferenceUsage<?> reference = chainArgumentOf("x", 0);
 
 		assertEquals(field(input("pos_a"), "x").getId(), reference.getTarget().getId());
 	}
 
 	@Test
 	public void testThreeLevelChainPosBxxResolvesToCorrectCompartment() {
-		TwinReferenceUsage<?> reference = chainArgumentOf("x", 1);
+		ReferenceUsage<?> reference = chainArgumentOf("x", 1);
 
 		assertEquals(field(fieldOf(input("pos_b"), "x"), "x").getId(), reference.getTarget().getId());
 	}
 
 	@Test
 	public void testThreeLevelChainPosByyResolvesToCorrectCompartment() {
-		TwinReferenceUsage<?> reference = chainArgumentOf("y", 1);
+		ReferenceUsage<?> reference = chainArgumentOf("y", 1);
 
 		assertEquals(field(fieldOf(input("pos_b"), "x"), "y").getId(), reference.getTarget().getId());
 	}
 
 	@Test
 	public void testThreeLevelChainPosBzzResolvesToCorrectCompartment() {
-		TwinReferenceUsage<?> reference = chainArgumentOf("z", 1);
+		ReferenceUsage<?> reference = chainArgumentOf("z", 1);
 
 		assertEquals(field(fieldOf(input("pos_b"), "x"), "z").getId(), reference.getTarget().getId());
 	}
@@ -101,7 +102,7 @@ public class TestFeatureChainCompartmentResolution extends AbstarctTest {
 		// INDEX_seq(nominalVoltage, 1) * 10
 		TwinCalculationUsage times = assertInstanceOf(TwinCalculationUsage.class, maxCharge.getExpression().orElseThrow());
 		TwinCalculationUsage index = assertInstanceOf(TwinCalculationUsage.class, times.getArguments().getFirst());
-		TwinReferenceUsage<?> reference = assertInstanceOf(TwinReferenceUsage.class, index.getArguments().getFirst());
+		ReferenceUsage<?> reference = assertInstanceOf(ReferenceUsage.class, index.getArguments().getFirst());
 
 		assertEquals(nominalVoltage.getId(), reference.getTarget().getId());
 	}
@@ -128,7 +129,7 @@ public class TestFeatureChainCompartmentResolution extends AbstarctTest {
 
 		TwinAttributeUsage<?, ?> doubled = named(TwinAttributeUsage.class, "doubled");
 		TwinCalculationUsage mult = assertInstanceOf(TwinCalculationUsage.class, doubled.getExpression().orElseThrow());
-		TwinReferenceUsage<?> reference = assertInstanceOf(TwinReferenceUsage.class, mult.getArguments().getFirst());
+		ReferenceUsage<?> reference = assertInstanceOf(ReferenceUsage.class, mult.getArguments().getFirst());
 
 		assertEquals(voltageInSoc2.getId(), reference.getTarget().getId());
 	}
@@ -153,7 +154,7 @@ public class TestFeatureChainCompartmentResolution extends AbstarctTest {
 
 
 
-	private TwinReferenceUsage<?> chainArgumentOf(
+	private ReferenceUsage<?> chainArgumentOf(
 			String constructorArgument,
 			int calculationArgument
 	) {
@@ -167,17 +168,17 @@ public class TestFeatureChainCompartmentResolution extends AbstarctTest {
 			default -> throw new IllegalArgumentException(constructorArgument);
 		};
 
-		TwinExpressionUsage argument =
+		ExpressionUsage argument =
 				constructor.getArguments().get(position);
 
 		TwinCalculationUsage calculation = assertInstanceOf(TwinCalculationUsage.class, argument);
 
-		TwinExpressionUsage reference =
+		ExpressionUsage reference =
 				calculation
 						.getArguments()
 						.get(calculationArgument);
 
-		return assertInstanceOf(TwinReferenceUsage.class, reference);
+		return assertInstanceOf(ReferenceUsage.class, reference);
 	}
 
 	private TwinAssignmentUsage findAssignmentTo(String targetName) {

@@ -1,6 +1,9 @@
 package TopLevelDefinitionTests;
 
 
+
+import Model.Definition;
+import Model.Usage;
 import org.example.Mapping.Model.Taxonomy.PhysicalTwin.PhysicalTwinDefiniton;
 import org.example.Mapping.Model.Taxonomy.PhysicalTwin.PhysicalTwinUsage;
 import org.junit.jupiter.api.Test;

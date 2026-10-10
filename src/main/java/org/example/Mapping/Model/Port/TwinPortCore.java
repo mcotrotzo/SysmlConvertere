@@ -1,13 +1,13 @@
 package org.example.Mapping.Model.Port;
 
+
+import Mapper.Mapper;
+import Model.AbstractType;
+import Model.Core.Core;
+import Model.Slots;
 import lombok.Getter;
-import org.example.Mapping.Model.AbstractModel;
-import org.example.Mapping.Model.Mapper;
-import org.example.Mapping.Model.Type.Core;
 import org.example.Mapping.Model.Protocol.ProtocolUsage;
 import org.example.Mapping.Model.Attribute.TwinAttributeStringUsage;
-import org.example.Mapping.Model.Slots;
-
 import java.util.Optional;
 import org.omg.sysml.lang.sysml.Type;
 
@@ -20,7 +20,7 @@ public class TwinPortCore extends Core<Type> {
 	}
 
 	@Override
-	public void fillSlots(AbstractModel<?> owner) {
+	public void fillSlots(AbstractType<?, ?> owner) {
 		protocol = Slots.atMostOne(owner, "communicationProtocol",
 				mapper.mapSlot("communicationProtocol", owner, Slots.<ProtocolUsage<?, ?>>rawClassOf(ProtocolUsage.class)));
 		deviceKey = Slots.exactlyOne(owner, "deviceKey", mapper.mapSlot("deviceKey", owner, TwinAttributeStringUsage.class));

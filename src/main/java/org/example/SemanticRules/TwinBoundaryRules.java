@@ -1,39 +1,39 @@
 package org.example.SemanticRules;
 
 
-import org.example.Mapping.Model.AbstractModel;
+
+import Executor.SemanticException;
+import Executor.SemanticRule;
+import Main.ResultConverter;
+import Mapper.NewUtil;
+import Model.AbstractType;
 import org.example.Mapping.Model.Action.TwinAssignmentUsage;
-import org.example.Mapping.Model.Expression.TwinReferenceUsage;
+import Model.Predefined.MetaClasses.Expression.ReferenceUsage;
 import org.example.Mapping.Model.Flow.FederationFlowUsage;
 import org.example.Mapping.Model.Flow.TwinFlowUsage;
-import org.example.Mapping.Model.Slots;
 import org.example.Mapping.Model.Twin.TwinCoreApi;
-import org.example.TwinDataBase;
-import org.example.Util.NewUtil;
-
 import java.util.Optional;
 
 public class TwinBoundaryRules extends SemanticRule {
 
-	private final Class<TwinReferenceUsage<?>> referenceClass = Slots.rawClassOf(TwinReferenceUsage.class);
 
 	public TwinBoundaryRules(NewUtil newUtil) {
 		super(newUtil);
 	}
 
 	@Override
-	public boolean isValid(TwinDataBase database) throws SemanticException {
-		for (TwinReferenceUsage<?> reference : database.getByType(referenceClass)) {
+	public boolean isValid(ResultConverter resultConverter) throws SemanticException {
+		for (ReferenceUsage<?> reference : resultConverter.getByType(ReferenceUsage.class )) {
 			if (!reference.isLibrary()) {
 				check(reference, reference.getTarget(), "Reference to");
 			}
 		}
-		for (TwinAssignmentUsage assignment : database.getByType(TwinAssignmentUsage.class)) {
+		for (TwinAssignmentUsage assignment : resultConverter.getByType(TwinAssignmentUsage.class)) {
 			if (!assignment.isLibrary()) {
 				check(assignment, assignment.getReferent(), "Assignment to");
 			}
 		}
-		for (TwinFlowUsage flow : database.getByType(TwinFlowUsage.class)) {
+		for (TwinFlowUsage flow : resultConverter.getByType(TwinFlowUsage.class)) {
 			if (flow.isLibrary() || flow instanceof FederationFlowUsage) {
 				continue;
 			}
@@ -43,18 +43,18 @@ public class TwinBoundaryRules extends SemanticRule {
 		return true;
 	}
 
-	private void check(AbstractModel<?> user, AbstractModel<?> used, String what) throws SemanticException {
-		Optional<AbstractModel<?>> userTwin = twinOf(user);
-		Optional<AbstractModel<?>> usedTwin = twinOf(used);
-		if (!userTwin.map(AbstractModel::getId).equals(usedTwin.map(AbstractModel::getId))) {
+	private void check(AbstractType<?, ?> user, AbstractType<?, ?> used, String what) throws SemanticException {
+		Optional<AbstractType<?, ?>> userTwin = twinOf(user);
+		Optional<AbstractType<?, ?>> usedTwin = twinOf(used);
+		if (!userTwin.map(AbstractType::getId).equals(usedTwin.map(AbstractType::getId))) {
 			throw new SemanticException("%s '%s' leaves its twin: it is used in '%s' but belongs to '%s'. Use a federation flow to connect twins."
-					.formatted(what, used.getName(), userTwin.map(AbstractModel::getName).orElse("no twin"), usedTwin.map(AbstractModel::getName).orElse("no twin")));
+					.formatted(what, used.getName(), userTwin.map(AbstractType::getName).orElse("no twin"), usedTwin.map(AbstractType::getName).orElse("no twin")));
 		}
 	}
 
 
-	private Optional<AbstractModel<?>> twinOf(AbstractModel<?> element) {
-		for (AbstractModel<?> current = element; current != null; current = current.getParent().orElse(null)) {
+	private Optional<AbstractType<?, ?>> twinOf(AbstractType<?, ?> element) {
+		for (AbstractType<?, ?> current = element; current != null; current = current.getParent().orElse(null)) {
 			if (current instanceof TwinCoreApi) {
 				return Optional.of(current);
 			}

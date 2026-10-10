@@ -4,6 +4,7 @@ library package TwinActionLibrary{
     private import TwinTaxonomyLibrary::*;
     private import TwinEnumLibrary::*;
 
+
     action def AbstractTwinAction{
         attribute local_Attributes[0..*] : TwinAttribute;
     }

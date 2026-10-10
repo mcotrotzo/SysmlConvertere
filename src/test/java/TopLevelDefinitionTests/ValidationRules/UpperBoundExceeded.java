@@ -54,7 +54,6 @@ public class UpperBoundExceeded extends AbstarctTest {
 
 	@Test
 	public void upperBoundShouldThrow() {
-		// MapperService.map() now reports rule violations as IllegalArgumentException (was MappingException)
 		IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> super.testTopLevelDefinition());
 		System.out.println(exception.getMessage());
 		assertTrue(exception.getMessage().contains("2 > 1"));

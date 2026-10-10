@@ -1,8 +1,9 @@
 package org.example.GenerelRules;
 
+
+import Executor.GenerelRules;
+import Mapper.NewUtil;
 import org.example.Util.LibraryNameSpaces;
-import org.example.Util.NewUtil;
-import org.example.Util.Utils;
 import org.omg.sysml.lang.sysml.AttributeUsage;
 import org.omg.sysml.lang.sysml.Type;
 
@@ -30,7 +31,7 @@ public class TwinAttributeHasToSpecialiced extends GenerelRules {
 	private void validateType(AttributeUsage attributeUsage, List<Type> types) throws IllegalArgumentException {
 
 
-		Type twinAttributeType = utilsManager.getLibraryRawType().getLibraries().get(LibraryNameSpaces.TWIN_ATTRIBUTE);
+		Type twinAttributeType = utilsManager.getResourceContainer().getLibraryResources().getLibraries().get(LibraryNameSpaces.TWIN_ATTRIBUTE);
 
 		boolean hasGenericTwinAttribute = types.stream().anyMatch(type -> type == twinAttributeType);
 

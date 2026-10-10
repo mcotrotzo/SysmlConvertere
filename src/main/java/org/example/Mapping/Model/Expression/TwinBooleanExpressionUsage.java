@@ -1,9 +1,13 @@
 package org.example.Mapping.Model.Expression;
 
-import org.example.Mapping.Model.Mapper;
+import Mapper.Mapper;
+import Model.Annotation.MappedMetaClass;
+import Model.EmptyCore;
+import Model.Predefined.MetaClasses.Expression.BooleanExpressionUsage;
 import org.omg.sysml.lang.sysml.BooleanExpression;
 
-public class TwinBooleanExpressionUsage extends TwinExpressionUsage<BooleanExpression> {
+@MappedMetaClass(value = BooleanExpression.class, core = EmptyCore.class)
+public class TwinBooleanExpressionUsage extends BooleanExpressionUsage {
 	public TwinBooleanExpressionUsage(BooleanExpression sysmlElement, Mapper mapper) {
 		super(sysmlElement, mapper);
 	}

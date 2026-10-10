@@ -1,7 +1,8 @@
 package org.example.Mapping.Model.StateMachine;
 
-import org.example.Mapping.Model.AbstractModel;
-import org.example.Mapping.Model.Mapper;
+
+import Mapper.Mapper;
+import Model.AbstractType;
 import org.example.Mapping.Model.Action.TriggerCore;
 import org.example.Mapping.Model.Action.TwinTriggerUsage;
 import org.omg.sysml.lang.sysml.Type;
@@ -16,7 +17,7 @@ public class TwinStateMachineCore extends TwinStateCore implements TriggerCore {
 	}
 
 	@Override
-	public void fillSlots(AbstractModel owner) {
+	public void fillSlots(AbstractType owner) {
 		super.fillSlots(owner);
 		trigger = mapper.mapSingleSlot("trigger", owner, TwinTriggerUsage.class);
 	}

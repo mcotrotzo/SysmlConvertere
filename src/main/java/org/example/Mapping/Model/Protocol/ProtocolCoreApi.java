@@ -1,6 +1,6 @@
 package org.example.Mapping.Model.Protocol;
 
-import org.example.Mapping.Model.Type.CoreApi;
 
+import Model.Core.CoreApi;
 public interface ProtocolCoreApi<C extends ProtocolCore> extends CoreApi<C> {
 }

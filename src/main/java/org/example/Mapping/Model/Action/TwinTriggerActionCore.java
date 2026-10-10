@@ -1,7 +1,8 @@
 package org.example.Mapping.Model.Action;
 
-import org.example.Mapping.Model.AbstractModel;
-import org.example.Mapping.Model.Mapper;
+
+import Mapper.Mapper;
+import Model.AbstractType;
 import org.omg.sysml.lang.sysml.Type;
 
 import java.util.Optional;
@@ -15,7 +16,7 @@ public class TwinTriggerActionCore extends ActionBlockCore implements TriggerCor
 	}
 
 	@Override
-	public void fillSlots(AbstractModel<?> owner) {
+	public void fillSlots(AbstractType<?, ?> owner) {
 		super.fillSlots(owner);
 		trigger = mapper.mapSingleSlot("trigger", owner, TwinTriggerUsage.class);
 	}

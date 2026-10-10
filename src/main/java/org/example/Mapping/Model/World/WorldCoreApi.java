@@ -1,9 +1,9 @@
 package org.example.Mapping.Model.World;
 
+
+import Model.Core.CoreApi;
 import org.example.Mapping.Model.Flow.FederationFlowUsage;
 import org.example.Mapping.Model.Twin.TwinUsage;
-import org.example.Mapping.Model.Type.CoreApi;
-
 import java.util.List;
 
 public interface WorldCoreApi extends CoreApi<WorldCore> {

@@ -1,5 +1,7 @@
 package TopLevelDefinitionTests.ValidationRules;
 
+
+import Executor.SemanticException;
 import TopLevelDefinitionTests.AbstarctTest;
 import org.junit.jupiter.api.Test;
 
@@ -60,7 +62,7 @@ public class FlowCheckSourceTaxonomy extends AbstarctTest {
 
 	@Test
 	public void wrongSourceTaxonomyShouldThrow() {
-		IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> super.testTopLevelDefinition());
+		SemanticException exception = assertThrows(SemanticException.class, () -> super.testTopLevelDefinition());
 		assertTrue(exception.getMessage().contains("source 'soc' belongs to taxonomy 'DescriptiveModelUsage', expected 'PhysicalTaxonomyUsage'"), exception.getMessage());
 	}
 }

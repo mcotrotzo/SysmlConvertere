@@ -2,7 +2,7 @@ package TopLevelDefinitionTests;
 
 import org.example.Mapping.CustomStrategyType;
 import org.example.Mapping.EnumFederationLink;
-import org.example.Mapping.Model.Action.TwinActionUsage;
+import Model.Predefined.MetaClasses.Action.ActionMapUsage;
 import org.example.Mapping.Model.Attribute.CustomTypeDefinition;
 import org.example.Mapping.Model.Attribute.CustomTypeUsage;
 import org.example.Mapping.Model.Attribute.TwinAttributeUsage;
@@ -543,8 +543,8 @@ public class TestFullModelPresence extends AbstarctTest {
 
 	@Test
 	public void testSocActionIsPresent() {
-		TwinActionUsage<?, ?, ?> soc =
-				named(TwinActionUsage.class, "soc");
+		ActionMapUsage<?, ?, ?> soc =
+				named(ActionMapUsage.class, "soc");
 
 		assertParent(
 				soc,
@@ -555,8 +555,8 @@ public class TestFullModelPresence extends AbstarctTest {
 
 	@Test
 	public void testTemp30ActionIsPresent() {
-		TwinActionUsage<?, ?, ?> temp30 =
-				named(TwinActionUsage.class, "temp30");
+		ActionMapUsage<?, ?, ?> temp30 =
+				named(ActionMapUsage.class, "temp30");
 
 		assertParent(
 				temp30,
@@ -567,8 +567,8 @@ public class TestFullModelPresence extends AbstarctTest {
 
 	@Test
 	public void testAvgTempActionIsPresent() {
-		TwinActionUsage<?, ?, ?> avgTemp =
-				named(TwinActionUsage.class, "avgTemp");
+		ActionMapUsage<?, ?, ?> avgTemp =
+				named(ActionMapUsage.class, "avgTemp");
 
 		assertParent(
 				avgTemp,

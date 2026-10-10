@@ -1,5 +1,7 @@
 package TopLevelDefinitionTests.ValidationRules;
 
+
+import Executor.SemanticException;
 import TopLevelDefinitionTests.AbstarctTest;
 import org.junit.jupiter.api.Test;
 
@@ -68,7 +70,7 @@ public class TwinBoundaryReferenceToOtherTwin extends AbstarctTest {
 
 	@Test
 	public void referenceToOtherTwinShouldThrow() {
-		IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> super.testTopLevelDefinition());
+		SemanticException exception = assertThrows(SemanticException.class, () -> super.testTopLevelDefinition());
 		assertTrue(exception.getMessage().contains("Reference to 'pvOut' leaves its twin"), exception.getMessage());
 	}
 }

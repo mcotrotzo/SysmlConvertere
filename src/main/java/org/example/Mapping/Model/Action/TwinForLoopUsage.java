@@ -1,34 +1,36 @@
 package org.example.Mapping.Model.Action;
 
-import org.example.Mapping.Model.Mapper;
-import org.example.Mapping.Role;
-import lombok.Getter;
-import org.example.Mapping.Model.Expression.TwinExpressionUsage;
-import org.example.Mapping.Model.Slots;
-import org.example.Mapping.Model.Type.EmptyCore;
-import org.omg.sysml.lang.sysml.ForLoopActionUsage;
+import Mapper.Mapper;
+import Model.Annotation.MappedMetaClass;
+import Model.Predefined.MetaClasses.Action.EmptyActionCore;
+import Model.Predefined.MetaClasses.Action.ForLoopMapUsage;
+import Model.Slots;
 import org.example.Mapping.Model.Attribute.TwinAttributeUsage;
+import org.example.Mapping.Role;
+import org.omg.sysml.lang.sysml.ForLoopActionUsage;
 
 import java.util.Optional;
 import java.util.stream.Stream;
 
-public class TwinForLoopUsage extends TwinActionUsage<EmptyCore, ForLoopActionUsage, TwinActionDefinition> {
+@MappedMetaClass(value = ForLoopActionUsage.class, core = EmptyActionCore.class)
+public class TwinForLoopUsage extends ForLoopMapUsage {
 
-	@Getter private Optional<TwinAttributeUsage<?, ?>> loopVariable = Optional.empty();
-	@Getter private Optional<TwinExpressionUsage> collection = Optional.empty();
-	@Getter private Optional<TwinActionUsage<?, ?, ?>> body = Optional.empty();
+	private static final Class<TwinAttributeUsage<?, ?>> ATTRIBUTE = Slots.rawClassOf(TwinAttributeUsage.class);
 
-	public TwinForLoopUsage(ForLoopActionUsage sysmlElement, Mapper newMappe) {
-		super(sysmlElement, () -> new EmptyCore(sysmlElement, newMappe), newMappe, TwinActionDefinition.class);
+	public TwinForLoopUsage(ForLoopActionUsage sysmlElement, Mapper mapper) {
+		super(sysmlElement, mapper);
+	}
+
+	// the loop variable is a twin attribute with the FOR_LOOP_VARIABLE role
+	@Override
+	protected void mapLoopVariable() {
+		Optional<TwinAttributeUsage<?, ?>> mapped = Slots.mapAll(instance, this, Stream.ofNullable(sysmlElement.getLoopVariable()).toList(), ATTRIBUTE).stream().findFirst();
+		mapped.ifPresent(variable -> variable.addRole(Role.FOR_LOOP_VARIABLE));
+		loopVariable = mapped;
 	}
 
 	@Override
-	public void fillSlots() {
-		super.fillSlots();
-		ForLoopActionUsage loop = sysmlElement;
-		loopVariable = Slots.mapAll(instance, this, Stream.ofNullable(loop.getLoopVariable()).toList(), Slots.<TwinAttributeUsage<?, ?>>rawClassOf(TwinAttributeUsage.class)).stream().findFirst();
-		loopVariable.ifPresent(variable -> variable.addRole(Role.FOR_LOOP_VARIABLE));
-		collection = Slots.mapAll(instance, this, Stream.ofNullable(loop.getSeqArgument()).toList(), TwinExpressionUsage.class).stream().findFirst();
-		body = Slots.mapAll(instance, this, Stream.ofNullable(loop.getBodyAction()).toList(), Slots.<TwinActionUsage<?, ?, ?>>rawClassOf(TwinActionUsage.class)).stream().findFirst();
+	public Optional<TwinAttributeUsage<?, ?>> getLoopVariable() {
+		return loopVariable.map(ATTRIBUTE::cast);
 	}
 }

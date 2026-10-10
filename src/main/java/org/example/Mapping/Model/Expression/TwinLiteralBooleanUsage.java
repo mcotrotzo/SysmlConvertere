@@ -1,10 +1,14 @@
 package org.example.Mapping.Model.Expression;
 
-import org.example.Mapping.Model.Mapper;
+import Mapper.Mapper;
+import Model.Annotation.MappedMetaClass;
+import Model.EmptyCore;
+import Model.Predefined.MetaClasses.Expression.LiteralBooleanUsage;
 import org.omg.sysml.lang.sysml.LiteralBoolean;
 
-public class TwinLiteralBooleanUsage extends TwinLiteralUsage<Boolean> {
+@MappedMetaClass(value = LiteralBoolean.class, core = EmptyCore.class)
+public class TwinLiteralBooleanUsage extends LiteralBooleanUsage {
 	public TwinLiteralBooleanUsage(LiteralBoolean sysmlElement, Mapper mapper) {
-		super(sysmlElement, mapper, sysmlElement.isValue());
+		super(sysmlElement, mapper);
 	}
 }

@@ -1,9 +1,10 @@
 package org.example.Mapping.Model.EnumAttribute;
 
+
+import Mapper.Mapper;
+import Model.EmptyCore;
+import Model.Usage;
 import lombok.Getter;
-import org.example.Mapping.Model.Mapper;
-import org.example.Mapping.Model.Type.EmptyCore;
-import org.example.Mapping.Model.Type.Usage;
 import org.example.Mapping.TwinEnum;
 import org.omg.sysml.lang.sysml.Feature;
 import org.omg.sysml.lang.sysml.FeatureReferenceExpression;
@@ -17,7 +18,7 @@ public abstract class EnumAttributeUsage<E extends Enum<E> & TwinEnum> extends U
 	@Getter private Optional<E> value = Optional.empty();
 
 	protected EnumAttributeUsage(Feature sysmlElement, Mapper mapper) {
-		super(sysmlElement, () -> new EmptyCore(sysmlElement, mapper), mapper, EnumDefinition.class);
+		super(sysmlElement, mapper);
 	}
 
 	protected abstract Class<E> getEnumClass();

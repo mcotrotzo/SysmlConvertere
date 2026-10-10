@@ -1,5 +1,7 @@
 package TopLevelDefinitionTests.ValidationRules;
 
+
+import Executor.SemanticException;
 import TopLevelDefinitionTests.AbstarctTest;
 import org.junit.jupiter.api.Test;
 
@@ -69,7 +71,7 @@ public class TwinBoundaryFlowToOtherTwin extends AbstarctTest {
 
 	@Test
 	public void flowToOtherTwinShouldThrow() {
-		IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> super.testTopLevelDefinition());
+		SemanticException exception = assertThrows(SemanticException.class, () -> super.testTopLevelDefinition());
 		assertTrue(exception.getMessage().contains("Flow target 'pvIn' leaves its twin"), exception.getMessage());
 	}
 }

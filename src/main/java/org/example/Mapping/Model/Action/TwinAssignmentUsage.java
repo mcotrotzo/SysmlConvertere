@@ -1,47 +1,30 @@
 package org.example.Mapping.Model.Action;
 
+import Mapper.Mapper;
+import Model.Annotation.MappedMetaClass;
+import Model.Predefined.MetaClasses.Action.AssignmentMapUsage;
+import Model.Predefined.MetaClasses.Action.EmptyActionCore;
+import Model.Slots;
 import org.example.Mapping.Model.Attribute.TwinAttributeUsage;
-import org.example.Mapping.Model.Slots;
-import lombok.Getter;
-import org.example.Mapping.Model.Mapper;
-import org.example.Mapping.Model.Expression.TwinExpressionUsage;
-import org.example.Mapping.Model.Type.EmptyCore;
-import org.omg.sysml.lang.sysml.*;
+import org.omg.sysml.lang.sysml.AssignmentActionUsage;
 
-import java.util.ArrayList;
-import java.util.List;
+@MappedMetaClass(value = AssignmentActionUsage.class, core = EmptyActionCore.class)
+public class TwinAssignmentUsage extends AssignmentMapUsage {
 
-public class TwinAssignmentUsage extends TwinActionUsage<EmptyCore, AssignmentActionUsage, TwinActionDefinition> {
-
-	@Getter
-	private TwinAttributeUsage<?, ?> referent;
-	@Getter
-	private TwinExpressionUsage<?> value;
+	private static final Class<TwinAttributeUsage<?, ?>> ATTRIBUTE = Slots.rawClassOf(TwinAttributeUsage.class);
 
 	public TwinAssignmentUsage(AssignmentActionUsage sysmlElement, Mapper mapper) {
-		super(sysmlElement, () -> new EmptyCore(sysmlElement, mapper), mapper, TwinActionDefinition.class);
+		super(sysmlElement, mapper);
+	}
+
+	// twins only assign to twin attributes; mapChain rejects anything else while mapping
+	@Override
+	protected void mapReferent() {
+		referent = instance.mapChain(referentChain(), this, ATTRIBUTE);
 	}
 
 	@Override
-	public void fillSlots() {
-		super.fillSlots();
-
-		Expression ta = sysmlElement.getTargetArgument();
-		List<Feature> chain = new ArrayList<>();
-		if (ta instanceof FeatureReferenceExpression r) {
-			chain.add(r.getReferent());
-		}
-		else
-			if (ta instanceof FeatureChainExpression c) {
-				if (c.getArgument().getFirst() instanceof FeatureReferenceExpression base) {
-					chain.add(base.getReferent());
-				}
-				Feature t = c.getTargetFeature();
-				chain.addAll(t.getChainingFeature().isEmpty() ? List.of(t) : t.getChainingFeature());
-		}
-		Feature ref = sysmlElement.getReferent();
-		chain.addAll(ref.getChainingFeature().isEmpty() ? List.of(ref) : ref.getChainingFeature());
-		referent = instance.mapChain(chain, this, TwinAttributeUsage.class);
-		value = Slots.mapAll(instance, this, List.of(sysmlElement.getValueExpression()), TwinExpressionUsage.class).getFirst();
+	public TwinAttributeUsage<?, ?> getReferent() {
+		return ATTRIBUTE.cast(referent);
 	}
 }
