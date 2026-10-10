@@ -35,11 +35,6 @@
             <name>GitHub Packages</name>
             <url>https://maven.pkg.github.com/mcotrotzo/SysmlConvertere</url>
         </repository>
-        <repository>
-            <id>github-parser</id>
-            <name>GitHub Packages</name>
-            <url>https://maven.pkg.github.com/mcotrotzo/Sysmlv2ModelParser</url>
-        </repository>
     </repositories>
 
     <distributionManagement>
